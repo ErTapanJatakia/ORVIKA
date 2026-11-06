@@ -26,6 +26,8 @@ void main() {
   testWidgets('QR Check opens and inspects a payment payload without initiating it', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
 
+    await tester.ensureVisible(find.text('QR Check'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('QR Check'));
     await tester.pumpAndSettle();
 
