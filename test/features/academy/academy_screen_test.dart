@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   testWidgets('Academy displays lessons and completes a lesson after a correct answer', (tester) async {
     SharedPreferences.setMockInitialValues({});
-    await tester.view.physicalSize = const Size(900, 1600);
+    tester.view.physicalSize = const Size(900, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -30,7 +30,7 @@ void main() {
 
   testWidgets('incorrect answer does not mark a lesson complete', (tester) async {
     SharedPreferences.setMockInitialValues({});
-    await tester.view.physicalSize = const Size(900, 1600);
+    tester.view.physicalSize = const Size(900, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -49,7 +49,7 @@ void main() {
     SharedPreferences.setMockInitialValues({
       'academy.completed.v1': <String>['verify_sender', 'phishing_links'],
     });
-    await tester.view.physicalSize = const Size(900, 1600);
+    tester.view.physicalSize = const Size(900, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
