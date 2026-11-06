@@ -4,6 +4,8 @@
 **Descriptor:** Personal Cyber Safety Intelligence  
 **Tagline:** Check Before You Trust.  
 **Motto:** See the Risk. Verify the Signal. Stay in Control.  
+**Russian tagline:** Проверь, прежде чем доверять.  
+**Product positioning:** Your Personal Digital Safety Companion.  
 **Archetype:** The Intelligent Guardian
 
 ## Brand symbol
