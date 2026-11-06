@@ -80,7 +80,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final lessons = AcademyCurriculum.lessons;
+    const lessons = AcademyCurriculum.lessons;
     final progress = _completed.length;
     return Scaffold(
       appBar: AppBar(title: const Text('Academy')),
@@ -150,7 +150,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                       ],
                     ),
                   ),
-                  for (final lesson in AcademyCurriculum().byCategory(category))
+                  for (final lesson in const AcademyCurriculum().byCategory(category))
                     Card(
                       margin: const EdgeInsets.only(bottom: 10),
                       child: Padding(
