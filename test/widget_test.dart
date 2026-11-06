@@ -182,6 +182,10 @@ void main() {
 
     expect(find.text('Know your next step.'), findsOneWidget);
     expect(find.text('An account may be compromised'), findsOneWidget);
+
+    // The scope disclaimer follows all five playbooks in the scrollable page.
+    await tester.drag(find.byType(ListView), const Offset(0, -1800));
+    await tester.pumpAndSettle();
     expect(find.textContaining('does not detect incidents'), findsOneWidget);
   });
 
