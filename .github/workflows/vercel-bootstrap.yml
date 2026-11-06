@@ -40,9 +40,9 @@ jobs:
             exit 1
           fi
 
-          echo "Authenticated personal Vercel account: ${username:-verified} (ID: $user_id)"
+          echo "Authenticated personal Vercel account: ${username:-verified}"
 
-          payload='{"name":"orvika-web","framework":"other","outputDirectory":"build/web","skipGitConnectDuringLink":true}'
+          payload='{"name":"orvika-web","outputDirectory":"build/web"}'
           response_file="$(mktemp)"
           status="$(curl --silent --show-error -o "$response_file" -w '%{http_code}' \
             -X POST https://api.vercel.com/v11/projects \
@@ -85,8 +85,7 @@ jobs:
             echo
             echo "- Project: `$PROJECT_NAME`"
             echo "- Project ID: `$PROJECT_ID`"
-            echo "- Personal account ID: `$ACCOUNT_ID`"
-            echo "- Git repository connection: **None**"
+                        echo "- Git repository connection: **None**"
             echo "- Source uploaded to Vercel: **No**"
             echo
             echo "Next: configure the production deployment workflow to upload only the compiled Flutter Web output."
