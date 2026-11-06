@@ -3,12 +3,23 @@ const { chromium } = require('playwright');
 
 const baseUrl = (process.env.ORVIKA_BASE_URL || 'https://orvika-web.vercel.app').replace(/\/$/, '');
 const pageErrors = [];
+const consoleErrors = [];
+const failedRequests = [];
 
 async function main() {
   const browser = await chromium.launch({ headless: true });
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     page.on('pageerror', (error) => pageErrors.push(error.message));
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('requestfailed', (request) => {
+      failedRequests.push({
+        url: request.url(),
+        error: request.failure()?.errorText || 'unknown request failure',
+      });
+    });
 
     async function verifyViewport(width, height, label) {
       await page.setViewportSize({ width, height });
@@ -19,32 +30,54 @@ async function main() {
       assert(response, `${label}: navigation returned no HTTP response`);
       assert.equal(response.status(), 200, `${label}: unexpected HTTP status`);
 
-      await page.waitForFunction(
-        () => Boolean(
-          document.querySelector('flt-glass-pane') &&
-          document.querySelector('canvas')
-        ),
-        null,
-        { timeout: 90000 },
-      );
+      // Flutter Web renderer internals vary by engine version. Inspect light DOM
+      // and nested shadow roots rather than relying on one private tag selector.
+      await page.waitForTimeout(4000);
+      const renderer = await page.evaluate(() => {
+        function deepExists(selector, root = document) {
+          if (root.querySelector(selector)) return true;
+          for (const element of root.querySelectorAll('*')) {
+            if (element.shadowRoot && deepExists(selector, element.shadowRoot)) return true;
+          }
+          return false;
+        }
 
-      const metrics = await page.evaluate(() => ({
-        viewportWidth: window.innerWidth,
-        documentWidth: document.documentElement.scrollWidth,
-        hasFlutterGlassPane: Boolean(document.querySelector('flt-glass-pane')),
-        hasCanvas: Boolean(document.querySelector('canvas')),
-        title: document.title,
-      }));
+        const flutterTags = Array.from(document.querySelectorAll('*'))
+          .map((element) => element.tagName.toLowerCase())
+          .filter((tag) => tag.startsWith('flt-') || tag === 'flutter-view');
 
-      assert(metrics.hasFlutterGlassPane, `${label}: Flutter surface did not mount`);
-      assert(metrics.hasCanvas, `${label}: Flutter canvas did not render`);
+        return {
+          viewportWidth: window.innerWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          title: document.title,
+          hasFlutterView: deepExists('flutter-view'),
+          hasGlassPane: deepExists('flt-glass-pane'),
+          hasSceneHost: deepExists('flt-scene-host'),
+          hasCanvasContainer: deepExists('flt-canvas-container'),
+          hasCanvas: deepExists('canvas'),
+          flutterTags: [...new Set(flutterTags)],
+          bodyText: document.body.innerText.slice(0, 500),
+          bodyMarkup: document.body.innerHTML.slice(0, 1800),
+          scriptSources: Array.from(document.scripts).map((script) => script.src).filter(Boolean),
+        };
+      });
+
+      console.log(`${label} renderer diagnostics: ${JSON.stringify(renderer)}`);
+      assert(renderer.title.includes('ORVIKA'), `${label}: unexpected document title`);
       assert(
-        metrics.documentWidth <= metrics.viewportWidth + 2,
-        `${label}: horizontal overflow (${metrics.documentWidth}px document / ${metrics.viewportWidth}px viewport)`,
+        renderer.hasFlutterView || renderer.hasGlassPane || renderer.hasSceneHost,
+        `${label}: Flutter Web root was not detected; page errors: ${pageErrors.join(' | ')}; failed requests: ${JSON.stringify(failedRequests)}`,
       );
-      assert(metrics.title.includes('ORVIKA'), `${label}: unexpected document title`);
+      assert(
+        renderer.hasCanvas || renderer.hasCanvasContainer || renderer.hasSceneHost,
+        `${label}: Flutter renderer surface was not detected`,
+      );
+      assert(
+        renderer.documentWidth <= renderer.viewportWidth + 2,
+        `${label}: horizontal overflow (${renderer.documentWidth}px document / ${renderer.viewportWidth}px viewport)`,
+      );
 
-      console.log(`${label} viewport passed: ${JSON.stringify(metrics)}`);
+      console.log(`${label} viewport passed.`);
     }
 
     await verifyViewport(1440, 1000, 'Desktop');
@@ -59,6 +92,7 @@ async function main() {
     assert.equal(favicon.status(), 200, 'ORVIKA favicon did not return HTTP 200');
 
     assert.deepEqual(pageErrors, [], `Browser runtime errors: ${pageErrors.join(' | ')}`);
+    console.log(`Browser console errors (diagnostic): ${JSON.stringify(consoleErrors)}`);
     console.log('ORVIKA production browser smoke tests passed.');
   } finally {
     await browser.close();
