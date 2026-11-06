@@ -45,7 +45,11 @@ The theme selector currently applies for the active app session. Persistent pref
 
 ## Typography
 
-The intended type direction is **Space Grotesk** for display headings and **Inter** for interface text, with a system sans-serif fallback. Font binaries are not yet bundled; the current Flutter build uses platform fallback typography. Bundle licensed local font assets before claiming exact typography parity or offline font independence.
+- **Space Grotesk** is bundled locally for display and heading styles.
+- **Inter** is bundled locally for interface and body text.
+- Both font families are distributed under the SIL Open Font License; the corresponding license texts are included alongside the font binaries in `assets/fonts/`.
+
+The fonts are loaded from local application assets. No runtime Google Fonts/CDN request is required, preserving the offline-first direction.
 
 ## Product modules
 
