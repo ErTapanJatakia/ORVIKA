@@ -79,23 +79,46 @@ class OrvikaApp extends StatefulWidget {
 class _OrvikaAppState extends State<OrvikaApp> {
   static const _themePreferenceKey = 'appearance.theme';
   OrvikaTheme _selectedTheme = OrvikaTheme.obsidian;
+  bool _isLoadingPreferences = true;
+  bool _hasCompletedOnboarding = false;
 
   @override
   void initState() {
     super.initState();
-    _restoreThemePreference();
+    _restoreAppPreferences();
   }
 
-  Future<void> _restoreThemePreference() async {
-    final preferences = await SharedPreferences.getInstance();
-    final savedName = preferences.getString(_themePreferenceKey);
-    if (savedName == null || !mounted) return;
-    for (final theme in OrvikaTheme.values) {
-      if (theme.name == savedName) {
-        setState(() => _selectedTheme = theme);
-        break;
-      }
+  Future<void> _restoreAppPreferences() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      final savedName = preferences.getString(_themePreferenceKey);
+      final completed = preferences.getBool('onboarding.completed.v1') ?? false;
+      if (!mounted) return;
+      setState(() {
+        if (savedName != null) {
+          for (final theme in OrvikaTheme.values) {
+            if (theme.name == savedName) {
+              _selectedTheme = theme;
+              break;
+            }
+          }
+        }
+        _hasCompletedOnboarding = completed;
+        _isLoadingPreferences = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _isLoadingPreferences = false);
     }
+  }
+
+  Future<void> _completeOnboarding() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setBool('onboarding.completed.v1', true);
+    } catch (_) {
+      // Keep the app usable if local preference storage is unavailable.
+    }
+    if (mounted) setState(() => _hasCompletedOnboarding = true);
   }
 
   Future<void> _selectTheme(OrvikaTheme theme) async {
@@ -163,12 +186,338 @@ class _OrvikaAppState extends State<OrvikaApp> {
           ),
         ),
       ),
-      home: SentinelDashboard(
-        selectedTheme: _selectedTheme,
-        onThemeChanged: _selectTheme,
+      home: _isLoadingPreferences
+          ? const OrvikaSplashScreen()
+          : _hasCompletedOnboarding
+              ? SentinelDashboard(
+                  selectedTheme: _selectedTheme,
+                  onThemeChanged: _selectTheme,
+                )
+              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding),
+    );
+  }
+}
+
+class OrvikaSplashScreen extends StatelessWidget {
+  const OrvikaSplashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const palette = OrvikaPalette.obsidian;
+    return Scaffold(
+      backgroundColor: palette.background,
+      body: const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            OrvikaOwlMark(size: 112, palette: palette),
+            SizedBox(height: 22),
+            Text(
+              'ORVIKA',
+              style: TextStyle(
+                color: Color(0xFFF3F7FC),
+                fontSize: 25,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 5,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'PERSONAL CYBER SAFETY INTELLIGENCE',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color(0xFF9BB0C8),
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+              ),
+            ),
+            SizedBox(height: 28),
+            SizedBox(
+              width: 92,
+              child: LinearProgressIndicator(minHeight: 2),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
+
+class OrvikaOnboardingScreen extends StatefulWidget {
+  const OrvikaOnboardingScreen({required this.onCompleted, super.key});
+
+  final VoidCallback onCompleted;
+
+  @override
+  State<OrvikaOnboardingScreen> createState() => _OrvikaOnboardingScreenState();
+}
+
+class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  static const _pages = <_OnboardingPageData>[
+    _OnboardingPageData(
+      title: 'Check before you trust.',
+      description:
+          'Inspect links and QR content before you open a destination, share information or take action.',
+      detail: 'Start with a signal. Make the decision yourself.',
+      icon: Icons.travel_explore_rounded,
+    ),
+    _OnboardingPageData(
+      title: 'Understand the risk.',
+      description:
+          'ORVIKA is designed to explain the indicators behind a finding—not hide them behind a mysterious score.',
+      detail: 'A suspicion is a signal to investigate, not proof of malicious intent.',
+      icon: Icons.radar_rounded,
+    ),
+    _OnboardingPageData(
+      title: 'Your data stays yours.',
+      description:
+          'The experience is designed around privacy-first, offline-friendly checks. No account is required to begin.',
+      detail: 'This prototype does not promise that every future feature will work offline.',
+      icon: Icons.shield_outlined,
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _next() {
+    if (_currentPage == _pages.length - 1) {
+      widget.onCompleted();
+      return;
+    }
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  void _skip() {
+    widget.onCompleted();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const palette = OrvikaPalette.obsidian;
+    final scheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      backgroundColor: palette.background,
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              palette.background,
+              Color.lerp(palette.background, palette.secondary, 0.13)!,
+              palette.background,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 720),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const OrvikaOwlMark(size: 42, palette: palette),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Text(
+                            'ORVIKA',
+                            style: TextStyle(
+                              color: Color(0xFFF3F7FC),
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2.8,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _skip,
+                          child: const Text('Skip'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: _pages.length,
+                        onPageChanged: (index) =>
+                            setState(() => _currentPage = index),
+                        itemBuilder: (context, index) {
+                          final page = _pages[index];
+                          return SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                Container(
+                                  width: 176,
+                                  height: 176,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: palette.surface,
+                                    border: Border.all(
+                                      color: palette.primary.withValues(alpha: 0.32),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: palette.secondary.withValues(alpha: 0.12),
+                                        blurRadius: 42,
+                                      ),
+                                    ],
+                                  ),
+                                  child: index == 0
+                                      ? const Center(
+                                          child: OrvikaOwlMark(
+                                            size: 136,
+                                            palette: palette,
+                                          ),
+                                        )
+                                      : Icon(
+                                          page.icon,
+                                          size: 76,
+                                          color: index == 1
+                                              ? palette.secondary
+                                              : palette.success,
+                                        ),
+                                ),
+                                const SizedBox(height: 34),
+                                Text(
+                                  page.title,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.copyWith(
+                                        color: scheme.onSurface,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: -0.7,
+                                      ),
+                                ),
+                                const SizedBox(height: 16),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 530),
+                                  child: Text(
+                                    page.description,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: scheme.onSurfaceVariant,
+                                      fontSize: 15,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 18),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: palette.surface,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: palette.primary.withValues(alpha: 0.18),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    page.detail,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: palette.primary,
+                                      fontSize: 12,
+                                      height: 1.45,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List<Widget>.generate(_pages.length, (index) {
+                        final selected = index == _currentPage;
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: selected ? 26 : 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            color: selected
+                                ? palette.primary
+                                : palette.primary.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 22),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: _next,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          child: Text(
+                            _currentPage == _pages.length - 1
+                                ? 'Enter ORVIKA'
+                                : 'Continue',
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'CHECK BEFORE YOU TRUST',
+                      style: TextStyle(
+                        color: scheme.onSurfaceVariant,
+                        fontSize: 9,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OnboardingPageData {
+  const _OnboardingPageData({
+    required this.title,
+    required this.description,
+    required this.detail,
+    required this.icon,
+  });
+
+  final String title;
+  final String description;
+  final String detail;
+  final IconData icon;
 }
 
 class SentinelDashboard extends StatelessWidget {

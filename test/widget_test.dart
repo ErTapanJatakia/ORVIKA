@@ -4,10 +4,58 @@ import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true}));
+
+  testWidgets('first launch presents branded onboarding and enters dashboard', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Check before you trust.'), findsOneWidget);
+    expect(find.byType(OrvikaOwlMark), findsWidgets);
+
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(find.text('Understand the risk.'), findsOneWidget);
+
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your data stays yours.'), findsOneWidget);
+
+    await tester.tap(find.text('Enter ORVIKA'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getBool('onboarding.completed.v1'), isTrue);
+  });
+
+  testWidgets('completed onboarding is not shown on the next launch', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+    expect(find.text('Check before you trust.'), findsNothing);
+  });
+
+  testWidgets('Skip completes onboarding without requiring all slides', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Skip'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getBool('onboarding.completed.v1'), isTrue);
+  });
 
   testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
 
     expect(find.text('ORVIKA'), findsOneWidget);
     expect(find.text('Check before\nyou trust.'), findsOneWidget);
@@ -28,6 +76,7 @@ void main() {
 
   testWidgets('theme selector switches to the Daylight palette', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip('Choose visual theme'));
     await tester.pumpAndSettle();
@@ -41,6 +90,7 @@ void main() {
 
   testWidgets('appearance settings saves and restores the selected theme', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Appearance and accessibility settings'));
     await tester.pumpAndSettle();
 
@@ -60,6 +110,7 @@ void main() {
 
   testWidgets('QR Check opens and inspects a payment payload without initiating it', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('QR Check'));
     await tester.pumpAndSettle();
