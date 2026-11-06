@@ -76,6 +76,7 @@ void main() {
 
   testWidgets('theme selector switches to the Daylight palette', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip('Choose visual theme'));
     await tester.pumpAndSettle();
@@ -89,6 +90,7 @@ void main() {
 
   testWidgets('appearance settings saves and restores the selected theme', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Appearance and accessibility settings'));
     await tester.pumpAndSettle();
 
@@ -108,6 +110,7 @@ void main() {
 
   testWidgets('QR Check opens and inspects a payment payload without initiating it', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('QR Check'));
     await tester.pumpAndSettle();
