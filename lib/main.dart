@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/link_check/presentation/link_check_screen.dart';
+import 'features/message_check/presentation/message_check_screen.dart';
 import 'features/qr_check/presentation/qr_check_screen.dart';
 
 void main() => runApp(const OrvikaApp());
@@ -534,7 +535,7 @@ class SentinelDashboard extends StatelessWidget {
     _SafetyModule('Sentinel', 'Your safety overview and recent checks.', Icons.shield_moon_outlined, _ModuleAccent.cyan, 'OVERVIEW'),
     _SafetyModule('Link Check', 'Inspect website addresses before you open them.', Icons.link_rounded, _ModuleAccent.cyan, 'AVAILABLE'),
     _SafetyModule('QR Check', 'Review decoded QR content before taking action.', Icons.qr_code_scanner_rounded, _ModuleAccent.violet, 'AVAILABLE'),
-    _SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, _ModuleAccent.amber, 'IN DEVELOPMENT'),
+    _SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, _ModuleAccent.amber, 'AVAILABLE'),
     _SafetyModule('Intelligence', 'Understand indicators, signals and threat context.', Icons.radar_rounded, _ModuleAccent.violet, 'IN DEVELOPMENT'),
     _SafetyModule('Privacy', 'Explore practical controls for your digital privacy.', Icons.privacy_tip_outlined, _ModuleAccent.green, 'IN DEVELOPMENT'),
     _SafetyModule('Academy', 'Build everyday cyber-safety knowledge.', Icons.school_outlined, _ModuleAccent.cyan, 'IN DEVELOPMENT'),
@@ -619,6 +620,9 @@ class SentinelDashboard extends StatelessWidget {
                                 } else if (module.title == 'QR Check') {
                                   onTap = () => Navigator.of(context).push(
                                     MaterialPageRoute<void>(builder: (_) => const QrCheckScreen()));
+                                } else if (module.title == 'Message Check') {
+                                  onTap = () => Navigator.of(context).push(
+                                    MaterialPageRoute<void>(builder: (_) => const MessageCheckScreen()));
                                 }
                                 return _ModuleCard(module: module, palette: palette, onTap: onTap);
                               },
