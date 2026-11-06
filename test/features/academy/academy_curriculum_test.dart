@@ -5,7 +5,7 @@ void main() {
   const curriculum = AcademyCurriculum();
 
   test('curriculum has unique lesson identifiers and complete knowledge checks', () {
-    final lessons = AcademyCurriculum.lessons;
+    const lessons = AcademyCurriculum.lessons;
     expect(lessons, isNotEmpty);
     expect(lessons.map((lesson) => lesson.id).toSet().length, lessons.length);
     for (final lesson in lessons) {
