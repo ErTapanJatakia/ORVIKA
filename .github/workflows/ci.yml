@@ -1,4 +1,5 @@
 name: ORVIKA CI
+# Re-trigger after repository Actions allowlist configuration update.
 
 on:
   push:
