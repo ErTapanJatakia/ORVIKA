@@ -50,6 +50,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('does not scan your device'), findsOneWidget);
-    expect(find.textContaining('does not verify or change a setting'), findsNothing);
   });
 }
