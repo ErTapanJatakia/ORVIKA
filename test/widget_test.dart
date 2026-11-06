@@ -171,6 +171,20 @@ void main() {
     expect(find.text('KNOWLEDGE CHECK'), findsWidgets);
   });
 
+  testWidgets('Response opens incident playbooks from the dashboard', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Response'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Response'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Know your next step.'), findsOneWidget);
+    expect(find.text('An account may be compromised'), findsOneWidget);
+    expect(find.textContaining('does not detect incidents'), findsOneWidget);
+  });
+
   testWidgets('Privacy opens the guided self-audit from the dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
     await tester.pumpWidget(const OrvikaApp());
