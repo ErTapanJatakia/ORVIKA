@@ -6,8 +6,54 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
+  testWidgets('first launch presents branded onboarding and enters dashboard', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Check before you trust.'), findsOneWidget);
+    expect(find.byType(OrvikaOwlMark), findsWidgets);
+
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(find.text('Understand the risk.'), findsOneWidget);
+
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your data stays yours.'), findsOneWidget);
+
+    await tester.tap(find.text('Enter ORVIKA'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getBool('onboarding.completed.v1'), isTrue);
+  });
+
+  testWidgets('completed onboarding is not shown on the next launch', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+    expect(find.text('Check before you trust.'), findsNothing);
+  });
+
+  testWidgets('Skip completes onboarding without requiring all slides', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Skip'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getBool('onboarding.completed.v1'), isTrue);
+  });
+
+  testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
 
     expect(find.text('ORVIKA'), findsOneWidget);
     expect(find.text('Check before\nyou trust.'), findsOneWidget);
