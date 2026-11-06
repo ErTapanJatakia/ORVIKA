@@ -5,6 +5,7 @@ import 'features/academy/presentation/academy_screen.dart';
 import 'features/link_check/presentation/link_check_screen.dart';
 import 'features/message_check/presentation/message_check_screen.dart';
 import 'features/privacy/presentation/privacy_screen.dart';
+import 'features/response/presentation/response_screen.dart';
 import 'features/intelligence/presentation/intelligence_screen.dart';
 import 'features/qr_check/presentation/qr_check_screen.dart';
 
@@ -542,7 +543,7 @@ class SentinelDashboard extends StatelessWidget {
     _SafetyModule('Intelligence', 'Explore explainable digital-risk indicators and safer next steps.', Icons.radar_rounded, _ModuleAccent.violet, 'AVAILABLE'),
     _SafetyModule('Privacy', 'Review practical privacy controls with a guided self-audit.', Icons.privacy_tip_outlined, _ModuleAccent.green, 'AVAILABLE'),
     _SafetyModule('Academy', 'Build everyday cyber-safety knowledge with short lessons and knowledge checks.', Icons.school_outlined, _ModuleAccent.cyan, 'AVAILABLE'),
-    _SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, _ModuleAccent.amber, 'IN DEVELOPMENT'),
+    _SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, _ModuleAccent.amber, 'AVAILABLE'),
   ];
 
   @override
@@ -635,6 +636,9 @@ class SentinelDashboard extends StatelessWidget {
                                 } else if (module.title == 'Academy') {
                                   onTap = () => Navigator.of(context).push(
                                     MaterialPageRoute<void>(builder: (_) => const AcademyScreen()));
+                                } else if (module.title == 'Response') {
+                                  onTap = () => Navigator.of(context).push(
+                                    MaterialPageRoute<void>(builder: (_) => const ResponseScreen()));
                                 }
                                 return _ModuleCard(module: module, palette: palette, onTap: onTap);
                               },
