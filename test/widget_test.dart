@@ -4,9 +4,10 @@ import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true}));
 
   testWidgets('first launch presents branded onboarding and enters dashboard', (tester) async {
+    SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
@@ -39,6 +40,7 @@ void main() {
   });
 
   testWidgets('Skip completes onboarding without requiring all slides', (tester) async {
+    SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
