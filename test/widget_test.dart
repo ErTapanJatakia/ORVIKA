@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/widgets.dart';
 import 'package:orvika/main.dart';
 
 void main() {
@@ -42,5 +42,4 @@ void main() {
     expect(find.text('UPI payment request'), findsOneWidget);
     expect(find.textContaining('will not initiate or approve a payment'), findsOneWidget);
   });
-
 }
