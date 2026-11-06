@@ -45,7 +45,9 @@ class UrlAnalyzer {
     if (input.length > 2048) {
       return _invalid(rawInput, 'The address is longer than the supported 2,048 characters.');
     }
-    if (RegExp(r'[\s\u0000-\u001F\u007F]').hasMatch(input)) {
+    // Validate the original value before trimming: trim() would otherwise hide
+    // trailing tabs/newlines and allow control characters to pass unnoticed.
+    if (RegExp(r'[\s\u0000-\u001F\u007F]').hasMatch(rawInput)) {
       return _invalid(rawInput, 'The address contains whitespace or control characters. Check it before continuing.');
     }
 
