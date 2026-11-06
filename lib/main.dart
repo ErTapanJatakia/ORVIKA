@@ -357,10 +357,9 @@ class _HeroPanel extends StatelessWidget {
       child: LayoutBuilder(builder: (context, constraints) {
         final compact = constraints.maxWidth < 570;
         final owl = OrvikaOwlMark(size: compact ? 102 : 154, palette: palette);
-        final copy = Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        final copyContent = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
               Text('SEE THE RISK. VERIFY THE SIGNAL.', style: TextStyle(
                 color: palette.primary, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.65)),
               const SizedBox(height: 14),
@@ -377,18 +376,17 @@ class _HeroPanel extends StatelessWidget {
                 _StatusPill(label: 'ON-DEVICE CHECKS', color: palette.success),
                 _StatusPill(label: 'EXPLAINABLE FINDINGS', color: palette.primary),
               ]),
-            ],
-          ),
+          ],
         );
         if (compact) {
           return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Align(alignment: Alignment.centerRight, child: owl),
             const SizedBox(height: 4),
-            copy,
+            copyContent,
           ]);
         }
         return Row(children: [
-          copy,
+          Expanded(child: copyContent),
           const SizedBox(width: 22),
           Container(
             width: 190, height: 190, alignment: Alignment.center,
