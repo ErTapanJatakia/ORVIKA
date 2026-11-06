@@ -156,6 +156,21 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('not a live threat-intelligence feed'), findsOneWidget);
   });
+  testWidgets('Academy opens the offline learning curriculum from the dashboard', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Academy'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Academy'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Build safer digital habits.'), findsOneWidget);
+    expect(find.text('8 lessons'), findsNothing);
+    expect(find.text('0 of 8 lessons completed'), findsOneWidget);
+    expect(find.text('KNOWLEDGE CHECK'), findsWidgets);
+  });
+
   testWidgets('Privacy opens the guided self-audit from the dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
     await tester.pumpWidget(const OrvikaApp());
