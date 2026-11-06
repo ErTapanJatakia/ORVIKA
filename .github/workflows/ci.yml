@@ -54,6 +54,14 @@ jobs:
           mkdir -p .vercel
           printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
 
+      - name: Configure Vercel project build settings
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
+          VERCEL_PROJECT_ID: prj_bHaSgv8y0tcFEGDJaEppYx8I0ZV0
+        run: vercel project update orvika-web --framework other --build-command "echo 'Using prebuilt Flutter Web output'" --output-directory "build/web" --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
+
       - name: Pull Vercel production configuration
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
