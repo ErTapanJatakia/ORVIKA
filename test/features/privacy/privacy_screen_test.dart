@@ -20,8 +20,10 @@ void main() {
     expect(find.text('WHAT YOU CAN DO'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('I have reviewed this practice'));
-    await tester.tap(find.text('I have reviewed this practice'));
+    await tester.drag(find.byType(ListView), const Offset(0, -320));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byType(CheckboxListTile).first);
+    await tester.tap(find.byType(CheckboxListTile).first);
     await tester.pumpAndSettle();
 
     expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
