@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'features/academy/presentation/academy_screen.dart';
 import 'features/link_check/presentation/link_check_screen.dart';
 import 'features/message_check/presentation/message_check_screen.dart';
 import 'features/privacy/presentation/privacy_screen.dart';
@@ -540,7 +541,7 @@ class SentinelDashboard extends StatelessWidget {
     _SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, _ModuleAccent.amber, 'AVAILABLE'),
     _SafetyModule('Intelligence', 'Explore explainable digital-risk indicators and safer next steps.', Icons.radar_rounded, _ModuleAccent.violet, 'AVAILABLE'),
     _SafetyModule('Privacy', 'Review practical privacy controls with a guided self-audit.', Icons.privacy_tip_outlined, _ModuleAccent.green, 'AVAILABLE'),
-    _SafetyModule('Academy', 'Build everyday cyber-safety knowledge.', Icons.school_outlined, _ModuleAccent.cyan, 'IN DEVELOPMENT'),
+    _SafetyModule('Academy', 'Build everyday cyber-safety knowledge with short lessons and knowledge checks.', Icons.school_outlined, _ModuleAccent.cyan, 'AVAILABLE'),
     _SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, _ModuleAccent.amber, 'IN DEVELOPMENT'),
   ];
 
@@ -631,6 +632,9 @@ class SentinelDashboard extends StatelessWidget {
                                 } else if (module.title == 'Privacy') {
                                   onTap = () => Navigator.of(context).push(
                                     MaterialPageRoute<void>(builder: (_) => const PrivacyScreen()));
+                                } else if (module.title == 'Academy') {
+                                  onTap = () => Navigator.of(context).push(
+                                    MaterialPageRoute<void>(builder: (_) => const AcademyScreen()));
                                 }
                                 return _ModuleCard(module: module, palette: palette, onTap: onTap);
                               },
