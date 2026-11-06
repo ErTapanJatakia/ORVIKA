@@ -81,6 +81,18 @@ class _OrvikaAppState extends State<OrvikaApp> {
   @override
   Widget build(BuildContext context) {
     final palette = _selectedTheme.palette;
+    final baseTextTheme = ThemeData(
+      brightness: palette.isDark ? Brightness.dark : Brightness.light,
+    ).textTheme.apply(fontFamily: 'Inter');
+    final brandTextTheme = baseTextTheme.copyWith(
+      displayLarge: baseTextTheme.displayLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
+      displayMedium: baseTextTheme.displayMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
+      displaySmall: baseTextTheme.displaySmall?.copyWith(fontFamily: 'SpaceGrotesk'),
+      headlineLarge: baseTextTheme.headlineLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
+      headlineMedium: baseTextTheme.headlineMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
+      headlineSmall: baseTextTheme.headlineSmall?.copyWith(fontFamily: 'SpaceGrotesk'),
+      titleLarge: baseTextTheme.titleLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
+    );
     final scheme = ColorScheme.fromSeed(
       seedColor: palette.primary,
       brightness: palette.isDark ? Brightness.dark : Brightness.light,
@@ -100,6 +112,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        fontFamily: 'Inter',
+        textTheme: brandTextTheme,
         colorScheme: scheme,
         scaffoldBackgroundColor: palette.background,
         canvasColor: palette.surface,
