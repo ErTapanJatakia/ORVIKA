@@ -22,4 +22,23 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('QR Check opens and inspects a payment payload without initiating it', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+
+    await tester.tap(find.text('QR Check'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Inspect QR content'), findsOneWidget);
+    await tester.enterText(
+      find.byType(TextField),
+      'upi://pay?pa=merchant@example&pn=Merchant',
+    );
+    await tester.tap(find.text('Inspect QR content'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('UPI payment request'), findsOneWidget);
+    expect(find.textContaining('will not initiate or approve a payment'), findsOneWidget);
+  });
+
 }
