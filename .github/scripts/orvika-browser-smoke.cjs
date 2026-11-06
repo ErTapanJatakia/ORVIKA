@@ -9,7 +9,11 @@ const failedRequests = [];
 async function main() {
   const browser = await chromium.launch({ headless: true });
   try {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const page = await browser.newPage({
+      viewport: { width: 1440, height: 1000 },
+      locale: 'en-IN',
+      timezoneId: 'Asia/Kolkata',
+    });
     page.on('pageerror', (error) => pageErrors.push(error.message));
     page.on('console', (message) => {
       if (message.type() === 'error') consoleErrors.push(message.text());
