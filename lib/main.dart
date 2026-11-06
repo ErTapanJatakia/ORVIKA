@@ -358,11 +358,12 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                             setState(() => _currentPage = index),
                         itemBuilder: (context, index) {
                           final page = _pages[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                          return SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                 Container(
                                   width: 176,
                                   height: 176,
@@ -444,7 +445,8 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                                     ),
                                   ),
                                 ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },
