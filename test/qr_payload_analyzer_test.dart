@@ -44,7 +44,7 @@ void main() {
     });
 
     test('recognises contact cards', () {
-      final result = analyzer.analyze('BEGIN:VCARD\nVERSION:3.0\nFN:Example\nEND:VCARD');
+      final result = analyzer.analyze('BEGIN:VCARD\\nVERSION:3.0\\nFN:Example\\nEND:VCARD');
       expect(result.kind, QrPayloadKind.contactCard);
     });
 
