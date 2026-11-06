@@ -128,4 +128,28 @@ void main() {
     expect(find.text('UPI payment request'), findsOneWidget);
     expect(find.textContaining('will not initiate or approve a payment'), findsOneWidget);
   });
+
+  testWidgets('Intelligence opens the offline reference and explains indicators', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Intelligence'));
+    await tester.tap(find.text('Intelligence'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Understand the signal.'), findsOneWidget);
+    expect(find.text('OFFLINE REFERENCE'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'Punycode');
+    await tester.pumpAndSettle();
+    expect(find.text('Internationalised domain / Punycode'), findsOneWidget);
+
+    await tester.tap(find.text('Internationalised domain / Punycode'));
+    await tester.pumpAndSettle();
+    expect(find.text('WHAT TO NOTICE'), findsOneWidget);
+    expect(find.text('WHAT IT MEANS'), findsOneWidget);
+    expect(find.text('SAFER NEXT STEP'), findsOneWidget);
+    expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
+    expect(find.textContaining('not a live threat-intelligence feed'), findsOneWidget);
+  });
 }
