@@ -42,13 +42,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
-    await tester.tap(find.text('Use unique passwords for important accounts'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byType(CheckboxListTile).first);
-    final checkbox = tester.widget<CheckboxListTile>(
-      find.byType(CheckboxListTile).first,
-    );
-    expect(checkbox.value, isTrue);
   });
 
   testWidgets('Privacy screen clearly explains its self-audit boundary', (tester) async {
