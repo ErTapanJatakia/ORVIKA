@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/link_check/presentation/link_check_screen.dart';
 import 'features/qr_check/presentation/qr_check_screen.dart';
@@ -76,7 +77,32 @@ class OrvikaApp extends StatefulWidget {
 }
 
 class _OrvikaAppState extends State<OrvikaApp> {
+  static const _themePreferenceKey = 'appearance.theme';
   OrvikaTheme _selectedTheme = OrvikaTheme.obsidian;
+
+  @override
+  void initState() {
+    super.initState();
+    _restoreThemePreference();
+  }
+
+  Future<void> _restoreThemePreference() async {
+    final preferences = await SharedPreferences.getInstance();
+    final savedName = preferences.getString(_themePreferenceKey);
+    if (savedName == null || !mounted) return;
+    for (final theme in OrvikaTheme.values) {
+      if (theme.name == savedName) {
+        setState(() => _selectedTheme = theme);
+        break;
+      }
+    }
+  }
+
+  Future<void> _selectTheme(OrvikaTheme theme) async {
+    setState(() => _selectedTheme = theme);
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setString(_themePreferenceKey, theme.name);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +165,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
       ),
       home: SentinelDashboard(
         selectedTheme: _selectedTheme,
-        onThemeChanged: (theme) => setState(() => _selectedTheme = theme),
+        onThemeChanged: _selectTheme,
       ),
     );
   }
@@ -275,6 +301,86 @@ class SentinelDashboard extends StatelessWidget {
   }
 }
 
+
+class AppearanceSettingsScreen extends StatefulWidget {
+  const AppearanceSettingsScreen({
+    required this.selectedTheme,
+    required this.onThemeChanged,
+    super.key,
+  });
+
+  final OrvikaTheme selectedTheme;
+  final ValueChanged<OrvikaTheme> onThemeChanged;
+
+  @override
+  State<AppearanceSettingsScreen> createState() => _AppearanceSettingsScreenState();
+}
+
+class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
+  late OrvikaTheme _selectedTheme = widget.selectedTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = _selectedTheme.palette;
+    final scheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Appearance & accessibility'),
+        backgroundColor: palette.background,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Text('Choose your visual environment',
+            style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Your choice is saved on this device. ORVIKA does not send appearance preferences to a server.',
+            style: TextStyle(color: scheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 20),
+          RadioGroup<OrvikaTheme>(
+            groupValue: _selectedTheme,
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() => _selectedTheme = value);
+              widget.onThemeChanged(value);
+            },
+            child: Column(
+              children: [
+                for (final theme in OrvikaTheme.values)
+                  Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: RadioListTile<OrvikaTheme>(
+                      value: theme,
+                      title: Text(theme.label, style: const TextStyle(fontWeight: FontWeight.w700)),
+                      subtitle: Text(theme.description),
+                      secondary: Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: theme.palette.background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: theme.palette.primary, width: 2),
+                        ),
+                        child: Icon(Icons.visibility_outlined, color: theme.palette.primary),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.',
+            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _TopBar extends StatelessWidget {
   const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged});
   final OrvikaPalette palette;
@@ -300,6 +406,18 @@ class _TopBar extends StatelessWidget {
                 color: scheme.onSurfaceVariant, fontSize: 8, letterSpacing: 1.05, fontWeight: FontWeight.w700)),
             ],
           ),
+        ),
+        IconButton(
+          tooltip: 'Appearance and accessibility settings',
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => AppearanceSettingsScreen(
+                selectedTheme: selectedTheme,
+                onThemeChanged: onThemeChanged,
+              ),
+            ),
+          ),
+          icon: Icon(Icons.settings_outlined, color: palette.primary),
         ),
         PopupMenuButton<OrvikaTheme>(
           tooltip: 'Choose visual theme',
