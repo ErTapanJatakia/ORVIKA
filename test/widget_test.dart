@@ -12,9 +12,11 @@ void main() {
     expect(find.text('Message Check'), findsOneWidget);
     expect(find.text('Privacy Check'), findsOneWidget);
 
-    // The trust note is below the fold in the scrollable dashboard.
+    // Ensure the trust note is brought into view in the dashboard's outer scroll view.
     final trustNote = find.textContaining('ORVIKA is an early prototype');
-    await tester.scrollUntilVisible(trustNote, 250);
+    expect(trustNote, findsOneWidget);
+    await tester.ensureVisible(trustNote);
+    await tester.pumpAndSettle();
     expect(trustNote, findsOneWidget);
   });
 }
