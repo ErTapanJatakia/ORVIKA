@@ -339,31 +339,37 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             style: TextStyle(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 20),
-          for (final theme in OrvikaTheme.values)
-            Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: RadioListTile<OrvikaTheme>(
-                value: theme,
-                groupValue: _selectedTheme,
-                onChanged: (value) {
-                  if (value == null) return;
-                  setState(() => _selectedTheme = value);
-                  widget.onThemeChanged(value);
-                },
-                title: Text(theme.label, style: const TextStyle(fontWeight: FontWeight.w700)),
-                subtitle: Text(theme.description),
-                secondary: Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: theme.palette.background,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: theme.palette.primary, width: 2),
+          RadioGroup<OrvikaTheme>(
+            groupValue: _selectedTheme,
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() => _selectedTheme = value);
+              widget.onThemeChanged(value);
+            },
+            child: Column(
+              children: [
+                for (final theme in OrvikaTheme.values)
+                  Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: RadioListTile<OrvikaTheme>(
+                      value: theme,
+                      title: Text(theme.label, style: const TextStyle(fontWeight: FontWeight.w700)),
+                      subtitle: Text(theme.description),
+                      secondary: Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: theme.palette.background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: theme.palette.primary, width: 2),
+                        ),
+                        child: Icon(Icons.visibility_outlined, color: theme.palette.primary),
+                      ),
+                    ),
                   ),
-                  child: Icon(Icons.visibility_outlined, color: theme.palette.primary),
-                ),
-              ),
+              ],
             ),
+          ),
           const SizedBox(height: 12),
           Text(
             'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.',
