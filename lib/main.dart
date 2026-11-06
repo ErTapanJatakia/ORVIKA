@@ -206,7 +206,7 @@ class OrvikaSplashScreen extends StatelessWidget {
     const palette = OrvikaPalette.obsidian;
     return Scaffold(
       backgroundColor: palette.background,
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -304,7 +304,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = OrvikaPalette.obsidian;
+    const palette = OrvikaPalette.obsidian;
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: palette.background,
