@@ -203,7 +203,7 @@ class OrvikaSplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = OrvikaPalette.obsidian;
+    const palette = OrvikaPalette.obsidian;
     return Scaffold(
       backgroundColor: palette.background,
       body: Center(
