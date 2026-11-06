@@ -3,24 +3,36 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 
 void main() {
-  testWidgets('ORVIKA dashboard presents its core safety modules', (tester) async {
+  testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
 
     expect(find.text('ORVIKA'), findsOneWidget);
-    expect(find.text('CHECK BEFORE YOU TRUST.'), findsOneWidget);
+    expect(find.text('Check before\nyou trust.'), findsOneWidget);
+    expect(find.byType(OrvikaOwlMark), findsWidgets);
+    expect(find.text('Sentinel'), findsOneWidget);
     expect(find.text('Link Check'), findsOneWidget);
     expect(find.text('QR Check'), findsOneWidget);
     expect(find.text('Message Check'), findsOneWidget);
-    expect(find.text('Privacy Check'), findsOneWidget);
+    expect(find.text('Intelligence'), findsOneWidget);
+    expect(find.text('Privacy'), findsOneWidget);
+    expect(find.text('Academy'), findsOneWidget);
+    expect(find.text('Response'), findsOneWidget);
 
-    // Scroll the outer dashboard so its lazily built trust note enters the tree.
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
     await tester.pumpAndSettle();
+    expect(find.textContaining('ORVIKA is an early prototype'), findsOneWidget);
+  });
 
-    expect(
-      find.textContaining('ORVIKA is an early prototype'),
-      findsOneWidget,
-    );
+  testWidgets('theme selector switches to the Daylight palette', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+
+    await tester.tap(find.byTooltip('Choose visual theme'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Daylight').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Daylight'), findsOneWidget);
+    expect(Theme.of(tester.element(find.text('Your safety toolkit'))).brightness, Brightness.light);
   });
 
   testWidgets('QR Check opens and inspects a payment payload without initiating it', (tester) async {

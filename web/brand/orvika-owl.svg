@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="title">
+<title id="title">ORVIKA geometric guardian owl</title>
+<defs>
+ <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00D5FF" stop-opacity=".30"/><stop offset="1" stop-color="#795CFF" stop-opacity=".23"/></linearGradient>
+ <linearGradient id="eyes" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00D5FF"/><stop offset="1" stop-color="#795CFF"/></linearGradient>
+</defs>
+<path d="M19 76 47 25 84 51 100 43 116 51 153 25 181 76 163 151Q100 190 37 151Z" fill="url(#shell)" stroke="#00D5FF" stroke-width="4" stroke-linejoin="round"/>
+<path d="m35 82 31-25 34 21 34-21 31 25-14 57Q100 174 49 139Z" fill="#10233B" stroke="#00D5FF" stroke-opacity=".8" stroke-width="2.4" stroke-linejoin="round"/>
+<g fill="none" stroke="#795CFF" stroke-width="2.5" stroke-linecap="round"><path d="m42 105 16 34m100-34-16 34M51 119l14 27m84-27-14 27"/></g>
+<g stroke="#00D5FF" stroke-width="4"><circle cx="73" cy="101" r="22" fill="none"/><circle cx="127" cy="101" r="22" fill="none"/></g>
+<g fill="url(#eyes)"><circle cx="73" cy="101" r="17"/><circle cx="127" cy="101" r="17"/></g>
+<g fill="#081426"><circle cx="77" cy="101" r="7"/><circle cx="131" cy="101" r="7"/></g>
+<g fill="#fff"><circle cx="80" cy="96" r="3"/><circle cx="134" cy="96" r="3"/></g>
+<path d="m91 128 9-11 9 11-9 17Z" fill="#FFB547" stroke="#081426" stroke-opacity=".6" stroke-width="1.5"/>
+<path d="M100 16v18" stroke="#00D5FF" stroke-width="2" stroke-linecap="round"/><circle cx="100" cy="12" r="4" fill="#795CFF"/>
+<g fill="#00D5FF"><circle cx="25" cy="158" r="3"/><circle cx="175" cy="158" r="3"/></g>
+</svg>
