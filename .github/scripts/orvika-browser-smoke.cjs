@@ -20,11 +20,13 @@ async function main() {
       assert.equal(response.status(), 200, `${label}: unexpected HTTP status`);
 
       await page.waitForFunction(
-        () => Boolean(document.querySelector('flt-glass-pane')),
+        () => Boolean(
+          document.querySelector('flt-glass-pane') &&
+          document.querySelector('canvas')
+        ),
         null,
         { timeout: 90000 },
       );
-      await page.waitForTimeout(1200);
 
       const metrics = await page.evaluate(() => ({
         viewportWidth: window.innerWidth,
