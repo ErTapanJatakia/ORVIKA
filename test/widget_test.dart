@@ -51,7 +51,7 @@ void main() {
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getString('appearance.theme'), 'daylight');
 
-    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpWidget(const OrvikaApp(key: ValueKey('restarted-app')));
     await tester.pumpAndSettle();
     expect(find.text('Daylight'), findsOneWidget);
     expect(Theme.of(tester.element(find.text('Your safety toolkit'))).brightness,
