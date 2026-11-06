@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
 
@@ -33,6 +36,26 @@ void main() {
 
     expect(find.text('Daylight'), findsOneWidget);
     expect(Theme.of(tester.element(find.text('Your safety toolkit'))).brightness, Brightness.light);
+  });
+
+
+  testWidgets('appearance settings saves and restores the selected theme', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.tap(find.byTooltip('Appearance and accessibility settings'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your visual environment'), findsOneWidget);
+    await tester.tap(find.text('Daylight'));
+    await tester.pumpAndSettle();
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('appearance.theme'), 'daylight');
+
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    expect(find.text('Daylight'), findsOneWidget);
+    expect(Theme.of(tester.element(find.text('Your safety toolkit'))).brightness,
+      Brightness.light);
   });
 
   testWidgets('QR Check opens and inspects a payment payload without initiating it', (tester) async {
