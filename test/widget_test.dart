@@ -151,6 +151,9 @@ void main() {
     expect(find.text('WHAT IT MEANS'), findsOneWidget);
     expect(find.text('SAFER NEXT STEP'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
+
+    await tester.drag(find.byType(ListView), const Offset(0, -1400));
+    await tester.pumpAndSettle();
     expect(find.textContaining('not a live threat-intelligence feed'), findsOneWidget);
   });
 }
