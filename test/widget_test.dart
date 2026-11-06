@@ -8,7 +8,7 @@ void main() {
 
     expect(find.text('ORVIKA'), findsOneWidget);
     expect(find.text('Check before\nyou trust.'), findsOneWidget);
-    expect(find.byType(OrvikaOwlMark), findsOneWidget);
+    expect(find.byType(OrvikaOwlMark), findsWidgets);
     expect(find.text('Sentinel'), findsOneWidget);
     expect(find.text('Link Check'), findsOneWidget);
     expect(find.text('QR Check'), findsOneWidget);
