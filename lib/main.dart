@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'features/link_check/presentation/link_check_screen.dart';
+
 void main() {
   runApp(const OrvikaApp());
 }
@@ -89,7 +91,16 @@ class SentinelDashboard extends StatelessWidget {
                                 mainAxisSpacing: 14,
                                 mainAxisExtent: 164,
                               ),
-                              itemBuilder: (context, index) => _ModuleCard(module: modules[index]),
+                              itemBuilder: (context, index) => _ModuleCard(
+                                module: modules[index],
+                                onTap: modules[index].title == 'Link Check'
+                                    ? () => Navigator.of(context).push(
+                                          MaterialPageRoute<void>(
+                                            builder: (_) => const LinkCheckScreen(),
+                                          ),
+                                        )
+                                    : null,
+                              ),
                             );
                           },
                         ),
@@ -234,20 +245,24 @@ class _SafetyModule {
 }
 
 class _ModuleCard extends StatelessWidget {
-  const _ModuleCard({required this.module});
+  const _ModuleCard({required this.module, this.onTap});
 
   final _SafetyModule module;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(17),
-      decoration: BoxDecoration(
-        color: OrvikaColors.surface.withValues(alpha: 0.88),
-        borderRadius: BorderRadius.circular(19),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
-      ),
-      child: Column(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(19),
+      child: Container(
+        padding: const EdgeInsets.all(17),
+        decoration: BoxDecoration(
+          color: OrvikaColors.surface.withValues(alpha: 0.88),
+          borderRadius: BorderRadius.circular(19),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -267,6 +282,7 @@ class _ModuleCard extends StatelessWidget {
           const SizedBox(height: 5),
           Text(module.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: OrvikaColors.muted, fontSize: 11, height: 1.35)),
         ],
+        ),
       ),
     );
   }
