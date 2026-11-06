@@ -11,6 +11,10 @@ void main() {
     expect(find.text('QR Check'), findsOneWidget);
     expect(find.text('Message Check'), findsOneWidget);
     expect(find.text('Privacy Check'), findsOneWidget);
-    expect(find.textContaining('early prototype'), findsOneWidget);
+
+    // The trust note is below the fold in the scrollable dashboard.
+    final trustNote = find.textContaining('ORVIKA is an early prototype');
+    await tester.scrollUntilVisible(trustNote, 250);
+    expect(trustNote, findsOneWidget);
   });
 }
