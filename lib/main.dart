@@ -3,85 +3,214 @@ import 'package:flutter/material.dart';
 import 'features/link_check/presentation/link_check_screen.dart';
 import 'features/qr_check/presentation/qr_check_screen.dart';
 
-void main() {
-  runApp(const OrvikaApp());
+void main() => runApp(const OrvikaApp());
+
+enum OrvikaTheme { obsidian, aurora, daylight, highContrast }
+
+class OrvikaPalette {
+  const OrvikaPalette({
+    required this.background,
+    required this.surface,
+    required this.primary,
+    required this.secondary,
+    required this.success,
+    required this.warning,
+    required this.danger,
+    required this.isDark,
+  });
+
+  final Color background, surface, primary, secondary, success, warning, danger;
+  final bool isDark;
+
+  static const obsidian = OrvikaPalette(
+    background: Color(0xFF081426), surface: Color(0xFF10233B),
+    primary: Color(0xFF00D5FF), secondary: Color(0xFF795CFF),
+    success: Color(0xFF20D69A), warning: Color(0xFFFFB547),
+    danger: Color(0xFFFF5263), isDark: true,
+  );
+  static const aurora = OrvikaPalette(
+    background: Color(0xFF101026), surface: Color(0xFF201D3D),
+    primary: Color(0xFF9CEBFF), secondary: Color(0xFFB69CFF),
+    success: Color(0xFF70E2B7), warning: Color(0xFFFFD080),
+    danger: Color(0xFFFF7886), isDark: true,
+  );
+  static const daylight = OrvikaPalette(
+    background: Color(0xFFF3F7FB), surface: Color(0xFFFFFFFF),
+    primary: Color(0xFF006B86), secondary: Color(0xFF6246B5),
+    success: Color(0xFF087A55), warning: Color(0xFF946000),
+    danger: Color(0xFFB42336), isDark: false,
+  );
+  static const highContrast = OrvikaPalette(
+    background: Color(0xFF000000), surface: Color(0xFF111111),
+    primary: Color(0xFF00FFFF), secondary: Color(0xFFD7B8FF),
+    success: Color(0xFF66FFB2), warning: Color(0xFFFFD166),
+    danger: Color(0xFFFF6262), isDark: true,
+  );
 }
 
-abstract final class OrvikaColors {
-  static const obsidian = Color(0xFF081426);
-  static const surface = Color(0xFF10233B);
-  static const cyan = Color(0xFF00D5FF);
-  static const violet = Color(0xFF795CFF);
-  static const green = Color(0xFF20D69A);
-  static const amber = Color(0xFFFFB547);
-  static const muted = Color(0xFF9BAFC5);
+extension OrvikaThemeDetails on OrvikaTheme {
+  String get label => switch (this) {
+    OrvikaTheme.obsidian => 'Obsidian',
+    OrvikaTheme.aurora => 'Aurora',
+    OrvikaTheme.daylight => 'Daylight',
+    OrvikaTheme.highContrast => 'High contrast',
+  };
+  String get description => switch (this) {
+    OrvikaTheme.obsidian => 'The original ORVIKA dark identity',
+    OrvikaTheme.aurora => 'A softer violet-blue night palette',
+    OrvikaTheme.daylight => 'A clean, bright interface',
+    OrvikaTheme.highContrast => 'Maximum contrast and clear edges',
+  };
+  OrvikaPalette get palette => switch (this) {
+    OrvikaTheme.obsidian => OrvikaPalette.obsidian,
+    OrvikaTheme.aurora => OrvikaPalette.aurora,
+    OrvikaTheme.daylight => OrvikaPalette.daylight,
+    OrvikaTheme.highContrast => OrvikaPalette.highContrast,
+  };
 }
 
-class OrvikaApp extends StatelessWidget {
+class OrvikaApp extends StatefulWidget {
   const OrvikaApp({super.key});
+  @override
+  State<OrvikaApp> createState() => _OrvikaAppState();
+}
+
+class _OrvikaAppState extends State<OrvikaApp> {
+  OrvikaTheme _selectedTheme = OrvikaTheme.obsidian;
 
   @override
   Widget build(BuildContext context) {
+    final palette = _selectedTheme.palette;
     final scheme = ColorScheme.fromSeed(
-      seedColor: OrvikaColors.cyan,
-      brightness: Brightness.dark,
-      surface: OrvikaColors.surface,
+      seedColor: palette.primary,
+      brightness: palette.isDark ? Brightness.dark : Brightness.light,
+      surface: palette.surface,
+    ).copyWith(
+      primary: palette.primary,
+      secondary: palette.secondary,
+      error: palette.danger,
+      surface: palette.surface,
+      onSurface: palette.isDark ? const Color(0xFFF3F7FC) : const Color(0xFF172536),
+      onPrimary: palette.isDark ? const Color(0xFF061321) : Colors.white,
+      outline: palette.isDark ? Colors.white24 : const Color(0xFF8292A4),
     );
+
     return MaterialApp(
-      title: 'ORVIKA',
+      title: 'ORVIKA — Check Before You Trust',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: scheme,
-        scaffoldBackgroundColor: OrvikaColors.obsidian,
+        scaffoldBackgroundColor: palette.background,
+        canvasColor: palette.surface,
+        cardColor: palette.surface,
+        appBarTheme: AppBarTheme(
+          backgroundColor: palette.background,
+          foregroundColor: scheme.onSurface,
+          elevation: 0,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: palette.surface,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(color: scheme.outline.withValues(alpha: 0.65)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(color: palette.primary, width: 1.6),
+          ),
+        ),
       ),
-      home: const SentinelDashboard(),
+      home: SentinelDashboard(
+        selectedTheme: _selectedTheme,
+        onThemeChanged: (theme) => setState(() => _selectedTheme = theme),
+      ),
     );
   }
 }
 
 class SentinelDashboard extends StatelessWidget {
-  const SentinelDashboard({super.key});
+  const SentinelDashboard({
+    required this.selectedTheme,
+    required this.onThemeChanged,
+    super.key,
+  });
+
+  final OrvikaTheme selectedTheme;
+  final ValueChanged<OrvikaTheme> onThemeChanged;
 
   static const modules = <_SafetyModule>[
-    _SafetyModule('Link Check', 'Inspect URLs before you open them', Icons.link_rounded, OrvikaColors.cyan, 'URL'),
-    _SafetyModule('QR Check', 'Inspect QR content before taking action', Icons.qr_code_scanner_rounded, OrvikaColors.violet, 'QR'),
-    _SafetyModule('Message Check', 'Review suspicious texts and emails', Icons.mark_email_unread_rounded, OrvikaColors.amber, 'SMS'),
-    _SafetyModule('Privacy Check', 'Build safer everyday digital habits', Icons.shield_outlined, OrvikaColors.green, 'CARE'),
+    _SafetyModule('Sentinel', 'Your safety overview and recent checks.', Icons.shield_moon_outlined, _ModuleAccent.cyan, 'OVERVIEW'),
+    _SafetyModule('Link Check', 'Inspect website addresses before you open them.', Icons.link_rounded, _ModuleAccent.cyan, 'AVAILABLE'),
+    _SafetyModule('QR Check', 'Review decoded QR content before taking action.', Icons.qr_code_scanner_rounded, _ModuleAccent.violet, 'AVAILABLE'),
+    _SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, _ModuleAccent.amber, 'IN DEVELOPMENT'),
+    _SafetyModule('Intelligence', 'Understand indicators, signals and threat context.', Icons.radar_rounded, _ModuleAccent.violet, 'IN DEVELOPMENT'),
+    _SafetyModule('Privacy', 'Explore practical controls for your digital privacy.', Icons.privacy_tip_outlined, _ModuleAccent.green, 'IN DEVELOPMENT'),
+    _SafetyModule('Academy', 'Build everyday cyber-safety knowledge.', Icons.school_outlined, _ModuleAccent.cyan, 'IN DEVELOPMENT'),
+    _SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, _ModuleAccent.amber, 'IN DEVELOPMENT'),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final palette = selectedTheme.palette;
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: DecoratedBox(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF0B1D34), OrvikaColors.obsidian, Color(0xFF10152C)],
+            colors: [
+              palette.background,
+              Color.lerp(palette.background, palette.secondary, 0.075)!,
+              palette.background,
+            ],
           ),
         ),
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1120),
+              constraints: const BoxConstraints(maxWidth: 1180),
               child: CustomScrollView(
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(24, 18, 24, 32),
+                    padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        const _TopBar(),
-                        const SizedBox(height: 34),
-                        const _HeroPanel(),
+                        _TopBar(
+                          palette: palette,
+                          selectedTheme: selectedTheme,
+                          onThemeChanged: onThemeChanged,
+                        ),
+                        const SizedBox(height: 28),
+                        _HeroPanel(palette: palette),
                         const SizedBox(height: 30),
-                        const Text('Your safety toolkit', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800)),
-                        const SizedBox(height: 5),
-                        const Text('Verify first. Decide with confidence.', style: TextStyle(color: OrvikaColors.muted, fontSize: 13)),
-                        const SizedBox(height: 16),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Your safety toolkit',
+                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                      fontWeight: FontWeight.w800, letterSpacing: -0.5)),
+                                  const SizedBox(height: 5),
+                                  Text('Eight focused capabilities. One clearer view of digital risk.',
+                                    style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13)),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            _StatusPill(label: 'PRIVACY-FIRST', color: palette.success),
+                          ],
+                        ),
+                        const SizedBox(height: 17),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final columns = constraints.maxWidth >= 760 ? 4 : constraints.maxWidth >= 480 ? 2 : 1;
+                            final columns = constraints.maxWidth >= 900 ? 4 : constraints.maxWidth >= 570 ? 2 : 1;
                             return GridView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -90,34 +219,33 @@ class SentinelDashboard extends StatelessWidget {
                                 crossAxisCount: columns,
                                 crossAxisSpacing: 14,
                                 mainAxisSpacing: 14,
-                                mainAxisExtent: 164,
+                                mainAxisExtent: 174,
                               ),
-                              itemBuilder: (context, index) => _ModuleCard(
-                                module: modules[index],
-                                onTap: switch (modules[index].title) {
-                                  'Link Check' => () => Navigator.of(context).push(
-                                        MaterialPageRoute<void>(
-                                          builder: (_) => const LinkCheckScreen(),
-                                        ),
-                                      ),
-                                  'QR Check' => () => Navigator.of(context).push(
-                                        MaterialPageRoute<void>(
-                                          builder: (_) => const QrCheckScreen(),
-                                        ),
-                                      ),
-                                  _ => null,
-                                },
-                              ),
+                              itemBuilder: (context, index) {
+                                final module = modules[index];
+                                VoidCallback? onTap;
+                                if (module.title == 'Link Check') {
+                                  onTap = () => Navigator.of(context).push(
+                                    MaterialPageRoute<void>(builder: (_) => const LinkCheckScreen()));
+                                } else if (module.title == 'QR Check') {
+                                  onTap = () => Navigator.of(context).push(
+                                    MaterialPageRoute<void>(builder: (_) => const QrCheckScreen()));
+                                }
+                                return _ModuleCard(module: module, palette: palette, onTap: onTap);
+                              },
                             );
                           },
                         ),
+                        const SizedBox(height: 20),
+                        _TrustNote(palette: palette),
                         const SizedBox(height: 24),
-                        const _TrustNote(),
-                        const SizedBox(height: 22),
-                        const Center(
+                        Center(
                           child: Text(
-                            'ORVIKA  •  CHECK BEFORE YOU TRUST',
-                            style: TextStyle(color: OrvikaColors.muted, fontSize: 11, letterSpacing: 1.6, fontWeight: FontWeight.w600),
+                            'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
+                              fontSize: 10, letterSpacing: 1.2, fontWeight: FontWeight.w700),
                           ),
                         ),
                       ]),
@@ -134,44 +262,66 @@ class SentinelDashboard extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar();
+  const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged});
+  final OrvikaPalette palette;
+  final OrvikaTheme selectedTheme;
+  final ValueChanged<OrvikaTheme> onThemeChanged;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            gradient: const LinearGradient(colors: [OrvikaColors.cyan, OrvikaColors.violet]),
-            boxShadow: [BoxShadow(color: OrvikaColors.cyan.withValues(alpha: 0.18), blurRadius: 22)],
-          ),
-          child: const Icon(Icons.visibility_rounded, color: OrvikaColors.obsidian),
-        ),
+        OrvikaOwlMark(size: 48, palette: palette),
         const SizedBox(width: 12),
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('ORVIKA', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: 2.2)),
-            Text('PERSONAL CYBER SAFETY INTELLIGENCE', style: TextStyle(fontSize: 8, color: OrvikaColors.muted, letterSpacing: 1.1)),
-          ],
-        ),
-        const Spacer(),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: OrvikaColors.green.withValues(alpha: 0.09),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: OrvikaColors.green.withValues(alpha: 0.35)),
-          ),
-          child: const Row(
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.lock_outline_rounded, size: 14, color: OrvikaColors.green),
-              SizedBox(width: 6),
-              Text('Privacy-first', style: TextStyle(fontSize: 12, color: OrvikaColors.green)),
+              Text('ORVIKA', style: TextStyle(
+                color: scheme.onSurface, fontSize: 19, fontWeight: FontWeight.w900,
+                letterSpacing: 2.8, height: 1.1)),
+              const SizedBox(height: 4),
+              Text('PERSONAL CYBER SAFETY INTELLIGENCE', style: TextStyle(
+                color: scheme.onSurfaceVariant, fontSize: 8, letterSpacing: 1.05, fontWeight: FontWeight.w700)),
             ],
+          ),
+        ),
+        PopupMenuButton<OrvikaTheme>(
+          tooltip: 'Choose visual theme',
+          initialValue: selectedTheme,
+          onSelected: onThemeChanged,
+          itemBuilder: (context) => OrvikaTheme.values.map((theme) => PopupMenuItem<OrvikaTheme>(
+            value: theme,
+            child: Row(
+              children: [
+                Icon(theme == selectedTheme ? Icons.radio_button_checked : Icons.radio_button_off,
+                  size: 18, color: theme.palette.primary),
+                const SizedBox(width: 10),
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(theme.label, style: const TextStyle(fontWeight: FontWeight.w700)),
+                    Text(theme.description, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                  ],
+                )),
+              ],
+            ),
+          )).toList(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: palette.surface,
+              borderRadius: BorderRadius.circular(13),
+              border: Border.all(color: scheme.outline.withValues(alpha: 0.4)),
+            ),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(Icons.palette_outlined, size: 17, color: palette.primary),
+              const SizedBox(width: 7),
+              Text(selectedTheme.label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: scheme.onSurface)),
+              const SizedBox(width: 3),
+              Icon(Icons.expand_more_rounded, size: 17, color: scheme.onSurfaceVariant),
+            ]),
           ),
         ),
       ],
@@ -180,146 +330,267 @@ class _TopBar extends StatelessWidget {
 }
 
 class _HeroPanel extends StatelessWidget {
-  const _HeroPanel();
+  const _HeroPanel({required this.palette});
+  final OrvikaPalette palette;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(26),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: OrvikaColors.cyan.withValues(alpha: 0.22)),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF15334D), Color(0xFF101D36), Color(0xFF211D46)],
+        border: Border.all(color: palette.primary.withValues(alpha: 0.28)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
+          colors: [
+            Color.lerp(palette.surface, palette.primary, palette.isDark ? 0.13 : 0.055)!,
+            palette.surface,
+            Color.lerp(palette.surface, palette.secondary, palette.isDark ? 0.17 : 0.06)!,
+          ],
         ),
+        boxShadow: [BoxShadow(
+          color: palette.secondary.withValues(alpha: palette.isDark ? 0.10 : 0.045),
+          blurRadius: 34, spreadRadius: 1)],
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final compact = constraints.maxWidth < 540;
-          return Row(
+      child: LayoutBuilder(builder: (context, constraints) {
+        final compact = constraints.maxWidth < 570;
+        final owl = OrvikaOwlMark(size: compact ? 102 : 154, palette: palette);
+        final copy = Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('SEE THE RISK. VERIFY THE SIGNAL.', style: TextStyle(color: OrvikaColors.cyan, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.8)),
-                    const SizedBox(height: 14),
-                    const Text('Your digital world.\nA little more secure.', style: TextStyle(fontSize: 30, height: 1.12, fontWeight: FontWeight.w800)),
-                    const SizedBox(height: 12),
-                    const Text('Check links, QR codes and suspicious messages before you trust them.', style: TextStyle(color: OrvikaColors.muted, height: 1.5, fontSize: 14)),
-                    const SizedBox(height: 18),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
-                      decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.18), borderRadius: BorderRadius.circular(12)),
-                      child: const Text('CHECK BEFORE YOU TRUST.', style: TextStyle(fontSize: 11, letterSpacing: 1.2, fontWeight: FontWeight.w700)),
-                    ),
-                  ],
-                ),
+              Text('SEE THE RISK. VERIFY THE SIGNAL.', style: TextStyle(
+                color: palette.primary, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.65)),
+              const SizedBox(height: 14),
+              Text('Check before\nyou trust.', style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                color: scheme.onSurface, fontWeight: FontWeight.w900, height: 1.02, letterSpacing: -1.1)),
+              const SizedBox(height: 13),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: Text('A clearer way to inspect digital signals, understand risk and make informed decisions.',
+                  style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14, height: 1.55)),
               ),
-              if (!compact) ...[
-                const SizedBox(width: 20),
-                Container(
-                  width: 132,
-                  height: 132,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: OrvikaColors.cyan.withValues(alpha: 0.06),
-                    border: Border.all(color: OrvikaColors.cyan.withValues(alpha: 0.25)),
-                    boxShadow: [BoxShadow(color: OrvikaColors.violet.withValues(alpha: 0.18), blurRadius: 42, spreadRadius: 5)],
-                  ),
-                  child: const Icon(Icons.shield_moon_outlined, size: 72, color: OrvikaColors.cyan),
-                ),
-              ],
+              const SizedBox(height: 17),
+              Wrap(spacing: 8, runSpacing: 8, children: [
+                _StatusPill(label: 'ON-DEVICE CHECKS', color: palette.success),
+                _StatusPill(label: 'EXPLAINABLE FINDINGS', color: palette.primary),
+              ]),
             ],
-          );
-        },
-      ),
+          ),
+        );
+        if (compact) {
+          return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Align(alignment: Alignment.centerRight, child: owl),
+            const SizedBox(height: 4),
+            copy,
+          ]);
+        }
+        return Row(children: [
+          copy,
+          const SizedBox(width: 22),
+          Container(
+            width: 190, height: 190, alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: palette.primary.withValues(alpha: 0.045),
+              border: Border.all(color: palette.primary.withValues(alpha: 0.18)),
+            ),
+            child: owl,
+          ),
+        ]);
+      }),
     );
   }
 }
 
-class _SafetyModule {
-  const _SafetyModule(this.title, this.subtitle, this.icon, this.color, this.label);
+class OrvikaOwlMark extends StatelessWidget {
+  const OrvikaOwlMark({required this.size, required this.palette, super.key});
+  final double size;
+  final OrvikaPalette palette;
+  @override
+  Widget build(BuildContext context) => SizedBox.square(
+    dimension: size, child: CustomPaint(painter: _OwlPainter(palette)));
+}
 
-  final String title;
-  final String subtitle;
+class _OwlPainter extends CustomPainter {
+  const _OwlPainter(this.palette);
+  final OrvikaPalette palette;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.scale(size.width / 200, size.height / 200);
+    final outline = Paint()
+      ..style = PaintingStyle.stroke ..strokeWidth = 4
+      ..strokeJoin = StrokeJoin.round ..color = palette.primary;
+    final shell = Paint()
+      ..style = PaintingStyle.fill
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft, end: Alignment.bottomRight,
+        colors: [palette.primary.withValues(alpha: 0.30), palette.secondary.withValues(alpha: 0.23)],
+      ).createShader(const Rect.fromLTWH(18, 18, 164, 164));
+    final outer = Path()
+      ..moveTo(19, 76) ..lineTo(47, 25) ..lineTo(84, 51)
+      ..lineTo(100, 43) ..lineTo(116, 51) ..lineTo(153, 25)
+      ..lineTo(181, 76) ..lineTo(163, 151)
+      ..quadraticBezierTo(100, 190, 37, 151) ..close();
+    canvas.drawPath(outer, shell);
+    canvas.drawPath(outer, outline);
+
+    final face = Path()
+      ..moveTo(35, 82) ..lineTo(66, 57) ..lineTo(100, 78)
+      ..lineTo(134, 57) ..lineTo(165, 82) ..lineTo(151, 139)
+      ..quadraticBezierTo(100, 174, 49, 139) ..close();
+    canvas.drawPath(face, Paint()..color = palette.surface);
+    canvas.drawPath(face, Paint()
+      ..color = palette.primary.withValues(alpha: 0.8)
+      ..style = PaintingStyle.stroke ..strokeWidth = 2.4);
+
+    final wing = Paint()
+      ..color = palette.secondary.withValues(alpha: 0.85)
+      ..style = PaintingStyle.stroke ..strokeWidth = 2.5 ..strokeCap = StrokeCap.round;
+    canvas.drawLine(const Offset(42, 105), const Offset(58, 139), wing);
+    canvas.drawLine(const Offset(158, 105), const Offset(142, 139), wing);
+    canvas.drawLine(const Offset(51, 119), const Offset(65, 146), wing);
+    canvas.drawLine(const Offset(149, 119), const Offset(135, 146), wing);
+
+    final eyeRing = Paint()..color = palette.primary..style = PaintingStyle.stroke..strokeWidth = 4;
+    final eyeFill = Paint()..shader = LinearGradient(colors: [palette.primary, palette.secondary])
+      .createShader(const Rect.fromLTWH(54, 76, 92, 50));
+    final pupil = Paint()..color = palette.background;
+    canvas.drawCircle(const Offset(73, 101), 22, eyeRing);
+    canvas.drawCircle(const Offset(127, 101), 22, eyeRing);
+    canvas.drawCircle(const Offset(73, 101), 17, eyeFill);
+    canvas.drawCircle(const Offset(127, 101), 17, eyeFill);
+    canvas.drawCircle(const Offset(77, 101), 7, pupil);
+    canvas.drawCircle(const Offset(131, 101), 7, pupil);
+    final glint = Paint()..color = Colors.white.withValues(alpha: 0.9);
+    canvas.drawCircle(const Offset(80, 96), 3, glint);
+    canvas.drawCircle(const Offset(134, 96), 3, glint);
+
+    final beak = Path()
+      ..moveTo(91, 128) ..lineTo(100, 117) ..lineTo(109, 128) ..lineTo(100, 145) ..close();
+    canvas.drawPath(beak, Paint()..color = palette.warning);
+    canvas.drawPath(beak, Paint()
+      ..color = palette.background.withValues(alpha: 0.6)
+      ..style = PaintingStyle.stroke ..strokeWidth = 1.5);
+
+    final circuit = Paint()..color = palette.primary.withValues(alpha: 0.65)
+      ..strokeWidth = 2 ..strokeCap = StrokeCap.round;
+    canvas.drawLine(const Offset(100, 16), const Offset(100, 34), circuit);
+    canvas.drawCircle(const Offset(100, 12), 4, Paint()..color = palette.secondary);
+    canvas.drawCircle(const Offset(25, 158), 3, Paint()..color = palette.primary);
+    canvas.drawCircle(const Offset(175, 158), 3, Paint()..color = palette.primary);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _OwlPainter oldDelegate) => oldDelegate.palette != palette;
+}
+
+enum _ModuleAccent { cyan, violet, green, amber }
+
+class _SafetyModule {
+  const _SafetyModule(this.title, this.description, this.icon, this.accent, this.status);
+  final String title, description, status;
   final IconData icon;
-  final Color color;
-  final String label;
+  final _ModuleAccent accent;
 }
 
 class _ModuleCard extends StatelessWidget {
-  const _ModuleCard({required this.module, this.onTap});
-
+  const _ModuleCard({required this.module, required this.palette, this.onTap});
   final _SafetyModule module;
+  final OrvikaPalette palette;
   final VoidCallback? onTap;
+
+  Color _accent() => switch (module.accent) {
+    _ModuleAccent.cyan => palette.primary,
+    _ModuleAccent.violet => palette.secondary,
+    _ModuleAccent.green => palette.success,
+    _ModuleAccent.amber => palette.warning,
+  };
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
+    final scheme = Theme.of(context).colorScheme;
+    final accent = _accent();
+    final enabled = onTap != null;
+    return Material(
+      color: palette.surface.withValues(alpha: enabled ? 1 : 0.72),
       borderRadius: BorderRadius.circular(19),
-      child: Container(
-        padding: const EdgeInsets.all(17),
-        decoration: BoxDecoration(
-          color: OrvikaColors.surface.withValues(alpha: 0.88),
-          borderRadius: BorderRadius.circular(19),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
-        ),
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
+      child: InkWell(
+        onTap: onTap, borderRadius: BorderRadius.circular(19),
+        child: Container(
+          padding: const EdgeInsets.all(17),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(19),
+            border: Border.all(color: accent.withValues(alpha: enabled ? 0.30 : 0.16)),
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
               Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(color: module.color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
-                child: Icon(module.icon, color: module.color, size: 21),
+                width: 40, height: 40,
+                decoration: BoxDecoration(color: accent.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(13)),
+                child: Icon(module.icon, color: accent, size: 22),
               ),
               const Spacer(),
-              Text(module.label, style: TextStyle(color: module.color, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
-            ],
-          ),
-          const Spacer(),
-          Text(module.title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-          const SizedBox(height: 5),
-          Text(module.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: OrvikaColors.muted, fontSize: 11, height: 1.35)),
-        ],
+              Icon(enabled ? Icons.arrow_outward_rounded : Icons.lock_outline_rounded,
+                size: 15, color: scheme.onSurfaceVariant),
+            ]),
+            const Spacer(),
+            Text(module.title, style: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w800, fontSize: 15)),
+            const SizedBox(height: 5),
+            Text(module.description, maxLines: 2, overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.35)),
+            const SizedBox(height: 10),
+            Text(module.status, style: TextStyle(color: accent, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.05)),
+          ]),
         ),
       ),
     );
   }
 }
 
-class _TrustNote extends StatelessWidget {
-  const _TrustNote();
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({required this.label, required this.color});
+  final String label;
+  final Color color;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.09),
+      borderRadius: BorderRadius.circular(30),
+      border: Border.all(color: color.withValues(alpha: 0.35)),
+    ),
+    child: Text(label, style: TextStyle(
+      color: color, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.85)),
+  );
+}
 
+class _TrustNote extends StatelessWidget {
+  const _TrustNote({required this.palette});
+  final OrvikaPalette palette;
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: OrvikaColors.surface.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        color: palette.surface.withValues(alpha: 0.78),
+        borderRadius: BorderRadius.circular(17),
+        border: Border.all(color: scheme.outline.withValues(alpha: 0.24)),
       ),
-      child: const Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.info_outline_rounded, color: OrvikaColors.cyan, size: 19),
-          SizedBox(width: 11),
-          Expanded(
-            child: Text(
-              'ORVIKA is an early prototype. Risk assessments will be evidence-led; an AI-generated suspicion will never be presented as a confirmed malicious verdict.',
-              style: TextStyle(color: OrvikaColors.muted, fontSize: 12, height: 1.45),
-            ),
-          ),
-        ],
-      ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Icon(Icons.info_outline_rounded, color: palette.primary, size: 20),
+        const SizedBox(width: 11),
+        Expanded(child: Text(
+          'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.',
+          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
+        )),
+      ]),
     );
   }
 }
