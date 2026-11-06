@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/widgets.dart';
 import 'package:orvika/main.dart';
 
 void main() {
@@ -12,11 +13,13 @@ void main() {
     expect(find.text('Message Check'), findsOneWidget);
     expect(find.text('Privacy Check'), findsOneWidget);
 
-    // Ensure the trust note is brought into view in the dashboard's outer scroll view.
-    final trustNote = find.textContaining('ORVIKA is an early prototype');
-    expect(trustNote, findsOneWidget);
-    await tester.ensureVisible(trustNote);
+    // Scroll the outer dashboard so its lazily built trust note enters the tree.
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
     await tester.pumpAndSettle();
-    expect(trustNote, findsOneWidget);
+
+    expect(
+      find.textContaining('ORVIKA is an early prototype'),
+      findsOneWidget,
+    );
   });
 }
