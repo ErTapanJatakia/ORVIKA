@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'features/link_check/presentation/link_check_screen.dart';
+import 'features/qr_check/presentation/qr_check_screen.dart';
 
 void main() {
   runApp(const OrvikaApp());
@@ -44,7 +45,7 @@ class SentinelDashboard extends StatelessWidget {
 
   static const modules = <_SafetyModule>[
     _SafetyModule('Link Check', 'Inspect URLs before you open them', Icons.link_rounded, OrvikaColors.cyan, 'URL'),
-    _SafetyModule('QR Check', 'Reveal and review QR destinations', Icons.qr_code_scanner_rounded, OrvikaColors.violet, 'QR'),
+    _SafetyModule('QR Check', 'Inspect QR content before taking action', Icons.qr_code_scanner_rounded, OrvikaColors.violet, 'QR'),
     _SafetyModule('Message Check', 'Review suspicious texts and emails', Icons.mark_email_unread_rounded, OrvikaColors.amber, 'SMS'),
     _SafetyModule('Privacy Check', 'Build safer everyday digital habits', Icons.shield_outlined, OrvikaColors.green, 'CARE'),
   ];
@@ -93,13 +94,19 @@ class SentinelDashboard extends StatelessWidget {
                               ),
                               itemBuilder: (context, index) => _ModuleCard(
                                 module: modules[index],
-                                onTap: modules[index].title == 'Link Check'
-                                    ? () => Navigator.of(context).push(
-                                          MaterialPageRoute<void>(
-                                            builder: (_) => const LinkCheckScreen(),
-                                          ),
-                                        )
-                                    : null,
+                                onTap: switch (modules[index].title) {
+                                  'Link Check' => () => Navigator.of(context).push(
+                                        MaterialPageRoute<void>(
+                                          builder: (_) => const LinkCheckScreen(),
+                                        ),
+                                      ),
+                                  'QR Check' => () => Navigator.of(context).push(
+                                        MaterialPageRoute<void>(
+                                          builder: (_) => const QrCheckScreen(),
+                                        ),
+                                      ),
+                                  _ => null,
+                                },
                               ),
                             );
                           },

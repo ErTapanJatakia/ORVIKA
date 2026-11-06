@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/widgets.dart';
 import 'package:orvika/main.dart';
 
 void main() {
@@ -21,5 +21,25 @@ void main() {
       find.textContaining('ORVIKA is an early prototype'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('QR Check opens and inspects a payment payload without initiating it', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+
+    await tester.ensureVisible(find.text('QR Check'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('QR Check'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Inspect QR content'), findsOneWidget);
+    await tester.enterText(
+      find.byType(TextField),
+      'upi://pay?pa=merchant@example&pn=Merchant',
+    );
+    await tester.tap(find.text('Inspect QR content'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('UPI payment request'), findsOneWidget);
+    expect(find.textContaining('will not initiate or approve a payment'), findsOneWidget);
   });
 }
