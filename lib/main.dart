@@ -302,7 +302,7 @@ class SentinelDashboard extends StatelessWidget {
 }
 
 
-class AppearanceSettingsScreen extends StatelessWidget {
+class AppearanceSettingsScreen extends StatefulWidget {
   const AppearanceSettingsScreen({
     required this.selectedTheme,
     required this.onThemeChanged,
@@ -313,8 +313,15 @@ class AppearanceSettingsScreen extends StatelessWidget {
   final ValueChanged<OrvikaTheme> onThemeChanged;
 
   @override
+  State<AppearanceSettingsScreen> createState() => _AppearanceSettingsScreenState();
+}
+
+class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
+  late OrvikaTheme _selectedTheme = widget.selectedTheme;
+
+  @override
   Widget build(BuildContext context) {
-    final palette = selectedTheme.palette;
+    final palette = _selectedTheme.palette;
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
@@ -337,9 +344,11 @@ class AppearanceSettingsScreen extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 12),
               child: RadioListTile<OrvikaTheme>(
                 value: theme,
-                groupValue: selectedTheme,
+                groupValue: _selectedTheme,
                 onChanged: (value) {
-                  if (value != null) onThemeChanged(value);
+                  if (value == null) return;
+                  setState(() => _selectedTheme = value);
+                  widget.onThemeChanged(value);
                 },
                 title: Text(theme.label, style: const TextStyle(fontWeight: FontWeight.w700)),
                 subtitle: Text(theme.description),
