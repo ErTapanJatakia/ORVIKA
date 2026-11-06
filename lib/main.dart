@@ -211,8 +211,8 @@ class OrvikaSplashScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             OrvikaOwlMark(size: 112, palette: palette),
-            const SizedBox(height: 22),
-            const Text(
+            SizedBox(height: 22),
+            Text(
               'ORVIKA',
               style: TextStyle(
                 color: Color(0xFFF3F7FC),
@@ -221,8 +221,8 @@ class OrvikaSplashScreen extends StatelessWidget {
                 letterSpacing: 5,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'PERSONAL CYBER SAFETY INTELLIGENCE',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -232,8 +232,8 @@ class OrvikaSplashScreen extends StatelessWidget {
                 letterSpacing: 1.5,
               ),
             ),
-            const SizedBox(height: 28),
-            const SizedBox(
+            SizedBox(height: 28),
+            SizedBox(
               width: 92,
               child: LinearProgressIndicator(minHeight: 2),
             ),
@@ -330,7 +330,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                   children: [
                     Row(
                       children: [
-                        OrvikaOwlMark(size: 42, palette: palette),
+                        const OrvikaOwlMark(size: 42, palette: palette),
                         const SizedBox(width: 10),
                         const Expanded(
                           child: Text(
@@ -380,7 +380,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                                     ],
                                   ),
                                   child: index == 0
-                                      ? Center(
+                                      ? const Center(
                                           child: OrvikaOwlMark(
                                             size: 136,
                                             palette: palette,
