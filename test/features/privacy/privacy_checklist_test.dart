@@ -3,7 +3,7 @@ import 'package:orvika/features/privacy/domain/privacy_checklist.dart';
 
 void main() {
   test('privacy practices have unique identifiers and cover every category', () {
-    final practices = PrivacyChecklist.practices;
+    const practices = PrivacyChecklist.practices;
     final ids = practices.map((practice) => practice.id).toSet();
 
     expect(ids.length, practices.length);
