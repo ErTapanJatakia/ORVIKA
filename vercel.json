@@ -1,0 +1,4 @@
+{
+  "buildCommand": "echo 'Using Flutter Web output built and tested by GitHub Actions'",
+  "outputDirectory": "build/web"
+}
