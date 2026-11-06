@@ -133,7 +133,8 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('Intelligence'));
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -700));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Intelligence'));
     await tester.pumpAndSettle();
 
