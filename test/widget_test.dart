@@ -156,4 +156,18 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('not a live threat-intelligence feed'), findsOneWidget);
   });
+  testWidgets('Privacy opens the guided self-audit from the dashboard', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Privacy'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Privacy'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Take control of your privacy.'), findsOneWidget);
+    expect(find.text('0 of 12 practices reviewed'), findsOneWidget);
+  });
+
 }
