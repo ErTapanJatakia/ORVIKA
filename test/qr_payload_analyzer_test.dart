@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:orvika/features/link_check/domain/url_analyzer.dart';
 import 'package:orvika/features/qr_check/domain/qr_payload_analyzer.dart';
 
 void main() {
@@ -43,7 +44,7 @@ void main() {
     });
 
     test('recognises contact cards', () {
-      final result = analyzer.analyze('BEGIN:VCARD\nVERSION:3.0\nFN:Example\nEND:VCARD');
+      final result = analyzer.analyze('BEGIN:VCARD\\nVERSION:3.0\\nFN:Example\\nEND:VCARD');
       expect(result.kind, QrPayloadKind.contactCard);
     });
 
