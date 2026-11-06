@@ -37,7 +37,7 @@ void main() {
 
   test('rejects empty and oversized input', () {
     expect(analyzer.analyze(' ').isValid, isFalse);
-    expect(analyzer.analyze('x' * 10001).isValid, isFalse);
+    expect(analyzer.analyze(List.filled(10001, 'x').join()).isValid, isFalse);
   });
 
   test('deduplicates repeated links', () {
