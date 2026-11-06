@@ -26,6 +26,10 @@ void main() {
     await tester.tap(find.byType(CheckboxListTile).first);
     await tester.pumpAndSettle();
 
+    // The progress summary is above the expanded card; return to it before
+    // asserting because ListView lazily builds off-screen children.
+    await tester.drag(find.byType(ListView), const Offset(0, 900));
+    await tester.pumpAndSettle();
     expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
     final preferences = await SharedPreferences.getInstance();
     expect(
@@ -38,6 +42,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
+    await tester.tap(find.text('Use unique passwords for important accounts'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byType(CheckboxListTile).first);
     final checkbox = tester.widget<CheckboxListTile>(
       find.byType(CheckboxListTile).first,
     );
