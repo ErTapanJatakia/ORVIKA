@@ -11,6 +11,7 @@ The catalogue contains 100 language entries using language identifiers and nativ
 - English: reviewed UI fallback.
 - Russian: reviewed initial UI pack for onboarding, dashboard module labels/descriptions and language settings.
 - Tatar (`tt`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
+- Bashkir (`ba`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - Other catalogue entries: selectable and persisted, but currently display the English fallback. A language being listed does not imply that its complete UI translation is already available.
 
 No machine-translation API, remote service, telemetry, or backend is used. New translation packs should be reviewed by fluent speakers and added as offline resources. Avoid auto-translating security, incident-response, legal, or privacy guidance without human review.
