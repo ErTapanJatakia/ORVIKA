@@ -1643,7 +1643,11 @@ class _ModuleCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Icon(
-                    enabled ? Icons.arrow_outward_rounded : Icons.lock_outline_rounded,
+                    enabled
+                        ? Icons.arrow_outward_rounded
+                        : module.status == 'OVERVIEW'
+                            ? Icons.dashboard_outlined
+                            : Icons.lock_outline_rounded,
                     size: 15,
                     color: scheme.onSurfaceVariant,
                   ),
