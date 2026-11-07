@@ -88,8 +88,11 @@ class _AcademyScreenState extends State<AcademyScreen> {
       appBar: const OrvikaFeatureAppBar(title: 'Academy'),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
                 Text(
                   'Build safer digital habits.',
@@ -246,7 +249,9 @@ class _AcademyScreenState extends State<AcademyScreen> {
                   'ORVIKA Academy provides general educational guidance, not professional, legal or financial advice. Threats and platform settings change; verify important instructions with official sources. Completing a lesson does not certify expertise.',
                   style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
                 ),
-              ],
+                  ],
+                ),
+              ),
             ),
     );
   }
