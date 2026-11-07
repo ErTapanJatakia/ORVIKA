@@ -179,9 +179,31 @@ class OrvikaLocalizations {
   }
 
   static OrvikaLocalizations of(BuildContext context) {
+    final selectedLanguage = OrvikaLanguageScope.maybeOf(context);
+    if (selectedLanguage != null) {
+      return OrvikaLocalizations(selectedLanguage);
+    }
     final locale = Localizations.localeOf(context);
-    return OrvikaLocalizations(
-      OrvikaLanguage.fromCode(locale.languageCode),
-    );
+    return OrvikaLocalizations(OrvikaLanguage.fromCode(locale.languageCode));
   }
+}
+
+/// Carries ORVIKA's selected catalogue language independently of Flutter's
+/// framework locale delegates, which do not provide Material translations for
+/// every regional language in the 200-language picker.
+class OrvikaLanguageScope extends InheritedWidget {
+  const OrvikaLanguageScope({
+    super.key,
+    required this.language,
+    required super.child,
+  });
+
+  final OrvikaLanguage language;
+
+  static OrvikaLanguage? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<OrvikaLanguageScope>()?.language;
+
+  @override
+  bool updateShouldNotify(OrvikaLanguageScope oldWidget) =>
+      language.code != oldWidget.language.code;
 }
