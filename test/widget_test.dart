@@ -462,4 +462,33 @@ void main() {
       greaterThanOrEqualTo(FontWeight.w500.value));
   });
 
+  testWidgets('dashboard module cards expose complete screen-reader labels and actions', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    final linkCard = find.bySemanticsLabel(
+      'Link Check. Inspect website addresses before you open them. Available.',
+    );
+    expect(linkCard, findsOneWidget);
+    expect(tester.getSemantics(linkCard).hasAction(SemanticsAction.tap), isTrue);
+
+    final disabledOverview = find.bySemanticsLabel(
+      'Sentinel. Your safety overview and recent checks. OVERVIEW.',
+    );
+    expect(disabledOverview, findsOneWidget);
+    expect(tester.getSemantics(disabledOverview).hasAction(SemanticsAction.tap), isFalse);
+
+    final dashboardHeading = find.bySemanticsLabel('Your safety toolkit');
+    expect(dashboardHeading, findsOneWidget);
+    expect(tester.getSemantics(dashboardHeading).hasFlag(SemanticsFlag.isHeader), isTrue);
+
+    expect(find.byType(FocusTraversalGroup), findsWidgets);
+    semantics.dispose();
+  });
+
 }
