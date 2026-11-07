@@ -462,4 +462,46 @@ void main() {
       greaterThanOrEqualTo(FontWeight.w500.value));
   });
 
+
+  testWidgets('dashboard header adapts across narrow, tablet and desktop widths', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    tester.view.devicePixelRatio = 1;
+    for (final width in [320.0, 375.0, 600.0, 760.0, 1024.0, 1920.0]) {
+      tester.view.physicalSize = Size(width, 900);
+      await tester.pumpWidget(OrvikaApp(key: ValueKey('responsive-$width')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('ORVIKA'), findsOneWidget, reason: 'width: $width');
+      expect(find.byTooltip('Change language'), findsOneWidget, reason: 'width: $width');
+      expect(tester.takeException(), isNull, reason: 'layout overflow at width: $width');
+    }
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+
+  testWidgets('dashboard header remains usable at 200 percent text scaling in RTL', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'ar',
+    });
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 900);
+    await tester.pumpWidget(
+      MediaQuery(
+        data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
+        child: const OrvikaApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('ORVIKA'), findsOneWidget);
+    expect(find.byTooltip('Change language'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+
 }
