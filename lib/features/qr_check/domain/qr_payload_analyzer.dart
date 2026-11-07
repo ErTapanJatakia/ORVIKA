@@ -88,6 +88,10 @@ class QrPayloadAnalyzer {
         case 'https':
           return _analyseWebLink(payload);
         case 'upi':
+          if (uri.host.toLowerCase() != 'pay' ||
+              (uri.queryParameters['pa'] ?? '').trim().isEmpty) {
+            return _invalid('The UPI payment payload is incomplete or has no payee address. Verify the QR source independently.');
+          }
           return const QrPayloadAnalysis(
             kind: QrPayloadKind.paymentRequest,
             title: 'UPI payment request',
@@ -95,6 +99,9 @@ class QrPayloadAnalyzer {
             severity: FindingSeverity.warning,
           );
         case 'tel':
+          if (uri.path.trim().isEmpty) {
+            return _invalid('The telephone action does not contain a phone number.');
+          }
           return const QrPayloadAnalysis(
             kind: QrPayloadKind.phoneAction,
             title: 'Phone call action',
@@ -102,6 +109,9 @@ class QrPayloadAnalyzer {
             severity: FindingSeverity.caution,
           );
         case 'mailto':
+          if (uri.path.trim().isEmpty) {
+            return _invalid('The email action does not contain a recipient.');
+          }
           return const QrPayloadAnalysis(
             kind: QrPayloadKind.emailAction,
             title: 'Email action',
@@ -109,6 +119,9 @@ class QrPayloadAnalyzer {
             severity: FindingSeverity.caution,
           );
         case 'sms':
+          if (uri.path.trim().isEmpty) {
+            return _invalid('The text-message action does not contain a recipient.');
+          }
           return const QrPayloadAnalysis(
             kind: QrPayloadKind.messageAction,
             title: 'Text-message action',

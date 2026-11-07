@@ -42,6 +42,24 @@ void main() {
       expect(analyzer.analyze('https://example.com\n').isValid, isFalse);
     });
 
+    test('flags Unicode hostnames for careful visual verification', () {
+      final result = analyzer.analyze('https://раypal.example');
+      expect(result.isValid, isTrue);
+      expect(result.findings.any((f) => f.title == 'Unicode hostname'), isTrue);
+    });
+
+    test('flags out-of-range dotted IPv4-looking hosts', () {
+      final result = analyzer.analyze('https://999.999.999.999');
+      expect(result.isValid, isTrue);
+      expect(result.findings.any((f) => f.title == 'Malformed IPv4-looking hostname'), isTrue);
+    });
+
+    test('flags deeper subdomain chains without claiming maliciousness', () {
+      final result = analyzer.analyze('https://paypal.com.attacker.example');
+      expect(result.isValid, isTrue);
+      expect(result.findings.any((f) => f.title == 'Long subdomain chain'), isTrue);
+    });
+
     test('does not label a structurally ordinary HTTPS URL as safe', () {
       final result = analyzer.analyze('https://example.com');
       expect(result.isValid, isTrue);

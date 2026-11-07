@@ -40,6 +40,26 @@ void main() {
     expect(analyzer.analyze(List.filled(10001, 'x').join()).isValid, isFalse);
   });
 
+  test('detects Hindi and Russian urgency and authentication wording', () {
+    final hindi = analyzer.analyze('तुरंत अपना ओटीपी साझा करें');
+    final russian = analyzer.analyze('Срочно сообщите одноразовый пароль и код подтверждения');
+
+    expect(hindi.findings.map((f) => f.title), contains('Urgency or pressure language'));
+    expect(hindi.findings.map((f) => f.title), contains('OTP or authentication-code reference'));
+    expect(russian.findings.map((f) => f.title), contains('Urgency or pressure language'));
+    expect(russian.findings.map((f) => f.title), contains('OTP or authentication-code reference'));
+  });
+
+  test('detects internationalised URLs and obfuscated hxxps links', () {
+    final result = analyzer.analyze(
+      'Проверьте https://раypal.example и hxxps://example.test/login',
+    );
+
+    expect(result.findings.map((f) => f.title), contains('Link or web address detected'));
+    expect(result.findings.map((f) => f.title), contains('Obfuscated web address detected'));
+    expect(result.detectedLinks, contains('https://раypal.example'));
+  });
+
   test('deduplicates repeated links', () {
     final result = analyzer.analyze(
       'Review https://example.test and https://example.test before continuing.',
