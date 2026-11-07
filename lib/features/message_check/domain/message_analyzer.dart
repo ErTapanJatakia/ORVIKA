@@ -22,12 +22,12 @@ class MessageAnalyzer {
   const MessageAnalyzer();
 
   static final RegExp _urlPattern = RegExp(
-    r'''(?:(?:https?://)|(?:www\\.))[^\\s<>"']+''',
+    r'''(?:(?:https?://)|(?:www\.))[^\s<>"']+''',
     caseSensitive: false,
   );
 
   static final RegExp _obfuscatedUrlPattern = RegExp(
-    r'''\\bhxxps?://[^\\s<>"']+''',
+    r'''\bhxxps?://[^\s<>"']+''',
     caseSensitive: false,
   );
 
@@ -35,17 +35,26 @@ class MessageAnalyzer {
     (
       title: 'Urgency or pressure language',
       detail: 'The message uses time pressure or immediate-action language. Pause and verify the request through a separate, trusted channel.',
-      pattern: RegExp(r'\b(urgent|immediately|act now|right away|final notice|within \d+ hours?|expires today|limited time|account.{0,20}(?:suspend|block|close))\b', caseSensitive: false),
+      pattern: RegExp(
+        r'\b(urgent|immediately|act now|right away|final notice|within \d+ hours?|expires today|limited time|account.{0,20}(?:suspend|block|close))\b|तुरंत|अभी|जल्दी|срочно|немедленно|сейчас',
+        caseSensitive: false,
+      ),
     ),
     (
       title: 'Credential or sign-in request',
       detail: 'The text appears to request a password, sign-in, or account verification. Do not enter credentials through a message link.',
-      pattern: RegExp(r'\b(password|passcode|sign[ -]?in|log[ -]?in|verify.{0,20}(?:account|identity)|account.{0,20}verification|credentials)\b', caseSensitive: false),
+      pattern: RegExp(
+        r'\b(password|passcode|sign[ -]?in|log[ -]?in|verify.{0,20}(?:account|identity)|account.{0,20}verification|credentials)\b|पासवर्ड|खाता|लॉग.?इन|пароль|войти|учетн\w* запись',
+        caseSensitive: false,
+      ),
     ),
     (
       title: 'OTP or authentication-code reference',
       detail: 'A one-time password or authentication code is mentioned. Never share an OTP, recovery code, or approval prompt with another person.',
-      pattern: RegExp(r'\b(otp|one[ -]?time password|verification code|authentication code|security code)\b', caseSensitive: false),
+      pattern: RegExp(
+        r'\b(otp|one[ -]?time password|verification code|authentication code|security code)\b|ओटीपी|एक.?बार.?का.?पासवर्ड|सत्यापन.?कोड|одноразовый пароль|код подтверждения|код аутентификации',
+        caseSensitive: false,
+      ),
     ),
     (
       title: 'Payment or financial action',
@@ -88,7 +97,7 @@ class MessageAnalyzer {
 
     final links = _urlPattern
         .allMatches(rawInput)
-        .map((match) => match.group(0)!.replaceAll(RegExp(r'''[.,!?;:)\\]}>]+
+        .map((match) => _trimTrailingPunctuation(match.group(0)!))
         .where((value) => value.isNotEmpty)
         .toSet()
         .toList(growable: false);
@@ -126,57 +135,27 @@ class MessageAnalyzer {
     );
   }
 
-  MessageAnalysisResult _invalid(String input, String detail) => MessageAnalysisResult(
-    input: input,
-    findings: [LinkFinding(
-      title: 'Message not analysed',
-      detail: detail,
-      severity: FindingSeverity.warning,
-    )],
-    detectedLinks: const [],
-    isValid: false,
-    notice: 'No network request was made.',
-  );
-}
-''), ''))
-        .where((value) => value.isNotEmpty)
-        .toSet()
-        .toList(growable: false);
-
-    if (links.isNotEmpty) {
-      findings.add(LinkFinding(
-        title: 'Link or web address detected',
-        detail: '${links.length} web address(es) found. A visible link can conceal a different destination; inspect each address separately before opening it.',
-        severity: FindingSeverity.caution,
-      ));
+  String _trimTrailingPunctuation(String value) {
+    var end = value.length;
+    const trailingCharacters = '.,!?;:)\\]}>\u2019\u201d';
+    while (end > 0 && trailingCharacters.contains(value[end - 1])) {
+      end--;
     }
-
-    if (findings.isEmpty) {
-      findings.add(const LinkFinding(
-        title: 'No listed social-engineering cues detected',
-        detail: 'The text did not match the limited patterns in this version. Harmful messages can still appear ordinary or use wording not covered here.',
-        severity: FindingSeverity.info,
-      ));
-    }
-
-    return MessageAnalysisResult(
-      input: rawInput,
-      findings: List.unmodifiable(findings),
-      detectedLinks: links,
-      isValid: true,
-      notice: 'Heuristic text checks only. No message was uploaded, no link was opened, and no sender identity or intent was verified.',
-    );
+    return value.substring(0, end);
   }
 
-  MessageAnalysisResult _invalid(String input, String detail) => MessageAnalysisResult(
-    input: input,
-    findings: [LinkFinding(
-      title: 'Message not analysed',
-      detail: detail,
-      severity: FindingSeverity.warning,
-    )],
-    detectedLinks: const [],
-    isValid: false,
-    notice: 'No network request was made.',
-  );
+  MessageAnalysisResult _invalid(String input, String detail) =>
+      MessageAnalysisResult(
+        input: input,
+        findings: [
+          LinkFinding(
+            title: 'Message not analysed',
+            detail: detail,
+            severity: FindingSeverity.warning,
+          ),
+        ],
+        detectedLinks: const [],
+        isValid: false,
+        notice: 'No network request was made.',
+      );
 }
