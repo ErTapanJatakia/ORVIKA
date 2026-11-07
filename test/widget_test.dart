@@ -248,54 +248,23 @@ void main() {
     expect(preferences.getString('appearance.language'), 'ru');
   });
 
-  testWidgets('Tatar draft localizes dashboard while retaining review status', (tester) async {
+  testWidgets('Tatar and Bashkir are temporarily unavailable in the language picker', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Tatar');
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-tt')));
-    await tester.pumpAndSettle();
-    expect(find.text('Сезнең санлы иминлек кораллары'), findsOneWidget);
-    // Dashboard module cards are built lazily; reveal the grid before checking
-    // the translated module label.
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Сылтаманы тикшерү'));
-    await tester.pumpAndSettle();
-    expect(find.text('Сылтаманы тикшерү'), findsOneWidget);
-    expect(
-      OrvikaLocalizations.of(tester.element(find.text('Сезнең санлы иминлек кораллары'))).language.code,
-      'tt',
-      reason: 'The selected Tatar locale must remain available to app localization.',
-    );
-    expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isTrue);
-    expect(OrvikaLanguage.fromCode('tt').hasReviewedTranslation, isFalse);
-  });
-
-  testWidgets('Bashkir draft localizes dashboard while retaining review status', (tester) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const OrvikaApp());
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Bashkir');
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-ba')));
-    await tester.pumpAndSettle();
-    expect(find.text('Һеҙҙең һанлы именлек ҡоралдары'), findsOneWidget);
-    // Dashboard module cards are built lazily; reveal the grid before checking
-    // the translated module label.
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Һылтанманы тикшереү'));
-    await tester.pumpAndSettle();
-    expect(find.text('Һылтанманы тикшереү'), findsOneWidget);
-    expect(
-      OrvikaLocalizations.of(tester.element(find.text('Һеҙҙең һанлы именлек ҡоралдары'))).language.code,
-      'ba',
-      reason: 'The selected Bashkir locale must remain available to app localization.',
-    );
-    expect(OrvikaLanguage.fromCode('ba').hasDraftTranslation, isTrue);
-    expect(OrvikaLanguage.fromCode('ba').hasReviewedTranslation, isFalse);
+    for (final languageName in ['Tatar', 'Bashkir']) {
+      await tester.enterText(find.byType(TextField), languageName);
+      await tester.pumpAndSettle();
+      expect(find.byKey(ValueKey('language-${languageName == 'Tatar' ? 'tt' : 'ba'}')), findsNothing);
+      await tester.enterText(find.byType(TextField), '');
+      await tester.pumpAndSettle();
+    }
+    expect(OrvikaLanguage.fromCode('tt').code, 'en');
+    expect(OrvikaLanguage.fromCode('ba').code, 'en');
+    expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isFalse);
+    expect(OrvikaLanguage.fromCode('ba').hasDraftTranslation, isFalse);
+    expect(OrvikaLocalizations.translatedLanguageCodes, isNot(contains('tt')));
+    expect(OrvikaLocalizations.translatedLanguageCodes, isNot(contains('ba')));
   });
 
   testWidgets('Hindi draft localizes dashboard immediately after selection', (tester) async {
@@ -361,14 +330,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Choose your language'), findsOneWidget);
-    await tester.enterText(find.byType(TextField), 'Tatar');
+    await tester.enterText(find.byType(TextField), 'Chechen');
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('language-tt')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('language-tt')));
+    expect(find.byKey(const ValueKey('language-ce')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('language-ce')));
     await tester.pumpAndSettle();
 
     final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'tt');
+    expect(preferences.getString('appearance.language'), 'ce');
   });
 
 
