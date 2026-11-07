@@ -42,6 +42,23 @@ Future<void> _openLinkCheck(
   expect(find.text('Inspect before you connect.'), findsOneWidget);
 }
 
+Future<void> _revealLinkCheckControl(
+  WidgetTester tester,
+  Finder control,
+) async {
+  final featureScrollable = find.descendant(
+    of: find.byType(LinkCheckScreen),
+    matching: find.byType(Scrollable),
+  ).first;
+
+  await tester.scrollUntilVisible(
+    control,
+    200,
+    scrollable: featureScrollable,
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets('Link Check analyses an address and explains its local-only scope',
       (tester) async {
@@ -131,9 +148,11 @@ void main() {
     final context = tester.element(find.text('Inspect before you connect.'));
     expect(Directionality.of(context), TextDirection.rtl);
     expect(MediaQuery.textScalerOf(context).scale(10), 10);
+    await _revealLinkCheckControl(tester, find.byType(TextField));
     expect(find.byType(TextField), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
+    await _revealLinkCheckControl(tester, find.text('Analyse address'));
     await tester.tap(find.text('Analyse address'));
     await tester.pumpAndSettle();
     expect(find.text('Analysis findings'), findsOneWidget);
@@ -149,9 +168,11 @@ void main() {
     final context = tester.element(find.text('Inspect before you connect.'));
     expect(Directionality.of(context), TextDirection.ltr);
     expect(MediaQuery.textScalerOf(context).scale(10), 20);
+    await _revealLinkCheckControl(tester, find.byType(TextField));
     expect(find.byType(TextField), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
+    await _revealLinkCheckControl(tester, find.text('Analyse address'));
     await tester.tap(find.text('Analyse address'));
     await tester.pumpAndSettle();
     expect(find.text('Analysis findings'), findsOneWidget);
@@ -167,10 +188,12 @@ void main() {
     final context = tester.element(find.text('Inspect before you connect.'));
     expect(Directionality.of(context), TextDirection.rtl);
     expect(MediaQuery.textScalerOf(context).scale(10), 20);
+    await _revealLinkCheckControl(tester, find.byType(TextField));
     expect(find.byType(TextField), findsOneWidget);
-    expect(find.text('Analyse address'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
+    await _revealLinkCheckControl(tester, find.text('Analyse address'));
+    expect(find.text('Analyse address'), findsOneWidget);
     await tester.tap(find.text('Analyse address'));
     await tester.pumpAndSettle();
 
