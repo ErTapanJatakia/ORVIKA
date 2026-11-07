@@ -359,4 +359,52 @@ void main() {
     expect(preferences.getString('appearance.language'), 'tt');
   });
 
+
+  test('nine requested language packs translate shared app interface strings', () {
+    const expected = <String, String>{
+      'de': 'Ihre Werkzeuge für digitale Sicherheit',
+      'fr': 'Vos outils de sécurité numérique',
+      'pa': 'ਤੁਹਾਡੇ ਡਿਜ਼ਿਟਲ ਸੁਰੱਖਿਆ ਸਾਧਨ',
+      'ur': 'آپ کے ڈیجیٹل تحفظ کے اوزار',
+      'it': 'I tuoi strumenti per la sicurezza digitale',
+      'ar': 'أدواتك للسلامة الرقمية',
+      'mr': 'तुमची डिजिटल सुरक्षा साधने',
+      'gu': 'તમારા ડિજિટલ સુરક્ષા સાધનો',
+      'sa': 'भवतः अङ्कीयसुरक्षायाः साधनानि',
+    };
+    for (final entry in expected.entries) {
+      final language = OrvikaLanguage.fromCode(entry.key);
+      final localizations = OrvikaLocalizations(language);
+      expect(localizations.text('dashboard.title'), entry.value, reason: entry.key);
+      expect(localizations.text('onboarding.title.1', 'Check before you trust.'),
+        isNot('Check before you trust.'), reason: 'Onboarding must be translated for ${entry.key}');
+      expect(localizations.text('module.link', 'Link Check'),
+        isNot('Link Check'), reason: 'Module label must be translated for ${entry.key}');
+      expect(language.hasDraftTranslation, isTrue);
+      expect(language.hasReviewedTranslation, isFalse);
+    }
+  });
+
+  testWidgets('Arabic selection applies right-to-left layout and translated dashboard', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'ar',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    expect(find.text('أدواتك للسلامة الرقمية'), findsOneWidget);
+    expect(Directionality.of(tester.element(find.text('أدواتك للسلامة الرقمية'))), TextDirection.rtl);
+  });
+
+  testWidgets('Urdu selection applies right-to-left layout and translated dashboard', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'ur',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    expect(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'), findsOneWidget);
+    expect(Directionality.of(tester.element(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'))), TextDirection.rtl);
+  });
+
 }
