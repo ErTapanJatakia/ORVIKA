@@ -1402,7 +1402,10 @@ class _TopBar extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < 760) {
+        final textScale = MediaQuery.textScalerOf(context).scale(10) / 10;
+        final compact = constraints.maxWidth < 760 ||
+            (textScale >= 1.5 && constraints.maxWidth < 1020);
+        if (compact) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -1456,7 +1459,9 @@ class _HeroPanel extends StatelessWidget {
           blurRadius: 34, spreadRadius: 1)],
       ),
       child: LayoutBuilder(builder: (context, constraints) {
-        final compact = constraints.maxWidth < 680;
+        final textScale = MediaQuery.textScalerOf(context).scale(10) / 10;
+        final compact = constraints.maxWidth < 680 ||
+            (textScale >= 1.5 && constraints.maxWidth < 900);
         final owl = OrvikaOwlMark(size: compact ? 96 : 148, palette: palette);
         final copyContent = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
