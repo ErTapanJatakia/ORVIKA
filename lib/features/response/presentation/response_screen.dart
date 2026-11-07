@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/orvika_feature_app_bar.dart';
+
 import '../domain/response_playbooks.dart';
 
 class ResponseScreen extends StatelessWidget {
@@ -25,7 +27,7 @@ class ResponseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Response')),
+      appBar: const OrvikaFeatureAppBar(title: 'Response'),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
