@@ -7,6 +7,7 @@ class OrvikaLanguage {
 
   String get label => '$name — $nativeName';
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
+  bool get hasDraftTranslation => code == 'tt';
 
   static const english = OrvikaLanguage('en', 'English', 'English');
   static const russian = OrvikaLanguage('ru', 'Russian', 'Русский');
