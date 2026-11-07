@@ -531,6 +531,30 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Link Check'), findsOneWidget);
+
+    // Every dashboard module description must remain present and wrap naturally
+    // at 200% scaling; fixed line caps previously hid part of the copy.
+    const dashboardDescriptions = [
+      'Your safety overview and recent checks.',
+      'Inspect website addresses before you open them.',
+      'Review decoded QR content before taking action.',
+      'Review suspicious texts, emails and messages.',
+      'Explore explainable digital-risk indicators and safer next steps.',
+      'Review practical privacy controls with a guided self-audit.',
+      'Build everyday cyber-safety knowledge with short lessons and knowledge checks.',
+      'Find clear next steps when something goes wrong.',
+    ];
+    for (final description in dashboardDescriptions) {
+      expect(find.text(description), findsOneWidget, reason: 'module description at 200%: $description');
+    }
+    expect(
+      tester.getSize(find.text(
+        'Build everyday cyber-safety knowledge with short lessons and knowledge checks.',
+      )).height,
+      greaterThan(80),
+      reason: 'long module description should wrap across multiple readable lines',
+    );
+    expect(find.text('AVAILABLE'), findsNWidgets(7));
     expect(tester.takeException(), isNull, reason: 'module card overflow at 200% text scaling');
 
     tester.view.resetPhysicalSize();
