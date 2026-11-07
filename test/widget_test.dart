@@ -265,7 +265,7 @@ void main() {
     expect(find.text('Choose your language'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'Tatar');
     await tester.pumpAndSettle();
-    expect(find.text('Tatar'), findsOneWidget);
+    expect(find.byKey(const ValueKey('language-tt')), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('language-tt')));
     await tester.pumpAndSettle();
 
