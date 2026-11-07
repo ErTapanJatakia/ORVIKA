@@ -1554,7 +1554,7 @@ class _ModuleCard extends StatelessWidget {
       enabled: enabled,
       onTap: onTap,
       child: ExcludeSemantics(
-        Material(
+        child: Material(
           color: palette.surface.withValues(alpha: enabled ? 1 : 0.72),
           borderRadius: BorderRadius.circular(19),
           child: InkWell(
@@ -1698,3 +1698,4 @@ _SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
       module.status,
     ),
   );
+}
