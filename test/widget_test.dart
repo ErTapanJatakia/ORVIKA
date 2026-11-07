@@ -1,7 +1,6 @@
 import 'dart:ui' show SemanticsAction;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show debugDumpSemanticsTree, DebugSemanticsDumpOrder;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
@@ -478,8 +477,6 @@ void main() {
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -700));
     await tester.pumpAndSettle();
 
-    // Diagnostic snapshot: capture the actual accessibility tree before the exact-label assertion.
-    debugDumpSemanticsTree(DebugSemanticsDumpOrder.traversalOrder);
     final linkCard = find.bySemanticsLabel(
       'Link Check. Inspect website addresses before you open them. Available.',
     );
