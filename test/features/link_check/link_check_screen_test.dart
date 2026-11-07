@@ -20,9 +20,23 @@ Future<void> _openLinkCheck(
   await tester.pumpWidget(const OrvikaApp());
   await tester.pumpAndSettle();
 
-  final moduleLabel = language == 'ar' ? 'فحص الروابط' : 'Link Check';
-  await tester.ensureVisible(find.text(moduleLabel));
-  await tester.tap(find.text(moduleLabel));
+  final moduleFinder = find.text(
+    language == 'ar' ? 'فحص الروابط' : 'Link Check',
+  );
+  await tester.dragUntilVisible(
+    moduleFinder,
+    find.byType(CustomScrollView),
+    const Offset(0, -300),
+  );
+  await tester.pumpAndSettle();
+
+  final moduleRect = tester.getRect(moduleFinder);
+  expect(
+    (Offset.zero & tester.view.physicalSize).overlaps(moduleRect),
+    isTrue,
+    reason: 'Link Check dashboard entry must be inside the viewport before tapping',
+  );
+  await tester.tap(moduleFinder);
   await tester.pumpAndSettle();
 
   expect(find.text('Inspect before you connect.'), findsOneWidget);
