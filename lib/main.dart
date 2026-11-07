@@ -736,9 +736,9 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.language', 'Language'), style: Theme.of(context).textTheme.titleLarge),
+          Text(OrvikaLocalizations(_selectedLanguage).text('settings.language', 'Language'), style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
-          Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.language.help', 'Choose the interface language. This setting is stored only on this device.'), style: TextStyle(color: scheme.onSurfaceVariant)),
+          Text(OrvikaLocalizations(_selectedLanguage).text('settings.language.help', 'Choose the interface language. This setting is stored only on this device.'), style: TextStyle(color: scheme.onSurfaceVariant)),
           const SizedBox(height: 8),
           RadioGroup<OrvikaLanguage>(
             groupValue: _selectedLanguage,
@@ -753,11 +753,11 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             ]),
           ),
           const Divider(height: 28),
-          Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.appearance', 'Choose your visual environment'),
+          Text(OrvikaLocalizations(_selectedLanguage).text('settings.appearance', 'Choose your visual environment'),
             style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
-            OrvikaLocalizations(widget.selectedLanguage).text('settings.saved', 'Your choice is saved on this device. ORVIKA does not send appearance preferences to a server.'),
+            OrvikaLocalizations(_selectedLanguage).text('settings.saved', 'Your choice is saved on this device. ORVIKA does not send appearance preferences to a server.'),
             style: TextStyle(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 20),
@@ -794,7 +794,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            OrvikaLocalizations(widget.selectedLanguage).text('settings.accessibility', 'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.'),
+            OrvikaLocalizations(_selectedLanguage).text('settings.accessibility', 'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.'),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
           ),
         ],
