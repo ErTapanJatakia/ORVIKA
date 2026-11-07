@@ -45,9 +45,53 @@ class OrvikaLocalizations {
     'module.response.description': 'Узнайте, что делать, если возникла проблема.',
   };
 
+  // Draft Tatar UI strings. They are deliberately not classified as reviewed:
+  // security and privacy terminology requires native-speaker validation.
+  static const Map<String, String> _tatarDraft = {
+    'skip': 'Уздырып җибәрү',
+    'continue': 'Дәвам итү',
+    'enter': 'ORVIKA-га керү',
+    'onboarding.title.1': 'Ышанганчы тикшерегез.',
+    'onboarding.description.1': 'Сылтамаларны һәм QR-код эчтәлеген ачканчы, мәгълүмат биргәнче яки гамәл кылганчы тикшерегез.',
+    'onboarding.detail.1': 'Башта билгеләрне тикшерегез. Карарны сез кабул итәсез.',
+    'onboarding.title.2': 'Хәвефләрне аңлагыз.',
+    'onboarding.description.2': 'ORVIKA нәтиҗәнең нинди билгеләргә нигезләнүен аңлата, серле бәя белән генә чикләнми.',
+    'onboarding.detail.2': 'Шикләнү — тикшерү өчен сәбәп, явыз ниятнең дәлиле түгел.',
+    'onboarding.title.3': 'Мәгълүматларыгыз үзегездә кала.',
+    'onboarding.description.3': 'Кушымта хосусыйлыкны һәм офлайн эшләүне өстен куеп эшләнә. Башлау өчен хисап язмасы кирәкми.',
+    'onboarding.detail.3': 'Бу прототип киләчәктәге барлык функцияләрнең дә офлайн эшләвен гарантияләми.',
+    'dashboard.title': 'Сезнең санлы иминлек кораллары',
+    'dashboard.subtitle': 'Сигез мөмкинлек. Санлы хәвефләрне яхшырак аңлау.',
+    'settings.title': 'Күренеш һәм мөмкинлекләр',
+    'settings.language': 'Тел',
+    'settings.language.help': 'Кушымта телен сайлагыз. Бу көйләү бары тик җайланмагызда саклана.',
+    'settings.appearance': 'Күренешне сайлагыз',
+    'settings.saved': 'Сайлау җайланмагызда саклана. ORVIKA күренеш көйләүләрен серверга җибәрми.',
+    'module.sentinel': 'Гомуми күзәтү',
+    'module.sentinel.description': 'Иминлекнең гомуми торышы һәм соңгы тикшерүләр.',
+    'module.link': 'Сылтаманы тикшерү',
+    'module.link.description': 'Күчкәнче сайт адресын тикшерегез.',
+    'module.qr': 'QR-кодны тикшерү',
+    'module.qr.description': 'Гамәл кылганчы QR-код эчтәлеген тикшерегез.',
+    'module.message': 'Хәбәрләрне тикшерү',
+    'module.message.description': 'Шикле SMS, электрон хатлар һәм хәбәрләрне тикшерегез.',
+    'module.intelligence': 'Аналитика',
+    'module.intelligence.description': 'Санлы хәвеф билгеләрен һәм куркынычсыз гамәлләрне өйрәнегез.',
+    'module.privacy': 'Хосусыйлык',
+    'module.privacy.description': 'Үз-үзеңне тикшерү ярдәмендә хосусыйлык көйләүләрен карагыз.',
+    'module.academy': 'Өйрәнү',
+    'module.academy.description': 'Кыска дәресләрдә кибериминлек нигезләрен өйрәнегез.',
+    'module.response': 'Җавап чаралары',
+    'module.response.description': 'Проблема килеп чыкса, нәрсә эшләргә икәнен белегез.',
+  };
+
   String text(String key, [String? fallback]) {
-    if (language.code != 'ru') return fallback ?? key;
-    return _russian[key] ?? fallback ?? key;
+    final translations = switch (language.code) {
+      'ru' => _russian,
+      'tt' => _tatarDraft,
+      _ => const <String, String>{},
+    };
+    return translations[key] ?? fallback ?? key;
   }
 
   static OrvikaLocalizations of(BuildContext context) {
