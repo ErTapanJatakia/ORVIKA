@@ -417,6 +417,9 @@ void main() {
 
     await tester.tap(find.byTooltip('Appearance and accessibility settings'));
     await tester.pumpAndSettle();
+    expect(find.text('Appearance & accessibility'), findsOneWidget);
+    await tester.drag(find.byType(ListView).last, const Offset(0, -620));
+    await tester.pumpAndSettle();
     expect(find.text('Accessibility'), findsOneWidget);
     expect(find.text('Text size'), findsOneWidget);
 
