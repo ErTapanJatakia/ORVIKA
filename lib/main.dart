@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/localization/orvika_localizations.dart';
 
@@ -184,6 +185,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
       title: 'ORVIKA — Check Before You Trust',
       locale: Locale(_selectedLanguage.code),
       supportedLocales: const [Locale('en'), Locale('ru')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -669,7 +671,7 @@ class SentinelDashboard extends StatelessWidget {
                                   onTap = () => Navigator.of(context).push(
                                     MaterialPageRoute<void>(builder: (_) => const ResponseScreen()));
                                 }
-                                return _ModuleCard(module: module, palette: palette, onTap: onTap);
+                                return _ModuleCard(module: _localizedModule(module, selectedLanguage), palette: palette, onTap: onTap);
                               },
                             );
                           },
@@ -720,6 +722,7 @@ class AppearanceSettingsScreen extends StatefulWidget {
 
 class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
   late OrvikaTheme _selectedTheme = widget.selectedTheme;
+  late OrvikaLanguage _selectedLanguage = widget.selectedLanguage;
 
   @override
   Widget build(BuildContext context) {
@@ -727,7 +730,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.title', 'Appearance & accessibility')),
+        title: Text(OrvikaLocalizations(_selectedLanguage).text('settings.title', 'Appearance & accessibility')),
         backgroundColor: palette.background,
       ),
       body: ListView(
@@ -738,8 +741,12 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.language.help', 'Choose the interface language. This setting is stored only on this device.'), style: TextStyle(color: scheme.onSurfaceVariant)),
           const SizedBox(height: 8),
           RadioGroup<OrvikaLanguage>(
-            groupValue: widget.selectedLanguage,
-            onChanged: (value) { if (value != null) widget.onLanguageChanged(value); },
+            groupValue: _selectedLanguage,
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() => _selectedLanguage = value);
+              widget.onLanguageChanged(value);
+            },
             child: Column(children: [
               for (final language in OrvikaLanguage.values)
                 RadioListTile<OrvikaLanguage>(value: language, title: Text(language.label)),
@@ -825,7 +832,7 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         IconButton(
-          tooltip: 'Appearance and accessibility settings',
+          tooltip: OrvikaLocalizations(selectedLanguage).text('settings.title', 'Appearance and accessibility'),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => AppearanceSettingsScreen(
@@ -839,7 +846,7 @@ class _TopBar extends StatelessWidget {
           icon: Icon(Icons.settings_outlined, color: palette.primary),
         ),
         PopupMenuButton<OrvikaTheme>(
-          tooltip: 'Choose visual theme',
+          tooltip: selectedLanguage == OrvikaLanguage.russian ? 'Выбрать тему оформления' : 'Choose visual theme',
           initialValue: selectedTheme,
           onSelected: onThemeChanged,
           itemBuilder: (context) => OrvikaTheme.values.map((theme) => PopupMenuItem<OrvikaTheme>(
@@ -1142,4 +1149,28 @@ class _TrustNote extends StatelessWidget {
       ]),
     );
   }
+}
+
+
+_SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
+  final strings = OrvikaLocalizations(language);
+  final key = switch (module.title) {
+    'Sentinel' => 'sentinel',
+    'Link Check' => 'link',
+    'QR Check' => 'qr',
+    'Message Check' => 'message',
+    'Intelligence' => 'intelligence',
+    'Privacy' => 'privacy',
+    'Academy' => 'academy',
+    'Response' => 'response',
+    _ => '',
+  };
+  if (key.isEmpty || language == OrvikaLanguage.english) return module;
+  return _SafetyModule(
+    strings.text('module.$key', module.title),
+    strings.text('module.$key.description', module.description),
+    module.icon,
+    module.accent,
+    module.status,
+  );
 }
