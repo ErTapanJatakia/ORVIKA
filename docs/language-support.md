@@ -8,6 +8,8 @@ The app provides two separately searchable catalogues: 100 languages and languag
 
 ## Translation coverage
 
+The unified selector currently contains 193 distinct language codes across the India and Russia catalogues. Only codes explicitly listed in `OrvikaLocalizations.translatedLanguageCodes` contain authored ORVIKA strings. Every other selectable language remains an English-fallback language until its offline pack is translated and tested. Per-key coverage is available through `hasTranslation`; named interpolation and writing-direction metadata are independent of translation status.
+
 - English: reviewed UI fallback.
 - Russian: reviewed initial UI pack for onboarding, dashboard module labels/descriptions and language settings.
 - Tatar (`tt`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
