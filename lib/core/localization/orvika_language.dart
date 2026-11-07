@@ -118,9 +118,110 @@ class OrvikaLanguage {
     OrvikaLanguage('sr', 'Serbian', 'Српски'),
   ];
 
+
+  /// Curated India-focused catalogue: the 22 Eighth Schedule languages plus
+  /// 78 widely represented regional, Indigenous and community languages.
+  /// This is a product selection, not a strict 2011 Census top-100 ranking.
+  static const indiaValues = <OrvikaLanguage>[
+    OrvikaLanguage('hi', 'Hindi', 'हिन्दी'),
+    OrvikaLanguage('bn', 'Bengali', 'বাংলা'),
+    OrvikaLanguage('mr', 'Marathi', 'मराठी'),
+    OrvikaLanguage('te', 'Telugu', 'తెలుగు'),
+    OrvikaLanguage('ta', 'Tamil', 'தமிழ்'),
+    OrvikaLanguage('gu', 'Gujarati', 'ગુજરાતી'),
+    OrvikaLanguage('ur', 'Urdu', 'اردو'),
+    OrvikaLanguage('kn', 'Kannada', 'ಕನ್ನಡ'),
+    OrvikaLanguage('or', 'Odia', 'ଓଡ଼ିଆ'),
+    OrvikaLanguage('ml', 'Malayalam', 'മലയാളം'),
+    OrvikaLanguage('pa', 'Punjabi', 'ਪੰਜਾਬੀ'),
+    OrvikaLanguage('as', 'Assamese', 'অসমীয়া'),
+    OrvikaLanguage('mai', 'Maithili', 'मैथिली'),
+    OrvikaLanguage('sat', 'Santali', 'ᱥᱟᱱᱛᱟᱲᱤ'),
+    OrvikaLanguage('ks', 'Kashmiri', 'کٲشُر'),
+    OrvikaLanguage('ne', 'Nepali', 'नेपाली'),
+    OrvikaLanguage('sd', 'Sindhi', 'سنڌي'),
+    OrvikaLanguage('doi', 'Dogri', 'डोगरी'),
+    OrvikaLanguage('kok', 'Konkani', 'कोंकणी'),
+    OrvikaLanguage('mni', 'Manipuri (Meitei)', 'মৈতৈলোন্'),
+    OrvikaLanguage('brx', 'Bodo', 'बड़ो'),
+    OrvikaLanguage('sa', 'Sanskrit', 'संस्कृतम्'),
+    OrvikaLanguage('bho', 'Bhojpuri', 'भोजपुरी'),
+    OrvikaLanguage('raj', 'Rajasthani', 'राजस्थानी'),
+    OrvikaLanguage('bhb', 'Bhili / Bhilodi', 'भीली'),
+    OrvikaLanguage('hne', 'Chhattisgarhi', 'छत्तीसगढ़ी'),
+    OrvikaLanguage('bgc', 'Haryanvi', 'हरियाणवी'),
+    OrvikaLanguage('mwr', 'Marwari', 'मारवाड़ी'),
+    OrvikaLanguage('mag', 'Magahi', 'मगही'),
+    OrvikaLanguage('khn', 'Khandeshi', 'खान्देशी'),
+    OrvikaLanguage('tcy', 'Tulu', 'ತುಳು'),
+    OrvikaLanguage('gon', 'Gondi', 'गोंडी'),
+    OrvikaLanguage('kru', 'Kurukh (Oraon)', 'कुड़ुख'),
+    OrvikaLanguage('unr', 'Mundari', 'मुंडारी'),
+    OrvikaLanguage('mrg', 'Mising', 'মিচিং'),
+    OrvikaLanguage('lus', 'Mizo (Lushai)', 'Mizo'),
+    OrvikaLanguage('grt', 'Garo', 'A·chik'),
+    OrvikaLanguage('hoc', 'Ho', 'Ho'),
+    OrvikaLanguage('kxu', 'Kui', 'କୁଇ'),
+    OrvikaLanguage('kfq', 'Korku', 'कोरकू'),
+    OrvikaLanguage('kff', 'Koya', 'Koya'),
+    OrvikaLanguage('srb', 'Sora (Savara)', 'ସୋରା'),
+    OrvikaLanguage('trp', 'Kokborok (Tripuri)', 'ককবরক'),
+    OrvikaLanguage('bfy', 'Bagheli', 'बघेली'),
+    OrvikaLanguage('hlb', 'Halabi', 'हलबी'),
+    OrvikaLanguage('xis', 'Kisan', 'Kisan'),
+    OrvikaLanguage('sck', 'Sadri', 'सदरी'),
+    OrvikaLanguage('sgj', 'Surgujia', 'सुरगुजिया'),
+    OrvikaLanguage('sjp', 'Surjapuri', 'सुरजापुरी'),
+    OrvikaLanguage('bjl', 'Banjari', 'बंजारी'),
+    OrvikaLanguage('lmn', 'Lambadi (Lamani)', 'लमाणी'),
+    OrvikaLanguage('wbr', 'Wagdi', 'वागड़ी'),
+    OrvikaLanguage('gju', 'Gojri', 'گوجری'),
+    OrvikaLanguage('kfy', 'Kumaoni', 'कुमाऊँनी'),
+    OrvikaLanguage('gbm', 'Garhwali', 'गढ़वाली'),
+    OrvikaLanguage('xnr', 'Kangri', 'कांगड़ी'),
+    OrvikaLanguage('mtr', 'Mewari', 'मेवाड़ी'),
+    OrvikaLanguage('noe', 'Nimadi', 'निमाड़ी'),
+    OrvikaLanguage('mup', 'Malvi', 'मालवी'),
+    OrvikaLanguage('wtm', 'Mewati', 'मेवाती'),
+    OrvikaLanguage('dhd', 'Dhundhari', 'ढूंढाड़ी'),
+    OrvikaLanguage('awa', 'Awadhi', 'अवधी'),
+    OrvikaLanguage('bra', 'Braj Bhasha', 'ब्रजभाषा'),
+    OrvikaLanguage('bns', 'Bundeli', 'बुंदेली'),
+    OrvikaLanguage('tdb', 'Panchpargania', 'पंचपरगनिया'),
+    OrvikaLanguage('kur', 'Kurmali', 'कुर्माली'),
+    OrvikaLanguage('kfr', 'Kachchhi', 'કચ્છી'),
+    OrvikaLanguage('spv', 'Sambalpuri', 'ସମ୍ବଲପୁରୀ'),
+    OrvikaLanguage('dso', 'Desia', 'ଦେଶିଆ'),
+    OrvikaLanguage('dng', 'Dangi', 'ડાંગી'),
+    OrvikaLanguage('lod', 'Lodha', 'ଲୋଧା'),
+    OrvikaLanguage('ppr', 'Pawri', 'पावरी'),
+    OrvikaLanguage('kzn', 'Kokna', 'કોકણી'),
+    OrvikaLanguage('vav', 'Varli', 'वारली'),
+    OrvikaLanguage('gbl', 'Gamit', 'ગામિત'),
+    OrvikaLanguage('dho', 'Dhodia', 'ધોડિયા'),
+    OrvikaLanguage('bhi', 'Bhilali', 'भिलाली'),
+    OrvikaLanguage('dap', 'Nissi (Nyishi)', 'Nyishi'),
+    OrvikaLanguage('adi', 'Adi', 'Adi'),
+    OrvikaLanguage('njo', 'Ao', 'Ao'),
+    OrvikaLanguage('njm', 'Angami', 'Angami'),
+    OrvikaLanguage('nbe', 'Konyak', 'Konyak'),
+    OrvikaLanguage('nmf', 'Tangkhul', 'Tangkhul'),
+    OrvikaLanguage('njh', 'Lotha', 'Lotha'),
+    OrvikaLanguage('mra', 'Mara', 'Mara'),
+  ];
+
+  static List<OrvikaLanguage> valuesForCatalogue(String catalogue) =>
+      catalogue == 'india' ? indiaValues : values;
+
+  static OrvikaLanguage defaultForCatalogue(String catalogue) =>
+      catalogue == 'india' ? indiaValues.first : english;
+
   static OrvikaLanguage fromCode(String? code) {
     if (code == null) return english;
     for (final language in values) {
+      if (language.code == code) return language;
+    }
+    for (final language in indiaValues) {
       if (language.code == code) return language;
     }
     return english;
