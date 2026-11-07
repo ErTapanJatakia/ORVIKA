@@ -43,8 +43,11 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(title: 'Intelligence'),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
             Text(
               'Understand the signal.',
@@ -156,7 +159,9 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                 height: 1.45,
               ),
             ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
