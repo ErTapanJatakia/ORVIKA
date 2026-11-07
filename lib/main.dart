@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'core/localization/orvika_language.dart';
 import 'core/localization/orvika_localizations.dart';
 
 import 'features/academy/presentation/academy_screen.dart';
@@ -87,6 +88,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
   static const _themePreferenceKey = 'appearance.theme';
   OrvikaTheme _selectedTheme = OrvikaTheme.obsidian;
   OrvikaLanguage _selectedLanguage = OrvikaLanguage.english;
+  bool _hasSelectedLanguage = false;
   bool _isLoadingPreferences = true;
   bool _hasCompletedOnboarding = false;
 
@@ -104,12 +106,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
       final completed = preferences.getBool('onboarding.completed.v1') ?? false;
       if (!mounted) return;
       setState(() {
-        if (savedLanguage != null) {
-          _selectedLanguage = OrvikaLanguage.values.firstWhere(
-            (language) => language.code == savedLanguage,
-            orElse: () => OrvikaLanguage.english,
-          );
-        }
+        _selectedLanguage = OrvikaLanguage.fromCode(savedLanguage);
+        _hasSelectedLanguage = savedLanguage != null;
         if (savedName != null) {
           for (final theme in OrvikaTheme.values) {
             if (theme.name == savedName) {
@@ -124,6 +122,11 @@ class _OrvikaAppState extends State<OrvikaApp> {
     } catch (_) {
       if (mounted) setState(() => _isLoadingPreferences = false);
     }
+  }
+
+  Future<void> _completeLanguageSelection() async {
+    await _selectLanguage(_selectedLanguage);
+    if (mounted) setState(() => _hasSelectedLanguage = true);
   }
 
   Future<void> _completeOnboarding() async {
@@ -216,14 +219,20 @@ class _OrvikaAppState extends State<OrvikaApp> {
       ),
       home: _isLoadingPreferences
           ? const OrvikaSplashScreen()
-          : _hasCompletedOnboarding
+          : !_hasSelectedLanguage
+              ? LanguageSelectionScreen(
+                  selectedLanguage: _selectedLanguage,
+                  onLanguageChanged: _selectLanguage,
+                  onContinue: _completeLanguageSelection,
+                )
+              : _hasCompletedOnboarding
               ? SentinelDashboard(
                   selectedTheme: _selectedTheme,
                   onThemeChanged: _selectTheme,
                   selectedLanguage: _selectedLanguage,
                   onLanguageChanged: _selectLanguage,
                 )
-              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding),
+              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding, language: _selectedLanguage),
     );
   }
 }
@@ -275,9 +284,10 @@ class OrvikaSplashScreen extends StatelessWidget {
 }
 
 class OrvikaOnboardingScreen extends StatefulWidget {
-  const OrvikaOnboardingScreen({required this.onCompleted, super.key});
+  const OrvikaOnboardingScreen({required this.onCompleted, required this.language, super.key});
 
   final VoidCallback onCompleted;
+  final OrvikaLanguage language;
 
   @override
   State<OrvikaOnboardingScreen> createState() => _OrvikaOnboardingScreenState();
@@ -287,29 +297,28 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  static const _pages = <_OnboardingPageData>[
+  static List<_OnboardingPageData> _pagesFor(OrvikaLanguage language) => [
     _OnboardingPageData(
-      title: 'Check before you trust.',
-      description:
-          'Inspect links and QR content before you open a destination, share information or take action.',
-      detail: 'Start with a signal. Make the decision yourself.',
+      title: OrvikaLocalizations(language).text('onboarding.title.1', 'Check before you trust.'),
+      description: OrvikaLocalizations(language).text('onboarding.description.1', 'Inspect links and QR content before you open a destination, share information or take action.'),
+      detail: OrvikaLocalizations(language).text('onboarding.detail.1', 'Start with a signal. Make the decision yourself.'),
       icon: Icons.travel_explore_rounded,
     ),
     _OnboardingPageData(
-      title: 'Understand the risk.',
-      description:
-          'ORVIKA is designed to explain the indicators behind a finding—not hide them behind a mysterious score.',
-      detail: 'A suspicion is a signal to investigate, not proof of malicious intent.',
+      title: OrvikaLocalizations(language).text('onboarding.title.2', 'Understand the risk.'),
+      description: OrvikaLocalizations(language).text('onboarding.description.2', 'ORVIKA is designed to explain the indicators behind a finding—not hide them behind a mysterious score.'),
+      detail: OrvikaLocalizations(language).text('onboarding.detail.2', 'A suspicion is a signal to investigate, not proof of malicious intent.'),
       icon: Icons.radar_rounded,
     ),
     _OnboardingPageData(
-      title: 'Your data stays yours.',
-      description:
-          'The experience is designed around privacy-first, offline-friendly checks. No account is required to begin.',
-      detail: 'This prototype does not promise that every future feature will work offline.',
+      title: OrvikaLocalizations(language).text('onboarding.title.3', 'Your data stays yours.'),
+      description: OrvikaLocalizations(language).text('onboarding.description.3', 'The experience is designed around privacy-first, offline-friendly checks. No account is required to begin.'),
+      detail: OrvikaLocalizations(language).text('onboarding.detail.3', 'This prototype does not promise that every future feature will work offline.'),
       icon: Icons.shield_outlined,
     ),
   ];
+
+  final _pages = _pagesFor(widget.language);
 
   @override
   void dispose() {
@@ -375,7 +384,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                         ),
                         TextButton(
                           onPressed: _skip,
-                          child: const Text('Skip'),
+                          child: Text(OrvikaLocalizations(widget.language).text('skip', 'Skip')),
                         ),
                       ],
                     ),
@@ -509,8 +518,8 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 13),
                           child: Text(
                             _currentPage == _pages.length - 1
-                                ? 'Enter ORVIKA'
-                                : 'Continue',
+                                ? OrvikaLocalizations(widget.language).text('enter', 'Enter ORVIKA')
+                                : OrvikaLocalizations(widget.language).text('continue', 'Continue'),
                           ),
                         ),
                       ),
@@ -832,7 +841,7 @@ class _TopBar extends StatelessWidget {
           ),
         ),
         IconButton(
-          tooltip: OrvikaLocalizations(selectedLanguage).text('settings.title', 'Appearance and accessibility'),
+          tooltip: selectedLanguage.code == 'ru' ? 'Внешний вид и доступность' : 'Appearance and accessibility settings',
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => AppearanceSettingsScreen(
@@ -846,7 +855,7 @@ class _TopBar extends StatelessWidget {
           icon: Icon(Icons.settings_outlined, color: palette.primary),
         ),
         PopupMenuButton<OrvikaTheme>(
-          tooltip: selectedLanguage == OrvikaLanguage.russian ? 'Выбрать тему оформления' : 'Choose visual theme',
+          tooltip: selectedLanguage.code == 'ru' ? 'Выбрать тему оформления' : 'Choose visual theme',
           initialValue: selectedTheme,
           onSelected: onThemeChanged,
           itemBuilder: (context) => OrvikaTheme.values.map((theme) => PopupMenuItem<OrvikaTheme>(
@@ -1165,7 +1174,7 @@ _SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
     'Response' => 'response',
     _ => '',
   };
-  if (key.isEmpty || language == OrvikaLanguage.english) return module;
+  if (key.isEmpty || language.code == 'en') return module;
   return _SafetyModule(
     strings.text('module.$key', module.title),
     strings.text('module.$key.description', module.description),
