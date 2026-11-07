@@ -1042,8 +1042,8 @@ class SentinelDashboard extends StatelessWidget {
                                         ? 2
                                         : 1;
                             final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
-                            final cardExtent = (178 + ((textScale - 1).clamp(0, 1.2) * 72))
-                                .clamp(178, 264)
+                            final cardExtent = (190 + ((textScale - 1).clamp(0, 1.2) * 72))
+                                .clamp(190, 276)
                                 .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
@@ -1622,30 +1622,75 @@ class _ModuleCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap, borderRadius: BorderRadius.circular(19),
         child: Container(
-          padding: const EdgeInsets.all(17),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(19),
             border: Border.all(color: accent.withValues(alpha: enabled ? 0.30 : 0.16)),
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(color: accent.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(13)),
-                child: Icon(module.icon, color: accent, size: 22),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.13),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: Icon(module.icon, color: accent, size: 22),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    enabled ? Icons.arrow_outward_rounded : Icons.lock_outline_rounded,
+                    size: 15,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ],
               ),
-              const Spacer(),
-              Icon(enabled ? Icons.arrow_outward_rounded : Icons.lock_outline_rounded,
-                size: 15, color: scheme.onSurfaceVariant),
-            ]),
-            const Spacer(),
-            Text(module.title, style: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w800, fontSize: 15)),
-            const SizedBox(height: 5),
-            Text(module.description, maxLines: 2, overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.35)),
-            const SizedBox(height: 10),
-            Text(module.status, style: TextStyle(color: accent, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.05)),
-          ]),
+              const SizedBox(height: 12),
+              Text(
+                module.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    module.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 11,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                module.status,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: accent,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.05,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
