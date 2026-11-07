@@ -218,9 +218,16 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
     return MaterialApp(
       title: 'ORVIKA — Check Before You Trust',
+      // Flutter framework widgets need locales supported by its Material and
+      // Cupertino delegates. ORVIKA's own language packs are carried separately
+      // by OrvikaLanguageScope, so regional selections never break framework UI.
       locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
       supportedLocales: const [Locale('en'), Locale('ru')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      builder: (context, child) => OrvikaLanguageScope(
+        language: _selectedLanguage,
+        child: child ?? const SizedBox.shrink(),
+      ),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
