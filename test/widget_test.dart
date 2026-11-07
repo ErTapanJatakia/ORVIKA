@@ -516,7 +516,7 @@ void main() {
       'accessibility.textScale': 2.0,
     });
     tester.view.physicalSize = const Size(320, 900);
-    await tester.pumpWidget(OrvikaApp(key: const ValueKey('dashboard-grid-200-scale')));
+    await tester.pumpWidget(const OrvikaApp(key: ValueKey('dashboard-grid-200-scale')));
     await tester.pumpAndSettle();
 
     final dashboardScrollable = find.descendant(
