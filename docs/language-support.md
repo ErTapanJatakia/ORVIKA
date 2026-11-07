@@ -13,7 +13,13 @@ The app provides two separately searchable catalogues: 100 languages and languag
 - Tatar (`tt`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - Bashkir (`ba`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - Hindi (`hi`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
+- German (`de`), French (`fr`), Punjabi (`pa`), Urdu (`ur`), Italian (`it`), Arabic (`ar`), Marathi (`mr`), Gujarati (`gu`) and Sanskrit (`sa`): initial draft packs now cover onboarding, dashboard module labels/descriptions, shared navigation and appearance settings. These are unreviewed drafts and require qualified native-speaker review, especially for security and privacy terminology.
+- Arabic and Urdu apply right-to-left app layout. Flutter framework widgets continue using the supported English/Russian framework locales; ORVIKA's selected language is carried independently.
 - Other catalogue entries: selectable and persisted, but currently display the English fallback. A language being listed does not imply that its complete UI translation is already available.
+
+## Coverage boundary
+
+These draft packs translate the shared onboarding/dashboard/navigation/appearance surface. The eight feature screens (Sentinel, Link Check, QR Check, Message Check, Intelligence, Privacy, Academy and Response), including their detailed instructional copy, validation messages and analysis findings, still require dedicated localization work. Untranslated feature content must not be represented as fully localized.
 
 No machine-translation API, remote service, telemetry, or backend is used. New translation packs should be reviewed by fluent speakers and added as offline resources. Avoid auto-translating security, incident-response, legal, or privacy guidance without human review.
 

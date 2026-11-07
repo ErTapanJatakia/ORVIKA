@@ -224,9 +224,14 @@ class _OrvikaAppState extends State<OrvikaApp> {
       locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
       supportedLocales: const [Locale('en'), Locale('ru')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, child) => OrvikaLanguageScope(
-        language: _selectedLanguage,
-        child: child ?? const SizedBox.shrink(),
+      builder: (context, child) => Directionality(
+        textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        child: OrvikaLanguageScope(
+          language: _selectedLanguage,
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
