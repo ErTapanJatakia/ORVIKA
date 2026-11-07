@@ -37,8 +37,12 @@ class UrlAnalyzer {
 
     final findings = <LinkFinding>[];
     final host = uri.host.toLowerCase();
+    // Dart's Uri parser canonicalises internationalised hostnames to ASCII
+    // (Punycode), so inspect the original authority to retain Unicode evidence.
+    final rawAuthority = candidate.split('://').last.split(RegExp(r'[/?:#]')).first;
+    final rawHost = rawAuthority.substring(rawAuthority.lastIndexOf('@') + 1);
 
-    if (RegExp(r'[^\x00-\x7F]').hasMatch(host)) {
+    if (RegExp(r'[^\x00-\x7F]').hasMatch(rawHost)) {
       findings.add(const LinkFinding(
         title: 'Unicode hostname',
         detail: 'The hostname contains non-ASCII characters. Check the internationalised domain carefully for visually similar characters and verify its exact spelling.',
