@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/orvika_feature_app_bar.dart';
+
 import '../../link_check/domain/url_analyzer.dart';
 import '../domain/message_analyzer.dart';
 
@@ -44,8 +46,8 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
     final scheme = Theme.of(context).colorScheme;
     final result = _result;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Message Check'),
+      appBar: const OrvikaFeatureAppBar(
+        title: 'Message Check',
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(

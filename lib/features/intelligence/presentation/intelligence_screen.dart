@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/orvika_feature_app_bar.dart';
+
 import '../domain/intelligence_library.dart';
 
 class IntelligenceScreen extends StatefulWidget {
@@ -39,7 +41,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
     final scheme = Theme.of(context).colorScheme;
     final entries = _library.search(query: _controller.text, category: _category);
     return Scaffold(
-      appBar: AppBar(title: const Text('Intelligence')),
+      appBar: const OrvikaFeatureAppBar(title: 'Intelligence'),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),

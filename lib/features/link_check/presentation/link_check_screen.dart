@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/orvika_feature_app_bar.dart';
+
 import '../domain/url_analyzer.dart';
 
 class LinkCheckScreen extends StatefulWidget {
@@ -45,8 +47,8 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Link Check'),
+      appBar: const OrvikaFeatureAppBar(
+        title: 'Link Check',
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(

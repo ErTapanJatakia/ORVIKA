@@ -124,6 +124,41 @@ void main() {
     expect(find.textContaining('will not initiate or approve a payment'), findsOneWidget);
   });
 
+  testWidgets('feature navigation preserves dashboard back-stack behaviour', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Link Check'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Link Check'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Inspect before you connect.'), findsOneWidget);
+    expect(find.text('Link Check'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    // The dashboard preserves its scroll offset. Verify the visible module
+    // card rather than a heading that is above the viewport and lazily unbuilt.
+    expect(find.text('Link Check'), findsOneWidget);
+    expect(find.text('Inspect before you connect.'), findsNothing);
+
+    await tester.ensureVisible(find.text('QR Check'));
+    await tester.tap(find.text('QR Check'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Look before you scan.'), findsOneWidget);
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    expect(find.text('QR Check'), findsOneWidget);
+    expect(find.text('Look before you scan.'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Intelligence opens the offline reference and explains indicators', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
@@ -430,7 +465,7 @@ void main() {
 
     // Accessibility settings live on a separate route. Return to the dashboard
     // before asserting that the app-wide MediaQuery and theme are applied there.
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     expect(find.text('Your safety toolkit'), findsOneWidget);
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
