@@ -232,7 +232,7 @@ class OrvikaLanguage {
     for (final language in [...values, ...indiaValues]) {
       byCode.putIfAbsent(language.code, () => language);
     }
-    final result = byCode.values.toList(growable: false);
+    final result = byCode.values.toList(growable: true);
     return result..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   }
 
