@@ -58,6 +58,16 @@ void main() {
           reason: 'URL input should remain available at width $width');
       expect(find.text('Analyse address'), findsOneWidget,
           reason: 'analysis action should remain available at width $width');
+      expect(
+        tester.getSize(find.byType(ListView)).width,
+        lessThanOrEqualTo(760),
+        reason: 'content width should remain readable at width $width',
+      );
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).maxLength,
+        2048,
+        reason: 'the input should enforce the analyzer length limit',
+      );
       expect(tester.takeException(), isNull,
           reason: 'Link Check layout overflow at width $width');
 
@@ -70,5 +80,39 @@ void main() {
       expect(tester.takeException(), isNull,
           reason: 'Link Check result overflow at width $width');
     }
+  });
+
+  testWidgets('Link Check remains usable at 200 percent text scaling in RTL',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 900);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: const TextScaler.linear(2),
+            ),
+            child: const Directionality(
+              textDirection: TextDirection.rtl,
+              child: LinkCheckScreen(),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('Analyse address'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'https://example.com');
+    await tester.tap(find.text('Analyse address'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Analysis findings'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
