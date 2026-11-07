@@ -125,8 +125,11 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
                 Text(
                   'Take control of your privacy.',
@@ -242,7 +245,9 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                     height: 1.45,
                   ),
                 ),
-              ],
+                  ],
+                ),
+              ),
             ),
     );
   }
