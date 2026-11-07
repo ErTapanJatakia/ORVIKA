@@ -13,6 +13,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Choose your language'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'English');
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('language-en')));
     await tester.pumpAndSettle();
 
@@ -223,7 +225,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('English').first);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Русский'));
+    await tester.enterText(find.byType(TextField), 'Russian');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('language-ru')));
     await tester.pumpAndSettle();
 
     final preferences = await SharedPreferences.getInstance();
