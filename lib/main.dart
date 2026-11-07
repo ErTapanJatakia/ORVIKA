@@ -92,6 +92,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
   bool _hasSelectedLanguage = false;
   bool _isLoadingPreferences = true;
   bool _hasCompletedOnboarding = false;
+  double _textScale = 1.0;
+  bool _boldText = false;
+  bool _reduceMotion = false;
 
   @override
   void initState() {
@@ -106,6 +109,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
       final savedLanguage = preferences.getString('appearance.language');
       final savedCatalogue = preferences.getString('appearance.languageCatalogue') ?? 'russia';
       final completed = preferences.getBool('onboarding.completed.v1') ?? false;
+      final textScale = preferences.getDouble('accessibility.textScale') ?? 1.0;
+      final boldText = preferences.getBool('accessibility.boldText') ?? false;
+      final reduceMotion = preferences.getBool('accessibility.reduceMotion') ?? false;
       if (!mounted) return;
       setState(() {
         _selectedCatalogue = savedCatalogue;
@@ -120,6 +126,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
           }
         }
         _hasCompletedOnboarding = completed;
+        _textScale = textScale.clamp(0.85, 2.0);
+        _boldText = boldText;
+        _reduceMotion = reduceMotion;
         _isLoadingPreferences = false;
       });
     } catch (_) {
@@ -181,6 +190,25 @@ class _OrvikaAppState extends State<OrvikaApp> {
     }
   }
 
+  Future<void> _setTextScale(double value) async {
+    final safeValue = value.clamp(0.85, 2.0);
+    setState(() => _textScale = safeValue);
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setDouble('accessibility.textScale', safeValue);
+  }
+
+  Future<void> _setBoldText(bool value) async {
+    setState(() => _boldText = value);
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool('accessibility.boldText', value);
+  }
+
+  Future<void> _setReduceMotion(bool value) async {
+    setState(() => _reduceMotion = value);
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool('accessibility.reduceMotion', value);
+  }
+
   Future<void> _selectTheme(OrvikaTheme theme) async {
     setState(() => _selectedTheme = theme);
     final preferences = await SharedPreferences.getInstance();
@@ -224,20 +252,22 @@ class _OrvikaAppState extends State<OrvikaApp> {
       locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
       supportedLocales: const [Locale('en'), Locale('ru')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, child) => Directionality(
-        textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
-            ? TextDirection.rtl
-            : TextDirection.ltr,
-        child: OrvikaLanguageScope(
-          language: _selectedLanguage,
-          child: child ?? const SizedBox.shrink(),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(_textScale),
+          disableAnimations: _reduceMotion || MediaQuery.of(context).disableAnimations,
+        ),
+        child: Directionality(
+          textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
+              ? TextDirection.rtl : TextDirection.ltr,
+          child: OrvikaLanguageScope(language: _selectedLanguage, child: child ?? const SizedBox.shrink()),
         ),
       ),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Inter',
-        textTheme: brandTextTheme,
+        textTheme: brandTextTheme.apply(fontWeightDelta: _boldText ? 1 : 0),
         colorScheme: scheme,
         scaffoldBackgroundColor: palette.background,
         canvasColor: palette.surface,
@@ -279,6 +309,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
                   selectedCatalogue: _selectedCatalogue,
                   onLanguageChanged: _selectLanguage,
                   onCatalogueChanged: _selectCatalogue,
+                  textScale: _textScale, onTextScaleChanged: _setTextScale,
+                  boldText: _boldText, onBoldTextChanged: _setBoldText,
+                  reduceMotion: _reduceMotion, onReduceMotionChanged: _setReduceMotion,
                 )
               : OrvikaOnboardingScreen(onCompleted: _completeOnboarding, language: _selectedLanguage, selectedCatalogue: _selectedCatalogue, onCatalogueChanged: _selectCatalogue),
     );
@@ -822,9 +855,18 @@ class SentinelDashboard extends StatelessWidget {
     required this.selectedCatalogue,
     required this.onLanguageChanged,
     required this.onCatalogueChanged,
+    required this.textScale, required this.onTextScaleChanged,
+    required this.boldText, required this.onBoldTextChanged,
+    required this.reduceMotion, required this.onReduceMotionChanged,
     super.key,
   });
 
+  final double textScale;
+  final ValueChanged<double> onTextScaleChanged;
+  final bool boldText;
+  final ValueChanged<bool> onBoldTextChanged;
+  final bool reduceMotion;
+  final ValueChanged<bool> onReduceMotionChanged;
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
   final OrvikaLanguage selectedLanguage;
@@ -878,6 +920,9 @@ class SentinelDashboard extends StatelessWidget {
                           selectedCatalogue: selectedCatalogue,
                           onLanguageChanged: onLanguageChanged,
                           onCatalogueChanged: onCatalogueChanged,
+                          textScale: textScale, onTextScaleChanged: onTextScaleChanged,
+                          boldText: boldText, onBoldTextChanged: onBoldTextChanged,
+                          reduceMotion: reduceMotion, onReduceMotionChanged: onReduceMotionChanged,
                         ),
                         const SizedBox(height: 28),
                         _HeroPanel(palette: palette, language: selectedLanguage),
@@ -980,6 +1025,9 @@ class AppearanceSettingsScreen extends StatefulWidget {
     required this.selectedCatalogue,
     required this.onLanguageChanged,
     required this.onCatalogueChanged,
+    required this.textScale, required this.onTextScaleChanged,
+    required this.boldText, required this.onBoldTextChanged,
+    required this.reduceMotion, required this.onReduceMotionChanged,
     super.key,
   });
 
@@ -989,6 +1037,12 @@ class AppearanceSettingsScreen extends StatefulWidget {
   final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
   final ValueChanged<String> onCatalogueChanged;
+  final double textScale;
+  final ValueChanged<double> onTextScaleChanged;
+  final bool boldText;
+  final ValueChanged<bool> onBoldTextChanged;
+  final bool reduceMotion;
+  final ValueChanged<bool> onReduceMotionChanged;
 
   @override
   State<AppearanceSettingsScreen> createState() => _AppearanceSettingsScreenState();
@@ -998,6 +1052,9 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
   late OrvikaTheme _selectedTheme = widget.selectedTheme;
   late OrvikaLanguage _selectedLanguage = widget.selectedLanguage;
   late String _selectedCatalogue = widget.selectedCatalogue;
+  late double _textScale = widget.textScale;
+  late bool _boldText = widget.boldText;
+  late bool _reduceMotion = widget.reduceMotion;
 
   @override
   Widget build(BuildContext context) {
@@ -1081,6 +1138,37 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             ),
           ),
           const SizedBox(height: 12),
+          const Divider(height: 28),
+          Text('Accessibility', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 6),
+          Text('These preferences are stored on this device. Operating-system accessibility settings remain respected.',
+            style: TextStyle(color: scheme.onSurfaceVariant)),
+          const SizedBox(height: 12),
+          Text('Text size', style: Theme.of(context).textTheme.titleMedium),
+          Semantics(
+            label: 'Text size', value: '${(_textScale * 100).round()} percent',
+            child: Slider(
+              min: 0.85, max: 2.0, divisions: 23, value: _textScale,
+              label: '${(_textScale * 100).round()}%',
+              onChanged: (value) { setState(() => _textScale = value); widget.onTextScaleChanged(value); },
+            ),
+          ),
+          Text('${(_textScale * 100).round()}% · 85%–200%',
+            style: TextStyle(color: scheme.onSurfaceVariant)),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Bold text'),
+            subtitle: const Text('Increase text weight throughout the app.'),
+            value: _boldText,
+            onChanged: (value) { setState(() => _boldText = value); widget.onBoldTextChanged(value); },
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Reduce motion'),
+            subtitle: const Text('Request reduced or disabled interface animations.'),
+            value: _reduceMotion,
+            onChanged: (value) { setState(() => _reduceMotion = value); widget.onReduceMotionChanged(value); },
+          ),
           Text(
             OrvikaLocalizations(_selectedLanguage).text('settings.accessibility', 'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.'),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
@@ -1092,7 +1180,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged, required this.selectedLanguage, required this.selectedCatalogue, required this.onLanguageChanged, required this.onCatalogueChanged});
+  const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged, required this.selectedLanguage, required this.selectedCatalogue, required this.onLanguageChanged, required this.onCatalogueChanged, required this.textScale, required this.onTextScaleChanged, required this.boldText, required this.onBoldTextChanged, required this.reduceMotion, required this.onReduceMotionChanged});
   final OrvikaPalette palette;
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
@@ -1100,6 +1188,12 @@ class _TopBar extends StatelessWidget {
   final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
   final ValueChanged<String> onCatalogueChanged;
+  final double textScale;
+  final ValueChanged<double> onTextScaleChanged;
+  final bool boldText;
+  final ValueChanged<bool> onBoldTextChanged;
+  final bool reduceMotion;
+  final ValueChanged<bool> onReduceMotionChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1147,6 +1241,9 @@ class _TopBar extends StatelessWidget {
                 selectedCatalogue: selectedCatalogue,
                 onLanguageChanged: onLanguageChanged,
                 onCatalogueChanged: onCatalogueChanged,
+                textScale: textScale, onTextScaleChanged: onTextScaleChanged,
+                boldText: boldText, onBoldTextChanged: onBoldTextChanged,
+                reduceMotion: reduceMotion, onReduceMotionChanged: onReduceMotionChanged,
               ),
             ),
           ),
