@@ -1309,9 +1309,22 @@ class _TopBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('ORVIKA', style: TextStyle(
-                color: scheme.onSurface, fontSize: 19, fontWeight: FontWeight.w900,
-                letterSpacing: 2.8, height: 1.1)),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  'ORVIKA',
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: scheme.onSurface,
+                    fontSize: 19,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.8,
+                    height: 1.1,
+                  ),
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 OrvikaLocalizations(selectedLanguage).text(
