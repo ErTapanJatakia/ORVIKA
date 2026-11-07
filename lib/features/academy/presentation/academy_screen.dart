@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../core/widgets/orvika_feature_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/academy_curriculum.dart';
@@ -83,7 +85,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
     const lessons = AcademyCurriculum.lessons;
     final progress = _completed.length;
     return Scaffold(
-      appBar: AppBar(title: const Text('Academy')),
+      appBar: const OrvikaFeatureAppBar(title: 'Academy'),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
