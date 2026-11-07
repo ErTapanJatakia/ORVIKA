@@ -124,6 +124,36 @@ void main() {
     expect(find.textContaining('will not initiate or approve a payment'), findsOneWidget);
   });
 
+  testWidgets('feature navigation preserves dashboard back-stack behaviour', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Link Check'));
+    await tester.tap(find.text('Link Check'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Inspect before you connect.'), findsOneWidget);
+    expect(find.text('Link Check'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('QR Check'));
+    await tester.tap(find.text('QR Check'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Look before you scan.'), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Intelligence opens the offline reference and explains indicators', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
