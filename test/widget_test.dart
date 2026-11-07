@@ -449,9 +449,15 @@ void main() {
       'appearance.language': 'en',
     });
     tester.view.devicePixelRatio = 1;
-    for (final width in [280.0, 320.0, 360.0, 375.0, 600.0, 760.0, 1024.0, 1920.0]) {
-      tester.view.physicalSize = Size(width, 900);
-      await tester.pumpWidget(OrvikaApp(key: ValueKey('responsive-$width')));
+    // Portrait logical-width profiles covering the reported Galaxy, iPhone and
+    // Pixel families, plus narrow browser viewports. Browser-engine/device
+    // verification is still required outside this widget test.
+    for (final width in [
+      280.0, 320.0, 360.0, 375.0, 390.0, 393.0, 402.0, 412.0, 414.0, 430.0,
+      600.0, 760.0, 1024.0, 1920.0,
+    ]) {
+      tester.view.physicalSize = Size(width, 850);
+      await tester.pumpWidget(OrvikaApp(key: ValueKey('responsive-portrait-$width')));
       await tester.pumpAndSettle();
 
       expect(find.text('ORVIKA'), findsOneWidget, reason: 'width: $width');
