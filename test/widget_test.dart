@@ -548,6 +548,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -1100));
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Link Check'));
     await tester.pumpAndSettle();
     expect(find.text('Link Check'), findsOneWidget);
