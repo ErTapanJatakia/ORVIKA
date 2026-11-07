@@ -257,7 +257,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
                   onLanguageChanged: _selectLanguage,
                   onCatalogueChanged: _selectCatalogue,
                 )
-              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding, language: _selectedLanguage),
+              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding, language: _selectedLanguage, selectedCatalogue: _selectedCatalogue, onCatalogueChanged: _selectCatalogue),
     );
   }
 }
@@ -515,6 +515,8 @@ class OrvikaSplashScreen extends StatelessWidget {
                   MaterialPageRoute<void>(
                     builder: (_) => LanguageSelectionScreen(
                       selectedLanguage: selectedLanguage,
+                      selectedCatalogue: widget.selectedCatalogue,
+                      onCatalogueChanged: widget.onCatalogueChanged,
                       onLanguageChanged: onLanguageChanged,
                       showContinueButton: false,
                     ),
@@ -532,10 +534,12 @@ class OrvikaSplashScreen extends StatelessWidget {
 }
 
 class OrvikaOnboardingScreen extends StatefulWidget {
-  const OrvikaOnboardingScreen({required this.onCompleted, required this.language, super.key});
+  const OrvikaOnboardingScreen({required this.onCompleted, required this.language, required this.selectedCatalogue, required this.onCatalogueChanged, super.key});
 
   final VoidCallback onCompleted;
   final OrvikaLanguage language;
+  final String selectedCatalogue;
+  final ValueChanged<String> onCatalogueChanged;
 
   @override
   State<OrvikaOnboardingScreen> createState() => _OrvikaOnboardingScreenState();
