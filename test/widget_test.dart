@@ -454,6 +454,7 @@ void main() {
     // verification is still required outside this widget test.
     for (final width in [
       280.0, 320.0, 360.0, 375.0, 390.0, 393.0, 402.0, 412.0, 414.0, 430.0,
+      473.0, // Exact screenshot viewport width (CSS/logical px must be confirmed in browser).
       600.0, 760.0, 1024.0, 1920.0,
     ]) {
       tester.view.physicalSize = Size(width, 850);
@@ -464,8 +465,16 @@ void main() {
       final wordmark = tester.widget<Text>(find.text('ORVIKA'));
       expect(wordmark.maxLines, 1, reason: 'wordmark must remain on one line at width: $width');
       expect(wordmark.softWrap, isFalse, reason: 'wordmark must not wrap at width: $width');
-      expect(find.ancestor(of: find.text('ORVIKA'), matching: find.byType(FittedBox)), findsOneWidget,
+      final wordmarkFit = find.ancestor(
+        of: find.text('ORVIKA'),
+        matching: find.byType(FittedBox),
+      );
+      expect(wordmarkFit, findsOneWidget,
           reason: 'wordmark must scale down rather than clip at width: $width');
+      expect(tester.getSize(wordmarkFit).width, greaterThanOrEqualTo(100),
+          reason: 'wordmark must have usable horizontal layout space at width: $width');
+      expect(find.text('PERSONAL CYBER SAFETY INTELLIGENCE'), findsOneWidget,
+          reason: 'brand descriptor must remain present at width: $width');
       expect(find.byTooltip('Change language'), findsOneWidget, reason: 'width: $width');
       expect(tester.takeException(), isNull, reason: 'layout overflow at width: $width');
     }
