@@ -294,6 +294,17 @@ void main() {
     expect(OrvikaLanguage.fromCode('unknown').code, 'en');
   });
 
+  testWidgets('language picker inherits the persisted Daylight theme', (tester) async {
+    SharedPreferences.setMockInitialValues({'appearance.theme': 'daylight'});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your language'), findsOneWidget);
+    final context = tester.element(find.text('Choose your language'));
+    expect(Theme.of(context).scaffoldBackgroundColor, OrvikaPalette.daylight.background);
+    expect(Theme.of(context).brightness, Brightness.light);
+  });
+
   testWidgets('first launch language picker can search and select a regional language', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
