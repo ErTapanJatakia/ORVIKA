@@ -1047,6 +1047,8 @@ class SentinelDashboard extends StatelessWidget {
                                 .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
+                              primary: false,
+                              clipBehavior: Clip.none,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: modules.length,
                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -1092,9 +1094,14 @@ class SentinelDashboard extends StatelessWidget {
                           child: Text(
                             OrvikaLocalizations(selectedLanguage).text('footer.motto', 'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'),
                             textAlign: TextAlign.center,
+                            softWrap: true,
                             style: TextStyle(
                               color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
-                              fontSize: 10, letterSpacing: 1.2, fontWeight: FontWeight.w700),
+                              fontSize: 10,
+                              letterSpacing: MediaQuery.textScalerOf(context).scale(10) > 12
+                                  ? 0.55
+                                  : 1.2,
+                              fontWeight: FontWeight.w700),
                           ),
                         ),
                       ]),
