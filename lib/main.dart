@@ -364,7 +364,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                 subtitle: Text(language.nativeName),
                                 trailing: language.hasReviewedTranslation
                                   ? const Icon(Icons.verified_outlined, size: 17)
-                                  : null,
+                                  : language.hasDraftTranslation
+                                      ? const Tooltip(message: 'Draft translation — native-speaker review required', child: Icon(Icons.edit_note_rounded, size: 19))
+                                      : null,
                                 onTap: () {
                                   setState(() => _selected = language);
                                     widget.onLanguageChanged(language);
@@ -378,8 +380,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 12),
                   Text(
                     isRussian
-                      ? 'Перевод интерфейса проверен для русского и английского. Для остальных языков пока используется английский текст.'
-                      : 'Reviewed interface translations are currently available in English and Russian. Other catalogue languages use the English fallback while translations are prepared.',
+                      ? 'Перевод интерфейса проверен для русского и английского. Для татарского подготовлен черновик, требующий проверки носителем языка; непереведённые разделы остаются на английском.'
+                      : 'Reviewed interface translations are available in English and Russian. Tatar has an initial draft that needs native-speaker review; untranslated areas still use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
                   if (widget.showContinueButton) ...[
