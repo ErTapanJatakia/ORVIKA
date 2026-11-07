@@ -91,17 +91,19 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Builder(
-          builder: (context) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
+        home: const LinkCheckScreen(),
+        builder: (context, child) {
+          final mediaQuery = MediaQuery.of(context);
+          return MediaQuery(
+            data: mediaQuery.copyWith(
               textScaler: const TextScaler.linear(2),
             ),
-            child: const Directionality(
+            child: Directionality(
               textDirection: TextDirection.rtl,
-              child: LinkCheckScreen(),
+              child: child!,
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
     await tester.pumpAndSettle();
