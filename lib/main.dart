@@ -1042,8 +1042,8 @@ class SentinelDashboard extends StatelessWidget {
                                         ? 2
                                         : 1;
                             final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
-                            final cardExtent = (190 + ((textScale - 1).clamp(0, 1.2) * 72))
-                                .clamp(190, 276)
+                            final cardExtent = (190 + ((textScale - 1).clamp(0, 1.5) * 160))
+                                .clamp(190, 430)
                                 .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
@@ -1671,8 +1671,7 @@ class _ModuleCard extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(
                     module.description,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
                     style: TextStyle(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
