@@ -10,6 +10,7 @@ The catalogue contains 100 language entries using language identifiers and nativ
 
 - English: reviewed UI fallback.
 - Russian: reviewed initial UI pack for onboarding, dashboard module labels/descriptions and language settings.
+- Tatar (`tt`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - Other catalogue entries: selectable and persisted, but currently display the English fallback. A language being listed does not imply that its complete UI translation is already available.
 
 No machine-translation API, remote service, telemetry, or backend is used. New translation packs should be reviewed by fluent speakers and added as offline resources. Avoid auto-translating security, incident-response, legal, or privacy guidance without human review.
@@ -31,6 +32,7 @@ Accordingly, this is a curated 100-language product catalogue, not a claim that 
 
 - Store language choice on-device only.
 - Keep the picker searchable by English name, native name and language code.
-- Use English as the explicit fallback for languages without a reviewed translation pack.
+- Use English as the explicit fallback for keys without a translation; keep draft and reviewed coverage visibly distinct.
+- Never mark a draft translation as reviewed without qualified native-speaker validation.
 - Do not represent an untranslated language as fully supported.
 - Keep language codes stable; changing a code after a user has selected it requires a migration.
