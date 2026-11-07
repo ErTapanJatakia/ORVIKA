@@ -1246,23 +1246,41 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;    return Row(
+    final scheme = Theme.of(context).colorScheme;
+    final brand = Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         OrvikaOwlMark(size: 48, palette: palette),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text('ORVIKA', style: TextStyle(
                 color: scheme.onSurface, fontSize: 19, fontWeight: FontWeight.w900,
                 letterSpacing: 2.8, height: 1.1)),
               const SizedBox(height: 4),
-              Text(OrvikaLocalizations(selectedLanguage).text('brand.descriptor', 'PERSONAL CYBER SAFETY INTELLIGENCE'), style: TextStyle(
-                color: scheme.onSurfaceVariant, fontSize: 8, letterSpacing: 1.05, fontWeight: FontWeight.w700)),
+              Text(
+                OrvikaLocalizations(selectedLanguage).text(
+                  'brand.descriptor', 'PERSONAL CYBER SAFETY INTELLIGENCE'),
+                softWrap: true,
+                style: TextStyle(
+                  color: scheme.onSurfaceVariant, fontSize: 8,
+                  letterSpacing: 1.05, fontWeight: FontWeight.w700),
+              ),
             ],
           ),
         ),
+      ],
+    );
+
+    final actions = Wrap(
+      alignment: WrapAlignment.end,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 4,
+      runSpacing: 4,
+      children: [
         IconButton(
           tooltip: OrvikaLocalizations(selectedLanguage).text('nav.changeLanguage', 'Change language'),
           onPressed: () => Navigator.of(context).push(
@@ -1335,6 +1353,31 @@ class _TopBar extends StatelessWidget {
           ),
         ),
       ],
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 760) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              brand,
+              const SizedBox(height: 10),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: actions,
+              ),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: brand),
+            const SizedBox(width: 18),
+            actions,
+          ],
+        );
+      },
     );
   }
 }
