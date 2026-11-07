@@ -3,14 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/localization/orvika_language.dart';
 import 'core/localization/orvika_localizations.dart';
+import 'core/navigation/orvika_navigation.dart';
 
-import 'features/academy/presentation/academy_screen.dart';
-import 'features/link_check/presentation/link_check_screen.dart';
-import 'features/message_check/presentation/message_check_screen.dart';
-import 'features/privacy/presentation/privacy_screen.dart';
-import 'features/response/presentation/response_screen.dart';
-import 'features/intelligence/presentation/intelligence_screen.dart';
-import 'features/qr_check/presentation/qr_check_screen.dart';
 
 void main() => runApp(const OrvikaApp());
 
@@ -1059,29 +1053,15 @@ class SentinelDashboard extends StatelessWidget {
                               ),
                               itemBuilder: (context, index) {
                                 final module = modules[index];
-                                VoidCallback? onTap;
-                                if (module.title == 'Link Check') {
-                                  onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(builder: (_) => const LinkCheckScreen()));
-                                } else if (module.title == 'QR Check') {
-                                  onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(builder: (_) => const QrCheckScreen()));
-                                } else if (module.title == 'Message Check') {
-                                  onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(builder: (_) => const MessageCheckScreen()));
-                                } else if (module.title == 'Intelligence') {
-                                  onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(builder: (_) => const IntelligenceScreen()));
-                                } else if (module.title == 'Privacy') {
-                                  onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(builder: (_) => const PrivacyScreen()));
-                                } else if (module.title == 'Academy') {
-                                  onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(builder: (_) => const AcademyScreen()));
-                                } else if (module.title == 'Response') {
-                                  onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(builder: (_) => const ResponseScreen()));
-                                }
+                                final destination =
+                                    OrvikaNavigation.screenForModule(module.title);
+                                final VoidCallback? onTap = destination == null
+                                    ? null
+                                    : () => Navigator.of(context).push(
+                                          MaterialPageRoute<void>(
+                                            builder: (_) => destination,
+                                          ),
+                                        );
                                 return _ModuleCard(module: _localizedModule(module, selectedLanguage), palette: palette, onTap: onTap);
                               },
                             );
