@@ -239,6 +239,8 @@ void main() {
 
     await tester.tap(find.byTooltip('Appearance and accessibility'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('English').first);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Русский'));
     await tester.pumpAndSettle();
 
