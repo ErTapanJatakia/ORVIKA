@@ -208,6 +208,15 @@ void main() {
 
     expect(find.text('Ваш набор цифровой безопасности'), findsOneWidget);
 
+    // Verify the header controls while they are still in the viewport.
+    await tester.tap(find.byTooltip('Внешний вид и доступность'));
+    await tester.pumpAndSettle();
+    expect(find.text('Язык'), findsOneWidget);
+    expect(find.text('Русский'), findsOneWidget);
+    expect(find.text('Внешний вид и доступность'), findsOneWidget);
+    await tester.tapAt(const Offset(12, 12));
+    await tester.pumpAndSettle();
+
     // The dashboard grid is below the hero panel and lazily builds its cards.
     // Scroll the outer dashboard until the grid is mounted, then reveal each
     // translated card before asserting its label.
@@ -219,12 +228,6 @@ void main() {
     await tester.ensureVisible(find.text('Проверка QR'));
     await tester.pumpAndSettle();
     expect(find.text('Проверка QR'), findsOneWidget);
-
-    await tester.tap(find.byTooltip('Внешний вид и доступность'));
-    await tester.pumpAndSettle();
-    expect(find.text('Язык'), findsOneWidget);
-    expect(find.text('Русский'), findsOneWidget);
-    expect(find.text('Внешний вид и доступность'), findsOneWidget);
   });
 
   testWidgets('language selector saves Russian preference from appearance settings', (tester) async {
