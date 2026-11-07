@@ -114,116 +114,6 @@ class OrvikaLocalizations {
     'footer.motto': 'जोखिम देखें • संकेत जाँचें • नियंत्रण अपने हाथ में रखें',
   };
 
-  // Draft Tatar UI strings. They are deliberately not classified as reviewed:
-  // security and privacy terminology requires native-speaker validation.
-  static const Map<String, String> _tatarDraft = {
-    'skip': 'Уздырып җибәрү',
-    'continue': 'Дәвам итү',
-    'enter': 'ORVIKA-га керү',
-    'onboarding.title.1': 'Ышанганчы тикшерегез.',
-    'onboarding.description.1': 'Сылтамаларны һәм QR-код эчтәлеген ачканчы, мәгълүмат биргәнче яки гамәл кылганчы тикшерегез.',
-    'onboarding.detail.1': 'Башта билгеләрне тикшерегез. Карарны сез кабул итәсез.',
-    'onboarding.title.2': 'Хәвефләрне аңлагыз.',
-    'onboarding.description.2': 'ORVIKA нәтиҗәнең нинди билгеләргә нигезләнүен аңлата, серле бәя белән генә чикләнми.',
-    'onboarding.detail.2': 'Шикләнү — тикшерү өчен сәбәп, явыз ниятнең дәлиле түгел.',
-    'onboarding.title.3': 'Мәгълүматларыгыз үзегездә кала.',
-    'onboarding.description.3': 'Кушымта хосусыйлыкны һәм офлайн эшләүне өстен куеп эшләнә. Башлау өчен хисап язмасы кирәкми.',
-    'onboarding.detail.3': 'Бу прототип киләчәктәге барлык функцияләрнең дә офлайн эшләвен гарантияләми.',
-    'dashboard.title': 'Сезнең санлы иминлек кораллары',
-    'dashboard.subtitle': 'Сигез мөмкинлек. Санлы хәвефләрне яхшырак аңлау.',
-    'settings.title': 'Күренеш һәм мөмкинлекләр',
-    'settings.language': 'Тел',
-    'settings.language.help': 'Кушымта телен сайлагыз. Бу көйләү бары тик җайланмагызда саклана.',
-    'settings.appearance': 'Күренешне сайлагыз',
-    'settings.saved': 'Сайлау җайланмагызда саклана. ORVIKA күренеш көйләүләрен серверга җибәрми.',
-    'module.sentinel': 'Гомуми күзәтү',
-    'module.sentinel.description': 'Иминлекнең гомуми торышы һәм соңгы тикшерүләр.',
-    'module.link': 'Сылтаманы тикшерү',
-    'module.link.description': 'Күчкәнче сайт адресын тикшерегез.',
-    'module.qr': 'QR-кодны тикшерү',
-    'module.qr.description': 'Гамәл кылганчы QR-код эчтәлеген тикшерегез.',
-    'module.message': 'Хәбәрләрне тикшерү',
-    'module.message.description': 'Шикле SMS, электрон хатлар һәм хәбәрләрне тикшерегез.',
-    'module.intelligence': 'Аналитика',
-    'module.intelligence.description': 'Санлы хәвеф билгеләрен һәм куркынычсыз гамәлләрне өйрәнегез.',
-    'module.privacy': 'Хосусыйлык',
-    'module.privacy.description': 'Үз-үзеңне тикшерү ярдәмендә хосусыйлык көйләүләрен карагыз.',
-    'module.academy': 'Өйрәнү',
-    'module.academy.description': 'Кыска дәресләрдә кибериминлек нигезләрен өйрәнегез.',
-    'module.response': 'Җавап чаралары',
-    'module.response.description': 'Проблема килеп чыкса, нәрсә эшләргә икәнен белегез.',
-    'brand.descriptor': 'Шәхси кибериминлек мәгълүматы',
-    'hero.eyebrow': 'ХӘВЕФНЕ КҮРЕГЕЗ. БИЛГЕНЕ ТИКШЕРЕГЕЗ.',
-    'hero.title': 'Ышанганчы тикшерегез.',
-    'hero.description': 'Санлы билгеләрне тикшерү, хәвефләрне аңлау һәм нигезле карарлар кабул итү өчен аңлаешлы ысул.',
-    'hero.onDevice': 'ҖАЙЛАНМАДА ТИКШЕРҮ',
-    'hero.explainable': 'АҢЛАТЫЛГАН НӘТИҖӘЛӘР',
-    'dashboard.privacyFirst': 'ХОСУСЫЙЛЫК БЕРЕНЧЕ УРЫНДА',
-    'nav.changeLanguage': 'Телне үзгәртү',
-    'nav.appearance': 'Күренеш һәм мөмкинлекләр',
-    'nav.chooseTheme': 'Бизәлеш темасын сайлау',
-    'module.status.overview': 'ГОМУМИ КҮЗӘТҮ',
-    'module.status.available': 'МӨМКИН',
-    'trust.note': 'ORVIKA — башлангыч прототип. Нәтиҗәләр тикшерелә торган билгеләргә нигезләнә: алгоритм шикләнүе кеше, хәбәр яки адресның зарарлы булуына дәлил түгел.',
-    'footer.motto': 'ХӘВЕФНЕ КҮРЕГЕЗ • БИЛГЕНЕ ТИКШЕРЕГЕЗ • КОНТРОЛЬНЕ САКЛАГЫЗ',
-  };
-
-
-  // Draft Bashkir UI strings. These are not reviewed or certified:
-  // security, privacy and incident-response terms require native-speaker review.
-  static const Map<String, String> _bashkirDraft = {
-    'skip': 'Үткәреп ебәреү',
-    'continue': 'Дауам итергә',
-    'enter': 'ORVIKA-ға инергә',
-    'onboarding.title.1': 'Ышаныр алдынан тикшерегеҙ.',
-    'onboarding.description.1': 'Һылтанмаларҙы һәм QR-код эсендәге мәғлүмәтте асырҙан, мәғлүмәт бирерҙән йәки ғәмәл ҡылырҙан алда тикшерегеҙ.',
-    'onboarding.detail.1': 'Башта билдәләрҙе тикшерегеҙ. Ҡарарҙы үҙегеҙ ҡабул итәһегеҙ.',
-    'onboarding.title.2': 'Хәүефтәрҙе аңлағыҙ.',
-    'onboarding.description.2': 'ORVIKA һөҙөмтәнең ниндәй билдәләргә нигеҙләнеүен аңлата, уны серле баһа менән генә сикләмәй.',
-    'onboarding.detail.2': 'Шикләнеү — тикшереү өсөн сәбәп, яуыз ниәттең дәлиле түгел.',
-    'onboarding.title.3': 'Мәғлүмәттәрегеҙ үҙегеҙҙә ҡала.',
-    'onboarding.description.3': 'Ҡушымта шәхси мәғлүмәтте һаҡлауҙы һәм офлайн эшләүҙе өҫтөн ҡуя. Башлау өсөн иҫәп яҙмаһы кәрәкмәй.',
-    'onboarding.detail.3': 'Был прототип киләсәктәге бөтә функцияларҙың да офлайн эшләүен гарантияламай.',
-    'dashboard.title': 'Һеҙҙең һанлы именлек ҡоралдары',
-    'dashboard.subtitle': 'Һигеҙ мөмкинлек. Һанлы хәүефтәрҙе яҡшыраҡ аңлау.',
-    'settings.title': 'Күренеш һәм мөмкинлектәр',
-    'settings.language': 'Тел',
-    'settings.language.help': 'Ҡушымта телен һайлағыҙ. Был көйләү тик ошо ҡоролмала һаҡлана.',
-    'settings.appearance': 'Күренеште һайлағыҙ',
-    'settings.saved': 'Һайлау ҡоролмағыҙҙа һаҡлана. ORVIKA күренеш көйләүҙәрен серверға ебәрмәй.',
-    'module.sentinel': 'Дөйөм күҙәтеү',
-    'module.sentinel.description': 'Именлектең дөйөм торошо һәм һуңғы тикшереүҙәр.',
-    'module.link': 'Һылтанманы тикшереү',
-    'module.link.description': 'Күсмәҫтән алда сайт адресын тикшерегеҙ.',
-    'module.qr': 'QR-кодты тикшереү',
-    'module.qr.description': 'Ғәмәл ҡылырҙан алда QR-код эсендәге мәғлүмәтте тикшерегеҙ.',
-    'module.message': 'Хәбәрҙәрҙе тикшереү',
-    'module.message.description': 'Шикле SMS, электрон хаттар һәм хәбәрҙәрҙе тикшерегеҙ.',
-    'module.intelligence': 'Аналитика',
-    'module.intelligence.description': 'Һанлы хәүеф билдәләрен һәм хәүефһеҙ ғәмәлдәрҙе өйрәнегеҙ.',
-    'module.privacy': 'Шәхси мәғлүмәтте һаҡлау',
-    'module.privacy.description': 'Үҙ-үҙеңде тикшереү ярҙамында шәхси мәғлүмәт көйләүҙәрен ҡарағыҙ.',
-    'module.academy': 'Өйрәнеү',
-    'module.academy.description': 'Ҡыҫҡа дәрестәрҙә киберименлек нигеҙҙәрен өйрәнегеҙ.',
-    'module.response': 'Яуап саралары',
-    'module.response.description': 'Проблема килеп сыҡһа, нимә эшләргә кәрәклеген белегеҙ.',
-    'brand.descriptor': 'Шәхси киберименлек мәғлүмәте',
-    'hero.eyebrow': 'ХӘҮЕФТЕ КҮРЕГЕҘ. БИЛДӘНЕ ТИКШЕРЕГЕҘ.',
-    'hero.title': 'Ышаныр алдынан тикшерегеҙ.',
-    'hero.description': 'Һанлы билдәләрҙе тикшереү, хәүефтәрҙе аңлау һәм нигеҙле ҡарарҙар ҡабул итеү өсөн аңлайышлы ысул.',
-    'hero.onDevice': 'ҠОРОЛМАЛА ТИКШЕРЕҮ',
-    'hero.explainable': 'АҢЛАТМАЛЫ ҺӨҘӨМТӘЛӘР',
-    'dashboard.privacyFirst': 'ШӘХСИ МӘҒЛҮМӘТТЕ ҺАҠЛАУ БЕРЕНСЕ УРЫНДА',
-    'nav.changeLanguage': 'Телде үҙгәртеү',
-    'nav.appearance': 'Күренеш һәм мөмкинлектәр',
-    'nav.chooseTheme': 'Биҙәлеш темаһын һайлау',
-    'module.status.overview': 'ДӨЙӨМ КҮҘӘТЕҮ',
-    'module.status.available': 'ҠУЛЛАНЫЛА',
-    'trust.note': 'ORVIKA — башланғыс прототип. Һөҙөмтәләр тикшерелә торған билдәләргә нигеҙләнә: алгоритм шикләнеүе кеше, хәбәр йәки адрес зарарлы тигән дәлил түгел.',
-    'footer.motto': 'ХӘҮЕФТЕ КҮРЕГЕҘ • БИЛДӘНЕ ТИКШЕРЕГЕҘ • КОНТРОЛДЕ ҺАҠЛАҒЫҘ',
-  };
-
-
   // Draft UI packs for the nine additional requested languages. These cover
   // shared onboarding, dashboard, navigation and appearance labels. They are
   // intentionally marked draft until reviewed by qualified native speakers.
@@ -572,15 +462,14 @@ class OrvikaLocalizations {
   /// Language packs currently containing authored ORVIKA strings.
   /// A picker entry alone is never evidence of translation coverage.
   static const Set<String> translatedLanguageCodes = {
-    'ru', 'hi', 'tt', 'ba', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
+    'ru', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
   };
 
   static const Set<String> rightToLeftLanguageCodes = {'ar', 'ur', 'he', 'fa', 'ps'};
   bool get usesRightToLeftLayout => rightToLeftLanguageCodes.contains(language.code);
 
   Map<String, String> get _translations => switch (language.code) {
-        'ru' => _russian, 'hi' => _hindiDraft, 'tt' => _tatarDraft,
-        'ba' => _bashkirDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
+        'ru' => _russian, 'hi' => _hindiDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
         'it' => _italianDraft, 'pa' => _punjabiDraft, 'ur' => _urduDraft,
         'ar' => _arabicDraft, 'mr' => _marathiDraft, 'gu' => _gujaratiDraft,
         'sa' => _sanskritDraft, _ => const <String, String>{},
