@@ -448,6 +448,11 @@ void main() {
     expect(preferences.getBool('accessibility.boldText'), isTrue);
     expect(preferences.getBool('accessibility.reduceMotion'), isTrue);
 
+    // Accessibility settings live on a separate route. Return to the dashboard
+    // before asserting that the app-wide MediaQuery and theme are applied there.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
     expect(MediaQuery.of(dashboardContext).textScaler.scale(10), 12.5);
     expect(MediaQuery.of(dashboardContext).disableAnimations, isTrue);
