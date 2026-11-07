@@ -16,6 +16,7 @@ class OrvikaLanguage {
   /// diaspora languages. English and Russian are the currently translated UI packs.
   static const values = <OrvikaLanguage>[
     OrvikaLanguage('ru', 'Russian', 'Русский'),
+    OrvikaLanguage('en', 'English', 'English'),
     OrvikaLanguage('tt', 'Tatar', 'Татарча'),
     OrvikaLanguage('ce', 'Chechen', 'Нохчийн мотт'),
     OrvikaLanguage('ba', 'Bashkir', 'Башҡорт теле'),
@@ -103,7 +104,6 @@ class OrvikaLanguage {
     OrvikaLanguage('ku', 'Kurdish', 'Kurdî'),
     OrvikaLanguage('rom', 'Romani', 'Romani ćhib'),
     OrvikaLanguage('yi', 'Yiddish', 'ייִדיש'),
-    OrvikaLanguage('en', 'English', 'English'),
     OrvikaLanguage('fr', 'French', 'Français'),
     OrvikaLanguage('es', 'Spanish', 'Español'),
     OrvikaLanguage('it', 'Italian', 'Italiano'),
