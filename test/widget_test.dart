@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
+import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true}));
+  setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'}));
 
   testWidgets('first launch presents branded onboarding and enters dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your language'), findsOneWidget);
+    expect(OrvikaLanguage.values.length, 100);
+    expect(find.text('English'), findsWidgets);
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(find.text('Check before you trust.'), findsOneWidget);
@@ -42,6 +49,9 @@ void main() {
   testWidgets('Skip completes onboarding without requiring all slides', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    expect(find.text('Choose your language'), findsOneWidget);
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Skip'));
@@ -234,6 +244,31 @@ void main() {
 
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getString('appearance.language'), 'ru');
+  });
+
+  test('Russia language catalogue contains 100 unique language codes', () {
+    expect(OrvikaLanguage.values, hasLength(100));
+    expect(OrvikaLanguage.values.map((language) => language.code).toSet(), hasLength(100));
+    expect(OrvikaLanguage.values.map((language) => language.name).toSet(), hasLength(100));
+    expect(OrvikaLanguage.fromCode('ru').code, 'ru');
+    expect(OrvikaLanguage.fromCode('sah').name, 'Sakha (Yakut)');
+    expect(OrvikaLanguage.fromCode('unknown').code, 'en');
+  });
+
+  testWidgets('first launch language picker can search and select a regional language', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your language'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'Tatar');
+    await tester.pumpAndSettle();
+    expect(find.text('Tatar'), findsOneWidget);
+    await tester.tap(find.text('Tatar'));
+    await tester.pumpAndSettle();
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('appearance.language'), 'tt');
   });
 
 }
