@@ -472,6 +472,12 @@ void main() {
     final semantics = tester.ensureSemantics();
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
+    // Assert the dashboard heading while it is in the viewport. The later
+    // scroll to the lazily built module grid intentionally moves it off-screen.
+    final dashboardHeading = find.bySemanticsLabel('Your safety toolkit');
+    expect(dashboardHeading, findsOneWidget);
+    expect(tester.getSemantics(dashboardHeading).getSemanticsData().flagsCollection.isHeader, isTrue);
+
     // Dashboard cards are below the hero in a lazily built scroll view.
     // Bring the module grid into the tree before querying its semantics.
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -700));
@@ -488,10 +494,6 @@ void main() {
     );
     expect(disabledOverview, findsOneWidget);
     expect(tester.getSemantics(disabledOverview).getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
-
-    final dashboardHeading = find.bySemanticsLabel('Your safety toolkit');
-    expect(dashboardHeading, findsOneWidget);
-    expect(tester.getSemantics(dashboardHeading).getSemanticsData().flagsCollection.isHeader, isTrue);
 
     expect(find.byType(FocusTraversalGroup), findsWidgets);
     semantics.dispose();
