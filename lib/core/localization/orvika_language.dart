@@ -7,7 +7,12 @@ class OrvikaLanguage {
 
   String get label => '$name — $nativeName';
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
-  bool get hasDraftTranslation => const {'tt', 'ba', 'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'}.contains(code);
+  bool get hasDraftTranslation => const {
+        'tt', 'ba', 'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'
+      }.contains(code);
+
+  /// Writing direction is independent of translation completeness.
+  bool get isRightToLeft => const {'ar', 'ur', 'he', 'fa', 'ps'}.contains(code);
 
   static const english = OrvikaLanguage('en', 'English', 'English');
   static const russian = OrvikaLanguage('ru', 'Russian', 'Русский');
