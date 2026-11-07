@@ -33,9 +33,9 @@ void main() {
     test('named parameters are interpolated', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(
-        localization.text(
+        localization.textWithParameters(
           'custom.message',
-          'Found {count} indicators',
+          fallback: 'Found {count} indicators',
           parameters: const {'count': 3},
         ),
         'Found 3 indicators',
@@ -45,7 +45,7 @@ void main() {
     test('missing interpolation values remain visible', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(
-        localization.text('custom.message', 'Found {count} indicators'),
+        localization.textWithParameters('custom.message', fallback: 'Found {count} indicators'),
         'Found {count} indicators',
       );
     });
