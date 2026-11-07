@@ -427,9 +427,20 @@ void main() {
     slider.onChanged!(1.25);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Bold text'));
+    final boldSwitch = find.descendant(
+      of: find.widgetWithText(SwitchListTile, 'Bold text'),
+      matching: find.byType(Switch),
+    );
+    await tester.ensureVisible(boldSwitch);
+    await tester.tap(boldSwitch);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Reduce motion'));
+
+    final reduceMotionSwitch = find.descendant(
+      of: find.widgetWithText(SwitchListTile, 'Reduce motion'),
+      matching: find.byType(Switch),
+    );
+    await tester.ensureVisible(reduceMotionSwitch);
+    await tester.tap(reduceMotionSwitch);
     await tester.pumpAndSettle();
 
     final preferences = await SharedPreferences.getInstance();
