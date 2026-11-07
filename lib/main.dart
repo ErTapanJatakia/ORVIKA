@@ -218,8 +218,14 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
     return MaterialApp(
       title: 'ORVIKA — Check Before You Trust',
-      locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
-      supportedLocales: const [Locale('en'), Locale('ru')],
+      locale: Locale(_selectedLanguage.code),
+      // Keep the selected catalogue locale intact so app-owned localization
+      // can resolve Hindi, Tatar, Bashkir and other language packs immediately.
+      // Flutter's built-in Material widgets still use their own supported-locale
+      // fallback where a framework translation is unavailable.
+      supportedLocales: OrvikaLanguage.allValues
+          .map((language) => Locale(language.code))
+          .toList(growable: false),
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
