@@ -60,6 +60,7 @@ void main() {
       'Use the bank app or a known official contact route independently',
     );
     await tester.ensureVisible(correctAnswer);
+    await tester.pumpAndSettle();
     await tester.tap(correctAnswer);
     await tester.pumpAndSettle();
 
