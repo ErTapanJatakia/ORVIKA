@@ -87,7 +87,18 @@ Each feature must be tested with:
 
 A feature is not accessibility-complete solely because automated tests pass. Record platform coverage and known limitations; never claim WCAG or platform certification without a formal audit.
 
-## 10. Delivery sequence
+## 10. Implementation progress
+
+### Implemented in the semantic accessibility increment
+
+- The application is wrapped in a semantic container and a focus traversal group.
+- Dashboard module cards expose one concise screen-reader label containing the module name, description and availability; actionable cards expose a semantic tap action.
+- The dashboard and accessibility settings section headings are marked as headings for assistive navigation.
+- Widget regression tests cover module labels, action availability, heading semantics and the presence of the focus traversal group.
+
+This is a first semantic increment, not proof of full screen-reader or keyboard conformance. Manual TalkBack, VoiceOver, browser screen-reader and keyboard-only checks remain release gates.
+
+## 11. Delivery sequence
 
 1. Shared accessibility preferences and app-wide text scaling, bold text, reduced motion and contrast support.
 2. Semantics and focus audit of onboarding, language selection, dashboard and appearance settings.
