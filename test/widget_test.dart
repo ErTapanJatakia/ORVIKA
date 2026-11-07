@@ -407,4 +407,38 @@ void main() {
     expect(Directionality.of(tester.element(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'))), TextDirection.rtl);
   });
 
+  testWidgets('accessibility preferences apply globally and persist locally', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Appearance and accessibility settings'));
+    await tester.pumpAndSettle();
+    expect(find.text('Accessibility'), findsOneWidget);
+    expect(find.text('Text size'), findsOneWidget);
+
+    final slider = tester.widget<Slider>(find.byType(Slider).first);
+    slider.onChanged!(1.25);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Bold text'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Reduce motion'));
+    await tester.pumpAndSettle();
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getDouble('accessibility.textScale'), 1.25);
+    expect(preferences.getBool('accessibility.boldText'), isTrue);
+    expect(preferences.getBool('accessibility.reduceMotion'), isTrue);
+
+    final dashboardContext = tester.element(find.text('Your safety toolkit'));
+    expect(MediaQuery.of(dashboardContext).textScaler.scale(10), 12.5);
+    expect(MediaQuery.of(dashboardContext).disableAnimations, isTrue);
+    expect(Theme.of(dashboardContext).textTheme.bodyMedium!.fontWeight!.index,
+      greaterThanOrEqualTo(FontWeight.w500.index));
+  });
+
 }
