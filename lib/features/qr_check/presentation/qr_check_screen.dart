@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/orvika_feature_app_bar.dart';
+
 import '../../link_check/domain/url_analyzer.dart';
 import '../domain/qr_payload_analyzer.dart';
 
@@ -47,8 +49,8 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
     final scheme = Theme.of(context).colorScheme;
     final result = _result;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('QR Check'),
+      appBar: const OrvikaFeatureAppBar(
+        title: 'QR Check',
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
