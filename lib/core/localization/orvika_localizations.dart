@@ -43,6 +43,20 @@ class OrvikaLocalizations {
     'module.academy.description': 'Изучайте основы кибербезопасности на коротких уроках.',
     'module.response': 'Реагирование',
     'module.response.description': 'Узнайте, что делать, если возникла проблема.',
+    'brand.descriptor': 'ИНТЕЛЛЕКТУАЛЬНАЯ ЗАЩИТА В ЦИФРОВОМ МИРЕ',
+    'hero.eyebrow': 'ОЦЕНИТЕ РИСК. ПРОВЕРЬТЕ СИГНАЛ.',
+    'hero.title': 'Проверьте, прежде чем доверять.',
+    'hero.description': 'Понятный способ изучать цифровые сигналы, понимать риски и принимать обоснованные решения.',
+    'hero.onDevice': 'ПРОВЕРКИ НА УСТРОЙСТВЕ',
+    'hero.explainable': 'ОБЪЯСНИМЫЕ РЕЗУЛЬТАТЫ',
+    'dashboard.privacyFirst': 'КОНФИДЕНЦИАЛЬНОСТЬ ПРЕЖДЕ ВСЕГО',
+    'nav.changeLanguage': 'Изменить язык',
+    'nav.appearance': 'Внешний вид и доступность',
+    'nav.chooseTheme': 'Выбрать тему оформления',
+    'module.status.overview': 'ОБЗОР',
+    'module.status.available': 'ДОСТУПНО',
+    'trust.note': 'ORVIKA — ранний прототип. Выводы основаны на проверяемых признаках: алгоритмическое подозрение не является доказательством того, что человек, сообщение или адрес вредоносны.',
+    'footer.motto': 'ОЦЕНИТЕ РИСК • ПРОВЕРЬТЕ СИГНАЛ • СОХРАНЯЙТЕ КОНТРОЛЬ',
   };
 
 
@@ -84,6 +98,20 @@ class OrvikaLocalizations {
     'module.academy.description': 'छोटे पाठों के माध्यम से साइबर सुरक्षा की मूल बातें सीखें।',
     'module.response': 'प्रतिक्रिया',
     'module.response.description': 'समस्या होने पर जानें कि आगे क्या करना है।',
+    'brand.descriptor': 'व्यक्तिगत साइबर सुरक्षा जानकारी',
+    'hero.eyebrow': 'जोखिम देखें। संकेत की पुष्टि करें।',
+    'hero.title': 'भरोसा करने से पहले जाँचें।',
+    'hero.description': 'डिजिटल संकेतों की जाँच करने, जोखिम समझने और सोच-समझकर निर्णय लेने का सरल तरीका।',
+    'hero.onDevice': 'डिवाइस पर जाँच',
+    'hero.explainable': 'समझने योग्य निष्कर्ष',
+    'dashboard.privacyFirst': 'गोपनीयता सर्वोपरि',
+    'nav.changeLanguage': 'भाषा बदलें',
+    'nav.appearance': 'रूप-रंग और सुलभता',
+    'nav.chooseTheme': 'थीम चुनें',
+    'module.status.overview': 'अवलोकन',
+    'module.status.available': 'उपलब्ध',
+    'trust.note': 'ORVIKA एक प्रारंभिक प्रोटोटाइप है। निष्कर्ष जाँचने योग्य संकेतों पर आधारित हैं: एल्गोरिदम का संदेह इस बात का प्रमाण नहीं है कि कोई व्यक्ति, संदेश या पता दुर्भावनापूर्ण है।',
+    'footer.motto': 'जोखिम देखें • संकेत जाँचें • नियंत्रण अपने हाथ में रखें',
   };
 
   // Draft Tatar UI strings. They are deliberately not classified as reviewed:
@@ -124,6 +152,20 @@ class OrvikaLocalizations {
     'module.academy.description': 'Кыска дәресләрдә кибериминлек нигезләрен өйрәнегез.',
     'module.response': 'Җавап чаралары',
     'module.response.description': 'Проблема килеп чыкса, нәрсә эшләргә икәнен белегез.',
+    'brand.descriptor': 'Шәхси кибериминлек мәгълүматы',
+    'hero.eyebrow': 'ХӘВЕФНЕ КҮРЕГЕЗ. БИЛГЕНЕ ТИКШЕРЕГЕЗ.',
+    'hero.title': 'Ышанганчы тикшерегез.',
+    'hero.description': 'Санлы билгеләрне тикшерү, хәвефләрне аңлау һәм нигезле карарлар кабул итү өчен аңлаешлы ысул.',
+    'hero.onDevice': 'ҖАЙЛАНМАДА ТИКШЕРҮ',
+    'hero.explainable': 'АҢЛАТЫЛГАН НӘТИҖӘЛӘР',
+    'dashboard.privacyFirst': 'ХОСУСЫЙЛЫК БЕРЕНЧЕ УРЫНДА',
+    'nav.changeLanguage': 'Телне үзгәртү',
+    'nav.appearance': 'Күренеш һәм мөмкинлекләр',
+    'nav.chooseTheme': 'Бизәлеш темасын сайлау',
+    'module.status.overview': 'ГОМУМИ КҮЗӘТҮ',
+    'module.status.available': 'МӨМКИН',
+    'trust.note': 'ORVIKA — башлангыч прототип. Нәтиҗәләр тикшерелә торган билгеләргә нигезләнә: алгоритм шикләнүе кеше, хәбәр яки адресның зарарлы булуына дәлил түгел.',
+    'footer.motto': 'ХӘВЕФНЕ КҮРЕГЕЗ • БИЛГЕНЕ ТИКШЕРЕГЕЗ • КОНТРОЛЬНЕ САКЛАГЫЗ',
   };
 
 
@@ -165,6 +207,20 @@ class OrvikaLocalizations {
     'module.academy.description': 'Ҡыҫҡа дәрестәрҙә киберименлек нигеҙҙәрен өйрәнегеҙ.',
     'module.response': 'Яуап саралары',
     'module.response.description': 'Проблема килеп сыҡһа, нимә эшләргә кәрәклеген белегеҙ.',
+    'brand.descriptor': 'Шәхси киберименлек мәғлүмәте',
+    'hero.eyebrow': 'ХӘҮЕФТЕ КҮРЕГЕҘ. БИЛДӘНЕ ТИКШЕРЕГЕҘ.',
+    'hero.title': 'Ышаныр алдынан тикшерегеҙ.',
+    'hero.description': 'Һанлы билдәләрҙе тикшереү, хәүефтәрҙе аңлау һәм нигеҙле ҡарарҙар ҡабул итеү өсөн аңлайышлы ысул.',
+    'hero.onDevice': 'ҠОРОЛМАЛА ТИКШЕРЕҮ',
+    'hero.explainable': 'АҢЛАТМАЛЫ ҺӨҘӨМТӘЛӘР',
+    'dashboard.privacyFirst': 'ШӘХСИ МӘҒЛҮМӘТТЕ ҺАҠЛАУ БЕРЕНСЕ УРЫНДА',
+    'nav.changeLanguage': 'Телде үҙгәртеү',
+    'nav.appearance': 'Күренеш һәм мөмкинлектәр',
+    'nav.chooseTheme': 'Биҙәлеш темаһын һайлау',
+    'module.status.overview': 'ДӨЙӨМ КҮҘӘТЕҮ',
+    'module.status.available': 'ҠУЛЛАНЫЛА',
+    'trust.note': 'ORVIKA — башланғыс прототип. Һөҙөмтәләр тикшерелә торған билдәләргә нигеҙләнә: алгоритм шикләнеүе кеше, хәбәр йәки адрес зарарлы тигән дәлил түгел.',
+    'footer.motto': 'ХӘҮЕФТЕ КҮРЕГЕҘ • БИЛДӘНЕ ТИКШЕРЕГЕҘ • КОНТРОЛДЕ ҺАҠЛАҒЫҘ',
   };
 
   String text(String key, [String? fallback]) {
