@@ -218,9 +218,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
     return MaterialApp(
       title: 'ORVIKA — Check Before You Trust',
-      locale: Locale(_selectedLanguage.code),
-      supportedLocales: OrvikaLanguage.allValues
-          .map((language) => Locale(language.code)).toList(growable: false),
+      locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
+      supportedLocales: const [Locale('en'), Locale('ru')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -341,12 +340,12 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     children: [
                       const OrvikaOwlMark(size: 46, palette: palette),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Text('ORVIKA', style: TextStyle(
-                          color: Color(0xFFF3F7FC), fontSize: 20,
+                          color: scheme.onSurface, fontSize: 20,
                           fontWeight: FontWeight.w900, letterSpacing: 2.8)),
                       ),
-                      Text('100 LANGUAGES', style: TextStyle(
+                      Text('LANGUAGES', style: TextStyle(
                         color: palette.primary, fontSize: 10,
                         fontWeight: FontWeight.w800, letterSpacing: 1.1)),
                     ],
@@ -434,7 +433,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   Text(
                     isRussian
                       ? 'Перевод интерфейса проверен для русского и английского. Для татарского, башкирского и хинди подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
-                      : 'Reviewed interface translations are available in English and Russian. Tatar, Bashkir and Hindi have initial drafts requiring native-speaker review; other untranslated areas use English.',
+                      : 'English and Russian have reviewed interface translations. Hindi, Tatar and Bashkir have initial drafts; languages without a translation currently use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
                 ],
