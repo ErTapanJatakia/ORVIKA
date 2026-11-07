@@ -350,8 +350,11 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                             itemBuilder: (context, index) {
                               final language = filtered[index];
                               final selected = language.code == _selected.code;
-                              return ListTile(
-                                key: ValueKey('language-${language.code}'),
+                              return Material(
+                                color: palette.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                child: ListTile(
+                                  key: ValueKey('language-${language.code}'),
                                 selected: selected,
                                 leading: Icon(
                                   selected ? Icons.radio_button_checked : Icons.radio_button_off,
@@ -364,8 +367,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                   : null,
                                 onTap: () {
                                   setState(() => _selected = language);
-                                  widget.onLanguageChanged(language);
-                                },
+                                    widget.onLanguageChanged(language);
+                                  },
+                                ),
                               );
                             },
                           ),
