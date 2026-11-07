@@ -337,7 +337,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 children: [
                   Row(
                     children: [
-                      const OrvikaOwlMark(size: 46, palette: palette),
+                      OrvikaOwlMark(size: 46, palette: palette),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text('ORVIKA', style: TextStyle(
