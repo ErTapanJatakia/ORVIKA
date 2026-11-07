@@ -237,7 +237,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Appearance and accessibility'));
+    await tester.tap(find.byTooltip('Appearance and accessibility settings'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('English').first);
     await tester.pumpAndSettle();
@@ -266,7 +266,7 @@ void main() {
     await tester.enterText(find.byType(TextField), 'Tatar');
     await tester.pumpAndSettle();
     expect(find.text('Tatar'), findsOneWidget);
-    await tester.tap(find.text('Tatar'));
+    await tester.tap(find.byKey(const ValueKey('language-tt')));
     await tester.pumpAndSettle();
 
     final preferences = await SharedPreferences.getInstance();
