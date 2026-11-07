@@ -283,6 +283,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
     expect(find.text('लिंक जाँच'), findsOneWidget);
+    expect(find.text('भरोसा करने से पहले जाँचें।'), findsOneWidget);
+    expect(find.text('डिवाइस पर जाँच'), findsOneWidget);
+    expect(find.text('गोपनीयता सर्वोपरि'), findsOneWidget);
+    expect(find.byTooltip('भाषा बदलें'), findsOneWidget);
+
     expect(
       OrvikaLocalizations.of(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).language.code,
       'hi',
