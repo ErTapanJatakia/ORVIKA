@@ -380,7 +380,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 12),
                   Text(
                     isRussian
-                      ? 'Перевод интерфейса проверен для русского и английского. Для остальных языков пока используется английский текст.'
+                      ? 'Перевод интерфейса проверен для русского и английского. Для татарского подготовлен черновик, требующий проверки носителем языка; непереведённые разделы остаются на английском.'
                       : 'Reviewed interface translations are available in English and Russian. Tatar has an initial draft that needs native-speaker review; untranslated areas still use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
