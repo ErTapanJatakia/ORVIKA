@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
+import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true}));
+  setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'}));
 
   testWidgets('first launch presents branded onboarding and enters dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your language'), findsOneWidget);
+    expect(OrvikaLanguage.values.length, 100);
+    expect(find.text('English'), findsWidgets);
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(find.text('Check before you trust.'), findsOneWidget);
@@ -31,7 +38,7 @@ void main() {
   });
 
   testWidgets('completed onboarding is not shown on the next launch', (tester) async {
-    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
@@ -43,6 +50,9 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
+    expect(find.text('Choose your language'), findsOneWidget);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
@@ -53,7 +63,7 @@ void main() {
   });
 
   testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
-    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
@@ -190,7 +200,7 @@ void main() {
   });
 
   testWidgets('Privacy opens the guided self-audit from the dashboard', (tester) async {
-    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
@@ -201,6 +211,66 @@ void main() {
 
     expect(find.text('Take control of your privacy.'), findsOneWidget);
     expect(find.text('0 of 12 practices reviewed'), findsOneWidget);
+  });
+
+  testWidgets('Russian language selection updates the dashboard and persists', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'ru',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ваш набор цифровой безопасности'), findsOneWidget);
+    expect(find.text('Проверка ссылок'), findsOneWidget);
+    expect(find.text('Проверка QR'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Внешний вид и доступность'));
+    await tester.pumpAndSettle();
+    expect(find.text('Язык'), findsOneWidget);
+    expect(find.text('Русский'), findsOneWidget);
+    expect(find.text('Внешний вид и доступность'), findsOneWidget);
+  });
+
+  testWidgets('language selector saves Russian preference from appearance settings', (tester) async {
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Appearance and accessibility settings'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Русский'));
+    await tester.pumpAndSettle();
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('appearance.language'), 'ru');
+  });
+
+  test('Russia language catalogue contains 100 unique language codes', () {
+    expect(OrvikaLanguage.values, hasLength(100));
+    expect(OrvikaLanguage.values.map((language) => language.code).toSet(), hasLength(100));
+    expect(OrvikaLanguage.values.map((language) => language.name).toSet(), hasLength(100));
+    expect(OrvikaLanguage.fromCode('ru').code, 'ru');
+    expect(OrvikaLanguage.fromCode('sah').name, 'Sakha (Yakut)');
+    expect(OrvikaLanguage.fromCode('unknown').code, 'en');
+  });
+
+  testWidgets('first launch language picker can search and select a regional language', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your language'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'Tatar');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('language-tt')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('language-tt')));
+    await tester.pumpAndSettle();
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('appearance.language'), 'tt');
   });
 
 }

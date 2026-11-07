@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({
         'onboarding.completed.v1': true,
+        'appearance.language': 'en',
       }));
 
   testWidgets('Message Check opens and explains social-engineering signals',
