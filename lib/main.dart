@@ -419,7 +419,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                   if (widget.showContinueButton) {
                                     widget.onContinue?.call();
                                   } else {
-                                    Navigator.of(context).maybePop();
+                                    Navigator.of(context).popUntil((route) => route.isFirst);
                                   }
                                 },
                                 ),
