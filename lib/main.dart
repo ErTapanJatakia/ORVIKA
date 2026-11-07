@@ -976,30 +976,75 @@ class SentinelDashboard extends StatelessWidget {
                         const SizedBox(height: 28),
                         _HeroPanel(palette: palette, language: selectedLanguage),
                         const SizedBox(height: 30),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Column(
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final compact = constraints.maxWidth < 620;
+                            final heading = Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  OrvikaLocalizations(selectedLanguage).text(
+                                    'dashboard.title', 'Your safety toolkit',
+                                  ),
+                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  OrvikaLocalizations(selectedLanguage).text(
+                                    'dashboard.subtitle',
+                                    'Eight focused capabilities. One clearer view of digital risk.',
+                                  ),
+                                  style: TextStyle(
+                                    color: scheme.onSurfaceVariant,
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            );
+                            final privacy = _StatusPill(
+                              label: OrvikaLocalizations(selectedLanguage).text(
+                                'dashboard.privacyFirst', 'PRIVACY-FIRST',
+                              ),
+                              color: palette.success,
+                            );
+                            if (compact) {
+                              return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(OrvikaLocalizations(selectedLanguage).text('dashboard.title', 'Your safety toolkit'),
-                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                      fontWeight: FontWeight.w800, letterSpacing: -0.5)),
-                                  const SizedBox(height: 5),
-                                  Text(OrvikaLocalizations(selectedLanguage).text('dashboard.subtitle', 'Eight focused capabilities. One clearer view of digital risk.'),
-                                    style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13)),
+                                  heading,
+                                  const SizedBox(height: 10),
+                                  privacy,
                                 ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            _StatusPill(label: OrvikaLocalizations(selectedLanguage).text('dashboard.privacyFirst', 'PRIVACY-FIRST'), color: palette.success),
-                          ],
+                              );
+                            }
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(child: heading),
+                                const SizedBox(width: 12),
+                                privacy,
+                              ],
+                            );
+                          },
                         ),
                         const SizedBox(height: 17),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final columns = constraints.maxWidth >= 900 ? 4 : constraints.maxWidth >= 570 ? 2 : 1;
+                            final columns = constraints.maxWidth >= 1000
+                                ? 4
+                                : constraints.maxWidth >= 760
+                                    ? 3
+                                    : constraints.maxWidth >= 560
+                                        ? 2
+                                        : 1;
+                            final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
+                            final cardExtent = (178 + ((textScale - 1).clamp(0, 1.2) * 72))
+                                .clamp(178, 264)
+                                .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -1008,7 +1053,7 @@ class SentinelDashboard extends StatelessWidget {
                                 crossAxisCount: columns,
                                 crossAxisSpacing: 14,
                                 mainAxisSpacing: 14,
-                                mainAxisExtent: 174,
+                                mainAxisExtent: cardExtent,
                               ),
                               itemBuilder: (context, index) {
                                 final module = modules[index];
@@ -1392,7 +1437,9 @@ class _HeroPanel extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(26),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 420 ? 18 : 26,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(26),
         border: Border.all(color: palette.primary.withValues(alpha: 0.28)),
@@ -1409,8 +1456,8 @@ class _HeroPanel extends StatelessWidget {
           blurRadius: 34, spreadRadius: 1)],
       ),
       child: LayoutBuilder(builder: (context, constraints) {
-        final compact = constraints.maxWidth < 570;
-        final owl = OrvikaOwlMark(size: compact ? 102 : 154, palette: palette);
+        final compact = constraints.maxWidth < 680;
+        final owl = OrvikaOwlMark(size: compact ? 96 : 148, palette: palette);
         final copyContent = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1636,14 +1683,26 @@ class _TrustNote extends StatelessWidget {
         borderRadius: BorderRadius.circular(17),
         border: Border.all(color: scheme.outline.withValues(alpha: 0.24)),
       ),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(Icons.info_outline_rounded, color: palette.primary, size: 20),
-        const SizedBox(width: 11),
-        Expanded(child: Text(
-          OrvikaLocalizations(language).text('trust.note', 'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.'),
-          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
-        )),
-      ]),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline_rounded, color: palette.primary, size: 20),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Text(
+              OrvikaLocalizations(language).text(
+                'trust.note',
+                'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.',
+              ),
+              style: TextStyle(
+                color: scheme.onSurfaceVariant,
+                fontSize: 12,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
