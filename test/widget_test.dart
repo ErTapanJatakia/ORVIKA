@@ -244,6 +244,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Сезнең санлы иминлек кораллары'), findsOneWidget);
     expect(find.text('Сылтаманы тикшерү'), findsOneWidget);
+    expect(
+      Localizations.localeOf(tester.element(find.text('Сезнең санлы иминлек кораллары'))).languageCode,
+      'tt',
+      reason: 'The selected Tatar locale must remain available to app localization.',
+    );
     expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('tt').hasReviewedTranslation, isFalse);
   });
@@ -258,6 +263,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Һеҙҙең һанлы именлек ҡоралдары'), findsOneWidget);
     expect(find.text('Һылтанманы тикшереү'), findsOneWidget);
+    expect(
+      Localizations.localeOf(tester.element(find.text('Һеҙҙең һанлы именлек ҡоралдары'))).languageCode,
+      'ba',
+      reason: 'The selected Bashkir locale must remain available to app localization.',
+    );
     expect(OrvikaLanguage.fromCode('ba').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('ba').hasReviewedTranslation, isFalse);
   });
@@ -272,6 +282,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
     expect(find.text('लिंक जाँच'), findsOneWidget);
+    expect(
+      Localizations.localeOf(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).languageCode,
+      'hi',
+      reason: 'The selected app locale must not be silently coerced to English.',
+    );
     expect(OrvikaLanguage.fromCode('hi').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('hi').hasReviewedTranslation, isFalse);
     final preferences = await SharedPreferences.getInstance();
