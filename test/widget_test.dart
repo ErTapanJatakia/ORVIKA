@@ -477,7 +477,7 @@ void main() {
       'Link Check. Inspect website addresses before you open them. Available.',
     );
     expect(linkCard, findsOneWidget);
-    expect(tester.getSemantics(linkCard).getSemanticsData().actions.contains(SemanticsAction.tap), isTrue);
+    expect(tester.getSemantics(linkCard).getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
 
     final disabledOverview = find.bySemanticsLabel(
       'Sentinel. Your safety overview and recent checks. OVERVIEW.',
