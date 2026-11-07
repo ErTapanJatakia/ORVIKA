@@ -85,10 +85,52 @@ class OrvikaLocalizations {
     'module.response.description': 'Проблема килеп чыкса, нәрсә эшләргә икәнен белегез.',
   };
 
+
+  // Draft Bashkir UI strings. These are not reviewed or certified:
+  // security, privacy and incident-response terms require native-speaker review.
+  static const Map<String, String> _bashkirDraft = {
+    'skip': 'Үткәреп ебәреү',
+    'continue': 'Дауам итергә',
+    'enter': 'ORVIKA-ға инергә',
+    'onboarding.title.1': 'Ышаныр алдынан тикшерегеҙ.',
+    'onboarding.description.1': 'Һылтанмаларҙы һәм QR-код эсендәге мәғлүмәтте асырҙан, мәғлүмәт бирерҙән йәки ғәмәл ҡылырҙан алда тикшерегеҙ.',
+    'onboarding.detail.1': 'Башта билдәләрҙе тикшерегеҙ. Ҡарарҙы үҙегеҙ ҡабул итәһегеҙ.',
+    'onboarding.title.2': 'Хәүефтәрҙе аңлағыҙ.',
+    'onboarding.description.2': 'ORVIKA һөҙөмтәнең ниндәй билдәләргә нигеҙләнеүен аңлата, уны серле баһа менән генә сикләмәй.',
+    'onboarding.detail.2': 'Шикләнеү — тикшереү өсөн сәбәп, яуыз ниәттең дәлиле түгел.',
+    'onboarding.title.3': 'Мәғлүмәттәрегеҙ үҙегеҙҙә ҡала.',
+    'onboarding.description.3': 'Ҡушымта шәхси мәғлүмәтте һаҡлауҙы һәм офлайн эшләүҙе өҫтөн ҡуя. Башлау өсөн иҫәп яҙмаһы кәрәкмәй.',
+    'onboarding.detail.3': 'Был прототип киләсәктәге бөтә функцияларҙың да офлайн эшләүен гарантияламай.',
+    'dashboard.title': 'Һеҙҙең һанлы именлек ҡоралдары',
+    'dashboard.subtitle': 'Һигеҙ мөмкинлек. Һанлы хәүефтәрҙе яҡшыраҡ аңлау.',
+    'settings.title': 'Күренеш һәм мөмкинлектәр',
+    'settings.language': 'Тел',
+    'settings.language.help': 'Ҡушымта телен һайлағыҙ. Был көйләү тик ошо ҡоролмала һаҡлана.',
+    'settings.appearance': 'Күренеште һайлағыҙ',
+    'settings.saved': 'Һайлау ҡоролмағыҙҙа һаҡлана. ORVIKA күренеш көйләүҙәрен серверға ебәрмәй.',
+    'module.sentinel': 'Дөйөм күҙәтеү',
+    'module.sentinel.description': 'Именлектең дөйөм торошо һәм һуңғы тикшереүҙәр.',
+    'module.link': 'Һылтанманы тикшереү',
+    'module.link.description': 'Күсмәҫтән алда сайт адресын тикшерегеҙ.',
+    'module.qr': 'QR-кодты тикшереү',
+    'module.qr.description': 'Ғәмәл ҡылырҙан алда QR-код эсендәге мәғлүмәтте тикшерегеҙ.',
+    'module.message': 'Хәбәрҙәрҙе тикшереү',
+    'module.message.description': 'Шикле SMS, электрон хаттар һәм хәбәрҙәрҙе тикшерегеҙ.',
+    'module.intelligence': 'Аналитика',
+    'module.intelligence.description': 'Һанлы хәүеф билдәләрен һәм хәүефһеҙ ғәмәлдәрҙе өйрәнегеҙ.',
+    'module.privacy': 'Шәхси мәғлүмәтте һаҡлау',
+    'module.privacy.description': 'Үҙ-үҙеңде тикшереү ярҙамында шәхси мәғлүмәт көйләүҙәрен ҡарағыҙ.',
+    'module.academy': 'Өйрәнеү',
+    'module.academy.description': 'Ҡыҫҡа дәрестәрҙә киберименлек нигеҙҙәрен өйрәнегеҙ.',
+    'module.response': 'Яуап саралары',
+    'module.response.description': 'Проблема килеп сыҡһа, нимә эшләргә кәрәклеген белегеҙ.',
+  };
+
   String text(String key, [String? fallback]) {
     final translations = switch (language.code) {
       'ru' => _russian,
       'tt' => _tatarDraft,
+      'ba' => _bashkirDraft,
       _ => const <String, String>{},
     };
     return translations[key] ?? fallback ?? key;
