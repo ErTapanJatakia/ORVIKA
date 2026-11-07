@@ -490,9 +490,9 @@ void main() {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(320, 900);
     await tester.pumpWidget(
-      MediaQuery(
+      const MediaQuery(
         data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
-        child: const OrvikaApp(),
+        child: OrvikaApp(),
       ),
     );
     await tester.pumpAndSettle();
