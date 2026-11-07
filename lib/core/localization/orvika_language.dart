@@ -7,7 +7,7 @@ class OrvikaLanguage {
 
   String get label => '$name — $nativeName';
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
-  bool get hasDraftTranslation => code == 'tt' || code == 'ba';
+  bool get hasDraftTranslation => code == 'tt' || code == 'ba' || code == 'hi';
 
   static const english = OrvikaLanguage('en', 'English', 'English');
   static const russian = OrvikaLanguage('ru', 'Russian', 'Русский');
@@ -207,7 +207,7 @@ class OrvikaLanguage {
     OrvikaLanguage('nbe', 'Konyak', 'Konyak'),
     OrvikaLanguage('nmf', 'Tangkhul', 'Tangkhul'),
     OrvikaLanguage('njh', 'Lotha', 'Lotha'),
-    OrvikaLanguage('mra', 'Mara', 'Mara'),
+    OrvikaLanguage('en', 'English', 'English'),
   ];
 
   static List<OrvikaLanguage> valuesForCatalogue(String catalogue) =>
