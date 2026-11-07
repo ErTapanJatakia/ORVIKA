@@ -110,12 +110,14 @@ class _AcademyScreenState extends State<AcademyScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 4,
                           children: [
-                            Expanded(
-                              child: Text('$progress of ${lessons.length} lessons completed',
-                                style: const TextStyle(fontWeight: FontWeight.w800)),
-                            ),
+                            Text('$progress of ${lessons.length} lessons completed',
+                              style: const TextStyle(fontWeight: FontWeight.w800)),
                             Text('${(progress / lessons.length * 100).round()}%',
                               style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w800)),
                           ],
