@@ -207,14 +207,27 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Ваш набор цифровой безопасности'), findsOneWidget);
-    expect(find.text('Проверка ссылок'), findsOneWidget);
-    expect(find.text('Проверка QR'), findsOneWidget);
 
+    // Verify the header controls while they are still in the viewport.
     await tester.tap(find.byTooltip('Внешний вид и доступность'));
     await tester.pumpAndSettle();
     expect(find.text('Язык'), findsOneWidget);
     expect(find.text('Русский'), findsOneWidget);
     expect(find.text('Внешний вид и доступность'), findsOneWidget);
+    await tester.tapAt(const Offset(12, 12));
+    await tester.pumpAndSettle();
+
+    // The dashboard grid is below the hero panel and lazily builds its cards.
+    // Scroll the outer dashboard until the grid is mounted, then reveal each
+    // translated card before asserting its label.
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Проверка ссылок'));
+    await tester.pumpAndSettle();
+    expect(find.text('Проверка ссылок'), findsOneWidget);
+    await tester.ensureVisible(find.text('Проверка QR'));
+    await tester.pumpAndSettle();
+    expect(find.text('Проверка QR'), findsOneWidget);
   });
 
   testWidgets('language selector saves Russian preference from appearance settings', (tester) async {
@@ -283,6 +296,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
     expect(find.text('लिंक जाँच'), findsOneWidget);
+    expect(find.text('भरोसा करने से पहले जाँचें।'), findsOneWidget);
+    expect(find.text('डिवाइस पर जाँच'), findsOneWidget);
+    expect(find.text('गोपनीयता सर्वोपरि'), findsOneWidget);
+    expect(find.byTooltip('भाषा बदलें'), findsOneWidget);
+
     expect(
       OrvikaLocalizations.of(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).language.code,
       'hi',
