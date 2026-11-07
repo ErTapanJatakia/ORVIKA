@@ -38,7 +38,7 @@ void main() {
   });
 
   testWidgets('completed onboarding is not shown on the next launch', (tester) async {
-    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
@@ -63,7 +63,7 @@ void main() {
   });
 
   testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
-    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
@@ -200,7 +200,7 @@ void main() {
   });
 
   testWidgets('Privacy opens the guided self-audit from the dashboard', (tester) async {
-    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
@@ -233,7 +233,7 @@ void main() {
   });
 
   testWidgets('language selector saves Russian preference from appearance settings', (tester) async {
-    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true});
+    SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
