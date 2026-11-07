@@ -462,24 +462,22 @@ void main() {
     tester.view.resetDevicePixelRatio();
   });
 
-  testWidgets('dashboard header remains usable at 200 percent text scaling in RTL', (tester) async {
+  testWidgets('dashboard header and hero remain usable at 200 percent text scaling in RTL', (tester) async {
     SharedPreferences.setMockInitialValues({
       'onboarding.completed.v1': true,
       'appearance.language': 'ar',
+      'accessibility.textScale': 2.0,
     });
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(320, 900);
-    await tester.pumpWidget(
-      const MediaQuery(
-        data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
-        child: OrvikaApp(),
-      ),
-    );
+    await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
     expect(find.text('ORVIKA'), findsOneWidget);
     expect(find.byTooltip('تغيير اللغة'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    final headerContext = tester.element(find.text('ORVIKA'));
+    expect(MediaQuery.of(headerContext).textScaler.scale(10), 20);
+    expect(tester.takeException(), isNull, reason: 'header or hero overflow at 200% RTL scaling');
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
   });
@@ -555,7 +553,29 @@ void main() {
       reason: 'long module description should wrap across multiple readable lines',
     );
     expect(find.text('AVAILABLE'), findsNWidgets(7));
-    expect(tester.takeException(), isNull, reason: 'module card overflow at 200% text scaling');
+
+    // The outer dashboard scroll must reach the trust note and footer after
+    // the full module grid, even when enlarged cards substantially increase
+    // the page height.
+    await tester.scrollUntilVisible(
+      find.text(
+        'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.',
+      ),
+      250,
+      scrollable: dashboardScrollable,
+      maxScrolls: 50,
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('ORVIKA is an early prototype.'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'),
+      250,
+      scrollable: dashboardScrollable,
+      maxScrolls: 20,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'), findsOneWidget);
+    expect(tester.takeException(), isNull, reason: 'module grid, trust note or footer overflow at 200% text scaling');
 
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
