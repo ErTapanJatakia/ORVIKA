@@ -237,6 +237,167 @@ class _OrvikaAppState extends State<OrvikaApp> {
   }
 }
 
+class LanguageSelectionScreen extends StatefulWidget {
+  const LanguageSelectionScreen({
+    required this.selectedLanguage,
+    required this.onLanguageChanged,
+    this.onContinue,
+    this.showContinueButton = true,
+    super.key,
+  });
+
+  final OrvikaLanguage selectedLanguage;
+  final ValueChanged<OrvikaLanguage> onLanguageChanged;
+  final VoidCallback? onContinue;
+  final bool showContinueButton;
+
+  @override
+  State<LanguageSelectionScreen> createState() => _LanguageSelectionScreenState();
+}
+
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
+  late OrvikaLanguage _selected = widget.selectedLanguage;
+  final TextEditingController _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const palette = OrvikaPalette.obsidian;
+    final scheme = Theme.of(context).colorScheme;
+    final isRussian = _selected.code == 'ru';
+    final filtered = OrvikaLanguage.values.where((language) {
+      final query = _query.trim().toLowerCase();
+      if (query.isEmpty) return true;
+      return language.name.toLowerCase().contains(query) ||
+          language.nativeName.toLowerCase().contains(query) ||
+          language.code.toLowerCase().contains(query);
+    }).toList(growable: false);
+
+    return Scaffold(
+      backgroundColor: palette.background,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(22, 18, 22, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      const OrvikaOwlMark(size: 46, palette: palette),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text('ORVIKA', style: TextStyle(
+                          color: Color(0xFFF3F7FC), fontSize: 20,
+                          fontWeight: FontWeight.w900, letterSpacing: 2.8)),
+                      ),
+                      Text('100 LANGUAGES', style: TextStyle(
+                        color: palette.primary, fontSize: 10,
+                        fontWeight: FontWeight.w800, letterSpacing: 1.1)),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    isRussian ? 'Выберите язык' : 'Choose your language',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: scheme.onSurface, fontWeight: FontWeight.w900),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isRussian
+                      ? 'Выберите язык интерфейса перед началом работы с ORVIKA.'
+                      : 'Choose your interface language before you start using ORVIKA.',
+                    style: TextStyle(color: scheme.onSurfaceVariant, height: 1.5),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _searchController,
+                    onChanged: (value) => setState(() => _query = value),
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      hintText: isRussian ? 'Поиск по названию или коду' : 'Search by language name or code',
+                      suffixIcon: _query.isEmpty ? null : IconButton(
+                        tooltip: isRussian ? 'Очистить поиск' : 'Clear search',
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _query = '');
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: palette.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: palette.primary.withValues(alpha: 0.2)),
+                      ),
+                      child: filtered.isEmpty
+                        ? Center(child: Text(isRussian ? 'Язык не найден' : 'No matching language'))
+                        : ListView.builder(
+                            key: const ValueKey('language-options'),
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              final language = filtered[index];
+                              final selected = language.code == _selected.code;
+                              return ListTile(
+                                key: ValueKey('language-${language.code}'),
+                                selected: selected,
+                                leading: Icon(
+                                  selected ? Icons.radio_button_checked : Icons.radio_button_off,
+                                  color: selected ? palette.primary : scheme.onSurfaceVariant,
+                                ),
+                                title: Text(language.name, style: const TextStyle(fontWeight: FontWeight.w700)),
+                                subtitle: Text(language.nativeName),
+                                trailing: language.hasReviewedTranslation
+                                  ? const Icon(Icons.verified_outlined, size: 17)
+                                  : null,
+                                onTap: () {
+                                  setState(() => _selected = language);
+                                  widget.onLanguageChanged(language);
+                                },
+                              );
+                            },
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    isRussian
+                      ? 'Перевод интерфейса проверен для русского и английского. Для остальных языков пока используется английский текст.'
+                      : 'Reviewed interface translations are currently available in English and Russian. Other catalogue languages use the English fallback while translations are prepared.',
+                    style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
+                  ),
+                  if (widget.showContinueButton) ...[
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: widget.onContinue,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                        child: Text(isRussian ? 'Продолжить' : 'Continue'),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class OrvikaSplashScreen extends StatelessWidget {
   const OrvikaSplashScreen({super.key});
 
