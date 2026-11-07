@@ -508,17 +508,27 @@ void main() {
       expect(tester.takeException(), isNull, reason: 'module grid overflow at width: $width');
     }
 
+    // Exercise ORVIKA's persisted accessibility setting rather than wrapping
+    // the app in a MediaQuery that MaterialApp can replace during its build.
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+      'accessibility.textScale': 2.0,
+    });
     tester.view.physicalSize = const Size(320, 900);
-    await tester.pumpWidget(
-      const MediaQuery(
-        data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
-        child: OrvikaApp(),
-      ),
+    await tester.pumpWidget(OrvikaApp(key: const ValueKey('dashboard-grid-200-scale')));
+    await tester.pumpAndSettle();
+
+    final dashboardScrollable = find.descendant(
+      of: find.byType(CustomScrollView),
+      matching: find.byType(Scrollable),
+    ).first;
+    await tester.scrollUntilVisible(
+      find.text('Link Check'),
+      250,
+      scrollable: dashboardScrollable,
+      maxScrolls: 30,
     );
-    await tester.pumpAndSettle();
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -1100));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Link Check'));
     await tester.pumpAndSettle();
     expect(find.text('Link Check'), findsOneWidget);
     expect(tester.takeException(), isNull, reason: 'module card overflow at 200% text scaling');
