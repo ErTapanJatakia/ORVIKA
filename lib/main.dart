@@ -14,6 +14,29 @@ import 'features/qr_check/presentation/qr_check_screen.dart';
 
 void main() => runApp(const OrvikaApp());
 
+/// Composes ORVIKA's optional text-size preference with the platform scaler.
+/// This preserves nonlinear system text scaling instead of replacing it with
+/// a linear scale whenever the in-app preference is changed.
+class _CombinedTextScaler extends TextScaler {
+  const _CombinedTextScaler(this.platformScaler, this.factor);
+
+  final TextScaler platformScaler;
+  final double factor;
+
+  @override
+  double scale(double fontSize) => platformScaler.scale(fontSize * factor);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _CombinedTextScaler &&
+          other.platformScaler == platformScaler &&
+          other.factor == factor;
+
+  @override
+  int get hashCode => Object.hash(platformScaler, factor);
+}
+
 enum OrvikaTheme { obsidian, aurora, daylight, highContrast }
 
 class OrvikaPalette {
@@ -252,17 +275,20 @@ class _OrvikaAppState extends State<OrvikaApp> {
       locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
       supportedLocales: const [Locale('en'), Locale('ru')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(_textScale),
-          disableAnimations: _reduceMotion || MediaQuery.of(context).disableAnimations,
+      builder: (context, child) {
+        final platformMediaQuery = MediaQuery.of(context);
+        return MediaQuery(
+        data: platformMediaQuery.copyWith(
+          textScaler: _CombinedTextScaler(platformMediaQuery.textScaler, _textScale),
+          disableAnimations: _reduceMotion || platformMediaQuery.disableAnimations,
         ),
         child: Directionality(
           textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
               ? TextDirection.rtl : TextDirection.ltr,
           child: OrvikaLanguageScope(language: _selectedLanguage, child: child ?? const SizedBox.shrink()),
         ),
-      ),
+      );
+      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
