@@ -297,7 +297,6 @@ class LanguageSelectionScreen extends StatefulWidget {
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   late OrvikaLanguage _selected = widget.selectedLanguage;
-  late String _selectedCatalogue = widget.selectedCatalogue;
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
 
