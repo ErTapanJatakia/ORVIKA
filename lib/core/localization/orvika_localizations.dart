@@ -45,6 +45,47 @@ class OrvikaLocalizations {
     'module.response.description': 'Узнайте, что делать, если возникла проблема.',
   };
 
+
+  // Initial Hindi draft. It remains unreviewed pending qualified native-speaker
+  // validation of security, privacy and incident-response terminology.
+  static const Map<String, String> _hindiDraft = {
+    'skip': 'छोड़ें',
+    'continue': 'जारी रखें',
+    'enter': 'ORVIKA में प्रवेश करें',
+    'onboarding.title.1': 'भरोसा करने से पहले जाँचें।',
+    'onboarding.description.1': 'लिंक और QR कोड की सामग्री खोलने, जानकारी साझा करने या कोई कार्रवाई करने से पहले जाँचें।',
+    'onboarding.detail.1': 'पहले संकेतों को जाँचें। निर्णय आपका है।',
+    'onboarding.title.2': 'जोखिम को समझें।',
+    'onboarding.description.2': 'ORVIKA परिणाम के पीछे के संकेतों को समझाता है, उन्हें किसी रहस्यमय स्कोर के पीछे नहीं छिपाता।',
+    'onboarding.detail.2': 'संदेह जाँच करने का कारण है, दुर्भावना का प्रमाण नहीं।',
+    'onboarding.title.3': 'आपका डेटा आपके नियंत्रण में।',
+    'onboarding.description.3': 'ऐप गोपनीयता और ऑफ़लाइन उपयोग को प्राथमिकता देता है। शुरुआत करने के लिए खाते की आवश्यकता नहीं है।',
+    'onboarding.detail.3': 'यह प्रोटोटाइप भविष्य की हर सुविधा के ऑफ़लाइन काम करने की गारंटी नहीं देता।',
+    'dashboard.title': 'आपके डिजिटल सुरक्षा उपकरण',
+    'dashboard.subtitle': 'आठ सुविधाएँ। डिजिटल जोखिमों की बेहतर समझ।',
+    'settings.title': 'रूप-रंग और सुलभता',
+    'settings.language': 'भाषा',
+    'settings.language.help': 'ऐप की भाषा चुनें। यह सेटिंग केवल इसी डिवाइस पर सहेजी जाती है।',
+    'settings.appearance': 'अपना रूप-रंग चुनें',
+    'settings.saved': 'आपकी पसंद इसी डिवाइस पर सहेजी जाती है। ORVIKA रूप-रंग की सेटिंग सर्वर पर नहीं भेजता।',
+    'module.sentinel': 'सुरक्षा अवलोकन',
+    'module.sentinel.description': 'सुरक्षा की समग्र स्थिति और हाल की जाँचें।',
+    'module.link': 'लिंक जाँच',
+    'module.link.description': 'वेबसाइट खोलने से पहले उसका पता जाँचें।',
+    'module.qr': 'QR कोड जाँच',
+    'module.qr.description': 'कार्रवाई करने से पहले QR कोड की सामग्री जाँचें।',
+    'module.message': 'संदेश जाँच',
+    'module.message.description': 'संदिग्ध SMS, ईमेल और संदेशों की जाँच करें।',
+    'module.intelligence': 'खुफिया जानकारी',
+    'module.intelligence.description': 'समझने योग्य डिजिटल जोखिम संकेतों और सुरक्षित अगले कदमों को जानें।',
+    'module.privacy': 'गोपनीयता',
+    'module.privacy.description': 'स्व-मूल्यांकन के माध्यम से अपनी गोपनीयता सेटिंग्स की समीक्षा करें।',
+    'module.academy': 'शिक्षा',
+    'module.academy.description': 'छोटे पाठों के माध्यम से साइबर सुरक्षा की मूल बातें सीखें।',
+    'module.response': 'प्रतिक्रिया',
+    'module.response.description': 'समस्या होने पर जानें कि आगे क्या करना है।',
+  };
+
   // Draft Tatar UI strings. They are deliberately not classified as reviewed:
   // security and privacy terminology requires native-speaker validation.
   static const Map<String, String> _tatarDraft = {
@@ -129,6 +170,7 @@ class OrvikaLocalizations {
   String text(String key, [String? fallback]) {
     final translations = switch (language.code) {
       'ru' => _russian,
+      'hi' => _hindiDraft,
       'tt' => _tatarDraft,
       'ba' => _bashkirDraft,
       _ => const <String, String>{},

@@ -88,6 +88,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
   static const _themePreferenceKey = 'appearance.theme';
   OrvikaTheme _selectedTheme = OrvikaTheme.obsidian;
   OrvikaLanguage _selectedLanguage = OrvikaLanguage.english;
+  String _selectedCatalogue = 'russia';
   bool _hasSelectedLanguage = false;
   bool _isLoadingPreferences = true;
   bool _hasCompletedOnboarding = false;
@@ -103,9 +104,11 @@ class _OrvikaAppState extends State<OrvikaApp> {
       final preferences = await SharedPreferences.getInstance();
       final savedName = preferences.getString(_themePreferenceKey);
       final savedLanguage = preferences.getString('appearance.language');
+      final savedCatalogue = preferences.getString('appearance.languageCatalogue') ?? 'russia';
       final completed = preferences.getBool('onboarding.completed.v1') ?? false;
       if (!mounted) return;
       setState(() {
+        _selectedCatalogue = savedCatalogue;
         _selectedLanguage = OrvikaLanguage.fromCode(savedLanguage);
         _hasSelectedLanguage = savedLanguage != null;
         if (savedName != null) {
@@ -146,6 +149,24 @@ class _OrvikaAppState extends State<OrvikaApp> {
       await preferences.setString('appearance.language', language.code);
     } catch (_) {
       // Keep the selected language for this session if storage is unavailable.
+    }
+  }
+
+  Future<void> _selectCatalogue(String catalogue) async {
+    final options = OrvikaLanguage.valuesForCatalogue(catalogue);
+    final selected = options.any((language) => language.code == _selectedLanguage.code)
+        ? _selectedLanguage
+        : OrvikaLanguage.defaultForCatalogue(catalogue);
+    setState(() {
+      _selectedCatalogue = catalogue;
+      _selectedLanguage = selected;
+    });
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setString('appearance.languageCatalogue', catalogue);
+      await preferences.setString('appearance.language', selected.code);
+    } catch (_) {
+      // Keep catalogue and language selection for this session.
     }
   }
 
@@ -218,11 +239,13 @@ class _OrvikaAppState extends State<OrvikaApp> {
         ),
       ),
       home: _isLoadingPreferences
-          ? OrvikaSplashScreen(selectedLanguage: _selectedLanguage, onLanguageChanged: _selectLanguage)
+          ? OrvikaSplashScreen(selectedLanguage: _selectedLanguage, selectedCatalogue: _selectedCatalogue, onLanguageChanged: _selectLanguage, onCatalogueChanged: _selectCatalogue)
           : !_hasSelectedLanguage
               ? LanguageSelectionScreen(
                   selectedLanguage: _selectedLanguage,
+                  selectedCatalogue: _selectedCatalogue,
                   onLanguageChanged: _selectLanguage,
+                  onCatalogueChanged: _selectCatalogue,
                   onContinue: _completeLanguageSelection,
                 )
               : _hasCompletedOnboarding
@@ -230,9 +253,11 @@ class _OrvikaAppState extends State<OrvikaApp> {
                   selectedTheme: _selectedTheme,
                   onThemeChanged: _selectTheme,
                   selectedLanguage: _selectedLanguage,
+                  selectedCatalogue: _selectedCatalogue,
                   onLanguageChanged: _selectLanguage,
+                  onCatalogueChanged: _selectCatalogue,
                 )
-              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding, language: _selectedLanguage),
+              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding, language: _selectedLanguage, selectedCatalogue: _selectedCatalogue, onCatalogueChanged: _selectCatalogue),
     );
   }
 }
@@ -240,14 +265,18 @@ class _OrvikaAppState extends State<OrvikaApp> {
 class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({
     required this.selectedLanguage,
+    required this.selectedCatalogue,
     required this.onLanguageChanged,
+    required this.onCatalogueChanged,
     this.onContinue,
     this.showContinueButton = true,
     super.key,
   });
 
   final OrvikaLanguage selectedLanguage;
+  final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
+  final ValueChanged<String> onCatalogueChanged;
   final VoidCallback? onContinue;
   final bool showContinueButton;
 
@@ -257,6 +286,7 @@ class LanguageSelectionScreen extends StatefulWidget {
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   late OrvikaLanguage _selected = widget.selectedLanguage;
+  late String _selectedCatalogue = widget.selectedCatalogue;
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
 
@@ -271,7 +301,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     const palette = OrvikaPalette.obsidian;
     final scheme = Theme.of(context).colorScheme;
     final isRussian = _selected.code == 'ru';
-    final filtered = OrvikaLanguage.values.where((language) {
+    final catalogueLanguages = OrvikaLanguage.valuesForCatalogue(_selectedCatalogue);
+    final filtered = catalogueLanguages.where((language) {
       final query = _query.trim().toLowerCase();
       if (query.isEmpty) return true;
       return language.name.toLowerCase().contains(query) ||
@@ -316,6 +347,29 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                       ? 'Выберите язык интерфейса перед началом работы с ORVIKA.'
                       : 'Choose your interface language before you start using ORVIKA.',
                     style: TextStyle(color: scheme.onSurfaceVariant, height: 1.5),
+                  ),
+                  const SizedBox(height: 16),
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'russia', label: Text('Russia')),
+                      ButtonSegment(value: 'india', label: Text('India')),
+                    ],
+                    selected: {_selectedCatalogue},
+                    onSelectionChanged: (selection) {
+                      final catalogue = selection.first;
+                      final languages = OrvikaLanguage.valuesForCatalogue(catalogue);
+                      final nextLanguage = languages.any((language) => language.code == _selected.code)
+                          ? _selected
+                          : OrvikaLanguage.defaultForCatalogue(catalogue);
+                      setState(() {
+                        _selectedCatalogue = catalogue;
+                        _selected = nextLanguage;
+                        _query = '';
+                        _searchController.clear();
+                      });
+                      widget.onCatalogueChanged(catalogue);
+                      widget.onLanguageChanged(nextLanguage);
+                    },
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -380,8 +434,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 12),
                   Text(
                     isRussian
-                      ? 'Перевод интерфейса проверен для русского и английского. Для татарского и башкирского подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
-                      : 'Reviewed interface translations are available in English and Russian. Tatar and Bashkir have initial drafts that need native-speaker review; untranslated areas still use English.',
+                      ? 'Перевод интерфейса проверен для русского и английского. Для татарского, башкирского и хинди подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
+                      : 'Reviewed interface translations are available in English and Russian. Tatar, Bashkir and Hindi have initial drafts requiring native-speaker review; other untranslated areas use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
                   if (widget.showContinueButton) ...[
@@ -407,12 +461,16 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 class OrvikaSplashScreen extends StatelessWidget {
   const OrvikaSplashScreen({
     required this.selectedLanguage,
+    required this.selectedCatalogue,
     required this.onLanguageChanged,
+    required this.onCatalogueChanged,
     super.key,
   });
 
   final OrvikaLanguage selectedLanguage;
+  final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
+  final ValueChanged<String> onCatalogueChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -461,6 +519,8 @@ class OrvikaSplashScreen extends StatelessWidget {
                   MaterialPageRoute<void>(
                     builder: (_) => LanguageSelectionScreen(
                       selectedLanguage: selectedLanguage,
+                      selectedCatalogue: selectedCatalogue,
+                      onCatalogueChanged: onCatalogueChanged,
                       onLanguageChanged: onLanguageChanged,
                       showContinueButton: false,
                     ),
@@ -478,10 +538,12 @@ class OrvikaSplashScreen extends StatelessWidget {
 }
 
 class OrvikaOnboardingScreen extends StatefulWidget {
-  const OrvikaOnboardingScreen({required this.onCompleted, required this.language, super.key});
+  const OrvikaOnboardingScreen({required this.onCompleted, required this.language, required this.selectedCatalogue, required this.onCatalogueChanged, super.key});
 
   final VoidCallback onCompleted;
   final OrvikaLanguage language;
+  final String selectedCatalogue;
+  final ValueChanged<String> onCatalogueChanged;
 
   @override
   State<OrvikaOnboardingScreen> createState() => _OrvikaOnboardingScreenState();
@@ -758,14 +820,18 @@ class SentinelDashboard extends StatelessWidget {
     required this.selectedTheme,
     required this.onThemeChanged,
     required this.selectedLanguage,
+    required this.selectedCatalogue,
     required this.onLanguageChanged,
+    required this.onCatalogueChanged,
     super.key,
   });
 
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
   final OrvikaLanguage selectedLanguage;
+  final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
+  final ValueChanged<String> onCatalogueChanged;
 
   static const modules = <_SafetyModule>[
     _SafetyModule('Sentinel', 'Your safety overview and recent checks.', Icons.shield_moon_outlined, _ModuleAccent.cyan, 'OVERVIEW'),
@@ -810,7 +876,9 @@ class SentinelDashboard extends StatelessWidget {
                           selectedTheme: selectedTheme,
                           onThemeChanged: onThemeChanged,
                           selectedLanguage: selectedLanguage,
+                          selectedCatalogue: selectedCatalogue,
                           onLanguageChanged: onLanguageChanged,
+                          onCatalogueChanged: onCatalogueChanged,
                         ),
                         const SizedBox(height: 28),
                         _HeroPanel(palette: palette),
@@ -910,14 +978,18 @@ class AppearanceSettingsScreen extends StatefulWidget {
     required this.selectedTheme,
     required this.onThemeChanged,
     required this.selectedLanguage,
+    required this.selectedCatalogue,
     required this.onLanguageChanged,
+    required this.onCatalogueChanged,
     super.key,
   });
 
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
   final OrvikaLanguage selectedLanguage;
+  final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
+  final ValueChanged<String> onCatalogueChanged;
 
   @override
   State<AppearanceSettingsScreen> createState() => _AppearanceSettingsScreenState();
@@ -926,6 +998,7 @@ class AppearanceSettingsScreen extends StatefulWidget {
 class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
   late OrvikaTheme _selectedTheme = widget.selectedTheme;
   late OrvikaLanguage _selectedLanguage = widget.selectedLanguage;
+  late String _selectedCatalogue = widget.selectedCatalogue;
 
   @override
   Widget build(BuildContext context) {
@@ -953,7 +1026,12 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
                 MaterialPageRoute<void>(
                   builder: (_) => LanguageSelectionScreen(
                     selectedLanguage: _selectedLanguage,
+                    selectedCatalogue: _selectedCatalogue,
                     showContinueButton: false,
+                    onCatalogueChanged: (catalogue) {
+                      setState(() => _selectedCatalogue = catalogue);
+                      widget.onCatalogueChanged(catalogue);
+                    },
                     onLanguageChanged: (language) {
                       setState(() => _selectedLanguage = language);
                       widget.onLanguageChanged(language);
@@ -1016,12 +1094,14 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged, required this.selectedLanguage, required this.onLanguageChanged});
+  const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged, required this.selectedLanguage, required this.selectedCatalogue, required this.onLanguageChanged, required this.onCatalogueChanged});
   final OrvikaPalette palette;
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
   final OrvikaLanguage selectedLanguage;
+  final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
+  final ValueChanged<String> onCatalogueChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1049,7 +1129,9 @@ class _TopBar extends StatelessWidget {
             MaterialPageRoute<void>(
               builder: (_) => LanguageSelectionScreen(
                 selectedLanguage: selectedLanguage,
+                selectedCatalogue: selectedCatalogue,
                 showContinueButton: false,
+                onCatalogueChanged: onCatalogueChanged,
                 onLanguageChanged: onLanguageChanged,
               ),
             ),
@@ -1064,7 +1146,9 @@ class _TopBar extends StatelessWidget {
                 selectedTheme: selectedTheme,
                 onThemeChanged: onThemeChanged,
                 selectedLanguage: selectedLanguage,
+                selectedCatalogue: selectedCatalogue,
                 onLanguageChanged: onLanguageChanged,
+                onCatalogueChanged: onCatalogueChanged,
               ),
             ),
           ),
