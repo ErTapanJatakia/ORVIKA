@@ -569,24 +569,40 @@ class OrvikaLocalizations {
     'footer.motto':'जोखिमं पश्यतु • सङ्केतं परीक्षताम् • नियन्त्रणं रक्षतु',
   };
 
-  String text(String key, [String? fallback]) {
-    final translations = switch (language.code) {
-      'ru' => _russian,
-      'hi' => _hindiDraft,
-      'tt' => _tatarDraft,
-      'ba' => _bashkirDraft,
-      'de' => _germanDraft,
-      'fr' => _frenchDraft,
-      'it' => _italianDraft,
-      'pa' => _punjabiDraft,
-      'ur' => _urduDraft,
-      'ar' => _arabicDraft,
-      'mr' => _marathiDraft,
-      'gu' => _gujaratiDraft,
-      'sa' => _sanskritDraft,
-      _ => const <String, String>{},
-    };
-    return translations[key] ?? fallback ?? key;
+  /// Language packs currently containing authored ORVIKA strings.
+  /// A picker entry alone is never evidence of translation coverage.
+  static const Set<String> translatedLanguageCodes = {
+    'ru', 'hi', 'tt', 'ba', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
+  };
+
+  static const Set<String> rightToLeftLanguageCodes = {'ar', 'ur', 'he', 'fa', 'ps'};
+  bool get usesRightToLeftLayout => rightToLeftLanguageCodes.contains(language.code);
+
+  Map<String, String> get _translations => switch (language.code) {
+        'ru' => _russian, 'hi' => _hindiDraft, 'tt' => _tatarDraft,
+        'ba' => _bashkirDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
+        'it' => _italianDraft, 'pa' => _punjabiDraft, 'ur' => _urduDraft,
+        'ar' => _arabicDraft, 'mr' => _marathiDraft, 'gu' => _gujaratiDraft,
+        'sa' => _sanskritDraft, _ => const <String, String>{},
+      };
+
+  /// True only when the selected language contains an authored value for [key].
+  bool hasTranslation(String key) => _translations.containsKey(key);
+
+  /// Resolves a key and interpolates named placeholders such as {count}.
+  /// Untranslated values use an explicit English fallback; missing parameters
+  /// remain visible to make incomplete call sites detectable.
+  String text(String key, [String? fallback], {
+    Map<String, Object?> parameters = const {},
+  }) {
+    final resolved = _translations[key] ?? fallback ?? key;
+    return resolved.replaceAllMapped(
+      RegExp(r'\{([a-zA-Z][a-zA-Z0-9_]*)\}'),
+      (match) {
+        final name = match.group(1)!;
+        return parameters.containsKey(name) ? '${parameters[name]}' : match.group(0)!;
+      },
+    );
   }
 
   static OrvikaLocalizations of(BuildContext context) {
