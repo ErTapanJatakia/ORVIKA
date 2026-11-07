@@ -140,7 +140,7 @@ void main() {
     expect(find.text('Inspect before you connect.'), findsOneWidget);
     expect(find.text('Link Check'), findsOneWidget);
 
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     expect(find.text('Your safety toolkit'), findsOneWidget);
 
@@ -149,7 +149,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Look before you scan.'), findsOneWidget);
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     expect(find.text('Your safety toolkit'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -461,7 +461,7 @@ void main() {
 
     // Accessibility settings live on a separate route. Return to the dashboard
     // before asserting that the app-wide MediaQuery and theme are applied there.
-    await tester.pageBack();
+    await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     expect(find.text('Your safety toolkit'), findsOneWidget);
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
