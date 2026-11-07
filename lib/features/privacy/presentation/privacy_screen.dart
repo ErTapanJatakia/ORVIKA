@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../core/widgets/orvika_feature_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/privacy_checklist.dart';
@@ -110,8 +112,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     final total = PrivacyChecklist.practices.length;
     final reviewed = _reviewedIds.length;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Privacy'),
+      appBar: OrvikaFeatureAppBar(
+        title: 'Privacy',
         actions: [
           if (!_isLoading && reviewed > 0)
             IconButton(
