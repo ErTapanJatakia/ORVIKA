@@ -1541,9 +1541,15 @@ class _ModuleCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final accent = _accent();
     final enabled = onTap != null;
+    final description = module.description.trim().replaceFirst(
+      RegExp(r'[.!?]+$'),
+      '',
+    );
+    final availability = enabled ? 'Available' : module.status;
+
     return Semantics(
       container: true,
-      label: '${module.title}. ${module.description.trim().replaceFirst(RegExp(r'[.!?]+
+      label: '${module.title}. $description. $availability.',
       button: enabled,
       enabled: enabled,
       onTap: onTap,
@@ -1552,32 +1558,70 @@ class _ModuleCard extends StatelessWidget {
           color: palette.surface.withValues(alpha: enabled ? 1 : 0.72),
           borderRadius: BorderRadius.circular(19),
           child: InkWell(
-            onTap: onTap, borderRadius: BorderRadius.circular(19),
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(19),
             child: Container(
               padding: const EdgeInsets.all(17),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(19),
-                border: Border.all(color: accent.withValues(alpha: enabled ? 0.30 : 0.16)),
+                border: Border.all(
+                  color: accent.withValues(alpha: enabled ? 0.30 : 0.16),
+                ),
               ),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Container(
-                    width: 40, height: 40,
-                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(13)),
-                    child: Icon(module.icon, color: accent, size: 22),
-                  ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: accent.withValues(alpha: 0.13),
+                        borderRadius: BorderRadius.circular(13),
+                      ),
+                      child: Icon(module.icon, color: accent, size: 22),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      enabled
+                          ? Icons.arrow_outward_rounded
+                          : Icons.lock_outline_rounded,
+                      size: 15,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ]),
                   const Spacer(),
-                  Icon(enabled ? Icons.arrow_outward_rounded : Icons.lock_outline_rounded,
-                    size: 15, color: scheme.onSurfaceVariant),
-                ]),
-                const Spacer(),
-                Text(module.title, style: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w800, fontSize: 15)),
-                const SizedBox(height: 5),
-                Text(module.description, maxLines: 2, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.35)),
-                const SizedBox(height: 10),
-                Text(module.status, style: TextStyle(color: accent, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.05)),
-              ]),
+                  Text(
+                    module.title,
+                    style: TextStyle(
+                      color: scheme.onSurface,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    module.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 11,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    module.status,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.05,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
