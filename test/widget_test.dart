@@ -472,6 +472,10 @@ void main() {
     final semantics = tester.ensureSemantics();
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
+    // Dashboard cards are below the hero in a lazily built scroll view.
+    // Bring the module grid into the tree before querying its semantics.
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -700));
+    await tester.pumpAndSettle();
 
     final linkCard = find.bySemanticsLabel(
       'Link Check. Inspect website addresses before you open them. Available.',
