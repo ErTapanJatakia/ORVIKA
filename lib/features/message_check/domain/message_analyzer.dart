@@ -22,7 +22,12 @@ class MessageAnalyzer {
   const MessageAnalyzer();
 
   static final RegExp _urlPattern = RegExp(
-    r'(?:(?:https?://)|(?:www\.))[A-Za-z0-9\-._~:/?#\[\]@!$&()*+,;=%]+',
+    r'''(?:(?:https?://)|(?:www\\.))[^\\s<>"']+''',
+    caseSensitive: false,
+  );
+
+  static final RegExp _obfuscatedUrlPattern = RegExp(
+    r'''\\bhxxps?://[^\\s<>"']+''',
     caseSensitive: false,
   );
 
@@ -83,7 +88,57 @@ class MessageAnalyzer {
 
     final links = _urlPattern
         .allMatches(rawInput)
-        .map((match) => match.group(0)!.replaceAll(RegExp(r'[.,!?;:]+$'), ''))
+        .map((match) => match.group(0)!.replaceAll(RegExp(r'''[.,!?;:)\\]}>]+
+        .where((value) => value.isNotEmpty)
+        .toSet()
+        .toList(growable: false);
+
+    if (_obfuscatedUrlPattern.hasMatch(rawInput)) {
+      findings.add(const LinkFinding(
+        title: 'Obfuscated web address detected',
+        detail: 'The message contains a link using a substituted scheme such as hxxp or hxxps. Treat it as an address requiring manual inspection; it has not been normalised or opened.',
+        severity: FindingSeverity.warning,
+      ));
+    }
+
+    if (links.isNotEmpty) {
+      findings.add(LinkFinding(
+        title: 'Link or web address detected',
+        detail: '${links.length} web address(es) found. A visible link can conceal a different destination; inspect each address separately before opening it.',
+        severity: FindingSeverity.caution,
+      ));
+    }
+
+    if (findings.isEmpty) {
+      findings.add(const LinkFinding(
+        title: 'No listed social-engineering cues detected',
+        detail: 'The text did not match the limited patterns in this version. Harmful messages can still appear ordinary or use wording not covered here.',
+        severity: FindingSeverity.info,
+      ));
+    }
+
+    return MessageAnalysisResult(
+      input: rawInput,
+      findings: List.unmodifiable(findings),
+      detectedLinks: links,
+      isValid: true,
+      notice: 'Heuristic text checks only. No message was uploaded, no link was opened, and no sender identity or intent was verified.',
+    );
+  }
+
+  MessageAnalysisResult _invalid(String input, String detail) => MessageAnalysisResult(
+    input: input,
+    findings: [LinkFinding(
+      title: 'Message not analysed',
+      detail: detail,
+      severity: FindingSeverity.warning,
+    )],
+    detectedLinks: const [],
+    isValid: false,
+    notice: 'No network request was made.',
+  );
+}
+''), ''))
         .where((value) => value.isNotEmpty)
         .toSet()
         .toList(growable: false);

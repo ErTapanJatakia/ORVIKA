@@ -63,6 +63,14 @@ class UrlAnalyzer {
     final findings = <LinkFinding>[];
     final host = uri.host.toLowerCase();
 
+    if (RegExp(r'[^\\x00-\\x7F]').hasMatch(host)) {
+      findings.add(const LinkFinding(
+        title: 'Unicode hostname',
+        detail: 'The hostname contains non-ASCII characters. Check the internationalised domain carefully for visually similar characters and verify its exact spelling.',
+        severity: FindingSeverity.caution,
+      ));
+    }
+
     if (uri.scheme == 'http') {
       findings.add(const LinkFinding(
         title: 'Unencrypted connection',
@@ -92,7 +100,73 @@ class UrlAnalyzer {
           detail: 'The address points directly to an IPv4 literal rather than a named domain. This is not inherently malicious, but deserves verification.',
           severity: FindingSeverity.caution,
         ));
+      } else {
+        findings.add(const LinkFinding(
+          title: 'Malformed IPv4-looking hostname',
+          detail: 'The hostname resembles a dotted IPv4 address but contains an out-of-range octet. Do not assume it identifies the intended destination.',
+          severity: FindingSeverity.warning,
+        ));
       }
+    } else if (RegExp(r'^[0-9.]+    final labels = host.split('.');
+    if (labels.length >= 4) {
+      findings.add(const LinkFinding(
+        title: 'Long subdomain chain',
+        detail: 'The hostname contains multiple subdomain levels. Read the registrable domain carefully; a familiar brand name in a subdomain does not establish who controls the destination.',
+        severity: FindingSeverity.caution,
+      ));
+    }
+    if (uri.hasPort && uri.port != 80 && uri.port != 443) {
+      findings.add(LinkFinding(
+        title: 'Non-standard port',
+        detail: 'The address uses port ${uri.port}, rather than the usual HTTP or HTTPS port.',
+        severity: FindingSeverity.caution,
+      ));
+    }
+    if (uri.hasFragment && uri.fragment.isNotEmpty) {
+      findings.add(const LinkFinding(
+        title: 'Fragment present',
+        detail: 'The address includes a fragment. It is part of the supplied URL and may affect the page or client-side routing.',
+        severity: FindingSeverity.info,
+      ));
+    }
+    if (findings.isEmpty) {
+      findings.add(const LinkFinding(
+        title: 'No structural warning detected',
+        detail: 'The address passed these basic local checks. This does not establish that the website is trustworthy or safe.',
+        severity: FindingSeverity.info,
+      ));
+    }
+
+    return LinkAnalysisResult(
+      input: rawInput,
+      normalizedUrl: uri.toString(),
+      findings: List.unmodifiable(findings),
+      isValid: true,
+      notice: 'Local structure checks only. No network request or reputation lookup was performed.',
+    );
+  }
+
+  LinkAnalysisResult _invalid(String input, String message) {
+    return LinkAnalysisResult(
+      input: input,
+      normalizedUrl: null,
+      findings: [
+        LinkFinding(
+          title: 'Address not analysed',
+          detail: message,
+          severity: FindingSeverity.warning,
+        ),
+      ],
+      isValid: false,
+      notice: 'No network request was made.',
+    );
+  }
+}).hasMatch(host) && host.contains('.')) {
+      findings.add(const LinkFinding(
+        title: 'Unusual numeric hostname',
+        detail: 'The hostname is numeric but is not a standard four-octet IPv4 address. Some clients may interpret unusual numeric forms differently.',
+        severity: FindingSeverity.warning,
+      ));
     }
     final labels = host.split('.');
     if (labels.length >= 5) {

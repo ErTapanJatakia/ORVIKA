@@ -54,6 +54,17 @@ void main() {
       expect(result.detail, contains('will not place a call'));
     });
 
+    test('rejects UPI payment actions without a payee address', () {
+      final result = analyzer.analyze('upi://pay?pn=Merchant');
+      expect(result.isValid, isFalse);
+      expect(result.kind, QrPayloadKind.invalid);
+    });
+
+    test('rejects empty phone and email actions', () {
+      expect(analyzer.analyze('tel:').isValid, isFalse);
+      expect(analyzer.analyze('mailto:').isValid, isFalse);
+    });
+
     test('treats ordinary text as text, not a trusted destination', () {
       final result = analyzer.analyze('Pay this invoice immediately');
       expect(result.kind, QrPayloadKind.plainText);
