@@ -529,6 +529,11 @@ void main() {
       await tester.pumpWidget(OrvikaApp(key: ValueKey('dashboard-grid-$width')));
       await tester.pumpAndSettle();
 
+      // The dashboard is a sliver list and the module grid sits below the
+      // hero panel. Scroll the outer dashboard viewport first so the lazy
+      // grid children are built before asking the tester to reveal a card.
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Link Check'));
       await tester.pumpAndSettle();
       expect(find.text('Link Check'), findsOneWidget, reason: 'module card at width: $width');
