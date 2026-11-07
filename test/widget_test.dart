@@ -133,6 +133,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('Link Check'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Link Check'));
     await tester.pumpAndSettle();
 
