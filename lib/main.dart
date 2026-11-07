@@ -126,7 +126,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
           }
         }
         _hasCompletedOnboarding = completed;
-        _textScale = textScale.clamp(0.85, 2.0);
+        _textScale = textScale.clamp(0.85, 2.0).toDouble();
         _boldText = boldText;
         _reduceMotion = reduceMotion;
         _isLoadingPreferences = false;
@@ -191,7 +191,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
   }
 
   Future<void> _setTextScale(double value) async {
-    final safeValue = value.clamp(0.85, 2.0);
+    final safeValue = value.clamp(0.85, 2.0).toDouble();
     setState(() => _textScale = safeValue);
     final preferences = await SharedPreferences.getInstance();
     await preferences.setDouble('accessibility.textScale', safeValue);
