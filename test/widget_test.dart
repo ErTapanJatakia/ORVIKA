@@ -142,7 +142,10 @@ void main() {
 
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
-    expect(find.text('Your safety toolkit'), findsOneWidget);
+    // The dashboard preserves its scroll offset. Verify the visible module
+    // card rather than a heading that is above the viewport and lazily unbuilt.
+    expect(find.text('Link Check'), findsOneWidget);
+    expect(find.text('Inspect before you connect.'), findsNothing);
 
     await tester.ensureVisible(find.text('QR Check'));
     await tester.tap(find.text('QR Check'));
@@ -151,7 +154,8 @@ void main() {
     expect(find.text('Look before you scan.'), findsOneWidget);
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
-    expect(find.text('Your safety toolkit'), findsOneWidget);
+    expect(find.text('QR Check'), findsOneWidget);
+    expect(find.text('Look before you scan.'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
