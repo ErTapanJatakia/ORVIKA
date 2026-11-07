@@ -4,7 +4,7 @@
 
 ORVIKA presents a searchable language selector before onboarding on a first launch. The selected language is saved locally with the `appearance.language` preference. The launch splash and dashboard header also provide a direct language-selection action; Appearance & Accessibility settings expose the same picker.
 
-The catalogue contains 100 language entries using language identifiers and native-script labels. The order prioritises Russian and English, followed by widely used languages and then regional, Indigenous and diaspora languages represented in Russia.
+The app provides two separately searchable catalogues: 100 languages and language varieties associated with communities in Russia, and 100 entries for India. Users choose the catalogue (Russia or India) and then the language on first launch; both choices are saved locally. The picker also remains available from the dashboard and settings. The Russia catalogue prioritises Russian and English; the India catalogue includes the 22 Eighth Schedule languages plus 78 selected regional, Indigenous and community languages/varieties, with English fallback included.
 
 ## Translation coverage
 
@@ -12,11 +12,16 @@ The catalogue contains 100 language entries using language identifiers and nativ
 - Russian: reviewed initial UI pack for onboarding, dashboard module labels/descriptions and language settings.
 - Tatar (`tt`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - Bashkir (`ba`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
+- Hindi (`hi`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - Other catalogue entries: selectable and persisted, but currently display the English fallback. A language being listed does not imply that its complete UI translation is already available.
 
 No machine-translation API, remote service, telemetry, or backend is used. New translation packs should be reviewed by fluent speakers and added as offline resources. Avoid auto-translating security, incident-response, legal, or privacy guidance without human review.
 
-## Catalogue methodology and limitations
+## India catalogue methodology and limitations
+
+The India catalogue is a curated 100-entry product selection, not a claim to be a statistically exact top-100 ranking. It includes the 22 languages in the Eighth Schedule and 78 selected languages or mother-tongue varieties drawn from Census of India language classifications and commonly represented regional and Indigenous communities. The official 2011 Census publication reports 121 language groups and 270 identifiable mother tongues with at least 10,000 speakers; many regional varieties are grouped under broader language headings. The catalogue keeps some well-known varieties separately searchable where useful, so its entries must not be added together as if they were independent Census categories.
+
+## Russia catalogue methodology and limitations
 
 There is no single universally accepted ranked list of the 100 most-used languages in Russia. Rosstat's 2020 All-Russian Population Census, Volume 5, reports language proficiency, everyday use and native-language data; Rosstat also notes that the Institute of Linguistics of the Russian Academy of Sciences analysed the census language responses to support consistent language identification. Academic language inventories identify well over 100 languages spoken in the Russian Federation, with totals depending on how diaspora languages, language varieties and dialects are classified.
 
@@ -24,6 +29,7 @@ Accordingly, this is a curated 100-language product catalogue, not a claim that 
 
 ## Reference sources
 
+- Office of the Registrar General, India, Census of India 2011, Paper 1 of 2018, Language — India, States and Union Territories (Table C-16): https://censusindia.gov.in/nada/index.php/catalog/42458/download/46089/C-1625062018.pdf
 - Rosstat, 2020 All-Russian Population Census, Volume 5 — National composition and language proficiency: https://rosstat.gov.ru/vpn/2020/Tom5_Nacionalnyj_sostav_i_vladenie_yazykami
 - Rosstat, census language information: https://43.rosstat.gov.ru/folder/69369/document/128065
 - Indiana University Center for Language Technology, Languages in the Russian Federation: https://celt.indiana.edu/portal/Russian/language_russia.html
