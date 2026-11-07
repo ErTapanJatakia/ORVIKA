@@ -455,6 +455,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('ORVIKA'), findsOneWidget, reason: 'width: $width');
+      final wordmark = tester.widget<Text>(find.text('ORVIKA'));
+      expect(wordmark.maxLines, 1, reason: 'wordmark must remain on one line at width: $width');
+      expect(wordmark.softWrap, isFalse, reason: 'wordmark must not wrap at width: $width');
       expect(find.ancestor(of: find.text('ORVIKA'), matching: find.byType(FittedBox)), findsOneWidget,
           reason: 'wordmark must scale down rather than clip at width: $width');
       expect(find.byTooltip('Change language'), findsOneWidget, reason: 'width: $width');
