@@ -83,7 +83,7 @@ void main() {
     expect(find.text('1 reference entries'), findsOneWidget);
     expect(find.text('Internationalised domain / Punycode'), findsOneWidget);
 
-    await tester.tap(find.text('Clear search'));
+    await tester.tap(find.byTooltip('Clear search'));
     await tester.pumpAndSettle();
     expect(find.text('10 reference entries'), findsOneWidget);
 
