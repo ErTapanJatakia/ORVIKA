@@ -208,8 +208,11 @@ void main() {
 
     expect(find.text('Ваш набор цифровой безопасности'), findsOneWidget);
 
-    // Module cards sit below the hero panel in the scrollable dashboard.
-    // Bring each translated card into the viewport before asserting its label.
+    // The dashboard grid is below the hero panel and lazily builds its cards.
+    // Scroll the outer dashboard until the grid is mounted, then reveal each
+    // translated card before asserting its label.
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Проверка ссылок'));
     await tester.pumpAndSettle();
     expect(find.text('Проверка ссылок'), findsOneWidget);
