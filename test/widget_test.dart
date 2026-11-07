@@ -437,8 +437,8 @@ void main() {
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
     expect(MediaQuery.of(dashboardContext).textScaler.scale(10), 12.5);
     expect(MediaQuery.of(dashboardContext).disableAnimations, isTrue);
-    expect(Theme.of(dashboardContext).textTheme.bodyMedium!.fontWeight!.index,
-      greaterThanOrEqualTo(FontWeight.w500.index));
+    expect(Theme.of(dashboardContext).textTheme.bodyMedium!.fontWeight!.value,
+      greaterThanOrEqualTo(FontWeight.w500.value));
   });
 
 }
