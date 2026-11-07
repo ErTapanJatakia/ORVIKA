@@ -207,7 +207,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Ваш набор цифровой безопасности'), findsOneWidget);
+
+    // Module cards sit below the hero panel in the scrollable dashboard.
+    // Bring each translated card into the viewport before asserting its label.
+    await tester.ensureVisible(find.text('Проверка ссылок'));
+    await tester.pumpAndSettle();
     expect(find.text('Проверка ссылок'), findsOneWidget);
+    await tester.ensureVisible(find.text('Проверка QR'));
+    await tester.pumpAndSettle();
     expect(find.text('Проверка QR'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Внешний вид и доступность'));
