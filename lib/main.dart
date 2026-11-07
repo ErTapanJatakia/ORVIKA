@@ -186,7 +186,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
     return MaterialApp(
       title: 'ORVIKA — Check Before You Trust',
-      locale: Locale(_selectedLanguage.code),
+      locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
       supportedLocales: const [Locale('en'), Locale('ru')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       debugShowCheckedModeBanner: false,
@@ -218,7 +218,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
         ),
       ),
       home: _isLoadingPreferences
-          ? const OrvikaSplashScreen()
+          ? OrvikaSplashScreen(selectedLanguage: _selectedLanguage, onLanguageChanged: _selectLanguage)
           : !_hasSelectedLanguage
               ? LanguageSelectionScreen(
                   selectedLanguage: _selectedLanguage,
@@ -399,46 +399,73 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 }
 
 class OrvikaSplashScreen extends StatelessWidget {
-  const OrvikaSplashScreen({super.key});
+  const OrvikaSplashScreen({
+    required this.selectedLanguage,
+    required this.onLanguageChanged,
+    super.key,
+  });
+
+  final OrvikaLanguage selectedLanguage;
+  final ValueChanged<OrvikaLanguage> onLanguageChanged;
 
   @override
   Widget build(BuildContext context) {
     const palette = OrvikaPalette.obsidian;
     return Scaffold(
       backgroundColor: palette.background,
-      body: const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            OrvikaOwlMark(size: 112, palette: palette),
-            SizedBox(height: 22),
-            Text(
-              'ORVIKA',
-              style: TextStyle(
-                color: Color(0xFFF3F7FC),
-                fontSize: 25,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 5,
+      body: Stack(
+        children: [
+          const Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                OrvikaOwlMark(size: 112, palette: palette),
+                SizedBox(height: 22),
+                Text(
+                  'ORVIKA',
+                  style: TextStyle(
+                    color: Color(0xFFF3F7FC),
+                    fontSize: 25,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 5,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'PERSONAL CYBER SAFETY INTELLIGENCE',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFF9BB0C8),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                SizedBox(height: 28),
+                SizedBox(width: 92, child: LinearProgressIndicator(minHeight: 2)),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 12,
+            right: 12,
+            child: SafeArea(
+              child: TextButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => LanguageSelectionScreen(
+                      selectedLanguage: selectedLanguage,
+                      onLanguageChanged: onLanguageChanged,
+                      showContinueButton: false,
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.translate_rounded, color: Color(0xFF00D5FF)),
+                label: Text(selectedLanguage.name, style: const TextStyle(color: Color(0xFFF3F7FC))),
               ),
             ),
-            SizedBox(height: 8),
-            Text(
-              'PERSONAL CYBER SAFETY INTELLIGENCE',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFF9BB0C8),
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.5,
-              ),
-            ),
-            SizedBox(height: 28),
-            SizedBox(
-              width: 92,
-              child: LinearProgressIndicator(minHeight: 2),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
