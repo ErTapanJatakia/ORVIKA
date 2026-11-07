@@ -6,8 +6,24 @@ void main() {
   group('ORVIKA language catalogue', () {
     test('unified picker contains unique stable language codes', () {
       final codes = OrvikaLanguage.allValues.map((language) => language.code).toList();
-      expect(codes.length, 193);
+      expect(codes.length, 191);
       expect(codes.toSet().length, codes.length);
+      expect(codes, isNot(contains('tt')));
+      expect(codes, isNot(contains('ba')));
+    });
+
+    test('Tatar and Bashkir are excluded from selectable language catalogues', () {
+      for (final catalogue in ['russia', 'india']) {
+        final codes = OrvikaLanguage.valuesForCatalogue(catalogue)
+            .map((language) => language.code)
+            .toSet();
+        expect(codes, isNot(contains('tt')));
+        expect(codes, isNot(contains('ba')));
+      }
+      expect(OrvikaLanguage.valuesForCatalogue('russia'), hasLength(98));
+      expect(OrvikaLanguage.valuesForCatalogue('india'), hasLength(100));
+      expect(OrvikaLanguage.fromCode('tt').code, 'en');
+      expect(OrvikaLanguage.fromCode('ba').code, 'en');
     });
 
     test('translation coverage is explicit and is not inferred from picker membership', () {

@@ -526,8 +526,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 12),
                   Text(
                     isRussian
-                      ? 'Перевод интерфейса проверен для русского и английского. Для татарского, башкирского и хинди подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
-                      : 'English and Russian have reviewed interface translations. Hindi, Tatar and Bashkir have initial drafts; languages without a translation currently use English.',
+                      ? 'Перевод интерфейса проверен для русского и английского. Для хинди и некоторых других языков подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
+                      : 'English and Russian have reviewed interface translations. Hindi and selected additional languages have unreviewed drafts; languages without an available translation use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
                 ],
@@ -976,39 +976,86 @@ class SentinelDashboard extends StatelessWidget {
                         const SizedBox(height: 28),
                         _HeroPanel(palette: palette, language: selectedLanguage),
                         const SizedBox(height: 30),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Column(
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final compact = constraints.maxWidth < 620;
+                            final heading = Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  OrvikaLocalizations(selectedLanguage).text(
+                                    'dashboard.title', 'Your safety toolkit',
+                                  ),
+                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  OrvikaLocalizations(selectedLanguage).text(
+                                    'dashboard.subtitle',
+                                    'Eight focused capabilities. One clearer view of digital risk.',
+                                  ),
+                                  style: TextStyle(
+                                    color: scheme.onSurfaceVariant,
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            );
+                            final privacy = _StatusPill(
+                              label: OrvikaLocalizations(selectedLanguage).text(
+                                'dashboard.privacyFirst', 'PRIVACY-FIRST',
+                              ),
+                              color: palette.success,
+                            );
+                            if (compact) {
+                              return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(OrvikaLocalizations(selectedLanguage).text('dashboard.title', 'Your safety toolkit'),
-                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                      fontWeight: FontWeight.w800, letterSpacing: -0.5)),
-                                  const SizedBox(height: 5),
-                                  Text(OrvikaLocalizations(selectedLanguage).text('dashboard.subtitle', 'Eight focused capabilities. One clearer view of digital risk.'),
-                                    style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13)),
+                                  heading,
+                                  const SizedBox(height: 10),
+                                  privacy,
                                 ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            _StatusPill(label: OrvikaLocalizations(selectedLanguage).text('dashboard.privacyFirst', 'PRIVACY-FIRST'), color: palette.success),
-                          ],
+                              );
+                            }
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(child: heading),
+                                const SizedBox(width: 12),
+                                privacy,
+                              ],
+                            );
+                          },
                         ),
                         const SizedBox(height: 17),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final columns = constraints.maxWidth >= 900 ? 4 : constraints.maxWidth >= 570 ? 2 : 1;
+                            final columns = constraints.maxWidth >= 1000
+                                ? 4
+                                : constraints.maxWidth >= 760
+                                    ? 3
+                                    : constraints.maxWidth >= 560
+                                        ? 2
+                                        : 1;
+                            final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
+                            final cardExtent = (190 + ((textScale - 1).clamp(0, 1.5) * 160))
+                                .clamp(190, 430)
+                                .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
+                              primary: false,
+                              clipBehavior: Clip.none,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: modules.length,
                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: columns,
                                 crossAxisSpacing: 14,
                                 mainAxisSpacing: 14,
-                                mainAxisExtent: 174,
+                                mainAxisExtent: cardExtent,
                               ),
                               itemBuilder: (context, index) {
                                 final module = modules[index];
@@ -1047,9 +1094,14 @@ class SentinelDashboard extends StatelessWidget {
                           child: Text(
                             OrvikaLocalizations(selectedLanguage).text('footer.motto', 'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'),
                             textAlign: TextAlign.center,
+                            softWrap: true,
                             style: TextStyle(
                               color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
-                              fontSize: 10, letterSpacing: 1.2, fontWeight: FontWeight.w700),
+                              fontSize: 10,
+                              letterSpacing: MediaQuery.textScalerOf(context).scale(10) > 12
+                                  ? 0.55
+                                  : 1.2,
+                              fontWeight: FontWeight.w700),
                           ),
                         ),
                       ]),
@@ -1246,23 +1298,55 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;    return Row(
+    final scheme = Theme.of(context).colorScheme;
+    final brand = Row(
+      mainAxisSize: MainAxisSize.max,
       children: [
         OrvikaOwlMark(size: 48, palette: palette),
         const SizedBox(width: 12),
-        Expanded(
+        Flexible(
+          fit: FlexFit.loose,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text('ORVIKA', style: TextStyle(
-                color: scheme.onSurface, fontSize: 19, fontWeight: FontWeight.w900,
-                letterSpacing: 2.8, height: 1.1)),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  'ORVIKA',
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: scheme.onSurface,
+                    fontSize: 19,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.8,
+                    height: 1.1,
+                  ),
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(OrvikaLocalizations(selectedLanguage).text('brand.descriptor', 'PERSONAL CYBER SAFETY INTELLIGENCE'), style: TextStyle(
-                color: scheme.onSurfaceVariant, fontSize: 8, letterSpacing: 1.05, fontWeight: FontWeight.w700)),
+              Text(
+                OrvikaLocalizations(selectedLanguage).text(
+                  'brand.descriptor', 'PERSONAL CYBER SAFETY INTELLIGENCE'),
+                softWrap: true,
+                style: TextStyle(
+                  color: scheme.onSurfaceVariant, fontSize: 8,
+                  letterSpacing: 1.05, fontWeight: FontWeight.w700),
+              ),
             ],
           ),
         ),
+      ],
+    );
+
+    final actions = Wrap(
+      alignment: WrapAlignment.end,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 4,
+      runSpacing: 4,
+      children: [
         IconButton(
           tooltip: OrvikaLocalizations(selectedLanguage).text('nav.changeLanguage', 'Change language'),
           onPressed: () => Navigator.of(context).push(
@@ -1336,6 +1420,34 @@ class _TopBar extends StatelessWidget {
         ),
       ],
     );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textScale = MediaQuery.textScalerOf(context).scale(10) / 10;
+        final compact = constraints.maxWidth < 760 ||
+            (textScale >= 1.5 && constraints.maxWidth < 1020);
+        if (compact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              brand,
+              const SizedBox(height: 10),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: actions,
+              ),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: brand),
+            const SizedBox(width: 18),
+            actions,
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -1349,7 +1461,9 @@ class _HeroPanel extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(26),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 420 ? 18 : 26,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(26),
         border: Border.all(color: palette.primary.withValues(alpha: 0.28)),
@@ -1366,8 +1480,10 @@ class _HeroPanel extends StatelessWidget {
           blurRadius: 34, spreadRadius: 1)],
       ),
       child: LayoutBuilder(builder: (context, constraints) {
-        final compact = constraints.maxWidth < 570;
-        final owl = OrvikaOwlMark(size: compact ? 102 : 154, palette: palette);
+        final textScale = MediaQuery.textScalerOf(context).scale(10) / 10;
+        final compact = constraints.maxWidth < 680 ||
+            (textScale >= 1.5 && constraints.maxWidth < 900);
+        final owl = OrvikaOwlMark(size: compact ? 96 : 148, palette: palette);
         final copyContent = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1532,30 +1648,78 @@ class _ModuleCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap, borderRadius: BorderRadius.circular(19),
         child: Container(
-          padding: const EdgeInsets.all(17),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(19),
             border: Border.all(color: accent.withValues(alpha: enabled ? 0.30 : 0.16)),
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(color: accent.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(13)),
-                child: Icon(module.icon, color: accent, size: 22),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.13),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: Icon(module.icon, color: accent, size: 22),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    enabled
+                        ? Icons.arrow_outward_rounded
+                        : module.status == 'OVERVIEW'
+                            ? Icons.dashboard_outlined
+                            : Icons.lock_outline_rounded,
+                    size: 15,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ],
               ),
-              const Spacer(),
-              Icon(enabled ? Icons.arrow_outward_rounded : Icons.lock_outline_rounded,
-                size: 15, color: scheme.onSurfaceVariant),
-            ]),
-            const Spacer(),
-            Text(module.title, style: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w800, fontSize: 15)),
-            const SizedBox(height: 5),
-            Text(module.description, maxLines: 2, overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.35)),
-            const SizedBox(height: 10),
-            Text(module.status, style: TextStyle(color: accent, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.05)),
-          ]),
+              const SizedBox(height: 12),
+              Text(
+                module.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: scheme.onSurface,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    module.description,
+                    softWrap: true,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 11,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                module.status,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: accent,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.05,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1593,14 +1757,26 @@ class _TrustNote extends StatelessWidget {
         borderRadius: BorderRadius.circular(17),
         border: Border.all(color: scheme.outline.withValues(alpha: 0.24)),
       ),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(Icons.info_outline_rounded, color: palette.primary, size: 20),
-        const SizedBox(width: 11),
-        Expanded(child: Text(
-          OrvikaLocalizations(language).text('trust.note', 'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.'),
-          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
-        )),
-      ]),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline_rounded, color: palette.primary, size: 20),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Text(
+              OrvikaLocalizations(language).text(
+                'trust.note',
+                'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.',
+              ),
+              style: TextStyle(
+                color: scheme.onSurfaceVariant,
+                fontSize: 12,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -248,42 +248,22 @@ void main() {
     expect(preferences.getString('appearance.language'), 'ru');
   });
 
-  testWidgets('Tatar draft localizes dashboard while retaining review status', (tester) async {
+  testWidgets('Tatar and Bashkir are temporarily unavailable in the language picker', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Tatar');
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-tt')));
-    await tester.pumpAndSettle();
-    expect(find.text('Сезнең санлы иминлек кораллары'), findsOneWidget);
-    expect(find.text('Сылтаманы тикшерү'), findsOneWidget);
-    expect(
-      OrvikaLocalizations.of(tester.element(find.text('Сезнең санлы иминлек кораллары'))).language.code,
-      'tt',
-      reason: 'The selected Tatar locale must remain available to app localization.',
-    );
-    expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isTrue);
-    expect(OrvikaLanguage.fromCode('tt').hasReviewedTranslation, isFalse);
-  });
-
-  testWidgets('Bashkir draft localizes dashboard while retaining review status', (tester) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const OrvikaApp());
-    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('language-tt')), findsNothing);
     await tester.enterText(find.byType(TextField), 'Bashkir');
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-ba')));
-    await tester.pumpAndSettle();
-    expect(find.text('Һеҙҙең һанлы именлек ҡоралдары'), findsOneWidget);
-    expect(find.text('Һылтанманы тикшереү'), findsOneWidget);
-    expect(
-      OrvikaLocalizations.of(tester.element(find.text('Һеҙҙең һанлы именлек ҡоралдары'))).language.code,
-      'ba',
-      reason: 'The selected Bashkir locale must remain available to app localization.',
-    );
-    expect(OrvikaLanguage.fromCode('ba').hasDraftTranslation, isTrue);
-    expect(OrvikaLanguage.fromCode('ba').hasReviewedTranslation, isFalse);
+    expect(find.byKey(const ValueKey('language-ba')), findsNothing);
+    expect(OrvikaLanguage.fromCode('tt').code, 'en');
+    expect(OrvikaLanguage.fromCode('ba').code, 'en');
+    expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isFalse);
+    expect(OrvikaLanguage.fromCode('ba').hasDraftTranslation, isFalse);
+    expect(OrvikaLocalizations.translatedLanguageCodes, isNot(contains('tt')));
+    expect(OrvikaLocalizations.translatedLanguageCodes, isNot(contains('ba')));
   });
 
   testWidgets('Hindi draft localizes dashboard immediately after selection', (tester) async {
@@ -349,14 +329,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Choose your language'), findsOneWidget);
-    await tester.enterText(find.byType(TextField), 'Tatar');
+    await tester.enterText(find.byType(TextField), 'Chechen');
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('language-tt')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('language-tt')));
+    expect(find.byKey(const ValueKey('language-ce')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('language-ce')));
     await tester.pumpAndSettle();
 
     final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'tt');
+    expect(preferences.getString('appearance.language'), 'ce');
   });
 
 
@@ -461,5 +441,165 @@ void main() {
     expect(Theme.of(dashboardContext).textTheme.bodyMedium!.fontWeight!.value,
       greaterThanOrEqualTo(FontWeight.w500.value));
   });
+
+
+  testWidgets('dashboard header adapts across narrow, tablet and desktop widths', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    tester.view.devicePixelRatio = 1;
+    // Portrait logical-width profiles covering the reported Galaxy, iPhone and
+    // Pixel families, plus narrow browser viewports. Browser-engine/device
+    // verification is still required outside this widget test.
+    for (final width in [
+      280.0, 320.0, 360.0, 375.0, 390.0, 393.0, 402.0, 412.0, 414.0, 430.0,
+      473.0, // Exact screenshot viewport width (CSS/logical px must be confirmed in browser).
+      600.0, 760.0, 1024.0, 1920.0,
+    ]) {
+      tester.view.physicalSize = Size(width, 850);
+      await tester.pumpWidget(OrvikaApp(key: ValueKey('responsive-portrait-$width')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('ORVIKA'), findsOneWidget, reason: 'width: $width');
+      final wordmark = tester.widget<Text>(find.text('ORVIKA'));
+      expect(wordmark.maxLines, 1, reason: 'wordmark must remain on one line at width: $width');
+      expect(wordmark.softWrap, isFalse, reason: 'wordmark must not wrap at width: $width');
+      final wordmarkFit = find.ancestor(
+        of: find.text('ORVIKA'),
+        matching: find.byType(FittedBox),
+      );
+      expect(wordmarkFit, findsOneWidget,
+          reason: 'wordmark must scale down rather than clip at width: $width');
+      expect(tester.getSize(wordmarkFit).width, greaterThanOrEqualTo(100),
+          reason: 'wordmark must have usable horizontal layout space at width: $width');
+      expect(find.text('PERSONAL CYBER SAFETY INTELLIGENCE'), findsOneWidget,
+          reason: 'brand descriptor must remain present at width: $width');
+      expect(find.byTooltip('Change language'), findsOneWidget, reason: 'width: $width');
+      expect(tester.takeException(), isNull, reason: 'layout overflow at width: $width');
+    }
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+
+  testWidgets('dashboard header and hero remain usable at 200 percent text scaling in RTL', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'ar',
+      'accessibility.textScale': 2.0,
+    });
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 900);
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('ORVIKA'), findsOneWidget);
+    expect(find.byTooltip('تغيير اللغة'), findsOneWidget);
+    final headerContext = tester.element(find.text('ORVIKA'));
+    expect(MediaQuery.of(headerContext).textScaler.scale(10), 20);
+    expect(tester.takeException(), isNull, reason: 'header or hero overflow at 200% RTL scaling');
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+
+
+  testWidgets('dashboard module cards adapt across viewport and text-scale sizes', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    tester.view.devicePixelRatio = 1;
+
+    for (final width in [320.0, 560.0, 760.0, 1024.0]) {
+      tester.view.physicalSize = Size(width, 900);
+      await tester.pumpWidget(OrvikaApp(key: ValueKey('dashboard-grid-$width')));
+      await tester.pumpAndSettle();
+
+      // The dashboard is a sliver list and the module grid sits below the
+      // hero panel. Scroll the outer dashboard viewport first so the lazy
+      // grid children are built before asking the tester to reveal a card.
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Link Check'));
+      await tester.pumpAndSettle();
+      expect(find.text('Link Check'), findsOneWidget, reason: 'module card at width: $width');
+      expect(tester.takeException(), isNull, reason: 'module grid overflow at width: $width');
+    }
+
+    // Exercise ORVIKA's persisted accessibility setting rather than wrapping
+    // the app in a MediaQuery that MaterialApp can replace during its build.
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+      'accessibility.textScale': 2.0,
+    });
+    tester.view.physicalSize = const Size(320, 900);
+    await tester.pumpWidget(const OrvikaApp(key: ValueKey('dashboard-grid-200-scale')));
+    await tester.pumpAndSettle();
+
+    final dashboardScrollable = find.descendant(
+      of: find.byType(CustomScrollView),
+      matching: find.byType(Scrollable),
+    ).first;
+    await tester.scrollUntilVisible(
+      find.text('Link Check'),
+      250,
+      scrollable: dashboardScrollable,
+      maxScrolls: 30,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Link Check'), findsOneWidget);
+
+    // Every dashboard module description must remain present and wrap naturally
+    // at 200% scaling; fixed line caps previously hid part of the copy.
+    const dashboardDescriptions = [
+      'Your safety overview and recent checks.',
+      'Inspect website addresses before you open them.',
+      'Review decoded QR content before taking action.',
+      'Review suspicious texts, emails and messages.',
+      'Explore explainable digital-risk indicators and safer next steps.',
+      'Review practical privacy controls with a guided self-audit.',
+      'Build everyday cyber-safety knowledge with short lessons and knowledge checks.',
+      'Find clear next steps when something goes wrong.',
+    ];
+    for (final description in dashboardDescriptions) {
+      expect(find.text(description), findsOneWidget, reason: 'module description at 200%: $description');
+    }
+    expect(
+      tester.getSize(find.text(
+        'Build everyday cyber-safety knowledge with short lessons and knowledge checks.',
+      )).height,
+      greaterThan(80),
+      reason: 'long module description should wrap across multiple readable lines',
+    );
+    expect(find.text('AVAILABLE'), findsNWidgets(7));
+
+    // The outer dashboard scroll must reach the trust note and footer after
+    // the full module grid, even when enlarged cards substantially increase
+    // the page height.
+    await tester.scrollUntilVisible(
+      find.text(
+        'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.',
+      ),
+      250,
+      scrollable: dashboardScrollable,
+      maxScrolls: 50,
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('ORVIKA is an early prototype.'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'),
+      250,
+      scrollable: dashboardScrollable,
+      maxScrolls: 20,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'), findsOneWidget);
+    expect(tester.takeException(), isNull, reason: 'module grid, trust note or footer overflow at 200% text scaling');
+
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+
 
 }

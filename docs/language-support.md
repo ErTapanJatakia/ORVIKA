@@ -4,20 +4,18 @@
 
 ORVIKA presents a searchable language selector before onboarding on a first launch. The selected language is saved locally with the `appearance.language` preference. The launch splash and dashboard header also provide a direct language-selection action; Appearance & Accessibility settings expose the same picker.
 
-The app provides two separately searchable catalogues: 100 languages and language varieties associated with communities in Russia, and 100 entries for India. Users choose the catalogue (Russia or India) and then the language on first launch; both choices are saved locally. The picker also remains available from the dashboard and settings. The Russia catalogue prioritises Russian and English; the India catalogue includes the 22 Eighth Schedule languages plus 78 selected regional, Indigenous and community languages/varieties, with English fallback included.
+The app maintains two curated source catalogues: 100 languages and language varieties associated with communities in Russia, and 100 entries for India. Tatar and Bashkir remain in the internal Russia catalogue reference data but are temporarily excluded from the selectable app language list. Users choose the catalogue (Russia or India) and then the language on first launch; both choices are saved locally. The picker also remains available from the dashboard and settings. The Russia catalogue prioritises Russian and English; the India catalogue includes the 22 Eighth Schedule languages plus 78 selected regional, Indigenous and community languages/varieties, with English fallback included.
 
 ## Translation coverage
 
-The unified selector currently contains 193 distinct language codes across the India and Russia catalogues. Only codes explicitly listed in `OrvikaLocalizations.translatedLanguageCodes` contain authored ORVIKA strings. Every other selectable language remains an English-fallback language until its offline pack is translated and tested. Per-key coverage is available through `hasTranslation`; named interpolation and writing-direction metadata are independent of translation status.
+The unified selector excludes Tatar (`tt`) and Bashkir (`ba`) for now; their catalogue metadata is retained internally but neither language is selectable or has an active translation pack. Only codes explicitly listed in `OrvikaLocalizations.translatedLanguageCodes` contain authored ORVIKA strings. Every other selectable language remains an English-fallback language until its offline pack is translated and tested. Per-key coverage is available through `hasTranslation`; named interpolation and writing-direction metadata are independent of translation status.
 
 - English: reviewed UI fallback.
 - Russian: reviewed initial UI pack for onboarding, dashboard module labels/descriptions and language settings.
-- Tatar (`tt`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
-- Bashkir (`ba`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - Hindi (`hi`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
 - German (`de`), French (`fr`), Punjabi (`pa`), Urdu (`ur`), Italian (`it`), Arabic (`ar`), Marathi (`mr`), Gujarati (`gu`) and Sanskrit (`sa`): initial draft packs now cover onboarding, dashboard module labels/descriptions, shared navigation and appearance settings. These are unreviewed drafts and require qualified native-speaker review, especially for security and privacy terminology.
 - Arabic and Urdu apply right-to-left app layout. Flutter framework widgets continue using the supported English/Russian framework locales; ORVIKA's selected language is carried independently.
-- Other catalogue entries: selectable and persisted, but currently display the English fallback. A language being listed does not imply that its complete UI translation is already available.
+- Other available catalogue entries: selectable and persisted, but currently display the English fallback. A language being listed does not imply that its complete UI translation is already available.
 
 ## Coverage boundary
 

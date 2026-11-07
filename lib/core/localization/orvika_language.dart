@@ -8,8 +8,12 @@ class OrvikaLanguage {
   String get label => '$name — $nativeName';
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
   bool get hasDraftTranslation => const {
-        'tt', 'ba', 'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'
+        'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'
       }.contains(code);
+
+  /// Languages temporarily withheld from the app's selectable UI catalogue.
+  /// Their catalogue metadata is retained for a possible future reintroduction.
+  static const Set<String> temporarilyUnavailableCodes = {'tt', 'ba'};
 
   /// Writing direction is independent of translation completeness.
   bool get isRightToLeft => const {'ar', 'ur', 'he', 'fa', 'ps'}.contains(code);
@@ -235,6 +239,7 @@ class OrvikaLanguage {
   static List<OrvikaLanguage> get allValues {
     final byCode = <String, OrvikaLanguage>{};
     for (final language in [...values, ...indiaValues]) {
+      if (temporarilyUnavailableCodes.contains(language.code)) continue;
       byCode.putIfAbsent(language.code, () => language);
     }
     final result = byCode.values.toList(growable: true);
@@ -242,13 +247,15 @@ class OrvikaLanguage {
   }
 
   static List<OrvikaLanguage> valuesForCatalogue(String catalogue) =>
-      catalogue == 'india' ? indiaValues : values;
+      (catalogue == 'india' ? indiaValues : values)
+          .where((language) => !temporarilyUnavailableCodes.contains(language.code))
+          .toList(growable: false);
 
   static OrvikaLanguage defaultForCatalogue(String catalogue) =>
       catalogue == 'india' ? indiaValues.first : english;
 
   static OrvikaLanguage fromCode(String? code) {
-    if (code == null) return english;
+    if (code == null || temporarilyUnavailableCodes.contains(code)) return english;
     for (final language in values) {
       if (language.code == code) return language;
     }
