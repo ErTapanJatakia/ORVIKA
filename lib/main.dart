@@ -239,7 +239,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
         ),
       ),
       home: _isLoadingPreferences
-          ? OrvikaSplashScreen(selectedLanguage: _selectedLanguage, onLanguageChanged: _selectLanguage)
+          ? OrvikaSplashScreen(selectedLanguage: _selectedLanguage, selectedCatalogue: _selectedCatalogue, onLanguageChanged: _selectLanguage, onCatalogueChanged: _selectCatalogue)
           : !_hasSelectedLanguage
               ? LanguageSelectionScreen(
                   selectedLanguage: _selectedLanguage,
@@ -461,12 +461,16 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 class OrvikaSplashScreen extends StatelessWidget {
   const OrvikaSplashScreen({
     required this.selectedLanguage,
+    required this.selectedCatalogue,
     required this.onLanguageChanged,
+    required this.onCatalogueChanged,
     super.key,
   });
 
   final OrvikaLanguage selectedLanguage;
+  final String selectedCatalogue;
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
+  final ValueChanged<String> onCatalogueChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -515,8 +519,8 @@ class OrvikaSplashScreen extends StatelessWidget {
                   MaterialPageRoute<void>(
                     builder: (_) => LanguageSelectionScreen(
                       selectedLanguage: selectedLanguage,
-                      selectedCatalogue: widget.selectedCatalogue,
-                      onCatalogueChanged: widget.onCatalogueChanged,
+                      selectedCatalogue: selectedCatalogue,
+                      onCatalogueChanged: onCatalogueChanged,
                       onLanguageChanged: onLanguageChanged,
                       showContinueButton: false,
                     ),
