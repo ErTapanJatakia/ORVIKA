@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'core/localization/orvika_localizations.dart';
 
 import 'features/academy/presentation/academy_screen.dart';
 import 'features/link_check/presentation/link_check_screen.dart';
@@ -84,6 +85,7 @@ class OrvikaApp extends StatefulWidget {
 class _OrvikaAppState extends State<OrvikaApp> {
   static const _themePreferenceKey = 'appearance.theme';
   OrvikaTheme _selectedTheme = OrvikaTheme.obsidian;
+  OrvikaLanguage _selectedLanguage = OrvikaLanguage.english;
   bool _isLoadingPreferences = true;
   bool _hasCompletedOnboarding = false;
 
@@ -97,9 +99,16 @@ class _OrvikaAppState extends State<OrvikaApp> {
     try {
       final preferences = await SharedPreferences.getInstance();
       final savedName = preferences.getString(_themePreferenceKey);
+      final savedLanguage = preferences.getString('appearance.language');
       final completed = preferences.getBool('onboarding.completed.v1') ?? false;
       if (!mounted) return;
       setState(() {
+        if (savedLanguage != null) {
+          _selectedLanguage = OrvikaLanguage.values.firstWhere(
+            (language) => language.code == savedLanguage,
+            orElse: () => OrvikaLanguage.english,
+          );
+        }
         if (savedName != null) {
           for (final theme in OrvikaTheme.values) {
             if (theme.name == savedName) {
@@ -124,6 +133,16 @@ class _OrvikaAppState extends State<OrvikaApp> {
       // Keep the app usable if local preference storage is unavailable.
     }
     if (mounted) setState(() => _hasCompletedOnboarding = true);
+  }
+
+  Future<void> _selectLanguage(OrvikaLanguage language) async {
+    setState(() => _selectedLanguage = language);
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setString('appearance.language', language.code);
+    } catch (_) {
+      // Keep the selected language for this session if storage is unavailable.
+    }
   }
 
   Future<void> _selectTheme(OrvikaTheme theme) async {
@@ -163,6 +182,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
     return MaterialApp(
       title: 'ORVIKA — Check Before You Trust',
+      locale: Locale(_selectedLanguage.code),
+      supportedLocales: const [Locale('en'), Locale('ru')],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -197,6 +218,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
               ? SentinelDashboard(
                   selectedTheme: _selectedTheme,
                   onThemeChanged: _selectTheme,
+                  selectedLanguage: _selectedLanguage,
+                  onLanguageChanged: _selectLanguage,
                 )
               : OrvikaOnboardingScreen(onCompleted: _completeOnboarding),
     );
@@ -529,11 +552,15 @@ class SentinelDashboard extends StatelessWidget {
   const SentinelDashboard({
     required this.selectedTheme,
     required this.onThemeChanged,
+    required this.selectedLanguage,
+    required this.onLanguageChanged,
     super.key,
   });
 
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
+  final OrvikaLanguage selectedLanguage;
+  final ValueChanged<OrvikaLanguage> onLanguageChanged;
 
   static const modules = <_SafetyModule>[
     _SafetyModule('Sentinel', 'Your safety overview and recent checks.', Icons.shield_moon_outlined, _ModuleAccent.cyan, 'OVERVIEW'),
@@ -577,6 +604,8 @@ class SentinelDashboard extends StatelessWidget {
                           palette: palette,
                           selectedTheme: selectedTheme,
                           onThemeChanged: onThemeChanged,
+                          selectedLanguage: selectedLanguage,
+                          onLanguageChanged: onLanguageChanged,
                         ),
                         const SizedBox(height: 28),
                         _HeroPanel(palette: palette),
@@ -588,11 +617,11 @@ class SentinelDashboard extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Your safety toolkit',
+                                  Text(OrvikaLocalizations(selectedLanguage).text('dashboard.title', 'Your safety toolkit'),
                                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                       fontWeight: FontWeight.w800, letterSpacing: -0.5)),
                                   const SizedBox(height: 5),
-                                  Text('Eight focused capabilities. One clearer view of digital risk.',
+                                  Text(OrvikaLocalizations(selectedLanguage).text('dashboard.subtitle', 'Eight focused capabilities. One clearer view of digital risk.'),
                                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13)),
                                 ],
                               ),
@@ -675,11 +704,15 @@ class AppearanceSettingsScreen extends StatefulWidget {
   const AppearanceSettingsScreen({
     required this.selectedTheme,
     required this.onThemeChanged,
+    required this.selectedLanguage,
+    required this.onLanguageChanged,
     super.key,
   });
 
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
+  final OrvikaLanguage selectedLanguage;
+  final ValueChanged<OrvikaLanguage> onLanguageChanged;
 
   @override
   State<AppearanceSettingsScreen> createState() => _AppearanceSettingsScreenState();
@@ -694,17 +727,30 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Appearance & accessibility'),
+        title: Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.title', 'Appearance & accessibility')),
         backgroundColor: palette.background,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Text('Choose your visual environment',
+          Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.language', 'Language'), style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.language.help', 'Choose the interface language. This setting is stored only on this device.'), style: TextStyle(color: scheme.onSurfaceVariant)),
+          const SizedBox(height: 8),
+          RadioGroup<OrvikaLanguage>(
+            groupValue: widget.selectedLanguage,
+            onChanged: (value) { if (value != null) widget.onLanguageChanged(value); },
+            child: Column(children: [
+              for (final language in OrvikaLanguage.values)
+                RadioListTile<OrvikaLanguage>(value: language, title: Text(language.label)),
+            ]),
+          ),
+          const Divider(height: 28),
+          Text(OrvikaLocalizations(widget.selectedLanguage).text('settings.appearance', 'Choose your visual environment'),
             style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
-            'Your choice is saved on this device. ORVIKA does not send appearance preferences to a server.',
+            OrvikaLocalizations(widget.selectedLanguage).text('settings.saved', 'Your choice is saved on this device. ORVIKA does not send appearance preferences to a server.'),
             style: TextStyle(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 20),
@@ -741,7 +787,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.',
+            OrvikaLocalizations(widget.selectedLanguage).text('settings.accessibility', 'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.'),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
           ),
         ],
@@ -751,10 +797,12 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged});
+  const _TopBar({required this.palette, required this.selectedTheme, required this.onThemeChanged, required this.selectedLanguage, required this.onLanguageChanged});
   final OrvikaPalette palette;
   final OrvikaTheme selectedTheme;
   final ValueChanged<OrvikaTheme> onThemeChanged;
+  final OrvikaLanguage selectedLanguage;
+  final ValueChanged<OrvikaLanguage> onLanguageChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -783,6 +831,8 @@ class _TopBar extends StatelessWidget {
               builder: (_) => AppearanceSettingsScreen(
                 selectedTheme: selectedTheme,
                 onThemeChanged: onThemeChanged,
+                selectedLanguage: selectedLanguage,
+                onLanguageChanged: onLanguageChanged,
               ),
             ),
           ),
