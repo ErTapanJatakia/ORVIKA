@@ -526,8 +526,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 12),
                   Text(
                     isRussian
-                      ? 'Перевод интерфейса проверен для русского и английского. Для татарского, башкирского и хинди подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
-                      : 'English and Russian have reviewed interface translations. Hindi, Tatar and Bashkir have initial drafts; languages without a translation currently use English.',
+                      ? 'Перевод интерфейса проверен для русского и английского. Для хинди и некоторых других языков подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
+                      : 'English and Russian have reviewed interface translations. Hindi and selected additional languages have unreviewed drafts; languages without an available translation use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
                 ],
