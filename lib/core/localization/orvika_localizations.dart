@@ -1,13 +1,5 @@
 import 'package:flutter/widgets.dart';
-
-enum OrvikaLanguage {
-  english('en', 'English'),
-  russian('ru', 'Русский');
-
-  const OrvikaLanguage(this.code, this.label);
-  final String code;
-  final String label;
-}
+import 'orvika_language.dart';
 
 class OrvikaLocalizations {
   const OrvikaLocalizations(this.language);
@@ -54,16 +46,14 @@ class OrvikaLocalizations {
   };
 
   String text(String key, [String? fallback]) {
-    if (language == OrvikaLanguage.english) return fallback ?? key;
+    if (language.code != 'ru') return fallback ?? key;
     return _russian[key] ?? fallback ?? key;
   }
 
   static OrvikaLocalizations of(BuildContext context) {
     final locale = Localizations.localeOf(context);
     return OrvikaLocalizations(
-      locale.languageCode == 'ru'
-          ? OrvikaLanguage.russian
-          : OrvikaLanguage.english,
+      OrvikaLanguage.fromCode(locale.languageCode),
     );
   }
 }
