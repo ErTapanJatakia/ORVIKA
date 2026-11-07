@@ -26,6 +26,13 @@ class _CombinedTextScaler extends TextScaler {
   @override
   double scale(double fontSize) => platformScaler.scale(fontSize * factor);
 
+  /// Legacy compatibility only; rendering uses [scale] to retain nonlinear
+  /// platform scaling. The value at 1 logical pixel is the best scalar
+  /// approximation available for older consumers of TextScaler.
+  // ignore: deprecated_member_use
+  @override
+  double get textScaleFactor => scale(1.0);
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
