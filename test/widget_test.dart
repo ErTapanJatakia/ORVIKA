@@ -227,7 +227,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Appearance & accessibility'));
+    await tester.tap(find.byTooltip('Appearance and accessibility'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Русский'));
     await tester.pumpAndSettle();
