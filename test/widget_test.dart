@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
+import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -245,7 +246,7 @@ void main() {
     expect(find.text('Сезнең санлы иминлек кораллары'), findsOneWidget);
     expect(find.text('Сылтаманы тикшерү'), findsOneWidget);
     expect(
-      Localizations.localeOf(tester.element(find.text('Сезнең санлы иминлек кораллары'))).languageCode,
+      OrvikaLocalizations.of(tester.element(find.text('Сезнең санлы иминлек кораллары'))).language.code,
       'tt',
       reason: 'The selected Tatar locale must remain available to app localization.',
     );
@@ -264,7 +265,7 @@ void main() {
     expect(find.text('Һеҙҙең һанлы именлек ҡоралдары'), findsOneWidget);
     expect(find.text('Һылтанманы тикшереү'), findsOneWidget);
     expect(
-      Localizations.localeOf(tester.element(find.text('Һеҙҙең һанлы именлек ҡоралдары'))).languageCode,
+      OrvikaLocalizations.of(tester.element(find.text('Һеҙҙең һанлы именлек ҡоралдары'))).language.code,
       'ba',
       reason: 'The selected Bashkir locale must remain available to app localization.',
     );
@@ -283,7 +284,7 @@ void main() {
     expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
     expect(find.text('लिंक जाँच'), findsOneWidget);
     expect(
-      Localizations.localeOf(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).languageCode,
+      OrvikaLocalizations.of(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).language.code,
       'hi',
       reason: 'The selected app locale must not be silently coerced to English.',
     );
