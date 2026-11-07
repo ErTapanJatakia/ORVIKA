@@ -49,54 +49,54 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
-            Text(
-              'Understand the signal.',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'A practical, on-device reference to common digital-risk indicators and safer next steps.',
-              style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _controller,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                labelText: 'Search indicators',
-                hintText: 'Try “OTP”, “Punycode” or “payment”',
-                prefixIcon: const Icon(Icons.search_rounded),
-                suffixIcon: _controller.text.isEmpty
-                    ? null
-                    : IconButton(
-                        tooltip: 'Clear search',
-                        onPressed: () {
-                          _controller.clear();
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.close_rounded),
-                      ),
-                border: const OutlineInputBorder(),
+              Text(
+                'Understand the signal.',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                ChoiceChip(
-                  label: const Text('All'),
-                  selected: _category == null,
-                  onSelected: (_) => setState(() => _category = null),
+              const SizedBox(height: 8),
+              Text(
+                'A practical, on-device reference to common digital-risk indicators and safer next steps.',
+                style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _controller,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  labelText: 'Search indicators',
+                  hintText: 'Try “OTP”, “Punycode” or “payment”',
+                  prefixIcon: const Icon(Icons.search_rounded),
+                  suffixIcon: _controller.text.isEmpty
+                      ? null
+                      : IconButton(
+                          tooltip: 'Clear search',
+                          onPressed: () {
+                            _controller.clear();
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.close_rounded),
+                        ),
+                  border: const OutlineInputBorder(),
                 ),
-                for (final category in IntelligenceCategory.values)
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
                   ChoiceChip(
-                    label: Text(_categoryLabel(category)),
-                    selected: _category == category,
-                    onSelected: (_) => setState(() => _category = category),
+                    label: const Text('All'),
+                    selected: _category == null,
+                    onSelected: (_) => setState(() => _category = null),
                   ),
+                  for (final category in IntelligenceCategory.values)
+                    ChoiceChip(
+                      label: Text(_categoryLabel(category)),
+                      selected: _category == category,
+                      onSelected: (_) => setState(() => _category = category),
+                    ),
               ],
             ),
             const SizedBox(height: 16),
