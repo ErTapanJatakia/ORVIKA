@@ -1,3 +1,5 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
@@ -475,17 +477,17 @@ void main() {
       'Link Check. Inspect website addresses before you open them. Available.',
     );
     expect(linkCard, findsOneWidget);
-    expect(tester.getSemantics(linkCard).hasAction(SemanticsAction.tap), isTrue);
+    expect(tester.getSemantics(linkCard).getSemanticsData().actions.contains(SemanticsAction.tap), isTrue);
 
     final disabledOverview = find.bySemanticsLabel(
       'Sentinel. Your safety overview and recent checks. OVERVIEW.',
     );
     expect(disabledOverview, findsOneWidget);
-    expect(tester.getSemantics(disabledOverview).hasAction(SemanticsAction.tap), isFalse);
+    expect(tester.getSemantics(disabledOverview).getSemanticsData().actions.contains(SemanticsAction.tap), isFalse);
 
     final dashboardHeading = find.bySemanticsLabel('Your safety toolkit');
     expect(dashboardHeading, findsOneWidget);
-    expect(tester.getSemantics(dashboardHeading).hasFlag(SemanticsFlag.isHeader), isTrue);
+    expect(tester.getSemantics(dashboardHeading).getSemanticsData().flagsCollection.isHeader, isTrue);
 
     expect(find.byType(FocusTraversalGroup), findsWidgets);
     semantics.dispose();
