@@ -36,13 +36,21 @@ class OrvikaLocalizations {
     'settings.saved': 'Выбор сохраняется на этом устройстве. ORVIKA не отправляет настройки оформления на сервер.',
     'settings.accessibility': 'Примечание о доступности: режим высокой контрастности использует более яркие сигнальные цвета и чёткое визуальное разделение. Предупреждения всегда сопровождаются текстом; цвет не является единственным индикатором.',
     'module.sentinel': 'Обзор',
+    'module.sentinel.description': 'Общая картина безопасности и последние проверки.',
     'module.link': 'Проверка ссылок',
+    'module.link.description': 'Проверьте адрес сайта перед переходом.',
     'module.qr': 'Проверка QR',
+    'module.qr.description': 'Проверьте содержимое QR-кода перед действием.',
     'module.message': 'Проверка сообщений',
+    'module.message.description': 'Проверяйте подозрительные SMS, письма и сообщения.',
     'module.intelligence': 'Аналитика',
+    'module.intelligence.description': 'Изучайте понятные индикаторы цифрового риска и безопасные действия.',
     'module.privacy': 'Конфиденциальность',
+    'module.privacy.description': 'Проверьте настройки конфиденциальности с помощью самоаудита.',
     'module.academy': 'Обучение',
+    'module.academy.description': 'Изучайте основы кибербезопасности на коротких уроках.',
     'module.response': 'Реагирование',
+    'module.response.description': 'Узнайте, что делать, если возникла проблема.',
   };
 
   String text(String key, [String? fallback]) {
