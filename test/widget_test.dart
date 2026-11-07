@@ -248,6 +248,28 @@ void main() {
     expect(preferences.getString('appearance.language'), 'ru');
   });
 
+  testWidgets('Tatar draft localizes onboarding and dashboard while retaining review status', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'Tatar');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('language-tt')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ышанганчы тикшерегез.'), findsOneWidget);
+    await tester.tap(find.text('Уздырып җибәрү'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Сезнең санлы иминлек кораллары'), findsOneWidget);
+    expect(find.text('Сылтаманы тикшерү'), findsOneWidget);
+    expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isTrue);
+    expect(OrvikaLanguage.fromCode('tt').hasReviewedTranslation, isFalse);
+  });
+
   test('Russia language catalogue contains 100 unique language codes', () {
     expect(OrvikaLanguage.values, hasLength(100));
     expect(OrvikaLanguage.values.map((language) => language.code).toSet(), hasLength(100));
