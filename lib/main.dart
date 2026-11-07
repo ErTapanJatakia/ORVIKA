@@ -267,7 +267,25 @@ class _OrvikaAppState extends State<OrvikaApp> {
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Inter',
-        textTheme: brandTextTheme.apply(fontWeightDelta: _boldText ? 1 : 0),
+        textTheme: _boldText
+            ? brandTextTheme.copyWith(
+                displayLarge: brandTextTheme.displayLarge?.copyWith(fontWeight: FontWeight.w900),
+                displayMedium: brandTextTheme.displayMedium?.copyWith(fontWeight: FontWeight.w900),
+                displaySmall: brandTextTheme.displaySmall?.copyWith(fontWeight: FontWeight.w900),
+                headlineLarge: brandTextTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
+                headlineMedium: brandTextTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
+                headlineSmall: brandTextTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
+                titleLarge: brandTextTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                titleMedium: brandTextTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                titleSmall: brandTextTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                bodyLarge: brandTextTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+                bodyMedium: brandTextTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                bodySmall: brandTextTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+                labelLarge: brandTextTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                labelMedium: brandTextTheme.labelMedium?.copyWith(fontWeight: FontWeight.w700),
+                labelSmall: brandTextTheme.labelSmall?.copyWith(fontWeight: FontWeight.w700),
+              )
+            : brandTextTheme,
         colorScheme: scheme,
         scaffoldBackgroundColor: palette.background,
         canvasColor: palette.surface,
@@ -397,8 +415,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   const SizedBox(height: 28),
                   Text(
                     isRussian ? 'Выберите язык' : 'Choose your language',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: scheme.onSurface, fontWeight: FontWeight.w900),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(                      color: scheme.onSurface, fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -797,8 +814,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                         );
                       }),
                     ),
-                    const SizedBox(height: 22),
-                    SizedBox(
+                    const SizedBox(height: 22),                    SizedBox(
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: _next,
@@ -1197,8 +1213,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Row(
+    final scheme = Theme.of(context).colorScheme;    return Row(
       children: [
         OrvikaOwlMark(size: 48, palette: palette),
         const SizedBox(width: 12),
