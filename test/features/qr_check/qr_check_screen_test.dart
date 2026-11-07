@@ -90,8 +90,8 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         home: MediaQuery(
-          data: const MediaQueryData(textScaler: TextScaler.linear(2)),
-          child: const Directionality(
+          data: MediaQueryData(textScaler: TextScaler.linear(2)),
+          child: Directionality(
             textDirection: TextDirection.rtl,
             child: QrCheckScreen(),
           ),
