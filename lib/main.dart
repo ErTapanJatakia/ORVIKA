@@ -875,7 +875,7 @@ class SentinelDashboard extends StatelessWidget {
                           onCatalogueChanged: onCatalogueChanged,
                         ),
                         const SizedBox(height: 28),
-                        _HeroPanel(palette: palette),
+                        _HeroPanel(palette: palette, language: selectedLanguage),
                         const SizedBox(height: 30),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -894,7 +894,7 @@ class SentinelDashboard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            _StatusPill(label: 'PRIVACY-FIRST', color: palette.success),
+                            _StatusPill(label: OrvikaLocalizations(selectedLanguage).text('dashboard.privacyFirst', 'PRIVACY-FIRST'), color: palette.success),
                           ],
                         ),
                         const SizedBox(height: 17),
@@ -942,11 +942,11 @@ class SentinelDashboard extends StatelessWidget {
                           },
                         ),
                         const SizedBox(height: 20),
-                        _TrustNote(palette: palette),
+                        _TrustNote(palette: palette, language: selectedLanguage),
                         const SizedBox(height: 24),
                         Center(
                           child: Text(
-                            'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL',
+                            OrvikaLocalizations(selectedLanguage).text('footer.motto', 'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
@@ -1111,13 +1111,13 @@ class _TopBar extends StatelessWidget {
                 color: scheme.onSurface, fontSize: 19, fontWeight: FontWeight.w900,
                 letterSpacing: 2.8, height: 1.1)),
               const SizedBox(height: 4),
-              Text('PERSONAL CYBER SAFETY INTELLIGENCE', style: TextStyle(
+              Text(OrvikaLocalizations(selectedLanguage).text('brand.descriptor', 'PERSONAL CYBER SAFETY INTELLIGENCE'), style: TextStyle(
                 color: scheme.onSurfaceVariant, fontSize: 8, letterSpacing: 1.05, fontWeight: FontWeight.w700)),
             ],
           ),
         ),
         IconButton(
-          tooltip: selectedLanguage.code == 'ru' ? 'Изменить язык' : 'Change language',
+          tooltip: OrvikaLocalizations(selectedLanguage).text('nav.changeLanguage', 'Change language'),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => LanguageSelectionScreen(
@@ -1132,7 +1132,7 @@ class _TopBar extends StatelessWidget {
           icon: Icon(Icons.translate_rounded, color: palette.primary),
         ),
         IconButton(
-          tooltip: selectedLanguage.code == 'ru' ? 'Внешний вид и доступность' : 'Appearance and accessibility settings',
+          tooltip: OrvikaLocalizations(selectedLanguage).text('nav.appearance', 'Appearance and accessibility settings'),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => AppearanceSettingsScreen(
@@ -1148,7 +1148,7 @@ class _TopBar extends StatelessWidget {
           icon: Icon(Icons.settings_outlined, color: palette.primary),
         ),
         PopupMenuButton<OrvikaTheme>(
-          tooltip: selectedLanguage.code == 'ru' ? 'Выбрать тему оформления' : 'Choose visual theme',
+          tooltip: OrvikaLocalizations(selectedLanguage).text('nav.chooseTheme', 'Choose visual theme'),
           initialValue: selectedTheme,
           onSelected: onThemeChanged,
           itemBuilder: (context) => OrvikaTheme.values.map((theme) => PopupMenuItem<OrvikaTheme>(
@@ -1190,8 +1190,9 @@ class _TopBar extends StatelessWidget {
 }
 
 class _HeroPanel extends StatelessWidget {
-  const _HeroPanel({required this.palette});
+  const _HeroPanel({required this.palette, required this.language});
   final OrvikaPalette palette;
+  final OrvikaLanguage language;
 
   @override
   Widget build(BuildContext context) {
@@ -1220,21 +1221,21 @@ class _HeroPanel extends StatelessWidget {
         final copyContent = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              Text('SEE THE RISK. VERIFY THE SIGNAL.', style: TextStyle(
+              Text(OrvikaLocalizations(language).text('hero.eyebrow', 'SEE THE RISK. VERIFY THE SIGNAL.'), style: TextStyle(
                 color: palette.primary, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.65)),
               const SizedBox(height: 14),
-              Text('Check before\nyou trust.', style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              Text(OrvikaLocalizations(language).text('hero.title', 'Check before\nyou trust.'), style: Theme.of(context).textTheme.displaySmall?.copyWith(
                 color: scheme.onSurface, fontWeight: FontWeight.w900, height: 1.02, letterSpacing: -1.1)),
               const SizedBox(height: 13),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 560),
-                child: Text('A clearer way to inspect digital signals, understand risk and make informed decisions.',
+                child: Text(OrvikaLocalizations(language).text('hero.description', 'A clearer way to inspect digital signals, understand risk and make informed decisions.'),
                   style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14, height: 1.55)),
               ),
               const SizedBox(height: 17),
               Wrap(spacing: 8, runSpacing: 8, children: [
-                _StatusPill(label: 'ON-DEVICE CHECKS', color: palette.success),
-                _StatusPill(label: 'EXPLAINABLE FINDINGS', color: palette.primary),
+                _StatusPill(label: OrvikaLocalizations(language).text('hero.onDevice', 'ON-DEVICE CHECKS'), color: palette.success),
+                _StatusPill(label: OrvikaLocalizations(language).text('hero.explainable', 'EXPLAINABLE FINDINGS'), color: palette.primary),
               ]),
           ],
         );
@@ -1429,8 +1430,9 @@ class _StatusPill extends StatelessWidget {
 }
 
 class _TrustNote extends StatelessWidget {
-  const _TrustNote({required this.palette});
+  const _TrustNote({required this.palette, required this.language});
   final OrvikaPalette palette;
+  final OrvikaLanguage language;
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -1445,7 +1447,7 @@ class _TrustNote extends StatelessWidget {
         Icon(Icons.info_outline_rounded, color: palette.primary, size: 20),
         const SizedBox(width: 11),
         Expanded(child: Text(
-          'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.',
+          OrvikaLocalizations(language).text('trust.note', 'ORVIKA is an early prototype. Findings are evidence-led: an algorithmic suspicion is never presented as proof that a person, message or destination is malicious.'),
           style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
         )),
       ]),
@@ -1473,6 +1475,9 @@ _SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
     strings.text('module.$key.description', module.description),
     module.icon,
     module.accent,
-    module.status,
+    strings.text(
+      module.status == 'OVERVIEW' ? 'module.status.overview' : 'module.status.available',
+      module.status,
+    ),
   );
 }
