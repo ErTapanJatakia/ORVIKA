@@ -257,6 +257,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('language-tt')));
     await tester.pumpAndSettle();
     expect(find.text('Сезнең санлы иминлек кораллары'), findsOneWidget);
+    // Dashboard module cards are built lazily; reveal the grid before checking
+    // the translated module label.
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Сылтаманы тикшерү'));
+    await tester.pumpAndSettle();
     expect(find.text('Сылтаманы тикшерү'), findsOneWidget);
     expect(
       OrvikaLocalizations.of(tester.element(find.text('Сезнең санлы иминлек кораллары'))).language.code,
@@ -276,6 +282,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('language-ba')));
     await tester.pumpAndSettle();
     expect(find.text('Һеҙҙең һанлы именлек ҡоралдары'), findsOneWidget);
+    // Dashboard module cards are built lazily; reveal the grid before checking
+    // the translated module label.
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -900));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Һылтанманы тикшереү'));
+    await tester.pumpAndSettle();
     expect(find.text('Һылтанманы тикшереү'), findsOneWidget);
     expect(
       OrvikaLocalizations.of(tester.element(find.text('Һеҙҙең һанлы именлек ҡоралдары'))).language.code,
@@ -498,7 +510,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('ORVIKA'), findsOneWidget);
-    expect(find.byTooltip('Change language'), findsOneWidget);
+    expect(find.byTooltip('تغيير اللغة'), findsOneWidget);
     expect(tester.takeException(), isNull);
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
