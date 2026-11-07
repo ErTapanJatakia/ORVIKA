@@ -483,7 +483,7 @@ void main() {
       'Sentinel. Your safety overview and recent checks. OVERVIEW.',
     );
     expect(disabledOverview, findsOneWidget);
-    expect(tester.getSemantics(disabledOverview).getSemanticsData().actions.contains(SemanticsAction.tap), isFalse);
+    expect(tester.getSemantics(disabledOverview).getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
 
     final dashboardHeading = find.bySemanticsLabel('Your safety toolkit');
     expect(dashboardHeading, findsOneWidget);
