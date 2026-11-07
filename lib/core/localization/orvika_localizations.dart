@@ -589,10 +589,15 @@ class OrvikaLocalizations {
   /// True only when the selected language contains an authored value for [key].
   bool hasTranslation(String key) => _translations.containsKey(key);
 
+  /// Resolves a key using the existing positional-fallback API.
+  String text(String key, [String? fallback]) =>
+      _translations[key] ?? fallback ?? key;
+
   /// Resolves a key and interpolates named placeholders such as {count}.
-  /// Untranslated values use an explicit English fallback; missing parameters
-  /// remain visible to make incomplete call sites detectable.
-  String text(String key, [String? fallback], {
+  /// Missing parameters remain visible to make incomplete call sites detectable.
+  String textWithParameters(
+    String key, {
+    String? fallback,
     Map<String, Object?> parameters = const {},
   }) {
     final resolved = _translations[key] ?? fallback ?? key;
