@@ -449,12 +449,14 @@ void main() {
       'appearance.language': 'en',
     });
     tester.view.devicePixelRatio = 1;
-    for (final width in [320.0, 375.0, 600.0, 760.0, 1024.0, 1920.0]) {
+    for (final width in [280.0, 320.0, 360.0, 375.0, 600.0, 760.0, 1024.0, 1920.0]) {
       tester.view.physicalSize = Size(width, 900);
       await tester.pumpWidget(OrvikaApp(key: ValueKey('responsive-$width')));
       await tester.pumpAndSettle();
 
       expect(find.text('ORVIKA'), findsOneWidget, reason: 'width: $width');
+      expect(find.ancestor(of: find.text('ORVIKA'), matching: find.byType(FittedBox)), findsOneWidget,
+          reason: 'wordmark must scale down rather than clip at width: $width');
       expect(find.byTooltip('Change language'), findsOneWidget, reason: 'width: $width');
       expect(tester.takeException(), isNull, reason: 'layout overflow at width: $width');
     }
