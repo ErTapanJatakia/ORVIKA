@@ -506,7 +506,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
     ),
   ];
 
-  final _pages = _pagesFor(widget.language);
+  late final _pages = _pagesFor(widget.language);
 
   @override
   void dispose() {
