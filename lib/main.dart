@@ -129,7 +129,18 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
   Future<void> _completeLanguageSelection() async {
     await _selectLanguage(_selectedLanguage);
-    if (mounted) setState(() => _hasSelectedLanguage = true);
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setBool('onboarding.completed.v1', true);
+    } catch (_) {
+      // Language selection must not be blocked by local storage.
+    }
+    if (mounted) {
+      setState(() {
+        _hasSelectedLanguage = true;
+        _hasCompletedOnboarding = true;
+      });
+    }
   }
 
   Future<void> _completeOnboarding() async {
@@ -207,8 +218,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
     return MaterialApp(
       title: 'ORVIKA — Check Before You Trust',
-      locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
-      supportedLocales: const [Locale('en'), Locale('ru')],
+      locale: Locale(_selectedLanguage.code),
+      supportedLocales: OrvikaLanguage.allValues
+          .map((language) => Locale(language.code)).toList(growable: false),
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -298,10 +310,14 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const palette = OrvikaPalette.obsidian;
+    final appTheme = OrvikaTheme.values.firstWhere(
+      (theme) => theme.palette.background == Theme.of(context).scaffoldBackgroundColor,
+      orElse: () => OrvikaTheme.obsidian,
+    );
+    final palette = appTheme.palette;
     final scheme = Theme.of(context).colorScheme;
     final isRussian = _selected.code == 'ru';
-    final catalogueLanguages = OrvikaLanguage.valuesForCatalogue(_selectedCatalogue);
+    final catalogueLanguages = OrvikaLanguage.allValues;
     final filtered = catalogueLanguages.where((language) {
       final query = _query.trim().toLowerCase();
       if (query.isEmpty) return true;
@@ -349,28 +365,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     style: TextStyle(color: scheme.onSurfaceVariant, height: 1.5),
                   ),
                   const SizedBox(height: 16),
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'russia', label: Text('Russia')),
-                      ButtonSegment(value: 'india', label: Text('India')),
-                    ],
-                    selected: {_selectedCatalogue},
-                    onSelectionChanged: (selection) {
-                      final catalogue = selection.first;
-                      final languages = OrvikaLanguage.valuesForCatalogue(catalogue);
-                      final nextLanguage = languages.any((language) => language.code == _selected.code)
-                          ? _selected
-                          : OrvikaLanguage.defaultForCatalogue(catalogue);
-                      setState(() {
-                        _selectedCatalogue = catalogue;
-                        _selected = nextLanguage;
-                        _query = '';
-                        _searchController.clear();
-                      });
-                      widget.onCatalogueChanged(catalogue);
-                      widget.onLanguageChanged(nextLanguage);
-                    },
-                  ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _searchController,
@@ -423,8 +417,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                       : null,
                                 onTap: () {
                                   setState(() => _selected = language);
-                                    widget.onLanguageChanged(language);
-                                  },
+                                  widget.onLanguageChanged(language);
+                                  if (widget.showContinueButton) {
+                                    widget.onContinue?.call();
+                                  } else {
+                                    Navigator.of(context).maybePop();
+                                  }
+                                },
                                 ),
                               );
                             },
@@ -438,16 +437,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                       : 'Reviewed interface translations are available in English and Russian. Tatar, Bashkir and Hindi have initial drafts requiring native-speaker review; other untranslated areas use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
-                  if (widget.showContinueButton) ...[
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      onPressed: widget.onContinue,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        child: Text(isRussian ? 'Продолжить' : 'Continue'),
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -1035,7 +1024,6 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
                     onLanguageChanged: (language) {
                       setState(() => _selectedLanguage = language);
                       widget.onLanguageChanged(language);
-                      Navigator.of(context).pop();
                     },
                   ),
                 ),
