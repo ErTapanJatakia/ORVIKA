@@ -52,8 +52,11 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
             const Text(
               'Inspect before you connect.',
@@ -71,6 +74,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
               autocorrect: false,
               enableSuggestions: false,
               textInputAction: TextInputAction.done,
+              maxLength: 2048,
               onSubmitted: (_) => _analyse(),
               decoration: const InputDecoration(
                 labelText: 'Website address',
@@ -165,7 +169,8 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
               'Important: a clean structural check is not a safety certificate. ORVIKA does not open the URL, contact the destination, or verify its reputation in this version.',
               style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
