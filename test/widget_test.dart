@@ -474,9 +474,12 @@ void main() {
     await tester.pumpAndSettle();
     // Assert the dashboard heading while it is in the viewport. The later
     // scroll to the lazily built module grid intentionally moves it off-screen.
-    final dashboardHeading = find.bySemanticsLabel('Your safety toolkit');
+    final dashboardHeading = find.text('Your safety toolkit');
     expect(dashboardHeading, findsOneWidget);
-    expect(tester.getSemantics(dashboardHeading).getSemanticsData().flagsCollection.isHeader, isTrue);
+    expect(
+      tester.getSemantics(dashboardHeading).getSemanticsData().flagsCollection.isHeader,
+      isTrue,
+    );
 
     // Dashboard cards are below the hero in a lazily built scroll view.
     // Bring the module grid into the tree before querying its semantics.
