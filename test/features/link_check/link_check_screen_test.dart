@@ -1,6 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:orvika/main.dart';
 import 'package:orvika/features/link_check/presentation/link_check_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> _openLinkCheck(
+  WidgetTester tester, {
+  String language = 'en',
+  double textScale = 1,
+}) async {
+  SharedPreferences.setMockInitialValues({
+    'onboarding.completed.v1': true,
+    'appearance.language': language,
+    'accessibility.textScale': textScale,
+  });
+
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = const Size(320, 900);
+  await tester.pumpWidget(const OrvikaApp());
+  await tester.pumpAndSettle();
+
+  final moduleLabel = language == 'ar' ? 'فحص الروابط' : 'Link Check';
+  await tester.ensureVisible(find.text(moduleLabel));
+  await tester.tap(find.text(moduleLabel));
+  await tester.pumpAndSettle();
+
+  expect(find.text('Inspect before you connect.'), findsOneWidget);
+}
 
 void main() {
   testWidgets('Link Check analyses an address and explains its local-only scope',
@@ -82,34 +108,54 @@ void main() {
     }
   });
 
-  testWidgets('Link Check remains usable at 200 percent text scaling in RTL',
+  testWidgets('Link Check supports RTL independently of enlarged text',
       (tester) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(320, 900);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
+    await _openLinkCheck(tester, language: 'ar');
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: const LinkCheckScreen(),
-        builder: (context, child) {
-          final mediaQuery = MediaQuery.of(context);
-          return MediaQuery(
-            data: mediaQuery.copyWith(
-              textScaler: const TextScaler.linear(2),
-            ),
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: child!,
-            ),
-          );
-        },
-      ),
-    );
+    final context = tester.element(find.text('Inspect before you connect.'));
+    expect(Directionality.of(context), TextDirection.rtl);
+    expect(MediaQuery.textScalerOf(context).scale(10), 10);
+    expect(find.byType(TextField), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'https://example.com');
+    await tester.tap(find.text('Analyse address'));
     await tester.pumpAndSettle();
+    expect(find.text('Analysis findings'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
+  testWidgets('Link Check supports 200 percent text scaling independently of RTL',
+      (tester) async {
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await _openLinkCheck(tester, textScale: 2);
+
+    final context = tester.element(find.text('Inspect before you connect.'));
+    expect(Directionality.of(context), TextDirection.ltr);
+    expect(MediaQuery.textScalerOf(context).scale(10), 20);
+    expect(find.byType(TextField), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'https://example.com');
+    await tester.tap(find.text('Analyse address'));
+    await tester.pumpAndSettle();
+    expect(find.text('Analysis findings'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Link Check remains usable at 200 percent text scaling in RTL',
+      (tester) async {
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await _openLinkCheck(tester, language: 'ar', textScale: 2);
+
+    final context = tester.element(find.text('Inspect before you connect.'));
+    expect(Directionality.of(context), TextDirection.rtl);
+    expect(MediaQuery.textScalerOf(context).scale(10), 20);
     expect(find.byType(TextField), findsOneWidget);
     expect(find.text('Analyse address'), findsOneWidget);
+
     await tester.enterText(find.byType(TextField), 'https://example.com');
     await tester.tap(find.text('Analyse address'));
     await tester.pumpAndSettle();
