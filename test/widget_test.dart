@@ -407,4 +407,59 @@ void main() {
     expect(Directionality.of(tester.element(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'))), TextDirection.rtl);
   });
 
+  testWidgets('accessibility preferences apply globally and persist locally', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Appearance and accessibility settings'));
+    await tester.pumpAndSettle();
+    expect(find.text('Appearance & accessibility'), findsOneWidget);
+    await tester.drag(find.byType(ListView).last, const Offset(0, -620));
+    await tester.pumpAndSettle();
+    expect(find.text('Accessibility'), findsOneWidget);
+    expect(find.text('Text size'), findsOneWidget);
+
+    final slider = tester.widget<Slider>(find.byType(Slider).first);
+    slider.onChanged!(1.25);
+    await tester.pumpAndSettle();
+
+    final boldSwitch = find.descendant(
+      of: find.widgetWithText(SwitchListTile, 'Bold text'),
+      matching: find.byType(Switch),
+    );
+    await tester.ensureVisible(boldSwitch);
+    await tester.tap(boldSwitch);
+    await tester.pumpAndSettle();
+
+    final reduceMotionSwitch = find.descendant(
+      of: find.widgetWithText(SwitchListTile, 'Reduce motion'),
+      matching: find.byType(Switch),
+    );
+    await tester.ensureVisible(reduceMotionSwitch);
+    await tester.tap(reduceMotionSwitch);
+    await tester.pumpAndSettle();
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getDouble('accessibility.textScale'), 1.25);
+    expect(preferences.getBool('accessibility.boldText'), isTrue);
+    expect(preferences.getBool('accessibility.reduceMotion'), isTrue);
+
+    // Accessibility settings live on a separate route. Return to the dashboard
+    // before asserting that the app-wide MediaQuery and theme are applied there.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+    final dashboardContext = tester.element(find.text('Your safety toolkit'));
+    expect(MediaQuery.of(dashboardContext).textScaler.scale(10), 12.5);
+    // ignore: deprecated_member_use
+    expect(MediaQuery.of(dashboardContext).textScaler.textScaleFactor, 1.25);
+    expect(MediaQuery.of(dashboardContext).disableAnimations, isTrue);
+    expect(Theme.of(dashboardContext).textTheme.bodyMedium!.fontWeight!.value,
+      greaterThanOrEqualTo(FontWeight.w500.value));
+  });
+
 }
