@@ -252,13 +252,12 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
-    for (final languageName in ['Tatar', 'Bashkir']) {
-      await tester.enterText(find.byType(TextField), languageName);
-      await tester.pumpAndSettle();
-      expect(find.byKey(ValueKey('language-${languageName == 'Tatar' ? 'tt' : 'ba'}')), findsNothing);
-      await tester.enterText(find.byType(TextField), '');
-      await tester.pumpAndSettle();
-    }
+    await tester.enterText(find.byType(TextField), 'Tatar');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('language-tt')), findsNothing);
+    await tester.enterText(find.byType(TextField), 'Bashkir');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('language-ba')), findsNothing);
     expect(OrvikaLanguage.fromCode('tt').code, 'en');
     expect(OrvikaLanguage.fromCode('ba').code, 'en');
     expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isFalse);
