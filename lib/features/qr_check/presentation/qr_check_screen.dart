@@ -54,7 +54,10 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
-        child: ListView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
             const Text(
@@ -72,6 +75,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               minLines: 3,
               maxLines: 7,
               keyboardType: TextInputType.multiline,
+              maxLength: 8192,
               autocorrect: false,
               enableSuggestions: false,
               decoration: const InputDecoration(
@@ -176,7 +180,9 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               'This first version inspects pasted, decoded content. It does not activate your camera, open destinations, connect to Wi-Fi, save contacts, send messages, or initiate payments. All analysis stays on this device.',
               style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
             ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
