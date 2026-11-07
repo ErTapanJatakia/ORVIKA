@@ -910,17 +910,26 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           const SizedBox(height: 8),
           Text(OrvikaLocalizations(_selectedLanguage).text('settings.language.help', 'Choose the interface language. This setting is stored only on this device.'), style: TextStyle(color: scheme.onSurfaceVariant)),
           const SizedBox(height: 8),
-          RadioGroup<OrvikaLanguage>(
-            groupValue: _selectedLanguage,
-            onChanged: (value) {
-              if (value == null) return;
-              setState(() => _selectedLanguage = value);
-              widget.onLanguageChanged(value);
-            },
-            child: Column(children: [
-              for (final language in OrvikaLanguage.values)
-                RadioListTile<OrvikaLanguage>(value: language, title: Text(language.label)),
-            ]),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.translate_rounded),
+              title: Text(_selectedLanguage.name),
+              subtitle: Text(_selectedLanguage.nativeName),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => LanguageSelectionScreen(
+                    selectedLanguage: _selectedLanguage,
+                    showContinueButton: false,
+                    onLanguageChanged: (language) {
+                      setState(() => _selectedLanguage = language);
+                      widget.onLanguageChanged(language);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ),
+            ),
           ),
           const Divider(height: 28),
           Text(OrvikaLocalizations(_selectedLanguage).text('settings.appearance', 'Choose your visual environment'),
@@ -1000,6 +1009,19 @@ class _TopBar extends StatelessWidget {
                 color: scheme.onSurfaceVariant, fontSize: 8, letterSpacing: 1.05, fontWeight: FontWeight.w700)),
             ],
           ),
+        ),
+        IconButton(
+          tooltip: selectedLanguage.code == 'ru' ? 'Изменить язык' : 'Change language',
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => LanguageSelectionScreen(
+                selectedLanguage: selectedLanguage,
+                showContinueButton: false,
+                onLanguageChanged: onLanguageChanged,
+              ),
+            ),
+          ),
+          icon: Icon(Icons.translate_rounded, color: palette.primary),
         ),
         IconButton(
           tooltip: selectedLanguage.code == 'ru' ? 'Внешний вид и доступность' : 'Appearance and accessibility settings',
