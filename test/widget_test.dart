@@ -7,33 +7,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'}));
 
-  testWidgets('first launch presents branded onboarding and enters dashboard', (tester) async {
+  testWidgets('first launch language selection immediately opens the dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Choose your language'), findsOneWidget);
-    expect(OrvikaLanguage.values.length, 100);
-    expect(find.text('English'), findsWidgets);
-    await tester.tap(find.text('Continue'));
+    await tester.enterText(find.byType(TextField), 'English');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('language-en')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Check before you trust.'), findsOneWidget);
-    expect(find.byType(OrvikaOwlMark), findsWidgets);
-
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-    expect(find.text('Understand the risk.'), findsOneWidget);
-
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-    expect(find.text('Your data stays yours.'), findsOneWidget);
-
-    await tester.tap(find.text('Enter ORVIKA'));
-    await tester.pumpAndSettle();
     expect(find.text('Your safety toolkit'), findsOneWidget);
-
+    expect(find.text('Choose your language'), findsNothing);
     final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('appearance.language'), 'en');
     expect(preferences.getBool('onboarding.completed.v1'), isTrue);
   });
 
@@ -46,20 +34,16 @@ void main() {
     expect(find.text('Check before you trust.'), findsNothing);
   });
 
-  testWidgets('Skip completes onboarding without requiring all slides', (tester) async {
+  testWidgets('first launch language picker does not require a separate Continue action', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
-    expect(find.text('Choose your language'), findsOneWidget);
-    await tester.tap(find.text('Continue'));
+    expect(find.text('Continue'), findsNothing);
+    await tester.enterText(find.byType(TextField), 'Hindi');
     await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Skip'));
+    await tester.tap(find.byKey(const ValueKey('language-hi')));
     await tester.pumpAndSettle();
-
-    expect(find.text('Your safety toolkit'), findsOneWidget);
-    final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getBool('onboarding.completed.v1'), isTrue);
+    expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
   });
 
   testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
@@ -241,89 +225,63 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('English').first);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Русский'));
+    await tester.enterText(find.byType(TextField), 'Russian');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('language-ru')));
     await tester.pumpAndSettle();
 
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getString('appearance.language'), 'ru');
   });
 
-  testWidgets('Tatar draft localizes onboarding and dashboard while retaining review status', (tester) async {
+  testWidgets('Tatar draft localizes dashboard while retaining review status', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
-
     await tester.enterText(find.byType(TextField), 'Tatar');
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('language-tt')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Ышанганчы тикшерегез.'), findsOneWidget);
-    await tester.tap(find.text('Уздырып җибәрү'));
-    await tester.pumpAndSettle();
-
     expect(find.text('Сезнең санлы иминлек кораллары'), findsOneWidget);
     expect(find.text('Сылтаманы тикшерү'), findsOneWidget);
     expect(OrvikaLanguage.fromCode('tt').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('tt').hasReviewedTranslation, isFalse);
   });
 
-
-  testWidgets('Bashkir draft localizes onboarding and dashboard while retaining review status', (tester) async {
+  testWidgets('Bashkir draft localizes dashboard while retaining review status', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
-
     await tester.enterText(find.byType(TextField), 'Bashkir');
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('language-ba')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Ышаныр алдынан тикшерегеҙ.'), findsOneWidget);
-    await tester.tap(find.text('Үткәреп ебәреү'));
-    await tester.pumpAndSettle();
-
     expect(find.text('Һеҙҙең һанлы именлек ҡоралдары'), findsOneWidget);
     expect(find.text('Һылтанманы тикшереү'), findsOneWidget);
     expect(OrvikaLanguage.fromCode('ba').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('ba').hasReviewedTranslation, isFalse);
   });
 
-
-  testWidgets('India catalogue can be selected at first launch and Hindi draft is shown', (tester) async {
+  testWidgets('Hindi draft localizes dashboard immediately after selection', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
-    await tester.pumpAndSettle();
-
-    expect(find.text('Choose your language'), findsOneWidget);
-    await tester.tap(find.text('India'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Hindi');
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('language-hi')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('भरोसा करने से पहले जाँचें।'), findsOneWidget);
-    await tester.tap(find.text('छोड़ें'));
-    await tester.pumpAndSettle();
     expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
     expect(find.text('लिंक जाँच'), findsOneWidget);
     expect(OrvikaLanguage.fromCode('hi').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('hi').hasReviewedTranslation, isFalse);
-
     final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.languageCatalogue'), 'india');
     expect(preferences.getString('appearance.language'), 'hi');
   });
 
   test('India language catalogue contains 100 unique codes and names', () {
     expect(OrvikaLanguage.indiaValues, hasLength(100));
+    expect(OrvikaLanguage.allValues.map((language) => language.code).toSet().length, OrvikaLanguage.allValues.length);
+    expect(OrvikaLanguage.allValues.length, greaterThan(100));
     expect(OrvikaLanguage.indiaValues.map((language) => language.code).toSet(), hasLength(100));
     expect(OrvikaLanguage.indiaValues.map((language) => language.name).toSet(), hasLength(100));
     expect(OrvikaLanguage.fromCode('hi').name, 'Hindi');
@@ -338,6 +296,17 @@ void main() {
     expect(OrvikaLanguage.fromCode('ru').code, 'ru');
     expect(OrvikaLanguage.fromCode('sah').name, 'Sakha (Yakut)');
     expect(OrvikaLanguage.fromCode('unknown').code, 'en');
+  });
+
+  testWidgets('language picker inherits the persisted Daylight theme', (tester) async {
+    SharedPreferences.setMockInitialValues({'appearance.theme': 'daylight'});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your language'), findsOneWidget);
+    final context = tester.element(find.text('Choose your language'));
+    expect(Theme.of(context).scaffoldBackgroundColor, OrvikaPalette.daylight.background);
+    expect(Theme.of(context).brightness, Brightness.light);
   });
 
   testWidgets('first launch language picker can search and select a regional language', (tester) async {

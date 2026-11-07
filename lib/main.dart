@@ -129,7 +129,18 @@ class _OrvikaAppState extends State<OrvikaApp> {
 
   Future<void> _completeLanguageSelection() async {
     await _selectLanguage(_selectedLanguage);
-    if (mounted) setState(() => _hasSelectedLanguage = true);
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setBool('onboarding.completed.v1', true);
+    } catch (_) {
+      // Language selection must not be blocked by local storage.
+    }
+    if (mounted) {
+      setState(() {
+        _hasSelectedLanguage = true;
+        _hasCompletedOnboarding = true;
+      });
+    }
   }
 
   Future<void> _completeOnboarding() async {
@@ -286,7 +297,6 @@ class LanguageSelectionScreen extends StatefulWidget {
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   late OrvikaLanguage _selected = widget.selectedLanguage;
-  late String _selectedCatalogue = widget.selectedCatalogue;
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
 
@@ -298,10 +308,14 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const palette = OrvikaPalette.obsidian;
+    final appTheme = OrvikaTheme.values.firstWhere(
+      (theme) => theme.palette.background == Theme.of(context).scaffoldBackgroundColor,
+      orElse: () => OrvikaTheme.obsidian,
+    );
+    final palette = appTheme.palette;
     final scheme = Theme.of(context).colorScheme;
     final isRussian = _selected.code == 'ru';
-    final catalogueLanguages = OrvikaLanguage.valuesForCatalogue(_selectedCatalogue);
+    final catalogueLanguages = OrvikaLanguage.allValues;
     final filtered = catalogueLanguages.where((language) {
       final query = _query.trim().toLowerCase();
       if (query.isEmpty) return true;
@@ -323,14 +337,14 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 children: [
                   Row(
                     children: [
-                      const OrvikaOwlMark(size: 46, palette: palette),
+                      OrvikaOwlMark(size: 46, palette: palette),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Text('ORVIKA', style: TextStyle(
-                          color: Color(0xFFF3F7FC), fontSize: 20,
+                          color: scheme.onSurface, fontSize: 20,
                           fontWeight: FontWeight.w900, letterSpacing: 2.8)),
                       ),
-                      Text('100 LANGUAGES', style: TextStyle(
+                      Text('LANGUAGES', style: TextStyle(
                         color: palette.primary, fontSize: 10,
                         fontWeight: FontWeight.w800, letterSpacing: 1.1)),
                     ],
@@ -349,28 +363,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     style: TextStyle(color: scheme.onSurfaceVariant, height: 1.5),
                   ),
                   const SizedBox(height: 16),
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'russia', label: Text('Russia')),
-                      ButtonSegment(value: 'india', label: Text('India')),
-                    ],
-                    selected: {_selectedCatalogue},
-                    onSelectionChanged: (selection) {
-                      final catalogue = selection.first;
-                      final languages = OrvikaLanguage.valuesForCatalogue(catalogue);
-                      final nextLanguage = languages.any((language) => language.code == _selected.code)
-                          ? _selected
-                          : OrvikaLanguage.defaultForCatalogue(catalogue);
-                      setState(() {
-                        _selectedCatalogue = catalogue;
-                        _selected = nextLanguage;
-                        _query = '';
-                        _searchController.clear();
-                      });
-                      widget.onCatalogueChanged(catalogue);
-                      widget.onLanguageChanged(nextLanguage);
-                    },
-                  ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _searchController,
@@ -423,8 +415,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                       : null,
                                 onTap: () {
                                   setState(() => _selected = language);
-                                    widget.onLanguageChanged(language);
-                                  },
+                                  widget.onLanguageChanged(language);
+                                  if (widget.showContinueButton) {
+                                    widget.onContinue?.call();
+                                  } else {
+                                    Navigator.of(context).popUntil((route) => route.isFirst);
+                                  }
+                                },
                                 ),
                               );
                             },
@@ -435,19 +432,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   Text(
                     isRussian
                       ? 'Перевод интерфейса проверен для русского и английского. Для татарского, башкирского и хинди подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
-                      : 'Reviewed interface translations are available in English and Russian. Tatar, Bashkir and Hindi have initial drafts requiring native-speaker review; other untranslated areas use English.',
+                      : 'English and Russian have reviewed interface translations. Hindi, Tatar and Bashkir have initial drafts; languages without a translation currently use English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
-                  if (widget.showContinueButton) ...[
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      onPressed: widget.onContinue,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        child: Text(isRussian ? 'Продолжить' : 'Continue'),
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -1035,7 +1022,6 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
                     onLanguageChanged: (language) {
                       setState(() => _selectedLanguage = language);
                       widget.onLanguageChanged(language);
-                      Navigator.of(context).pop();
                     },
                   ),
                 ),

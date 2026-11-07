@@ -225,6 +225,17 @@ class OrvikaLanguage {
     OrvikaLanguage('en', 'English', 'English'),
   ];
 
+  /// One unified, de-duplicated language list for the language picker.
+  /// Russia and India catalogues remain available as curated source sets.
+  static List<OrvikaLanguage> get allValues {
+    final byCode = <String, OrvikaLanguage>{};
+    for (final language in [...values, ...indiaValues]) {
+      byCode.putIfAbsent(language.code, () => language);
+    }
+    final result = byCode.values.toList(growable: true);
+    return result..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  }
+
   static List<OrvikaLanguage> valuesForCatalogue(String catalogue) =>
       catalogue == 'india' ? indiaValues : values;
 
