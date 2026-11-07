@@ -516,4 +516,41 @@ void main() {
     tester.view.resetDevicePixelRatio();
   });
 
+
+  testWidgets('dashboard module cards adapt across viewport and text-scale sizes', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    tester.view.devicePixelRatio = 1;
+
+    for (final width in [320.0, 560.0, 760.0, 1024.0]) {
+      tester.view.physicalSize = Size(width, 900);
+      await tester.pumpWidget(OrvikaApp(key: ValueKey('dashboard-grid-$width')));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Link Check'));
+      await tester.pumpAndSettle();
+      expect(find.text('Link Check'), findsOneWidget, reason: 'module card at width: $width');
+      expect(tester.takeException(), isNull, reason: 'module grid overflow at width: $width');
+    }
+
+    tester.view.physicalSize = const Size(320, 900);
+    await tester.pumpWidget(
+      const MediaQuery(
+        data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
+        child: OrvikaApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Link Check'));
+    await tester.pumpAndSettle();
+    expect(find.text('Link Check'), findsOneWidget);
+    expect(tester.takeException(), isNull, reason: 'module card overflow at 200% text scaling');
+
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  });
+
+
 }
