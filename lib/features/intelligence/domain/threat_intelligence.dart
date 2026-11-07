@@ -159,7 +159,7 @@ class IndicatorAssessmentEngine {
             supportingObservations.reduce((a, b) => a.isAfter(b) ? a : b), now);
     final score = supportingWeight == 0
         ? 0
-        : (weightedSupport / supportingWeight).round().clamp(0, 100);
+        : (weightedSupport / supportingWeight).round().clamp(0, 100).toInt();
 
     return IndicatorAssessment(
       status: _status(
