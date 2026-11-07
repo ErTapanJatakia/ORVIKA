@@ -289,10 +289,19 @@ class _OrvikaAppState extends State<OrvikaApp> {
           textScaler: _CombinedTextScaler(platformMediaQuery.textScaler, _textScale),
           disableAnimations: _reduceMotion || platformMediaQuery.disableAnimations,
         ),
-        child: Directionality(
-          textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
-              ? TextDirection.rtl : TextDirection.ltr,
-          child: OrvikaLanguageScope(language: _selectedLanguage, child: child ?? const SizedBox.shrink()),
+        child: FocusTraversalGroup(
+          child: Semantics(
+            container: true,
+            explicitChildNodes: true,
+            child: Directionality(
+              textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
+                  ? TextDirection.rtl : TextDirection.ltr,
+              child: OrvikaLanguageScope(
+                language: _selectedLanguage,
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
+          ),
         ),
       );
       },
