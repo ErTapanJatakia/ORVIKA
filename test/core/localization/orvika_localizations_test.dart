@@ -109,6 +109,53 @@ void main() {
       }
     });
 
+
+    test('Russian and Hindi packs cover Intelligence and Privacy interface keys', () {
+      const keys = [
+        'intelligence.heading',
+        'intelligence.description',
+        'intelligence.search',
+        'intelligence.searchHint',
+        'intelligence.clear',
+        'intelligence.filter.all',
+        'intelligence.category.links',
+        'intelligence.category.messages',
+        'intelligence.category.qr',
+        'intelligence.category.accounts',
+        'intelligence.count',
+        'intelligence.offline',
+        'intelligence.empty',
+        'intelligence.detail.notice',
+        'intelligence.detail.meaning',
+        'intelligence.detail.next',
+        'intelligence.detail.limit',
+        'intelligence.notice',
+        'privacy.category.accounts',
+        'privacy.category.device',
+        'privacy.category.apps',
+        'privacy.category.browsing',
+        'privacy.reset.tooltip',
+        'privacy.heading',
+        'privacy.description',
+        'privacy.progress',
+        'privacy.progressSemantics',
+        'privacy.progressUpdate',
+        'privacy.progressNote',
+        'privacy.detail.why',
+        'privacy.detail.action',
+        'privacy.detail.limit',
+        'privacy.reviewed',
+      ];
+      for (final code in ['ru', 'hi']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in keys) {
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing interface key $key');
+          expect(localization.text(key), isNot(key));
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
