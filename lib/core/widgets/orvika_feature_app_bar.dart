@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../localization/orvika_localizations.dart';
 
 /// Consistent app-bar shell for ORVIKA feature screens.
 ///
@@ -17,9 +18,25 @@ class OrvikaFeatureAppBar extends StatelessWidget
   final List<Widget>? actions;
   final Color? backgroundColor;
 
+  String _localizedTitle(BuildContext context) {
+    final key = switch (title) {
+      'Link Check' => 'module.link',
+      'QR Check' => 'module.qr',
+      'Message Check' => 'module.message',
+      'Intelligence' => 'module.intelligence',
+      'Privacy' => 'module.privacy',
+      'Academy' => 'module.academy',
+      'Response' => 'module.response',
+      _ => null,
+    };
+    return key == null
+        ? title
+        : OrvikaLocalizations.of(context).text(key, title);
+  }
+
   @override
   Widget build(BuildContext context) => AppBar(
-        title: Text(title),
+        title: Text(_localizedTitle(context)),
         actions: actions,
         backgroundColor: backgroundColor,
       );

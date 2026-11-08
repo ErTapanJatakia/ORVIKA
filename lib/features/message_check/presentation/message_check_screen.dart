@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
+import '../../../core/localization/orvika_localizations.dart';
 
 import '../../link_check/domain/url_analyzer.dart';
 import '../domain/message_analyzer.dart';
@@ -36,14 +37,15 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
       };
 
   String _severityLabel(FindingSeverity severity) => switch (severity) {
-        FindingSeverity.info => 'INFO',
-        FindingSeverity.caution => 'CAUTION',
-        FindingSeverity.warning => 'WARNING',
+        FindingSeverity.info => OrvikaLocalizations.of(context).text('checker.severity.info', 'INFO'),
+        FindingSeverity.caution => OrvikaLocalizations.of(context).text('checker.severity.caution', 'CAUTION'),
+        FindingSeverity.warning => OrvikaLocalizations.of(context).text('checker.severity.warning', 'WARNING'),
       };
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     final result = _result;
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(
@@ -59,14 +61,14 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
               children: [
                 Semantics(
                   header: true,
-                  child: const Text(
-                    'Pause. Inspect. Then respond.',
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                  child: Text(
+                    l10n.text('checker.message.heading', 'Pause. Inspect. Then respond.'),
+                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Paste a suspicious SMS, email or chat message to review common social-engineering cues. Analysis stays on this device.',
+                  l10n.text('checker.message.description', 'Paste a suspicious SMS, email or chat message to review common social-engineering cues. Analysis stays on this device.'),
                   style:
                       TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
                 ),
@@ -79,20 +81,19 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                   keyboardType: TextInputType.multiline,
                   autocorrect: false,
                   enableSuggestions: false,
-                  decoration: const InputDecoration(
-                    labelText: 'Message text',
-                    hintText:
-                        'Paste the message here. Avoid adding unrelated personal information.',
+                  decoration: InputDecoration(
+                    labelText: l10n.text('checker.message.input', 'Message text'),
+                    hintText: l10n.text('checker.message.hint', 'Paste the message here. Avoid adding unrelated personal information.'),
                     alignLabelWithHint: true,
-                    prefixIcon: Icon(Icons.message_outlined),
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.message_outlined),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 10),
                 FilledButton.icon(
                   onPressed: _analyse,
                   icon: const Icon(Icons.manage_search_rounded),
-                  label: const Text('Inspect message'),
+                  label: Text(l10n.text('checker.message.action', 'Inspect message')),
                 ),
                 if (result != null) ...[
                   Semantics(
@@ -108,9 +109,9 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Review findings',
-                            style: TextStyle(
+                          Text(
+                            l10n.text('checker.message.result', 'Review findings'),
+                            style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 14),
@@ -163,8 +164,8 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                             ),
                           if (result.detectedLinks.isNotEmpty) ...[
                             const Divider(),
-                            const Text('Detected web addresses',
-                                style: TextStyle(fontWeight: FontWeight.w700)),
+                            Text(l10n.text('checker.message.links', 'Detected web addresses'),
+                                style: const TextStyle(fontWeight: FontWeight.w700)),
                             const SizedBox(height: 8),
                             for (final link in result.detectedLinks)
                               Padding(
@@ -187,7 +188,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                 ],
                 const SizedBox(height: 16),
                 Text(
-                  'Important: this version uses a limited set of transparent text patterns. It does not determine whether a sender is genuine, prove fraud, inspect attachments, or verify a message against external threat intelligence. Do not share OTPs, passwords or recovery codes.',
+                  l10n.text('checker.message.notice', 'Important: this version uses a limited set of transparent text patterns. It does not determine whether a sender is genuine, prove fraud, inspect attachments, or verify a message against external threat intelligence. Do not share OTPs, passwords or recovery codes.'),
                   style: TextStyle(
                       color: scheme.onSurfaceVariant,
                       fontSize: 12,

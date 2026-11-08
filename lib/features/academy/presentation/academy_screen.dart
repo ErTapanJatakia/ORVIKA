@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
+import '../../../core/localization/orvika_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/academy_curriculum.dart';
@@ -65,11 +66,11 @@ class _AcademyScreenState extends State<AcademyScreen> {
     }
   }
 
-  String _categoryLabel(AcademyCategory category) => switch (category) {
-        AcademyCategory.accountSafety => 'Account safety',
-        AcademyCategory.socialEngineering => 'Social engineering',
-        AcademyCategory.deviceSafety => 'Device safety',
-        AcademyCategory.payments => 'Payments & QR',
+  String _categoryLabel(AcademyCategory category, OrvikaLocalizations l10n) => switch (category) {
+        AcademyCategory.accountSafety => l10n.text('academy.category.accounts', 'Account safety'),
+        AcademyCategory.socialEngineering => l10n.text('academy.category.social', 'Social engineering'),
+        AcademyCategory.deviceSafety => l10n.text('academy.category.device', 'Device safety'),
+        AcademyCategory.payments => l10n.text('academy.category.payments', 'Payments & QR'),
       };
 
   IconData _categoryIcon(AcademyCategory category) => switch (category) {
@@ -82,6 +83,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     const lessons = AcademyCurriculum.lessons;
     final progress = _completed.length;
     return Scaffold(
@@ -97,13 +99,13 @@ class _AcademyScreenState extends State<AcademyScreen> {
                 Semantics(
                   header: true,
                   child: Text(
-                    'Build safer digital habits.',
+                    l10n.text('academy.heading', 'Build safer digital habits.'),
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Short, practical lessons to help you recognise common risks and choose safer next steps.',
+                  l10n.text('academy.description', 'Short, practical lessons to help you recognise common risks and choose safer next steps.'),
                   style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
                 ),
                 const SizedBox(height: 18),
@@ -116,7 +118,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                         LayoutBuilder(
                           builder: (context, constraints) {
                             final label = Text(
-                              '$progress of ${lessons.length} lessons completed',
+                              l10n.textWithParameters('academy.progress', fallback: '$progress of ${lessons.length} lessons completed', parameters: {'completed': progress, 'total': lessons.length}),
                               style: const TextStyle(fontWeight: FontWeight.w800),
                             );
                             final percentage = Text(
@@ -147,18 +149,18 @@ class _AcademyScreenState extends State<AcademyScreen> {
                         const SizedBox(height: 10),
                         LinearProgressIndicator(
                           value: progress / lessons.length,
-                          semanticsLabel: 'Academy lesson completion: $progress of ${lessons.length} lessons completed',
+                          semanticsLabel: l10n.textWithParameters('academy.progressSemantics', fallback: 'Academy lesson completion: $progress of ${lessons.length} lessons completed', parameters: {'completed': progress, 'total': lessons.length}),
                           semanticsValue: '${progress / lessons.length}',
                         ),
                         Semantics(
                           container: true,
                           liveRegion: true,
-                          label: 'Academy progress: $progress of ${lessons.length} lessons completed',
+                          label: l10n.textWithParameters('academy.progressUpdate', fallback: 'Academy progress: $progress of ${lessons.length} lessons completed', parameters: {'completed': progress, 'total': lessons.length}),
                           child: const SizedBox.shrink(),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Progress is stored locally on this device. Completion means you answered the lesson check correctly; it is not a certification.',
+                          l10n.text('academy.progressNote', 'Progress is stored locally on this device. Completion means you answered the lesson check correctly; it is not a certification.'),
                           style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.4),
                         ),
                         if (progress > 0) ...[
@@ -168,7 +170,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                             child: TextButton.icon(
                               onPressed: _resetProgress,
                               icon: const Icon(Icons.restart_alt_rounded, size: 18),
-                              label: const Text('Reset progress'),
+                              label: Text(l10n.text('academy.reset', 'Reset progress')), 
                             ),
                           ),
                         ],
@@ -187,7 +189,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                       children: [
                         Icon(_categoryIcon(category), color: scheme.primary, size: 20),
                         Text(
-                          _categoryLabel(category),
+                          _categoryLabel(category, l10n),
                           style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
@@ -219,8 +221,8 @@ class _AcademyScreenState extends State<AcademyScreen> {
                             Text(lesson.summary,
                               style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45)),
                             const SizedBox(height: 12),
-                            const Text('KEY POINTS',
-                              style: TextStyle(fontSize: 10, letterSpacing: 0.8, fontWeight: FontWeight.w800)),
+                            Text(l10n.text('academy.keyPoints', 'KEY POINTS'),
+                              style: const TextStyle(fontSize: 10, letterSpacing: 0.8, fontWeight: FontWeight.w800)),
                             const SizedBox(height: 6),
                             for (final point in lesson.keyPoints)
                               Padding(
@@ -234,7 +236,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                                 ),
                               ),
                             const Divider(height: 24),
-                            Text('KNOWLEDGE CHECK',
+                            Text(l10n.text('academy.knowledgeCheck', 'KNOWLEDGE CHECK'),
                               style: TextStyle(color: scheme.primary, fontSize: 10, letterSpacing: 0.8, fontWeight: FontWeight.w800)),
                             const SizedBox(height: 7),
                             Text(lesson.question, style: const TextStyle(fontWeight: FontWeight.w700, height: 1.4)),
@@ -268,8 +270,8 @@ class _AcademyScreenState extends State<AcademyScreen> {
                                   liveRegion: true,
                                   child: Text(
                                     _answers[lesson.id] == lesson.correctIndex
-                                        ? 'Correct. ${lesson.explanation}'
-                                        : 'Not quite. Review the key points and try again.',
+                                        ? '${l10n.text('academy.correct', 'Correct.')} ${lesson.explanation}'
+                                        : l10n.text('academy.tryAgain', 'Not quite. Review the key points and try again.'), 
                                     style: TextStyle(
                                       color: _answers[lesson.id] == lesson.correctIndex
                                           ? scheme.primary
@@ -281,7 +283,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                                 ),
                               )
                             else if (_completed.contains(lesson.id))
-                              Text('Lesson completed.',
+                              Text(l10n.text('academy.completed', 'Lesson completed.'),
                                 style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w700)),
                           ],
                         ),
@@ -290,7 +292,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                 ],
                 const SizedBox(height: 12),
                 Text(
-                  'ORVIKA Academy provides general educational guidance, not professional, legal or financial advice. Threats and platform settings change; verify important instructions with official sources. Completing a lesson does not certify expertise.',
+                  l10n.text('academy.notice', 'ORVIKA Academy provides general educational guidance, not professional, legal or financial advice. Threats and platform settings change; verify important instructions with official sources. Completing a lesson does not certify expertise.'),
                   style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
                 ),
                   ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
+import '../../../core/localization/orvika_localizations.dart';
 
 import '../domain/url_analyzer.dart';
 
@@ -37,15 +38,16 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
 
   String _severityLabel(FindingSeverity severity) {
     return switch (severity) {
-      FindingSeverity.info => 'INFO',
-      FindingSeverity.caution => 'CAUTION',
-      FindingSeverity.warning => 'WARNING',
+      FindingSeverity.info => OrvikaLocalizations.of(context).text('checker.severity.info', 'INFO'),
+      FindingSeverity.caution => OrvikaLocalizations.of(context).text('checker.severity.caution', 'CAUTION'),
+      FindingSeverity.warning => OrvikaLocalizations.of(context).text('checker.severity.warning', 'WARNING'),
     };
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(
         title: 'Link Check',
@@ -60,14 +62,14 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
               children: [
                 Semantics(
                   header: true,
-                  child: const Text(
-                    'Inspect before you connect.',
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                  child: Text(
+                    l10n.text('checker.link.heading', 'Inspect before you connect.'),
+                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Paste a URL to review its structure for common warning signs. Analysis happens on this device.',
+                  l10n.text('checker.link.description', 'Paste a URL to review its structure for common warning signs. Analysis happens on this device.'),
                   style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
                 ),
                 const SizedBox(height: 22),
@@ -79,18 +81,18 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   textInputAction: TextInputAction.done,
                   maxLength: 2048,
                   onSubmitted: (_) => _analyse(),
-                  decoration: const InputDecoration(
-                    labelText: 'Website address',
+                  decoration: InputDecoration(
+                    labelText: l10n.text('checker.link.input', 'Website address'),
                     hintText: 'https://example.com',
-                    prefixIcon: Icon(Icons.link_rounded),
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.link_rounded),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 12),
                 FilledButton.icon(
                   onPressed: _analyse,
                   icon: const Icon(Icons.manage_search_rounded),
-                  label: const Text('Analyse address'),
+                  label: Text(l10n.text('checker.link.action', 'Analyse address')),
                 ),
                 if (_result case final result?) ...[
                   Semantics(
@@ -115,10 +117,10 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                                 color: result.isValid ? scheme.primary : scheme.error,
                               ),
                               const SizedBox(width: 9),
-                              const Expanded(
+                              Expanded(
                                 child: Text(
-                                  'Analysis findings',
-                                  style: TextStyle(
+                                  l10n.text('checker.link.result', 'Analysis findings'),
+                                  style: const TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -204,7 +206,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                 ],
                 const SizedBox(height: 16),
                 Text(
-                  'Important: a clean structural check is not a safety certificate. ORVIKA does not open the URL, contact the destination, or verify its reputation in this version.',
+                  l10n.text('checker.link.notice', 'Important: a clean structural check is not a safety certificate. ORVIKA does not open the URL, contact the destination, or verify its reputation in this version.'),
                   style: TextStyle(
                     color: scheme.onSurfaceVariant,
                     fontSize: 12,

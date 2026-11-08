@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
+import '../../../core/localization/orvika_localizations.dart';
 
 import '../../link_check/domain/url_analyzer.dart';
 import '../domain/qr_payload_analyzer.dart';
@@ -38,15 +39,16 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
 
   String _severityLabel(FindingSeverity severity) {
     return switch (severity) {
-      FindingSeverity.info => 'INFO',
-      FindingSeverity.caution => 'CAUTION',
-      FindingSeverity.warning => 'WARNING',
+      FindingSeverity.info => OrvikaLocalizations.of(context).text('checker.severity.info', 'INFO'),
+      FindingSeverity.caution => OrvikaLocalizations.of(context).text('checker.severity.caution', 'CAUTION'),
+      FindingSeverity.warning => OrvikaLocalizations.of(context).text('checker.severity.warning', 'WARNING'),
     };
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     final result = _result;
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(
@@ -62,14 +64,14 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
           children: [
             Semantics(
               header: true,
-              child: const Text(
-                'Look before you scan.',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+              child: Text(
+                l10n.text('checker.qr.heading', 'Look before you scan.'),
+                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Inspect decoded QR content before opening a link, joining a network, saving a contact, or making a payment.',
+              l10n.text('checker.qr.description', 'Inspect decoded QR content before opening a link, joining a network, saving a contact, or making a payment.'),
               style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
             ),
             const SizedBox(height: 22),
@@ -81,19 +83,19 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               maxLength: 8192,
               autocorrect: false,
               enableSuggestions: false,
-              decoration: const InputDecoration(
-                labelText: 'Decoded QR content',
-                hintText: 'Paste the text or destination decoded from a QR code',
+              decoration: InputDecoration(
+                labelText: l10n.text('checker.qr.input', 'Decoded QR content'),
+                hintText: l10n.text('checker.qr.hint', 'Paste the text or destination decoded from a QR code'),
                 alignLabelWithHint: true,
-                prefixIcon: Icon(Icons.qr_code_2_rounded),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.qr_code_2_rounded),
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
             FilledButton.icon(
               onPressed: _inspect,
               icon: const Icon(Icons.policy_outlined),
-              label: const Text('Inspect QR content'),
+              label: Text(l10n.text('checker.qr.action', 'Inspect QR content')),
             ),
             if (result != null) ...[
               Semantics(
@@ -118,10 +120,10 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                             color: result.isValid ? scheme.primary : scheme.error,
                           ),
                           const SizedBox(width: 9),
-                          const Expanded(
+                          Expanded(
                             child: Text(
-                              'Inspection result',
-                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                              l10n.text('checker.qr.result', 'Inspection result'),
+                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                             ),
                           ),
                           Text(
@@ -144,7 +146,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                       ),
                       if (result.normalizedUrl != null) ...[
                         const SizedBox(height: 14),
-                        const Text('Detected destination', style: TextStyle(fontWeight: FontWeight.w700)),
+                        Text(l10n.text('checker.qr.destination', 'Detected destination'), style: const TextStyle(fontWeight: FontWeight.w700)),
                         const SizedBox(height: 5),
                         SelectableText(
                           result.normalizedUrl!,
@@ -186,7 +188,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
             ],
             const SizedBox(height: 16),
             Text(
-              'This first version inspects pasted, decoded content. It does not activate your camera, open destinations, connect to Wi-Fi, save contacts, send messages, or initiate payments. All analysis stays on this device.',
+              l10n.text('checker.qr.notice', 'This first version inspects pasted, decoded content. It does not activate your camera, open destinations, connect to Wi-Fi, save contacts, send messages, or initiate payments. All analysis stays on this device.'),
               style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
             ),
               ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
+import '../../../core/localization/orvika_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/privacy_checklist.dart';
@@ -93,10 +94,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   }
 
   String _categoryLabel(PrivacyCategory category) => switch (category) {
-        PrivacyCategory.accounts => 'Accounts',
-        PrivacyCategory.device => 'Device',
-        PrivacyCategory.apps => 'Apps and permissions',
-        PrivacyCategory.browsing => 'Browsing and sharing',
+        PrivacyCategory.accounts => OrvikaLocalizations.of(context).text('privacy.category.accounts', 'Accounts'),
+        PrivacyCategory.device => OrvikaLocalizations.of(context).text('privacy.category.device', 'Device'),
+        PrivacyCategory.apps => OrvikaLocalizations.of(context).text('privacy.category.apps', 'Apps and permissions'),
+        PrivacyCategory.browsing => OrvikaLocalizations.of(context).text('privacy.category.browsing', 'Browsing and sharing'),
       };
 
   IconData _categoryIcon(PrivacyCategory category) => switch (category) {
@@ -109,6 +110,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     final total = PrivacyChecklist.practices.length;
     final reviewed = _reviewedIds.length;
     return Scaffold(
@@ -117,7 +119,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         actions: [
           if (!_isLoading && reviewed > 0)
             IconButton(
-              tooltip: 'Reset review progress',
+              tooltip: l10n.text('privacy.reset.tooltip', 'Reset review progress'),
               onPressed: _resetProgress,
               icon: const Icon(Icons.restart_alt_rounded),
             ),
@@ -134,7 +136,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 Semantics(
                   header: true,
                   child: Text(
-                    'Take control of your privacy.',
+                    l10n.text('privacy.heading', 'Take control of your privacy.'),
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
@@ -142,7 +144,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'A practical self-audit for the accounts, devices, apps and everyday habits that shape your digital privacy.',
+                  l10n.text('privacy.description', 'A practical self-audit for the accounts, devices, apps and everyday habits that shape your digital privacy.'),
                   style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
                 ),
                 const SizedBox(height: 18),
@@ -156,7 +158,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                '$reviewed of $total practices reviewed',
+                                l10n.textWithParameters('privacy.progress', fallback: '{reviewed} of {total} practices reviewed', parameters: {'reviewed': reviewed, 'total': total}),
                                 style: const TextStyle(fontWeight: FontWeight.w800),
                               ),
                             ),
@@ -172,18 +174,18 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         const SizedBox(height: 10),
                         LinearProgressIndicator(
                           value: reviewed / total,
-                          semanticsLabel: 'Privacy review progress: $reviewed of $total practices reviewed',
+                          semanticsLabel: l10n.textWithParameters('privacy.progressSemantics', fallback: 'Privacy review progress: {reviewed} of {total} practices reviewed', parameters: {'reviewed': reviewed, 'total': total}),
                           semanticsValue: '${reviewed / total}',
                         ),
                         Semantics(
                           container: true,
                           liveRegion: true,
-                          label: 'Privacy progress update: $reviewed of $total practices reviewed',
+                          label: l10n.textWithParameters('privacy.progressUpdate', fallback: 'Privacy progress update: {reviewed} of {total} practices reviewed', parameters: {'reviewed': reviewed, 'total': total}),
                           child: const SizedBox.shrink(),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Your progress is saved locally on this device. A checkmark means you reviewed the guidance—not that ORVIKA verified or changed a setting.',
+                          l10n.text('privacy.progressNote', 'Your progress is saved locally on this device. A checkmark means you reviewed the guidance—not that ORVIKA verified or changed a setting.'),
                           style: TextStyle(
                             color: scheme.onSurfaceVariant,
                             fontSize: 12,
@@ -229,17 +231,17 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                         expandedCrossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _GuidanceSection(label: 'WHY IT MATTERS', value: practice.why),
-                          _GuidanceSection(label: 'WHAT YOU CAN DO', value: practice.action),
-                          _GuidanceSection(label: 'IMPORTANT LIMIT', value: practice.limit),
+                          _GuidanceSection(label: l10n.text('privacy.detail.why', 'WHY IT MATTERS'), value: practice.why),
+                          _GuidanceSection(label: l10n.text('privacy.detail.action', 'WHAT YOU CAN DO'), value: practice.action),
+                          _GuidanceSection(label: l10n.text('privacy.detail.limit', 'IMPORTANT LIMIT'), value: practice.limit),
                           const SizedBox(height: 8),
                           CheckboxListTile(
                             contentPadding: EdgeInsets.zero,
                             value: _reviewedIds.contains(practice.id),
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: const Text(
-                              'I have reviewed this practice',
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                            title: Text(
+                              l10n.text('privacy.reviewed', 'I have reviewed this practice'),
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
                             ),
                             onChanged: (value) {
                               _setReviewed(practice.id, value ?? false);
