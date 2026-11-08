@@ -132,6 +132,14 @@ void main() {
     final progress = find.bySemanticsLabel('Privacy review progress');
     expect(progress, findsOneWidget);
     expect(tester.getSemantics(progress).value, '0 of 12 practices reviewed');
+    final announcement = find.bySemanticsLabel(
+      RegExp(r'Privacy review progress:'),
+    );
+    expect(announcement, findsOneWidget);
+    expect(
+      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      isTrue,
+    );
   });
 
   testWidgets('Academy progress exposes a descriptive accessible value',
@@ -145,5 +153,38 @@ void main() {
     final progress = find.bySemanticsLabel('Academy lesson completion');
     expect(progress, findsOneWidget);
     expect(tester.getSemantics(progress).value, '0 of 8 lessons completed');
+    final announcement = find.bySemanticsLabel(
+      RegExp(r'Academy progress:'),
+    );
+    expect(announcement, findsOneWidget);
+    expect(
+      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      isTrue,
+    );
   });
 }
+
+  testWidgets('Academy answer feedback is announced as a live update',
+      (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+    SharedPreferences.setMockInitialValues({});
+    tester.view.physicalSize = const Size(900, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const MaterialApp(home: AcademyScreen()));
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.text('Use the bank app or a known official contact route independently'),
+    );
+    await tester.pumpAndSettle();
+
+    final feedback = find.bySemanticsLabel(RegExp(r'Correct\.'));
+    expect(feedback, findsOneWidget);
+    expect(
+      tester.getSemantics(feedback).hasFlag(SemanticsFlag.isLiveRegion),
+      isTrue,
+    );
+  });
