@@ -155,3 +155,32 @@ Added in the accessibility interaction-validation increment:
 - Keyboard regression coverage exercises forward traversal, reverse traversal with Shift+Tab, and Enter activation of a dashboard destination.
 
 These automated checks validate selected palette pairs, selected dashboard targets and Flutter's widget-level focus behaviour. They do not replace a complete text/background contrast inventory, browser keyboard testing, real-device touch testing, or TalkBack, NVDA, VoiceOver and Switch Access validation. WCAG 2.2 AA remains a target, not a conformance claim.
+
+
+## 15. Browser keyboard and route-focus regression validation
+
+Automated widget-level regression coverage in the browser/assistive-navigation validation increment:
+
+- Space activates a focused actionable dashboard card, matching the Enter activation path.
+- Returning from a feature route restores keyboard focus to the dashboard card that opened it, so keyboard users do not have to restart traversal from the top of the page.
+- The tests assert the resulting feature destination and restored focus target; they do not simulate a real browser, operating system, screen reader or switch device.
+
+### Manual browser and assistive-technology evidence record
+
+Complete this record against the deployed Web/PWA build before describing a platform as validated. Record the exact browser, OS, screen-reader/switch software and versions, viewport, zoom/text scale, date, expected result, observed result and pass/fail. Do not infer success from widget tests or the existing production smoke test.
+
+| Area | Manual procedure | Evidence to capture |
+|---|---|---|
+| Keyboard order | Reload with pointer untouched; traverse the dashboard and each feature using Tab and Shift+Tab | Focus sequence, skipped/duplicate controls and any trap |
+| Focus visibility | Inspect every focused control in all four palettes | Visible focus indicator, contrast and clipping |
+| Activation | Activate links/cards/buttons using Enter and Space where applicable | Correct action with no pointer dependency |
+| Route focus | Open a feature, return using its Back control and browser back where supported | Focus destination after return; no lost or hidden focus |
+| Dialogs/overlays | Open each modal, menu and picker; test Escape, close control and return focus | Whether dismissal is predictable and focus returns to the invoker |
+| Screen-reader structure | Navigate headings, landmarks, controls and results using screen-reader commands | Spoken name, role, value, state and reading order |
+| Dynamic results | Run Link, QR and Message checks; change Intelligence filters and progress states | Announcement timing, completeness and duplicate/noisy announcements |
+| Switch/voice control | Navigate and activate visible controls using platform switch/voice features | Stable accessible names and operable actions |
+| Zoom/reflow | Test browser zoom at 200% and 400%, plus narrow viewport | No lost content, horizontal page scrolling or inaccessible controls |
+
+Suggested minimum combinations: NVDA with Firefox or Chrome on Windows; VoiceOver with Safari on macOS/iOS; TalkBack with Chrome on Android; and Android Switch Access. Availability of a combination depends on supported target devices. Record failures as issues rather than silently waiving them.
+
+**Status:** manual browser and native assistive-technology execution remains outstanding. This section is a repeatable test protocol, not evidence of completed manual testing or a WCAG 2.2 AA conformance claim.
