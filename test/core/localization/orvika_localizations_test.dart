@@ -156,6 +156,30 @@ void main() {
       }
     });
 
+
+    test('Russian and Hindi packs cover Academy and Response interface keys', () {
+      const keys = [
+        'academy.heading', 'academy.description', 'academy.category.accounts',
+        'academy.category.social', 'academy.category.device', 'academy.category.payments',
+        'academy.progress', 'academy.progressSemantics', 'academy.progressUpdate',
+        'academy.progressNote', 'academy.reset', 'academy.keyPoints',
+        'academy.knowledgeCheck', 'academy.correct', 'academy.tryAgain',
+        'academy.completed', 'academy.notice', 'response.heading',
+        'response.description', 'response.urgent', 'response.category.accounts',
+        'response.category.payments', 'response.category.device',
+        'response.category.identity', 'response.firstPriority', 'response.steps',
+        'response.preserve', 'response.avoid', 'response.limit', 'response.notice',
+      ];
+      for (final code in ['ru', 'hi']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in keys) {
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing feature key $key');
+          expect(localization.text(key), isNot(key));
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
