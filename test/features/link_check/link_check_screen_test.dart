@@ -4,6 +4,9 @@ import 'package:orvika/main.dart';
 import 'package:orvika/features/link_check/presentation/link_check_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+String _linkAction(String language) =>
+    language == 'ar' ? 'تحقّق من العنوان' : 'Analyse address';
+
 Future<void> _openLinkCheck(
   WidgetTester tester, {
   String language = 'en',
@@ -79,7 +82,7 @@ void main() {
     );
 
     await tester.enterText(find.byType(TextField), 'http://example.com');
-    await tester.tap(find.text('Analyse address'));
+    await tester.tap(find.text(_linkAction('ar')));
     await tester.pumpAndSettle();
 
     expect(find.text('Analysis findings'), findsOneWidget);
@@ -159,7 +162,7 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
-    await _revealLinkCheckControl(tester, find.text('Analyse address'));
+    await _revealLinkCheckControl(tester, find.text(_linkAction('ar')));
     await tester.tap(find.text('Analyse address'));
     await tester.pumpAndSettle();
     expect(find.text('Analysis findings'), findsOneWidget);
@@ -172,15 +175,15 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await _openLinkCheck(tester, textScale: 2);
 
-    final context = tester.element(find.text('تحقّق قبل الاتصال.'));
+    final context = tester.element(find.text('Inspect before you connect.'));
     expect(Directionality.of(context), TextDirection.ltr);
     expect(MediaQuery.textScalerOf(context).scale(10), 20);
     await _revealLinkCheckControl(tester, find.byType(TextField));
     expect(find.byType(TextField), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
-    await _revealLinkCheckControl(tester, find.text('Analyse address'));
-    await tester.tap(find.text('Analyse address'));
+    await _revealLinkCheckControl(tester, find.text(_linkAction('en')));
+    await tester.tap(find.text(_linkAction('en')));
     await tester.pumpAndSettle();
     expect(find.text('Analysis findings'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -192,16 +195,16 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await _openLinkCheck(tester, language: 'ar', textScale: 2);
 
-    final context = tester.element(find.text('Inspect before you connect.'));
+    final context = tester.element(find.text('تحقّق قبل الاتصال.'));
     expect(Directionality.of(context), TextDirection.rtl);
     expect(MediaQuery.textScalerOf(context).scale(10), 20);
     await _revealLinkCheckControl(tester, find.byType(TextField));
     expect(find.byType(TextField), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
-    await _revealLinkCheckControl(tester, find.text('Analyse address'));
-    expect(find.text('Analyse address'), findsOneWidget);
-    await tester.tap(find.text('Analyse address'));
+    await _revealLinkCheckControl(tester, find.text(_linkAction('ar')));
+    expect(find.text(_linkAction('ar')), findsOneWidget);
+    await tester.tap(find.text(_linkAction('ar')));
     await tester.pumpAndSettle();
 
     expect(find.text('Analysis findings'), findsOneWidget);
