@@ -62,7 +62,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
               children: [
                 Semantics(
                   header: true,
-                  child: const Text(
+                  child: Text(
                     l10n.text('checker.link.heading', 'Inspect before you connect.'),
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
                   ),
@@ -117,7 +117,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                                 color: result.isValid ? scheme.primary : scheme.error,
                               ),
                               const SizedBox(width: 9),
-                              const Expanded(
+                              Expanded(
                                 child: Text(
                                   l10n.text('checker.link.result', 'Analysis findings'),
                                   style: TextStyle(
