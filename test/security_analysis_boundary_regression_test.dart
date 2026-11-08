@@ -134,7 +134,8 @@ void main() {
       expect(result.isValid, isTrue);
       expect(result.findings.single.severity, FindingSeverity.caution);
       expect(result.findings.single.title, 'Link or web address detected');
-      expect(result.notice, contains('sender identity or intent was verified') == false);
+      expect(result.notice, contains('No message was uploaded'));
+      expect(result.notice, contains('no sender identity or intent was verified'));
     });
   });
 
