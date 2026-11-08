@@ -183,7 +183,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
                         bytes,
                         fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) => Padding(
-                          padding: EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(24),
                           child: Text(l10n.text('checker.image.previewUnavailable', 'Preview unavailable for this image format.')),
                         ),
                       ),
