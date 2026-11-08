@@ -119,7 +119,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                 ),
                 Text(
                   l10n.text('intelligence.offline', 'OFFLINE REFERENCE'),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 10,
                     letterSpacing: 1,
                     fontWeight: FontWeight.w800,
