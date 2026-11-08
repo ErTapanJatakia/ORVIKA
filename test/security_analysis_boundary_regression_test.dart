@@ -18,8 +18,9 @@ void main() {
     });
 
     test('preserves original input while returning a normalised destination', () {
-      const raw = '  https://example.com/path  ';
+      const raw = 'HTTPS://EXAMPLE.COM/path';
       final result = analyzer.analyze(raw);
+      expect(result.isValid, isTrue);
       expect(result.input, raw);
       expect(result.normalizedUrl, 'https://example.com/path');
     });
