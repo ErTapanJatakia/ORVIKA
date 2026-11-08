@@ -117,13 +117,13 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
             OutlinedButton.icon(
               onPressed: _scanWithCamera,
               icon: const Icon(Icons.document_scanner_outlined),
-              label: const Text('Scan QR / barcode with camera'),
+              label: Text(l10n.text('checker.qr.scanCamera', 'Scan QR / barcode with camera')),
             ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: _scanFromImage,
               icon: const Icon(Icons.image_search_outlined),
-              label: const Text('Scan QR / barcode from image'),
+              label: Text(l10n.text('checker.qr.scanImage', 'Scan QR / barcode from image')),
             ),
             const SizedBox(height: 12),
             TextField(
