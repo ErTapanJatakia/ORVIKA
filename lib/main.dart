@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/localization/orvika_language.dart';
 import 'core/localization/orvika_localizations.dart';
 import 'core/navigation/orvika_navigation.dart';
+import 'core/analytics/orvika_analytics.dart';
 
 
 void main() => runApp(const OrvikaApp());
@@ -1057,11 +1058,14 @@ class SentinelDashboard extends StatelessWidget {
                                     OrvikaNavigation.screenForModule(module.title);
                                 final VoidCallback? onTap = destination == null
                                     ? null
-                                    : () => Navigator.of(context).push(
+                                    : () {
+                                        OrvikaAnalytics.moduleOpened(module.title);
+                                        Navigator.of(context).push(
                                           MaterialPageRoute<void>(
                                             builder: (_) => destination,
                                           ),
                                         );
+                                      };
                                 return _ModuleCard(module: _localizedModule(module, selectedLanguage), palette: palette, onTap: onTap);
                               },
                             );

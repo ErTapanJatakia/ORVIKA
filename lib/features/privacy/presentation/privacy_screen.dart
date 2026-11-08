@@ -238,6 +238,15 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 ],
                 const SizedBox(height: 12),
                 Text(
+                  'Website analytics: when enabled for this deployment, ORVIKA uses Vercel Web Analytics for aggregated visits and basic device, browser, referrer and approximate location metrics. ORVIKA sends only fixed feature-usage events and allowlisted module names. Pasted URLs, message text, decoded QR content and analysis findings are never sent as analytics data. This is separate from on-device security analysis. Vercel states that Web Analytics does not use cookies and that visitor hashes expire after 24 hours.',
+                  style: TextStyle(
+                    color: scheme.onSurfaceVariant,
+                    fontSize: 12,
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
                   'ORVIKA does not scan your device, inspect installed apps, read account data or change permissions. Settings and labels vary by platform. Use each operating system or service’s official settings and documentation.',
                   style: TextStyle(
                     color: scheme.onSurfaceVariant,
