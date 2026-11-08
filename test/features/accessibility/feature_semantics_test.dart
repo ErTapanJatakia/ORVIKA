@@ -13,7 +13,6 @@ void main() {
   testWidgets('feature screen titles are exposed as semantic headings',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
 
     final cases = <(Widget, String)>[
       (const LinkCheckScreen(), 'Inspect before you connect.'),
@@ -39,12 +38,12 @@ void main() {
         reason: '$heading should be exposed as a heading',
       );
     }
+    semantics.dispose();
   });
 
   testWidgets('Link Check announces newly available analysis results',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     await tester.pumpWidget(const MaterialApp(home: LinkCheckScreen()));
 
     await tester.enterText(find.byType(TextField), 'http://example.com');
@@ -59,12 +58,12 @@ void main() {
       tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
+    semantics.dispose();
   });
 
   testWidgets('QR Check announces inspection outcome and severity',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     await tester.pumpWidget(const MaterialApp(home: QrCheckScreen()));
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
@@ -79,12 +78,12 @@ void main() {
       tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
+    semantics.dispose();
   });
 
   testWidgets('Message Check announces finding and detected-link counts',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     await tester.pumpWidget(const MaterialApp(home: MessageCheckScreen()));
 
     await tester.enterText(
@@ -102,12 +101,12 @@ void main() {
       tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
+    semantics.dispose();
   });
 
   testWidgets('Intelligence announces updated reference-result count',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     await tester.pumpWidget(const MaterialApp(home: IntelligenceScreen()));
 
     await tester.enterText(find.byType(TextField), 'Punycode');
@@ -119,19 +118,21 @@ void main() {
       tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
+    semantics.dispose();
   });
 
   testWidgets('Privacy progress exposes a descriptive accessible value',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
 
-    final progress = find.bySemanticsLabel('Privacy review progress: 0 of 12 practices reviewed');
+    final progress = find.byType(LinearProgressIndicator);
     expect(progress, findsOneWidget);
-    expect(double.parse(tester.getSemantics(progress).value), 0.0);
+    final progressSemantics = tester.getSemantics(progress);
+    expect(progressSemantics.label, contains('Privacy review progress: 0 of 12 practices reviewed'));
+    expect(double.parse(progressSemantics.value), 0.0);
     final announcement = find.bySemanticsLabel(
       RegExp(r'Privacy review progress:'),
     );
@@ -140,19 +141,21 @@ void main() {
       tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
+    semantics.dispose();
   });
 
   testWidgets('Academy progress exposes a descriptive accessible value',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const MaterialApp(home: AcademyScreen()));
     await tester.pumpAndSettle();
 
-    final progress = find.bySemanticsLabel('Academy lesson completion: 0 of 8 lessons completed');
+    final progress = find.byType(LinearProgressIndicator);
     expect(progress, findsOneWidget);
-    expect(double.parse(tester.getSemantics(progress).value), 0.0);
+    final progressSemantics = tester.getSemantics(progress);
+    expect(progressSemantics.label, contains('Academy lesson completion: 0 of 8 lessons completed'));
+    expect(double.parse(progressSemantics.value), 0.0);
     final announcement = find.bySemanticsLabel(
       RegExp(r'Academy progress:'),
     );
@@ -161,12 +164,12 @@ void main() {
       tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
+    semantics.dispose();
   });
 
   testWidgets('Academy answer feedback is announced as a live update',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     SharedPreferences.setMockInitialValues({});
     tester.view.physicalSize = const Size(900, 1600);
     tester.view.devicePixelRatio = 1;
@@ -186,5 +189,6 @@ void main() {
       tester.getSemantics(feedback).flagsCollection.isLiveRegion,
       isTrue,
     );
+    semantics.dispose();
   });
 }
