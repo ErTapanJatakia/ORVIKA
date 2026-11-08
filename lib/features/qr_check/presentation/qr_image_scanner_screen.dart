@@ -26,6 +26,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   String? _message;
 
   Future<void> _chooseImage() async {
+    final l10n = OrvikaLocalizations.of(context);
     setState(() {
       _loading = true;
       _message = null;
@@ -45,14 +46,14 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
       final length = await selected.length();
       if (length <= 0) {
         setState(() {
-          _message = 'The selected image is empty or could not be read.';
+          _message = l10n.text('checker.image.error.empty', 'The selected image is empty or could not be read.');
           _loading = false;
         });
         return;
       }
       if (length > _maxImageBytes) {
         setState(() {
-          _message = 'Please choose an image smaller than 20 MB.';
+          _message = l10n.text('checker.image.error.tooLarge', 'Please choose an image smaller than 20 MB.');
           _loading = false;
         });
         return;
@@ -69,13 +70,14 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _message = 'The image could not be selected. Check the file and try again.';
+        _message = l10n.text('checker.image.error.selection', 'The image could not be selected. Check the file and try again.');
         _loading = false;
       });
     }
   }
 
   Future<void> _decodeImage() async {
+    final l10n = OrvikaLocalizations.of(context);
     final bytes = _imageBytes;
     final path = _imagePath;
     if (bytes == null || path == null || _loading) return;
@@ -94,7 +96,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
       setState(() {
         _codes = results;
         _message = results.isEmpty
-            ? 'No supported QR code or barcode was detected. Try a clearer image with the code fully visible.'
+            ? l10n.text('checker.image.error.noCode', 'No supported QR code or barcode was detected. Try a clearer image with the code fully visible.')
             : null;
         _loading = false;
       });
@@ -113,7 +115,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _message = 'This image could not be decoded on this device or browser.';
+        _message = l10n.text('checker.image.error.decode', 'This image could not be decoded on this device or browser.');
         _loading = false;
       });
     }
@@ -153,8 +155,8 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
           children: [
-            const Text(
-              'Choose an image containing a QR code or barcode.',
+            Text(
+              l10n.text('checker.image.instruction', 'Choose an image containing a QR code or barcode.'),
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
             ),
             const SizedBox(height: 8),
