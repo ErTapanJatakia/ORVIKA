@@ -58,9 +58,12 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
-                const Text(
-                  'Inspect before you connect.',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                Semantics(
+                  header: true,
+                  child: const Text(
+                    'Inspect before you connect.',
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -90,6 +93,12 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   label: const Text('Analyse address'),
                 ),
                 if (_result case final result?) ...[
+                  Semantics(
+                    container: true,
+                    liveRegion: true,
+                    label: 'Link analysis complete. ${result.findings.length} findings.',
+                    child: const SizedBox.shrink(),
+                  ),
                   const SizedBox(height: 24),
                   Card(
                     child: Padding(
