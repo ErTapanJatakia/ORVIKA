@@ -241,7 +241,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             controlAffinity: ListTileControlAffinity.leading,
                             title: Text(
                               l10n.text('privacy.reviewed', 'I have reviewed this practice'),
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
                             ),
                             onChanged: (value) {
                               _setReviewed(practice.id, value ?? false);
