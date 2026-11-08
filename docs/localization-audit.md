@@ -81,3 +81,8 @@ The broader source review extended beyond the three primary checker forms:
 ### Milestone closure criteria
 
 The Phase 2 implementation can be considered code-complete only when all visible widget-owned controls, titles, dialogs, errors and empty-state labels have a localization key or a documented canonical-English exception; tests cover the key/fallback contract; and CI passes on the final PR head. Translation quality, native-speaker sign-off, complete RTL behavior and physical-device/browser checks remain separate acceptance activities and must not be inferred from CI.
+
+
+### Audit correction — current Phase 2 head
+
+The initial audit table above records the pre-localization baseline and should be read as a historical snapshot, not the current state. On the current Phase 2 branch, Link Check, QR Check and Message Check already resolve their primary form copy, result headings/notices and severity labels through localization lookup. Their result announcements and QR detected-format label have also now been moved behind localization keys. Scanner controls and Privacy reset/error controls are keyed as detailed above. A key with no authored value intentionally falls back to English; keying and translation coverage are tracked separately.
