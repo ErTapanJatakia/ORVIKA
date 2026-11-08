@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'qr_camera_scanner_screen.dart';
+
 import '../../../core/widgets/orvika_feature_app_bar.dart';
 import '../../../core/localization/orvika_localizations.dart';
 
@@ -17,6 +19,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
   final _controller = TextEditingController();
   final _analyzer = const QrPayloadAnalyzer();
   QrPayloadAnalysis? _result;
+  String? _detectedCodeFormat;
 
   @override
   void dispose() {
@@ -26,7 +29,26 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
 
   void _inspect() {
     FocusScope.of(context).unfocus();
-    setState(() => _result = _analyzer.analyze(_controller.text));
+    setState(() {
+      _result = _analyzer.analyze(_controller.text);
+      _detectedCodeFormat = null;
+    });
+  }
+
+  Future<void> _scanWithCamera() async {
+    final scanned = await Navigator.of(context).push<({String value, String format})>(
+      MaterialPageRoute(
+        builder: (_) => const QrCameraScannerScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+    if (!mounted || scanned == null) return;
+    _controller.text = scanned.value;
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _detectedCodeFormat = scanned.format;
+      _result = _analyzer.analyze(scanned.value);
+    });
   }
 
   Color _severityColor(FindingSeverity severity, ColorScheme scheme) {
@@ -75,6 +97,12 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
             ),
             const SizedBox(height: 22),
+            OutlinedButton.icon(
+              onPressed: _scanWithCamera,
+              icon: const Icon(Icons.document_scanner_outlined),
+              label: const Text('Scan QR / barcode with camera'),
+            ),
+            const SizedBox(height: 12),
             TextField(
               controller: _controller,
               minLines: 3,
@@ -137,6 +165,11 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                           ),
                         ],
                       ),
+                      if (_detectedCodeFormat != null) ...[
+                        const SizedBox(height: 10),
+                        Text('Detected code format: ${_detectedCodeFormat!.toUpperCase()}',
+                            style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w700)),
+                      ],
                       const SizedBox(height: 14),
                       Text(result.title, style: const TextStyle(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 6),
@@ -188,7 +221,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
             ],
             const SizedBox(height: 16),
             Text(
-              l10n.text('checker.qr.notice', 'This first version inspects pasted, decoded content. It does not activate your camera, open destinations, connect to Wi-Fi, save contacts, send messages, or initiate payments. All analysis stays on this device.'),
+              l10n.text('checker.qr.notice', 'Camera scanning starts only after you explicitly choose Scan and then Allow camera for this scan. The camera stops when a code is captured or you leave the scanner. Decoded content is analysed on this device; ORVIKA does not open destinations, connect to Wi-Fi, save contacts, send messages, or initiate payments. Browser and operating-system permission settings remain under your control.'),
               style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
             ),
               ],
