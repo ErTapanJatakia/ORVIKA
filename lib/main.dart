@@ -1198,8 +1198,11 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
         title: Text(OrvikaLocalizations(_selectedLanguage).text('settings.title', 'Appearance & accessibility')),
         backgroundColor: palette.background,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: ListView(
+            padding: const EdgeInsets.all(20),
         children: [
           Semantics(
             header: true,
@@ -1320,7 +1323,9 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             OrvikaLocalizations(_selectedLanguage).text('settings.accessibility', 'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.'),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
           ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
