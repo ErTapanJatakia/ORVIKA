@@ -49,3 +49,10 @@ Accordingly, this is a curated 100-language product catalogue, not a claim that 
 - Never mark a draft translation as reviewed without qualified native-speaker validation.
 - Do not represent an untranslated language as fully supported.
 - Keep language codes stable; changing a code after a user has selected it requires a migration.
+
+
+## Phase-two checker controls
+
+The phase-two checker interface increment adds offline translations for primary headings, input labels and actions in Link Check, QR Check and Message Check, plus severity labels and QR camera/image entry actions. These keys are authored for Russian, Hindi, German, French, Italian, Punjabi, Urdu, Arabic, Marathi, Gujarati and Sanskrit.
+
+The nine additional packs remain drafts; the existing reviewed/draft classification is unchanged. Detailed descriptions, security findings, privacy/legal notices and incident-response playbooks continue to use English fallback until qualified review. Arabic and Urdu retain RTL language metadata; automated tests do not establish full RTL conformance.
