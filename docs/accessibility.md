@@ -132,3 +132,15 @@ Automated semantic-tree tests cover heading flags, analysis-result announcements
 - Windows: test the deployed web app with Narrator and at least one supported browser/screen-reader combination such as NVDA with Firefox or Chrome.
 - Browser keyboard: test Tab, Shift+Tab, Enter, Space, focus visibility, overlays and escape/return behaviour.
 - Record OS, browser, screen-reader version, viewport, text scale, observed announcement, expected announcement and pass/fail for each test. Do not mark a platform complete from widget tests alone.
+
+## 13. Onboarding, language selection and appearance settings semantics
+
+Implemented in the onboarding/settings accessibility increment:
+
+- Language selection exposes its page title as a semantic heading and its search field has an explicit accessible label.
+- Language search publishes the current result count through a live region, including the zero-results state.
+- Each onboarding page title is exposed as a semantic heading. The current page number is visible and announced as a live update, so progress is not conveyed by coloured pagination dots alone.
+- Appearance settings expose the Language, visual-environment and Accessibility section titles as semantic headings.
+- The existing Material controls remain in place for keyboard and assistive-technology compatibility; this increment does not replace them with custom controls.
+
+This is partial coverage of delivery-sequence item 2, not completion of the onboarding/settings audit. Keyboard traversal, focus restoration after language selection, screen-reader testing, large-text visual checks and full theme contrast review remain outstanding. Automated widget tests verify Flutter semantics only and do not establish native assistive-technology compatibility or WCAG conformance.
