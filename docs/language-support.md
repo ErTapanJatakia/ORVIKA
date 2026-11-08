@@ -61,3 +61,6 @@ The nine additional packs remain drafts; the existing reviewed/draft classificat
 ## Phase-two extended UI coverage
 
 QR camera and image scanner controls, plus Privacy checklist reset/error controls, now use the localization lookup API. These newly keyed strings currently use explicit English fallback across the draft packs until translations are authored and reviewed. Scanner platform/privacy explanations, decoder diagnostics, detailed privacy disclosures, analyzer findings and curated security guidance remain canonical English by design. A localization key prevents an untracked literal; it does not by itself mean a language has a translation for that key.
+
+
+Phase 2 also keys checker result announcements and the QR detected-format label. Where a key has no authored translation in a selected language, the app uses its explicit English fallback. Key coverage must not be reported as translated coverage.
