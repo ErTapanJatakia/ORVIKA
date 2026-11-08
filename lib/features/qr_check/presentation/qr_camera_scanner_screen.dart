@@ -15,16 +15,20 @@ class QrCameraScannerScreen extends StatefulWidget {
   State<QrCameraScannerScreen> createState() => _QrCameraScannerScreenState();
 }
 
-class _QrCameraScannerScreenState extends State<QrCameraScannerScreen> {
+class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
+    with WidgetsBindingObserver {
   late final MobileScannerController _controller;
   bool _cameraActive = false;
   bool _starting = false;
   bool _handledCapture = false;
+  bool _cameraRequested = false;
+  bool _pausedByLifecycle = false;
   String? _statusMessage;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller = MobileScannerController(
       autoStart: false,
       facing: CameraFacing.back,
@@ -34,12 +38,13 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     unawaited(_controller.dispose());
     super.dispose();
   }
 
   Future<void> _startCamera() async {
-    if (_starting || _cameraActive) return;
+    if (_starting || _cameraActive || !_cameraRequested) return;
     setState(() {
       _starting = true;
       _statusMessage = null;
@@ -67,7 +72,43 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen> {
   }
 
   Future<void> _stopCamera() async {
-    await _controller.stop();
+    _cameraRequested = false;
+    _pausedByLifecycle = false;
+    try {
+      await _controller.stop();
+    } catch (_) {
+      // The controller may already have stopped during a platform transition.
+    }
+    if (mounted) setState(() => _cameraActive = false);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        // Do not stop while the initial permission prompt is unresolved. Once
+        // capture is active, release the camera whenever the app is backgrounded.
+        if (_cameraRequested && _cameraActive && !_handledCapture) {
+          _pausedByLifecycle = true;
+          unawaited(_pauseCameraForLifecycle());
+        }
+      case AppLifecycleState.resumed:
+        if (_cameraRequested && _pausedByLifecycle && !_handledCapture) {
+          _pausedByLifecycle = false;
+          unawaited(_startCamera());
+        }
+    }
+  }
+
+  Future<void> _pauseCameraForLifecycle() async {
+    try {
+      await _controller.stop();
+    } catch (_) {
+      // Best-effort release when the platform is already transitioning.
+    }
     if (mounted) setState(() => _cameraActive = false);
   }
 
@@ -77,7 +118,13 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen> {
       final value = barcode.rawValue;
       if (value == null || value.trim().isEmpty) continue;
       _handledCapture = true;
-      await _controller.stop();
+      _cameraRequested = false;
+      _pausedByLifecycle = false;
+      try {
+        await _controller.stop();
+      } catch (_) {
+        // Continue returning the decoded value; disposal also releases resources.
+      }
       if (!mounted) return;
       Navigator.of(context).pop((
         value: value,
@@ -172,7 +219,12 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen> {
                   ],
                   if (!_cameraActive)
                     FilledButton.icon(
-                      onPressed: _starting ? null : _startCamera,
+                      onPressed: _starting
+                          ? null
+                          : () {
+                              _cameraRequested = true;
+                              _startCamera();
+                            },
                       icon: const Icon(Icons.no_photography_outlined),
                       label: Text(_starting
                           ? 'Requesting camera access…'
