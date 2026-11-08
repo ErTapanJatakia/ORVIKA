@@ -172,8 +172,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         const SizedBox(height: 10),
                         LinearProgressIndicator(
                           value: reviewed / total,
-                          semanticsLabel: 'Privacy review progress',
-                          semanticsValue: '$reviewed of $total practices reviewed',
+                          semanticsLabel: 'Privacy review progress: $reviewed of $total practices reviewed',
+                          semanticsValue: '${reviewed / total}',
                         ),
                         Semantics(
                           container: true,
