@@ -120,7 +120,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                               Expanded(
                                 child: Text(
                                   l10n.text('checker.link.result', 'Analysis findings'),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.w700,
                                   ),
