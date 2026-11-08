@@ -91,9 +91,12 @@ class _AcademyScreenState extends State<AcademyScreen> {
           : ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
-                Text(
-                  'Build safer digital habits.',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'Build safer digital habits.',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -118,7 +121,11 @@ class _AcademyScreenState extends State<AcademyScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        LinearProgressIndicator(value: progress / lessons.length),
+                        LinearProgressIndicator(
+                          value: progress / lessons.length,
+                          semanticsLabel: 'Academy lesson completion',
+                          semanticsValue: '${progress} of ${lessons.length} lessons completed',
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           'Progress is stored locally on this device. Completion means you answered the lesson check correctly; it is not a certification.',
