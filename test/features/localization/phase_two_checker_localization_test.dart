@@ -72,6 +72,52 @@ void main() {
     }
   });
 
+  test('checker and scanner UI copy has authored translations or explicit English fallbacks', () {
+    const fallbacks = {
+      'checker.link.description': 'Paste a URL to review its structure for common warning signs. Analysis happens on this device.',
+      'checker.link.result': 'Analysis findings',
+      'checker.link.notice': 'Important: a clean structural check is not a safety certificate. ORVIKA does not open the URL, contact the destination, or verify its reputation in this version.',
+      'checker.message.description': 'Paste a suspicious SMS, email or chat message to review common social-engineering cues. Analysis stays on this device.',
+      'checker.message.hint': 'Paste the message here. Avoid adding unrelated personal information.',
+      'checker.message.result': 'Review findings',
+      'checker.message.links': 'Detected web addresses',
+      'checker.message.notice': 'Important: this version uses a limited set of transparent text patterns. It does not determine whether a sender is genuine, prove fraud, inspect attachments, or verify a message against external threat intelligence. Do not share OTPs, passwords or recovery codes.',
+      'checker.qr.description': 'Inspect decoded QR content before opening a link, joining a network, saving a contact, or making a payment.',
+      'checker.qr.hint': 'Paste the text or destination decoded from a QR code',
+      'checker.qr.result': 'Inspection result',
+      'checker.qr.destination': 'Detected destination',
+      'checker.qr.notice': 'Camera scanning starts only after you explicitly choose Scan and then Allow camera for this scan. The camera stops when a code is captured or you leave the scanner. Decoded content is analysed on this device; ORVIKA does not open destinations, connect to Wi-Fi, save contacts, send messages, or initiate payments. Browser and operating-system permission settings remain under your control.',
+      'checker.camera.close': 'Close scanner',
+      'checker.image.close': 'Close image scanner',
+      'checker.image.instruction': 'Choose an image containing a QR code or barcode.',
+      'checker.image.error.empty': 'The selected image is empty or could not be read.',
+      'checker.image.error.tooLarge': 'Please choose an image smaller than 20 MB.',
+      'checker.image.error.selection': 'The image could not be selected. Check the file and try again.',
+      'checker.image.error.noCode': 'No supported QR code or barcode was detected. Try a clearer image with the code fully visible.',
+      'checker.image.error.decode': 'This image could not be decoded on this device or browser.',
+    };
+    for (final code in languageCodes) {
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+      for (final entry in fallbacks.entries) {
+        final resolved = localization.text(entry.key, entry.value);
+        expect(resolved, isNotEmpty, reason: '$code has empty copy for ${entry.key}');
+        expect(resolved, isNot(entry.key), reason: '$code exposes raw key ${entry.key}');
+      }
+    }
+  });
+
+  test('parameterized checker fallbacks interpolate every supplied value', () {
+    final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
+    expect(
+      localization.textWithParameters(
+        'checker.image.detectedMany',
+        fallback: 'Detected {count} codes',
+        parameters: {'count': 3},
+      ),
+      'Detected 3 codes',
+    );
+  });
+
   test('RTL writing direction remains independent from draft translation coverage', () {
     for (final code in ['ar', 'ur']) {
       final language = OrvikaLanguage.fromCode(code);
