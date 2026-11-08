@@ -117,7 +117,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                     ),
                   ),
                 ),
-                const Text(
+                Text(
                   l10n.text('intelligence.offline', 'OFFLINE REFERENCE'),
                   style: TextStyle(
                     fontSize: 10,
@@ -135,10 +135,10 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
               child: const SizedBox.shrink(),
             ),
             if (entries.isEmpty)
-              const Card(
+              Card(
                 child: Padding(
-                  padding: EdgeInsets.all(18),
-                  child: Text(l10n.text('intelligence.empty', 'No matching indicators. Try another search term or category.')),
+                  padding: const EdgeInsets.all(18),
+                  child: Text(l10n.text('intelligence.empty', 'No matching indicators. Try another search term or category.'),
                 ),
               ),
             for (final entry in entries)
