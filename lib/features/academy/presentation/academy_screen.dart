@@ -126,6 +126,12 @@ class _AcademyScreenState extends State<AcademyScreen> {
                           semanticsLabel: 'Academy lesson completion',
                           semanticsValue: '${progress} of ${lessons.length} lessons completed',
                         ),
+                        Semantics(
+                          container: true,
+                          liveRegion: true,
+                          label: 'Academy progress: ${progress} of ${lessons.length} lessons completed',
+                          child: const SizedBox.shrink(),
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           'Progress is stored locally on this device. Completion means you answered the lesson check correctly; it is not a certification.',
@@ -227,16 +233,19 @@ class _AcademyScreenState extends State<AcademyScreen> {
                             if (_answers.containsKey(lesson.id))
                               Padding(
                                 padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  _answers[lesson.id] == lesson.correctIndex
-                                      ? 'Correct. ${lesson.explanation}'
-                                      : 'Not quite. Review the key points and try again.',
-                                  style: TextStyle(
-                                    color: _answers[lesson.id] == lesson.correctIndex
-                                        ? scheme.primary
-                                        : scheme.onSurfaceVariant,
-                                    height: 1.4,
-                                    fontWeight: FontWeight.w600,
+                                child: Semantics(
+                                  liveRegion: true,
+                                  child: Text(
+                                    _answers[lesson.id] == lesson.correctIndex
+                                        ? 'Correct. ${lesson.explanation}'
+                                        : 'Not quite. Review the key points and try again.',
+                                    style: TextStyle(
+                                      color: _answers[lesson.id] == lesson.correctIndex
+                                          ? scheme.primary
+                                          : scheme.onSurfaceVariant,
+                                      height: 1.4,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               )
