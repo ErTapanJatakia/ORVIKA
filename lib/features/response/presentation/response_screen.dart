@@ -28,8 +28,11 @@ class ResponseScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(title: 'Response'),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 760),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
           Text(
             'Know your next step.',
@@ -124,7 +127,9 @@ class ResponseScreen extends StatelessWidget {
             'ORVIKA Response is general educational guidance, not emergency assistance, legal advice, financial advice or a substitute for qualified incident response. It does not detect incidents, contact providers or authorities, change account settings, or submit reports. Reporting channels and procedures vary by jurisdiction; use independently verified official sources.',
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
           ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
