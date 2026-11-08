@@ -40,6 +40,33 @@ void main() {
       expect(OrvikaLanguage.fromCode('ce').hasReviewedTranslation, isFalse);
     });
 
+    test('all authored language packs cover every feature app-bar title', () {
+      const featureTitleKeys = [
+        'module.link',
+        'module.qr',
+        'module.message',
+        'module.intelligence',
+        'module.privacy',
+        'module.academy',
+        'module.response',
+      ];
+      for (final code in OrvikaLocalizations.translatedLanguageCodes) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in featureTitleKeys) {
+          expect(
+            localization.hasTranslation(key),
+            isTrue,
+            reason: '$code is missing the feature title key $key',
+          );
+          expect(
+            localization.text(key),
+            isNot(key),
+            reason: '$code resolves $key to its untranslated key',
+          );
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
