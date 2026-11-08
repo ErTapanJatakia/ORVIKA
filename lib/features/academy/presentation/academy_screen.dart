@@ -124,12 +124,12 @@ class _AcademyScreenState extends State<AcademyScreen> {
                         LinearProgressIndicator(
                           value: progress / lessons.length,
                           semanticsLabel: 'Academy lesson completion',
-                          semanticsValue: '${progress} of ${lessons.length} lessons completed',
+                          semanticsValue: '$progress of ${lessons.length} lessons completed',
                         ),
                         Semantics(
                           container: true,
                           liveRegion: true,
-                          label: 'Academy progress: ${progress} of ${lessons.length} lessons completed',
+                          label: 'Academy progress: $progress of ${lessons.length} lessons completed',
                           child: const SizedBox.shrink(),
                         ),
                         const SizedBox(height: 8),
