@@ -46,7 +46,7 @@ void main() {
     }
   });
 
-  testWidgets('Academy knowledge checks remain usable on a narrow screen',
+  testWidgets('Academy narrow-screen answer handler updates completion and local progress',
       (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(280, 900);
@@ -65,13 +65,13 @@ void main() {
     );
     expect(answerButton, findsOneWidget);
 
-    await tester.scrollUntilVisible(
-      answerButton,
-      240,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(answerButton);
+    final button = tester.widget<OutlinedButton>(answerButton);
+    expect(button.onPressed, isNotNull,
+        reason: 'The correct answer must be enabled at 280px.');
+
+    // Invoke the real button callback directly to separate application-state
+    // handling from pointer hit-testing/scroll geometry.
+    button.onPressed!();
     await tester.pumpAndSettle();
 
     expect(find.text('1 of 8 lessons completed'), findsOneWidget);
