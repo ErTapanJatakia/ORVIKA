@@ -60,9 +60,12 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
             child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
-            const Text(
-              'Look before you scan.',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+            Semantics(
+              header: true,
+              child: const Text(
+                'Look before you scan.',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -93,6 +96,12 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               label: const Text('Inspect QR content'),
             ),
             if (result != null) ...[
+              Semantics(
+                container: true,
+                liveRegion: true,
+                label: 'QR inspection complete. ${result.title}. Severity ${_severityLabel(result.severity)}. ${result.linkFindings.length} link findings.',
+                child: const SizedBox.shrink(),
+              ),
               const SizedBox(height: 24),
               Card(
                 child: Padding(
