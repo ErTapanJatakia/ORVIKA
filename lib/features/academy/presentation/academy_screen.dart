@@ -88,8 +88,11 @@ class _AcademyScreenState extends State<AcademyScreen> {
       appBar: const OrvikaFeatureAppBar(title: 'Academy'),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
                 Semantics(
                   header: true,
@@ -110,15 +113,36 @@ class _AcademyScreenState extends State<AcademyScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text('$progress of ${lessons.length} lessons completed',
-                                style: const TextStyle(fontWeight: FontWeight.w800)),
-                            ),
-                            Text('${(progress / lessons.length * 100).round()}%',
-                              style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w800)),
-                          ],
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final label = Text(
+                              '$progress of ${lessons.length} lessons completed',
+                              style: const TextStyle(fontWeight: FontWeight.w800),
+                            );
+                            final percentage = Text(
+                              '${(progress / lessons.length * 100).round()}%',
+                              style: TextStyle(
+                                color: scheme.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            );
+                            if (constraints.maxWidth < 320) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  label,
+                                  const SizedBox(height: 4),
+                                  percentage,
+                                ],
+                              );
+                            }
+                            return Row(
+                              children: [
+                                Expanded(child: label),
+                                percentage,
+                              ],
+                            );
+                          },
                         ),
                         const SizedBox(height: 10),
                         LinearProgressIndicator(
@@ -156,12 +180,19 @@ class _AcademyScreenState extends State<AcademyScreen> {
                 for (final category in AcademyCategory.values) ...[
                   Padding(
                     padding: const EdgeInsets.only(top: 18, bottom: 8),
-                    child: Row(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 9,
+                      runSpacing: 4,
                       children: [
                         Icon(_categoryIcon(category), color: scheme.primary, size: 20),
-                        const SizedBox(width: 9),
-                        Text(_categoryLabel(category),
-                          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                        Text(
+                          _categoryLabel(category),
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -262,7 +293,9 @@ class _AcademyScreenState extends State<AcademyScreen> {
                   'ORVIKA Academy provides general educational guidance, not professional, legal or financial advice. Threats and platform settings change; verify important instructions with official sources. Completing a lesson does not certify expertise.',
                   style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
                 ),
-              ],
+                  ],
+                ),
+              ),
             ),
     );
   }
