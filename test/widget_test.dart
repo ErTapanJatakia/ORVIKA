@@ -1,4 +1,7 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
@@ -636,5 +639,80 @@ void main() {
     tester.view.resetDevicePixelRatio();
   });
 
+
+
+  testWidgets('dashboard cards expose concise screen-reader labels and correct actions', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    final dashboardHeading = find.text('Your safety toolkit');
+    expect(dashboardHeading, findsOneWidget);
+    expect(
+      tester.getSemantics(dashboardHeading).getSemanticsData().flagsCollection.isHeader,
+      isTrue,
+    );
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+
+    final linkCard = find.bySemanticsLabel(
+      'Link Check. Inspect website addresses before you open them. Available.',
+    );
+    expect(linkCard, findsOneWidget);
+    expect(
+      tester.getSemantics(linkCard).getSemanticsData().hasAction(SemanticsAction.tap),
+      isTrue,
+    );
+
+    final overviewCard = find.bySemanticsLabel(
+      'Sentinel. Your safety overview and recent checks. OVERVIEW.',
+    );
+    expect(overviewCard, findsOneWidget);
+    expect(
+      tester.getSemantics(overviewCard).getSemanticsData().hasAction(SemanticsAction.tap),
+      isFalse,
+    );
+
+    expect(find.byType(FocusTraversalGroup), findsWidgets);
+    semantics.dispose();
+  });
+
+  testWidgets('Tab traverses focusable controls and Enter activates a dashboard card', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    final linkCardTitle = find.text('Link Check');
+    await tester.ensureVisible(linkCardTitle);
+    await tester.pumpAndSettle();
+
+    var reachedLinkCard = false;
+    for (var attempt = 0; attempt < 40; attempt++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      if (Focus.of(tester.element(linkCardTitle)).hasFocus) {
+        reachedLinkCard = true;
+        break;
+      }
+    }
+
+    expect(
+      reachedLinkCard,
+      isTrue,
+      reason: 'Tab traversal must reach the Link Check card in dashboard reading order.',
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.text('Inspect before you connect.'), findsOneWidget);
+  });
 
 }

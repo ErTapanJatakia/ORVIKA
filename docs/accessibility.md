@@ -87,7 +87,19 @@ Each feature must be tested with:
 
 A feature is not accessibility-complete solely because automated tests pass. Record platform coverage and known limitations; never claim WCAG or platform certification without a formal audit.
 
-## 10. Delivery sequence
+## 10. Keyboard and dashboard navigation implementation
+
+Implemented on the dedicated keyboard/assistive-navigation branch:
+
+- The app shell uses Flutter's reading-order focus traversal group and a root semantic container with explicit child semantics.
+- Actionable dashboard cards expose one complete semantic label, button state and tap action; informational cards are announced without a false action.
+- Dashboard and Accessibility settings headings are exposed as semantic headings.
+- Dashboard cards remain keyboard-focusable only when actionable and display a high-visibility focus outline plus a focus highlight.
+- Regression tests cover card labels/actions, heading semantics, traversal-group presence, Tab navigation to a dashboard card and Enter activation.
+
+This increment does not establish full WCAG 2.2 AA conformance. Browser-level keyboard testing, reverse traversal (Shift+Tab), Escape behaviour for each overlay, TalkBack/VoiceOver/browser screen-reader testing, Switch Access, and assistive navigation across every feature screen remain validation and follow-on coverage items. Automated widget tests cannot replace those manual checks.
+
+## 11. Delivery sequence
 
 1. Shared accessibility preferences and app-wide text scaling, bold text, reduced motion and contrast support.
 2. Semantics and focus audit of onboarding, language selection, dashboard and appearance settings.
