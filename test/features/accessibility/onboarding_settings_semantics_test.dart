@@ -117,7 +117,7 @@ void main() {
           .isHeader,
       isTrue,
     );
-    await tester.ensureVisible(find.text('Accessibility'));
+    await tester.drag(find.byType(ListView), const Offset(0, -1200));
     await tester.pumpAndSettle();
     expect(
       tester.getSemantics(find.text('Accessibility'))
