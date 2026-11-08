@@ -79,11 +79,18 @@ void main() {
     await tester.tap(answerButton, warnIfMissed: true);
     await tester.pumpAndSettle();
 
-    expect(find.text('1 of 8 lessons completed'), findsOneWidget);
     expect(
       find.textContaining('Use a contact route you obtain independently.'),
       findsOneWidget,
+      reason: 'The tapped answer should display its feedback in the lesson card.',
     );
+
+    // The progress summary is a lazy-list child above the lesson card. Return
+    // to the top before asserting it so the summary is built in the widget tree.
+    await tester.drag(find.byType(ListView), const Offset(0, 1200));
+    await tester.pumpAndSettle();
+    expect(find.text('1 of 8 lessons completed'), findsOneWidget);
+
     final preferences = await SharedPreferences.getInstance();
     expect(
       preferences.getStringList('academy.completed.v1'),
