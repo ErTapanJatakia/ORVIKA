@@ -141,6 +141,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                   child: Text(l10n.text('intelligence.empty', 'No matching indicators. Try another search term or category.'),
                 ),
               ),
+            ),
             for (final entry in entries)
               Card(
                 margin: const EdgeInsets.only(bottom: 10),
