@@ -57,9 +57,12 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
-                const Text(
-                  'Pause. Inspect. Then respond.',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                Semantics(
+                  header: true,
+                  child: const Text(
+                    'Pause. Inspect. Then respond.',
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -92,6 +95,12 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                   label: const Text('Inspect message'),
                 ),
                 if (result != null) ...[
+                  Semantics(
+                    container: true,
+                    liveRegion: true,
+                    label: 'Message inspection complete. ${result.findings.length} findings. ${result.detectedLinks.length} web addresses detected.',
+                    child: const SizedBox.shrink(),
+                  ),
                   const SizedBox(height: 22),
                   Card(
                     child: Padding(
