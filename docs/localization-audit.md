@@ -18,8 +18,8 @@ The seven feature presentation screens were inspected:
 | Link Check | `lib/features/link_check/presentation/link_check_screen.dart` | 0 |
 | QR Check | `lib/features/qr_check/presentation/qr_check_screen.dart` | 0 |
 | Message Check | `lib/features/message_check/presentation/message_check_screen.dart` | 0 |
-| Intelligence | `lib/features/intelligence/presentation/intelligence_screen.dart` | 0 |
-| Privacy | `lib/features/privacy/presentation/privacy_screen.dart` | 0 |
+| Intelligence | `lib/features/intelligence/presentation/intelligence_screen.dart` | Interface labels and guidance headings localized |
+| Privacy | `lib/features/privacy/presentation/privacy_screen.dart` | Interface labels and progress framing localized |
 | Academy | `lib/features/academy/presentation/academy_screen.dart` | 0 |
 | Response | `lib/features/response/presentation/response_screen.dart` | 0 |
 
@@ -28,14 +28,16 @@ Their visible labels, helper text, actions, empty states, dialogs and progress m
 ## This implementation increment
 
 - The shared feature app bar resolves the seven known feature titles through existing `module.*` localization keys. Unknown/custom app-bar titles remain unchanged.
-- Link Check, QR Check and Message Check now resolve their main instructions, input labels/hints, primary actions, result headings, destination/link headings and scope notices through the existing lookup API.
-- Russian and Hindi draft packs contain authored strings for those three checker interfaces and severity labels. Other language packs intentionally use the explicit English fallback until their screen-level strings are authored and reviewed.
+- Link Check, QR Check and Message Check resolve their main instructions, input labels/hints, primary actions, result headings, destination/link headings and scope notices through the existing lookup API.
+- Intelligence localizes its heading, description, search controls, category filters, result count, empty state, detail-section headings and educational-scope notice. Curated reference entry titles and explanatory content remain canonical English in this increment.
+- Privacy localizes its heading, description, category labels, review progress framing and announcements, guidance-section headings, review checkbox and reset tooltip. Detailed practice content and analytics/privacy disclosures remain canonical English to avoid unreviewed translation of nuanced security and data-handling statements.
+- Russian and Hindi draft packs contain authored strings for the three checker interfaces plus Intelligence and Privacy UI chrome. Other language packs use explicit English fallback until screen-level strings are authored and reviewed. Neither draft pack is promoted to reviewed status.
 - Analyzer-generated finding titles, details, normalized addresses and result notices remain canonical analyzer output; this increment does not translate or alter security evidence.
-- Widget tests cover Russian and Hindi checker rendering plus English fallback for a language without a screen-level translation. Localization contract tests cover the new Russian/Hindi key set and the seven feature titles.
+- Widget tests cover Russian Link Check, Message Check and Intelligence; Hindi QR Check and Privacy; plus English fallback for an unsupported language. Localization contract tests cover Russian/Hindi keys for all five implemented screens and the seven feature titles.
 
 ## Remaining implementation work
 
-1. Complete screen-level localization for Intelligence, Privacy, Academy and Response, then review any remaining checker strings.
+1. Complete screen-level localization for Academy and Response, then review remaining dialogs, errors and checker strings.
 2. Expand screen-level translation coverage beyond Russian and Hindi without changing draft packs to reviewed status.
 3. Translate dialogs, errors, empty states, result framing and learning content—not only primary labels.
 4. Test language switching across every module, RTL layout (Arabic and Urdu), long strings, narrow viewports and 200% text scaling.
