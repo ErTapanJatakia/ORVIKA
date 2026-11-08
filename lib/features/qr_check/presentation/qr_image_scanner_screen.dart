@@ -225,8 +225,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
             if (_codes.isNotEmpty) ...[
               const SizedBox(height: 18),
               Text(
-                'Detected ' + _codes.length.toString() +
-                    (_codes.length == 1 ? ' code' : ' codes'),
+                'Detected ${_codes.length}${_codes.length == 1 ? ' code' : ' codes'}',
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
