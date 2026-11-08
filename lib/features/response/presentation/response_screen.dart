@@ -28,106 +28,113 @@ class ResponseScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(title: 'Response'),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        children: [
-          Semantics(
-            header: true,
-            child: Text(
-              'Know your next step.',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              children: [
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'Know your next step.',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
                   ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Practical, ordered guidance for common digital incidents. Choose the situation that best matches what happened.',
-            style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.priority_high_rounded, color: scheme.error, size: 22),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'If someone is in immediate physical danger, contact local emergency services. For financial loss or suspected account takeover, contact the relevant provider promptly through an official channel.',
-                      style: TextStyle(
-                        color: scheme.onSurfaceVariant,
-                        height: 1.45,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          for (final playbook in ResponsePlaybooks.playbooks)
-            Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ExpansionTile(
-                key: PageStorageKey<String>('response-${playbook.id}'),
-                leading: Icon(_icon(playbook.scenario), color: scheme.primary),
-                title: Text(
-                  playbook.title,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(_sectionLabel(playbook.scenario)),
+                const SizedBox(height: 8),
+                Text(
+                  'Practical, ordered guidance for common digital incidents. Choose the situation that best matches what happened.',
+                  style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
                 ),
-                childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(playbook.summary,
-                      style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45)),
-                  const SizedBox(height: 14),
-                  _ResponseSection(
-                    label: 'FIRST PRIORITY',
-                    child: Text(
-                      playbook.firstAction,
-                      style: TextStyle(
-                        color: scheme.onSurface,
-                        height: 1.45,
-                        fontWeight: FontWeight.w700,
+                const SizedBox(height: 16),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.priority_high_rounded, color: scheme.error, size: 22),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'If someone is in immediate physical danger, contact local emergency services. For financial loss or suspected account takeover, contact the relevant provider promptly through an official channel.',
+                            style: TextStyle(
+                              color: scheme.onSurfaceVariant,
+                              height: 1.45,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                for (final playbook in ResponsePlaybooks.playbooks)
+                  Card(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: ExpansionTile(
+                      key: PageStorageKey<String>('response-${playbook.id}'),
+                      leading: Icon(_icon(playbook.scenario), color: scheme.primary),
+                      title: Text(
+                        playbook.title,
+                        style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(_sectionLabel(playbook.scenario)),
+                      ),
+                      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(playbook.summary,
+                            style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45)),
+                        const SizedBox(height: 14),
+                        _ResponseSection(
+                          label: 'FIRST PRIORITY',
+                          child: Text(
+                            playbook.firstAction,
+                            style: TextStyle(
+                              color: scheme.onSurface,
+                              height: 1.45,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        _ResponseSection(
+                          label: 'STEP-BY-STEP',
+                          child: _BulletList(items: playbook.steps),
+                        ),
+                        _ResponseSection(
+                          label: 'PRESERVE USEFUL INFORMATION',
+                          child: _BulletList(items: playbook.preserve),
+                        ),
+                        _ResponseSection(
+                          label: 'AVOID',
+                          child: _BulletList(items: playbook.avoid),
+                        ),
+                        _ResponseSection(
+                          label: 'IMPORTANT LIMIT',
+                          child: Text(
+                            playbook.limit,
+                            style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  _ResponseSection(
-                    label: 'STEP-BY-STEP',
-                    child: _BulletList(items: playbook.steps),
-                  ),
-                  _ResponseSection(
-                    label: 'PRESERVE USEFUL INFORMATION',
-                    child: _BulletList(items: playbook.preserve),
-                  ),
-                  _ResponseSection(
-                    label: 'AVOID',
-                    child: _BulletList(items: playbook.avoid),
-                  ),
-                  _ResponseSection(
-                    label: 'IMPORTANT LIMIT',
-                    child: Text(
-                      playbook.limit,
-                      style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
-                    ),
-                  ),
-                ],
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  'ORVIKA Response is general educational guidance, not emergency assistance, legal advice, financial advice or a substitute for qualified incident response. It does not detect incidents, contact providers or authorities, change account settings, or submit reports. Reporting channels and procedures vary by jurisdiction; use independently verified official sources.',
+                  style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
+                ),
+              ],
             ),
-          const SizedBox(height: 8),
-          Text(
-            'ORVIKA Response is general educational guidance, not emergency assistance, legal advice, financial advice or a substitute for qualified incident response. It does not detect incidents, contact providers or authorities, change account settings, or submit reports. Reporting channels and procedures vary by jurisdiction; use independently verified official sources.',
-            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
           ),
-        ],
+        ),
       ),
     );
   }
