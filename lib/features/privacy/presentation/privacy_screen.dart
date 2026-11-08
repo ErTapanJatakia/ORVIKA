@@ -239,7 +239,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             contentPadding: EdgeInsets.zero,
                             value: _reviewedIds.contains(practice.id),
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: const Text(
+                            title: Text(
                               l10n.text('privacy.reviewed', 'I have reviewed this practice'),
                               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
                             ),
