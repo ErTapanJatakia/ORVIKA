@@ -61,7 +61,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('अपनी गोपनीयता पर नियंत्रण रखें।'), findsOneWidget);
     expect(find.text('खाते'), findsOneWidget);
-    expect(find.text('मैंने इस अभ्यास की समीक्षा कर ली है'), findsWidgets);
+    final firstPractice = find.byType(ExpansionTile).first;
+    await tester.ensureVisible(firstPractice);
+    await tester.tap(firstPractice);
+    await tester.pumpAndSettle();
+    expect(find.text('मैंने इस अभ्यास की समीक्षा कर ली है'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
