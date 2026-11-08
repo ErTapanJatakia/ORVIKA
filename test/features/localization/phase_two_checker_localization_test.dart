@@ -61,6 +61,10 @@ void main() {
       'privacy.reset.title': 'Reset review progress?',
       'privacy.reset.action': 'Reset progress',
       'privacy.error.save': 'Could not save this review on the device.',
+      'checker.link.complete': 'Link analysis complete. {count} findings.',
+      'checker.message.complete': 'Message inspection complete. {findings} findings. {links} web addresses detected.',
+      'checker.qr.complete': 'QR inspection complete. {title}. Severity {severity}. {count} link findings.',
+      'checker.qr.detectedFormat': 'Detected code format: {format}',
     };
     for (final entry in fallbacks.entries) {
       expect(localization.hasTranslation(entry.key), isFalse);
