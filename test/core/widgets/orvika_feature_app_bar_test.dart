@@ -36,9 +36,9 @@ void main() {
       MaterialApp(
         home: OrvikaLanguageScope(
           language: OrvikaLanguage.fromCode('ru'),
-          child: Scaffold(
-            appBar: const OrvikaFeatureAppBar(title: 'Link Check'),
-            body: const SizedBox.expand(),
+          child: const Scaffold(
+            appBar: OrvikaFeatureAppBar(title: 'Link Check'),
+            body: SizedBox.expand(),
           ),
         ),
       ),
@@ -54,9 +54,9 @@ void main() {
       MaterialApp(
         home: OrvikaLanguageScope(
           language: OrvikaLanguage.fromCode('hi'),
-          child: Scaffold(
-            appBar: const OrvikaFeatureAppBar(title: 'QR Check'),
-            body: const SizedBox.expand(),
+          child: const Scaffold(
+            appBar: OrvikaFeatureAppBar(title: 'QR Check'),
+            body: SizedBox.expand(),
           ),
         ),
       ),
@@ -68,10 +68,10 @@ void main() {
 
   testWidgets('unknown app-bar titles remain unchanged', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
-          appBar: const OrvikaFeatureAppBar(title: 'Custom Screen'),
-          body: const SizedBox.expand(),
+          appBar: OrvikaFeatureAppBar(title: 'Custom Screen'),
+          body: SizedBox.expand(),
         ),
       ),
     );
