@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
+import '../../../core/localization/orvika_localizations.dart';
 
 import '../domain/response_playbooks.dart';
 
 class ResponseScreen extends StatelessWidget {
   const ResponseScreen({super.key});
 
-  String _sectionLabel(ResponseScenario scenario) => switch (scenario) {
-        ResponseScenario.accountCompromise => 'ACCOUNT SECURITY',
-        ResponseScenario.paymentFraud => 'PAYMENTS AND FRAUD',
-        ResponseScenario.lostDevice => 'DEVICE SECURITY',
+  String _sectionLabel(ResponseScenario scenario, OrvikaLocalizations l10n) => switch (scenario) {
+        ResponseScenario.accountCompromise => l10n.text('response.category.accounts', 'ACCOUNT SECURITY'),
+        ResponseScenario.paymentFraud => l10n.text('response.category.payments', 'PAYMENTS AND FRAUD'),
+        ResponseScenario.lostDevice => l10n.text('response.category.device', 'DEVICE SECURITY'),
         ResponseScenario.suspectedMalware => 'DEVICE SECURITY',
-        ResponseScenario.identityExposure => 'PRIVACY AND IDENTITY',
+        ResponseScenario.identityExposure => l10n.text('response.category.identity', 'PRIVACY AND IDENTITY'),
       };
 
   IconData _icon(ResponseScenario scenario) => switch (scenario) {
@@ -26,6 +27,7 @@ class ResponseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(title: 'Response'),
       body: SafeArea(
@@ -38,7 +40,7 @@ class ResponseScreen extends StatelessWidget {
                 Semantics(
                   header: true,
                   child: Text(
-                    'Know your next step.',
+                    l10n.text('response.heading', 'Know your next step.'),
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
@@ -46,7 +48,7 @@ class ResponseScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Practical, ordered guidance for common digital incidents. Choose the situation that best matches what happened.',
+                  l10n.text('response.description', 'Practical, ordered guidance for common digital incidents. Choose the situation that best matches what happened.'),
                   style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
                 ),
                 const SizedBox(height: 16),
@@ -60,7 +62,7 @@ class ResponseScreen extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            'If someone is in immediate physical danger, contact local emergency services. For financial loss or suspected account takeover, contact the relevant provider promptly through an official channel.',
+                            l10n.text('response.urgent', 'If someone is in immediate physical danger, contact local emergency services. For financial loss or suspected account takeover, contact the relevant provider promptly through an official channel.'),
                             style: TextStyle(
                               color: scheme.onSurfaceVariant,
                               height: 1.45,
@@ -85,7 +87,7 @@ class ResponseScreen extends StatelessWidget {
                       ),
                       subtitle: Padding(
                         padding: const EdgeInsets.only(top: 4),
-                        child: Text(_sectionLabel(playbook.scenario)),
+                        child: Text(_sectionLabel(playbook.scenario, l10n)),
                       ),
                       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +96,7 @@ class ResponseScreen extends StatelessWidget {
                             style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45)),
                         const SizedBox(height: 14),
                         _ResponseSection(
-                          label: 'FIRST PRIORITY',
+                          label: l10n.text('response.firstPriority', 'FIRST PRIORITY'),
                           child: Text(
                             playbook.firstAction,
                             style: TextStyle(
@@ -105,19 +107,19 @@ class ResponseScreen extends StatelessWidget {
                           ),
                         ),
                         _ResponseSection(
-                          label: 'STEP-BY-STEP',
+                          label: l10n.text('response.steps', 'STEP-BY-STEP'),
                           child: _BulletList(items: playbook.steps),
                         ),
                         _ResponseSection(
-                          label: 'PRESERVE USEFUL INFORMATION',
+                          label: l10n.text('response.preserve', 'PRESERVE USEFUL INFORMATION'),
                           child: _BulletList(items: playbook.preserve),
                         ),
                         _ResponseSection(
-                          label: 'AVOID',
+                          label: l10n.text('response.avoid', 'AVOID'),
                           child: _BulletList(items: playbook.avoid),
                         ),
                         _ResponseSection(
-                          label: 'IMPORTANT LIMIT',
+                          label: l10n.text('response.limit', 'IMPORTANT LIMIT'),
                           child: Text(
                             playbook.limit,
                             style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
@@ -128,7 +130,7 @@ class ResponseScreen extends StatelessWidget {
                   ),
                 const SizedBox(height: 8),
                 Text(
-                  'ORVIKA Response is general educational guidance, not emergency assistance, legal advice, financial advice or a substitute for qualified incident response. It does not detect incidents, contact providers or authorities, change account settings, or submit reports. Reporting channels and procedures vary by jurisdiction; use independently verified official sources.',
+                  l10n.text('response.notice', 'ORVIKA Response is general educational guidance, not emergency assistance, legal advice, financial advice or a substitute for qualified incident response. It does not detect incidents, contact providers or authorities, change account settings, or submit reports. Reporting channels and procedures vary by jurisdiction; use independently verified official sources.'),
                   style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
                 ),
               ],
