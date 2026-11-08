@@ -91,9 +91,12 @@ class _AcademyScreenState extends State<AcademyScreen> {
           : ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
-                Text(
-                  'Build safer digital habits.',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'Build safer digital habits.',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -118,7 +121,17 @@ class _AcademyScreenState extends State<AcademyScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        LinearProgressIndicator(value: progress / lessons.length),
+                        LinearProgressIndicator(
+                          value: progress / lessons.length,
+                          semanticsLabel: 'Academy lesson completion: $progress of ${lessons.length} lessons completed',
+                          semanticsValue: '${progress / lessons.length}',
+                        ),
+                        Semantics(
+                          container: true,
+                          liveRegion: true,
+                          label: 'Academy progress: $progress of ${lessons.length} lessons completed',
+                          child: const SizedBox.shrink(),
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           'Progress is stored locally on this device. Completion means you answered the lesson check correctly; it is not a certification.',
@@ -220,16 +233,19 @@ class _AcademyScreenState extends State<AcademyScreen> {
                             if (_answers.containsKey(lesson.id))
                               Padding(
                                 padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  _answers[lesson.id] == lesson.correctIndex
-                                      ? 'Correct. ${lesson.explanation}'
-                                      : 'Not quite. Review the key points and try again.',
-                                  style: TextStyle(
-                                    color: _answers[lesson.id] == lesson.correctIndex
-                                        ? scheme.primary
-                                        : scheme.onSurfaceVariant,
-                                    height: 1.4,
-                                    fontWeight: FontWeight.w600,
+                                child: Semantics(
+                                  liveRegion: true,
+                                  child: Text(
+                                    _answers[lesson.id] == lesson.correctIndex
+                                        ? 'Correct. ${lesson.explanation}'
+                                        : 'Not quite. Review the key points and try again.',
+                                    style: TextStyle(
+                                      color: _answers[lesson.id] == lesson.correctIndex
+                                          ? scheme.primary
+                                          : scheme.onSurfaceVariant,
+                                      height: 1.4,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               )
