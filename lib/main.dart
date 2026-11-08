@@ -875,13 +875,15 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                       container: true,
                       liveRegion: true,
                       label: 'Onboarding page ${_currentPage + 1} of ${_pages.length}',
-                      child: Text(
-                        '${_currentPage + 1} / ${_pages.length}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: scheme.onSurfaceVariant,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
+                      child: ExcludeSemantics(
+                        child: Text(
+                          '${_currentPage + 1} / ${_pages.length}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
