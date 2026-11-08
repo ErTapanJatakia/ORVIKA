@@ -131,11 +131,14 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               children: [
-                Text(
-                  'Take control of your privacy.',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'Take control of your privacy.',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -167,7 +170,11 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        LinearProgressIndicator(value: reviewed / total),
+                        LinearProgressIndicator(
+                          value: reviewed / total,
+                          semanticsLabel: 'Privacy review progress',
+                          semanticsValue: '${reviewed} of ${total} practices reviewed',
+                        ),
                         const SizedBox(height: 12),
                         Text(
                           'Your progress is saved locally on this device. A checkmark means you reviewed the guidance—not that ORVIKA verified or changed a setting.',
