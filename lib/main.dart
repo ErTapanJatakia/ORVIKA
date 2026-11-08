@@ -451,9 +451,15 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     ],
                   ),
                   const SizedBox(height: 28),
-                  Text(
-                    isRussian ? 'Выберите язык' : 'Choose your language',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(                      color: scheme.onSurface, fontWeight: FontWeight.w900),
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      isRussian ? 'Выберите язык' : 'Choose your language',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color: scheme.onSurface,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -469,6 +475,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     onChanged: (value) => setState(() => _query = value),
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search),
+                      labelText: isRussian ? 'Поиск языков' : 'Search languages',
                       hintText: isRussian ? 'Поиск по названию или коду' : 'Search by language name or code',
                       suffixIcon: _query.isEmpty ? null : IconButton(
                         tooltip: isRussian ? 'Очистить поиск' : 'Clear search',
@@ -527,6 +534,14 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                             },
                           ),
                     ),
+                  ),
+                  Semantics(
+                    container: true,
+                    liveRegion: true,
+                    label: isRussian
+                        ? 'Доступно языков: ${filtered.length}'
+                        : '${filtered.length} ${filtered.length == 1 ? 'language' : 'languages'} available',
+                    child: const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -778,9 +793,11 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                                         ),
                                 ),
                                 const SizedBox(height: 34),
-                                Text(
-                                  page.title,
-                                  textAlign: TextAlign.center,
+                                Semantics(
+                                  header: true,
+                                  child: Text(
+                                    page.title,
+                                    textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineMedium
@@ -789,6 +806,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: -0.7,
                                       ),
+                                  ),
                                 ),
                                 const SizedBox(height: 16),
                                 ConstrainedBox(
@@ -852,7 +870,23 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                         );
                       }),
                     ),
-                    const SizedBox(height: 22),                    SizedBox(
+                    const SizedBox(height: 8),
+                    Semantics(
+                      container: true,
+                      liveRegion: true,
+                      label: 'Onboarding page ${_currentPage + 1} of ${_pages.length}',
+                      child: Text(
+                        '${_currentPage + 1} / ${_pages.length}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: scheme.onSurfaceVariant,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    SizedBox(
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: _next,
@@ -1165,7 +1199,13 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Text(OrvikaLocalizations(_selectedLanguage).text('settings.language', 'Language'), style: Theme.of(context).textTheme.titleLarge),
+          Semantics(
+            header: true,
+            child: Text(
+              OrvikaLocalizations(_selectedLanguage).text('settings.language', 'Language'),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(OrvikaLocalizations(_selectedLanguage).text('settings.language.help', 'Choose the interface language. This setting is stored only on this device.'), style: TextStyle(color: scheme.onSurfaceVariant)),
           const SizedBox(height: 8),
@@ -1195,8 +1235,13 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             ),
           ),
           const Divider(height: 28),
-          Text(OrvikaLocalizations(_selectedLanguage).text('settings.appearance', 'Choose your visual environment'),
-            style: Theme.of(context).textTheme.titleLarge),
+          Semantics(
+            header: true,
+            child: Text(
+              OrvikaLocalizations(_selectedLanguage).text('settings.appearance', 'Choose your visual environment'),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             OrvikaLocalizations(_selectedLanguage).text('settings.saved', 'Your choice is saved on this device. ORVIKA does not send appearance preferences to a server.'),
