@@ -129,9 +129,9 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
 
-    final progress = find.bySemanticsLabel('Privacy review progress');
+    final progress = find.bySemanticsLabel('Privacy review progress: 0 of 12 practices reviewed');
     expect(progress, findsOneWidget);
-    expect(tester.getSemantics(progress).value, '0 of 12 practices reviewed');
+    expect(double.parse(tester.getSemantics(progress).value!), 0.0);
     final announcement = find.bySemanticsLabel(
       RegExp(r'Privacy review progress:'),
     );
@@ -150,9 +150,9 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: AcademyScreen()));
     await tester.pumpAndSettle();
 
-    final progress = find.bySemanticsLabel('Academy lesson completion');
+    final progress = find.bySemanticsLabel('Academy lesson completion: 0 of 8 lessons completed');
     expect(progress, findsOneWidget);
-    expect(tester.getSemantics(progress).value, '0 of 8 lessons completed');
+    expect(double.parse(tester.getSemantics(progress).value!), 0.0);
     final announcement = find.bySemanticsLabel(
       RegExp(r'Academy progress:'),
     );
