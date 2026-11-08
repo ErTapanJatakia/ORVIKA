@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'qr_camera_scanner_screen.dart';
+import 'qr_image_scanner_screen.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
 import '../../../core/localization/orvika_localizations.dart';
@@ -39,6 +40,22 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
     final scanned = await Navigator.of(context).push<({String value, String format})>(
       MaterialPageRoute(
         builder: (_) => const QrCameraScannerScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+    if (!mounted || scanned == null) return;
+    _controller.text = scanned.value;
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _detectedCodeFormat = scanned.format;
+      _result = _analyzer.analyze(scanned.value);
+    });
+  }
+
+  Future<void> _scanFromImage() async {
+    final scanned = await Navigator.of(context).push<({String value, String format})>(
+      MaterialPageRoute(
+        builder: (_) => const QrImageScannerScreen(),
         fullscreenDialog: true,
       ),
     );
@@ -101,6 +118,12 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               onPressed: _scanWithCamera,
               icon: const Icon(Icons.document_scanner_outlined),
               label: const Text('Scan QR / barcode with camera'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: _scanFromImage,
+              icon: const Icon(Icons.image_search_outlined),
+              label: const Text('Scan QR / barcode from image'),
             ),
             const SizedBox(height: 12),
             TextField(

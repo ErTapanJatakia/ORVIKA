@@ -91,6 +91,24 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('image scanning is offered alongside camera and manual analysis', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: QrCheckScreen()));
+    expect(find.text('Scan QR / barcode with camera'), findsOneWidget);
+    expect(find.text('Scan QR / barcode from image'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+
+    await tester.tap(find.text('Scan QR / barcode from image'));
+    await tester.pumpAndSettle();
+    expect(find.text('Choose an image containing a QR code or barcode.'), findsOneWidget);
+    expect(find.text('Choose image'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.byTooltip('Close image scanner'));
+    await tester.pumpAndSettle();
+    expect(find.text('Scan QR / barcode from image'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('camera session requires a second explicit user action', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: QrCheckScreen()));
     await tester.tap(find.text('Scan QR / barcode with camera'));
