@@ -111,7 +111,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                         children: [
                           Text(
                             l10n.text('checker.message.result', 'Review findings'),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 14),
@@ -165,7 +165,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                           if (result.detectedLinks.isNotEmpty) ...[
                             const Divider(),
                             Text(l10n.text('checker.message.links', 'Detected web addresses'),
-                                style: TextStyle(fontWeight: FontWeight.w700)),
+                                style: const TextStyle(fontWeight: FontWeight.w700)),
                             const SizedBox(height: 8),
                             for (final link in result.detectedLinks)
                               Padding(
