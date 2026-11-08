@@ -59,7 +59,11 @@ void main() {
     final correctAnswer = find.text(
       'Use the bank app or a known official contact route independently',
     );
-    await tester.ensureVisible(correctAnswer);
+    await tester.scrollUntilVisible(
+      correctAnswer,
+      240,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.pumpAndSettle();
     await tester.tap(correctAnswer);
     await tester.pumpAndSettle();
