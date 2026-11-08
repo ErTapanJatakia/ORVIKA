@@ -12,7 +12,7 @@ class ResponseScreen extends StatelessWidget {
         ResponseScenario.accountCompromise => l10n.text('response.category.accounts', 'ACCOUNT SECURITY'),
         ResponseScenario.paymentFraud => l10n.text('response.category.payments', 'PAYMENTS AND FRAUD'),
         ResponseScenario.lostDevice => l10n.text('response.category.device', 'DEVICE SECURITY'),
-        ResponseScenario.suspectedMalware => 'DEVICE SECURITY',
+        ResponseScenario.suspectedMalware => l10n.text('response.category.device', 'DEVICE SECURITY'),
         ResponseScenario.identityExposure => l10n.text('response.category.identity', 'PRIVACY AND IDENTITY'),
       };
 
