@@ -91,15 +91,18 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
       case AppLifecycleState.detached:
         // Do not stop while the initial permission prompt is unresolved. Once
         // capture is active, release the camera whenever the app is backgrounded.
-        if (_cameraRequested && _cameraActive && !_handledCapture) {
+        if (_cameraRequested && _cameraActive && !_pausedByLifecycle &&
+            !_handledCapture) {
           _pausedByLifecycle = true;
           unawaited(_pauseCameraForLifecycle());
         }
+        break;
       case AppLifecycleState.resumed:
         if (_cameraRequested && _pausedByLifecycle && !_handledCapture) {
           _pausedByLifecycle = false;
           unawaited(_startCamera());
         }
+        break;
     }
   }
 
