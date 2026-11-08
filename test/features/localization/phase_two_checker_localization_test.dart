@@ -49,6 +49,25 @@ void main() {
     );
   });
 
+  test('extended scanner and privacy controls have explicit English fallbacks', () {
+    final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
+    const fallbacks = {
+      'checker.camera.title': 'Scan a code',
+      'checker.camera.allow': 'Allow camera for this scan',
+      'checker.camera.stop': 'Stop camera',
+      'checker.image.title': 'Scan from image',
+      'checker.image.choose': 'Choose image',
+      'checker.image.clear': 'Clear selected image',
+      'privacy.reset.title': 'Reset review progress?',
+      'privacy.reset.action': 'Reset progress',
+      'privacy.error.save': 'Could not save this review on the device.',
+    };
+    for (final entry in fallbacks.entries) {
+      expect(localization.hasTranslation(entry.key), isFalse);
+      expect(localization.text(entry.key, entry.value), entry.value);
+    }
+  });
+
   test('RTL writing direction remains independent from draft translation coverage', () {
     for (final code in ['ar', 'ur']) {
       final language = OrvikaLanguage.fromCode(code);
