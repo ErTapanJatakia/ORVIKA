@@ -49,3 +49,17 @@ Their visible labels, helper text, actions, empty states, dialogs and progress m
 ## Validation boundaries
 
 No claim of complete localization, native-speaker review, full Material framework translation, or full RTL conformance is made by this audit. Android device and Aurora OS runtime validation remain separate follow-up activities.
+
+
+## Phase 2 — checker control coverage (9 November 2026)
+
+- Added a dedicated offline feature-translation overlay for the eleven existing authored packs: Russian, Hindi, German, French, Italian, Punjabi, Urdu, Arabic, Marathi, Gujarati and Sanskrit.
+- The phase-two key set covers primary Link Check, QR Check and Message Check headings, input labels and primary actions; shared severity labels; and the two QR acquisition actions (camera and selected image).
+- QR camera and image acquisition remain opt-in. Only presentation labels changed; camera permission flow, image selection, decoding, analyzer behavior and result semantics are unchanged.
+- Added contract tests asserting every phase-two key exists in all eleven authored packs, explicit English fallback for an un-authored language, and RTL metadata for Arabic and Urdu. Widget tests verify French and Arabic QR acquisition labels render.
+- Translation packs remain draft where previously classified as draft. No language has been promoted to reviewed status.
+- Detailed descriptions, analyzer-generated findings, incident-response instructions, legal/privacy disclosures, Academy curriculum and Intelligence reference content remain outside this increment. These require specialist and native-speaker review before translation.
+
+## Phase 2 validation boundary
+
+Automated coverage verifies key presence and widget rendering, not linguistic correctness, regional appropriateness, typography quality or complete RTL conformance. Human review by fluent speakers remains required. This is a partial expansion of feature UI coverage, not a claim of full localization.
