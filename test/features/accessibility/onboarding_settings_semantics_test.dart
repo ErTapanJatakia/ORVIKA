@@ -117,6 +117,8 @@ void main() {
           .isHeader,
       isTrue,
     );
+    await tester.ensureVisible(find.text('Accessibility'));
+    await tester.pumpAndSettle();
     expect(
       tester.getSemantics(find.text('Accessibility'))
           .flagsCollection.isHeader,
