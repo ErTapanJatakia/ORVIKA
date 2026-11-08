@@ -1,0 +1,78 @@
+name: ORVIKA Android Build Validation
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orvika-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-release-mode:
+    name: Generate Android scaffold and validate release-mode APK
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select JDK 17
+        shell: bash
+        run: |
+          if [ -z "${JAVA_HOME_17_X64:-}" ]; then
+            echo "JDK 17 is not available on this runner." >&2
+            exit 1
+          fi
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+
+      - name: Install Flutter SDK
+        shell: bash
+        run: |
+          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+
+      - name: Generate isolated Android platform scaffold
+        run: flutter create --platforms=android --org dev.orvika --project-name orvika --no-pub .
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Build release-mode APK
+        run: flutter build apk --release --no-pub
+
+      - name: Verify APK and record integrity
+        id: apk
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          test -s "$APK"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
+          if [ -z "$APKSIGNER" ]; then
+            echo "Android apksigner was not found." >&2
+            exit 1
+          fi
+          "$APKSIGNER" verify --verbose "$APK"
+          SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
+          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Android release-mode build"
+            echo
+            echo "- APK: `$APK`"
+            echo "- Size: $(du -h "$APK" | cut -f 1)"
+            echo "- SHA-256: `$SHA256`"
+            echo "- Application ID: `dev.orvika.orvika` (provisional CI identity)"
+            echo "- Signing: Flutter-generated debug signing; **not suitable for distribution**."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload validation APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orvika-android-release-mode-validation
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 7

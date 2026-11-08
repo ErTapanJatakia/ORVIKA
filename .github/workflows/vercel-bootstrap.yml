@@ -1,0 +1,92 @@
+name: ORVIKA Vercel Bootstrap
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    name: Create Vercel project without Git integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Vercel token
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::VERCEL_TOKEN is missing from repository Actions secrets."
+            exit 1
+          fi
+
+      - name: Verify personal account and create project
+        id: project
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          headers=(-H "Authorization: Bearer $VERCEL_TOKEN" -H "Content-Type: application/json")
+
+          user_json="$(curl --fail-with-body --silent --show-error "${headers[@]}" https://api.vercel.com/v2/user)"
+          username="$(jq -r '.user.username // empty' <<< "$user_json")"
+          user_id="$(jq -r '.user.id // empty' <<< "$user_json")"
+
+          if [ -z "$user_id" ]; then
+            echo "::error::Could not identify the authenticated Vercel account."
+            exit 1
+          fi
+
+          echo "Authenticated personal Vercel account: ${username:-verified}"
+
+          payload='{"name":"orvika-web","outputDirectory":"build/web"}'
+          response_file="$(mktemp)"
+          status="$(curl --silent --show-error -o "$response_file" -w '%{http_code}' \
+            -X POST https://api.vercel.com/v11/projects \
+            "${headers[@]}" \
+            --data "$payload")"
+
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "::error::Vercel project creation failed (HTTP $status)."
+            jq -r '.error.message // .message // "Vercel API returned an unspecified error."' "$response_file"
+            if [ "$status" = "409" ]; then
+              echo "A project named orvika-web may already exist. No existing project was modified."
+            fi
+            exit 1
+          fi
+
+          project_id="$(jq -r '.id // empty' "$response_file")"
+          account_id="$(jq -r '.accountId // empty' "$response_file")"
+          project_name="$(jq -r '.name // "orvika-web"' "$response_file")"
+
+          if [ -z "$project_id" ] || [ -z "$account_id" ]; then
+            echo "::error::Vercel created a response, but required project identifiers were absent."
+            exit 1
+          fi
+
+          {
+            echo "project_id=$project_id"
+            echo "account_id=$account_id"
+            echo "project_name=$project_name"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish bootstrap details
+        shell: bash
+        env:
+          PROJECT_ID: ${{ steps.project.outputs.project_id }}
+          ACCOUNT_ID: ${{ steps.project.outputs.account_id }}
+          PROJECT_NAME: ${{ steps.project.outputs.project_name }}
+        run: |
+          {
+            echo "## ORVIKA Vercel project created"
+            echo
+            echo "- Project: `$PROJECT_NAME`"
+            echo "- Project ID: `$PROJECT_ID`"
+                        echo "- Git repository connection: **None**"
+            echo "- Source uploaded to Vercel: **No**"
+            echo
+            echo "Next: configure the production deployment workflow to upload only the compiled Flutter Web output."
+          } >> "$GITHUB_STEP_SUMMARY"

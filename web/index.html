@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="ORVIKA — Personal Cyber Safety Intelligence. Check before you trust. Inspect links and decoded QR content with explainable, on-device checks.">
+  <meta name="theme-color" content="#081426">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="application-name" content="ORVIKA">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="icons/orvika-192.svg">
+  <link rel="manifest" href="manifest.json">
+  <title>ORVIKA — Check Before You Trust</title>
+  <!-- Vercel's verified standard Web Analytics script endpoint. -->
+  <meta name="vercel-analytics-script" content="/_vercel/insights/script.js">
+</head>
+<body>
+  <script>
+    window.va = window.va || function () {
+      (window.vaq = window.vaq || []).push(arguments);
+    };
+    (function () {
+      var pathElement = document.querySelector('meta[name="vercel-analytics-script"]');
+      var scriptPath = pathElement ? pathElement.getAttribute('content').trim() : '';
+      if (!/^\/[A-Za-z0-9/_-]+\/script\.js$/.test(scriptPath)) return;
+      var script = document.createElement('script');
+      script.defer = true;
+      script.src = scriptPath;
+      document.head.appendChild(script);
+    })();
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

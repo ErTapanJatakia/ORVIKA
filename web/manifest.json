@@ -1,0 +1,15 @@
+{
+  "name": "ORVIKA — Personal Cyber Safety Intelligence",
+  "short_name": "ORVIKA",
+  "description": "Online Risk Verification, Intelligence, Knowledge & Assistance. Check before you trust.",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#081426",
+  "theme_color": "#081426",
+  "icons": [
+    { "src": "icons/orvika-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/orvika-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/orvika-maskable-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
