@@ -162,7 +162,6 @@ void main() {
       isTrue,
     );
   });
-}
 
   testWidgets('Academy answer feedback is announced as a live update',
       (tester) async {
@@ -188,3 +187,4 @@ void main() {
       isTrue,
     );
   });
+}
