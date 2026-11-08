@@ -48,9 +48,14 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
 
-    await tester.drag(find.byType(ListView), const Offset(0, -1800));
+    final boundaryText = find.textContaining('ORVIKA does not scan your device');
+    await tester.scrollUntilVisible(
+      boundaryText,
+      400,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('does not scan your device'), findsOneWidget);
+    expect(boundaryText, findsOneWidget);
   });
 }
