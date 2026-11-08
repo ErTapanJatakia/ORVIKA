@@ -63,3 +63,21 @@ No claim of complete localization, native-speaker review, full Material framewor
 ## Phase 2 validation boundary
 
 Automated coverage verifies key presence and widget rendering, not linguistic correctness, regional appropriateness, typography quality or complete RTL conformance. Human review by fluent speakers remains required. This is a partial expansion of feature UI coverage, not a claim of full localization.
+
+
+## Phase 2 — extended hard-coded UI review (9 November 2026)
+
+The broader source review extended beyond the three primary checker forms:
+
+- QR camera scanner title, close tooltip, explicit camera-start/requesting labels and stop-camera action now resolve through localization keys.
+- QR image scanner title, close tooltip, choose/choose-another, preview fallback, scan progress/action, clear action, detected-code count and result-selection instruction now resolve through localization keys.
+- Privacy checklist reset dialog title/body/actions and persistence error messages now resolve through localization keys.
+- The shared feature app bar already resolves the known feature titles through the existing `module.*` keys.
+- These newly keyed scanner and privacy strings intentionally use explicit English fallback until translations are authored and reviewed. They are no longer untracked literals embedded in widget code, but they are not claimed as translated in the eleven draft packs.
+- Scanner permission/error explanations, image-decoder diagnostics, security-analysis findings and the detailed privacy/analytics disclosures remain canonical English. They communicate platform behavior, limitations or data-handling claims and require specialist/native-speaker review before translation.
+- Privacy checklist practice titles and guidance are content, not decorative UI chrome; they remain canonical pending review.
+- Automated fallback-contract tests cover representative new camera, image and privacy controls. This is not a linguistic-quality test.
+
+### Milestone closure criteria
+
+The Phase 2 implementation can be considered code-complete only when all visible widget-owned controls, titles, dialogs, errors and empty-state labels have a localization key or a documented canonical-English exception; tests cover the key/fallback contract; and CI passes on the final PR head. Translation quality, native-speaker sign-off, complete RTL behavior and physical-device/browser checks remain separate acceptance activities and must not be inferred from CI.
