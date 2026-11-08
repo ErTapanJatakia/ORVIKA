@@ -134,7 +134,7 @@ void main() {
     expect(progressSemantics.label, contains('Privacy review progress: 0 of 12 practices reviewed'));
     expect(double.parse(progressSemantics.value), 0.0);
     final announcement = find.bySemanticsLabel(
-      RegExp(r'Privacy review progress:'),
+      RegExp(r'Privacy progress update:'),
     );
     expect(announcement, findsOneWidget);
     expect(
