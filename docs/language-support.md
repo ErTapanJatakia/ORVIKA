@@ -56,3 +56,8 @@ Accordingly, this is a curated 100-language product catalogue, not a claim that 
 The phase-two checker interface increment adds offline translations for primary headings, input labels and actions in Link Check, QR Check and Message Check, plus severity labels and QR camera/image entry actions. These keys are authored for Russian, Hindi, German, French, Italian, Punjabi, Urdu, Arabic, Marathi, Gujarati and Sanskrit.
 
 The nine additional packs remain drafts; the existing reviewed/draft classification is unchanged. Detailed descriptions, security findings, privacy/legal notices and incident-response playbooks continue to use English fallback until qualified review. Arabic and Urdu retain RTL language metadata; automated tests do not establish full RTL conformance.
+
+
+## Phase-two extended UI coverage
+
+QR camera and image scanner controls, plus Privacy checklist reset/error controls, now use the localization lookup API. These newly keyed strings currently use explicit English fallback across the draft packs until translations are authored and reviewed. Scanner platform/privacy explanations, decoder diagnostics, detailed privacy disclosures, analyzer findings and curated security guidance remain canonical English by design. A localization key prevents an untracked literal; it does not by itself mean a language has a translation for that key.
