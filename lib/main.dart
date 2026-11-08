@@ -283,10 +283,20 @@ class _OrvikaAppState extends State<OrvikaApp> {
           textScaler: _CombinedTextScaler(platformMediaQuery.textScaler, _textScale),
           disableAnimations: _reduceMotion || platformMediaQuery.disableAnimations,
         ),
-        child: Directionality(
-          textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
-              ? TextDirection.rtl : TextDirection.ltr,
-          child: OrvikaLanguageScope(language: _selectedLanguage, child: child ?? const SizedBox.shrink()),
+        child: FocusTraversalGroup(
+          policy: ReadingOrderTraversalPolicy(),
+          child: Semantics(
+            container: true,
+            explicitChildNodes: true,
+            child: Directionality(
+              textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
+                  ? TextDirection.rtl : TextDirection.ltr,
+              child: OrvikaLanguageScope(
+                language: _selectedLanguage,
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
+          ),
         ),
       );
       },
@@ -317,6 +327,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
         scaffoldBackgroundColor: palette.background,
         canvasColor: palette.surface,
         cardColor: palette.surface,
+        focusColor: scheme.primary.withValues(alpha: 0.22),
         appBarTheme: AppBarTheme(
           backgroundColor: palette.background,
           foregroundColor: scheme.onSurface,
@@ -976,13 +987,16 @@ class SentinelDashboard extends StatelessWidget {
                             final heading = Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  OrvikaLocalizations(selectedLanguage).text(
-                                    'dashboard.title', 'Your safety toolkit',
-                                  ),
-                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: -0.5,
+                                Semantics(
+                                  header: true,
+                                  child: Text(
+                                    OrvikaLocalizations(selectedLanguage).text(
+                                      'dashboard.title', 'Your safety toolkit',
+                                    ),
+                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: -0.5,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 5),
@@ -1222,7 +1236,10 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           ),
           const SizedBox(height: 12),
           const Divider(height: 28),
-          Text('Accessibility', style: Theme.of(context).textTheme.titleLarge),
+          Semantics(
+            header: true,
+            child: Text('Accessibility', style: Theme.of(context).textTheme.titleLarge),
+          ),
           const SizedBox(height: 6),
           Text('These preferences are stored on this device. Operating-system accessibility settings remain respected.',
             style: TextStyle(color: scheme.onSurfaceVariant)),
@@ -1606,101 +1623,138 @@ class _SafetyModule {
   final _ModuleAccent accent;
 }
 
-class _ModuleCard extends StatelessWidget {
+class _ModuleCard extends StatefulWidget {
   const _ModuleCard({required this.module, required this.palette, this.onTap});
   final _SafetyModule module;
   final OrvikaPalette palette;
   final VoidCallback? onTap;
 
-  Color _accent() => switch (module.accent) {
-    _ModuleAccent.cyan => palette.primary,
-    _ModuleAccent.violet => palette.secondary,
-    _ModuleAccent.green => palette.success,
-    _ModuleAccent.amber => palette.warning,
+  @override
+  State<_ModuleCard> createState() => _ModuleCardState();
+}
+
+class _ModuleCardState extends State<_ModuleCard> {
+  bool _hasKeyboardFocus = false;
+
+  Color _accent() => switch (widget.module.accent) {
+    _ModuleAccent.cyan => widget.palette.primary,
+    _ModuleAccent.violet => widget.palette.secondary,
+    _ModuleAccent.green => widget.palette.success,
+    _ModuleAccent.amber => widget.palette.warning,
   };
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final accent = _accent();
-    final enabled = onTap != null;
-    return Material(
-      color: palette.surface.withValues(alpha: enabled ? 1 : 0.72),
-      borderRadius: BorderRadius.circular(19),
-      child: InkWell(
-        onTap: onTap, borderRadius: BorderRadius.circular(19),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+    final enabled = widget.onTap != null;
+    final description = widget.module.description.trim().replaceFirst(
+      RegExp(r'[.!?]+$'),
+      '',
+    );
+    final availability = widget.module.status == 'AVAILABLE'
+        ? 'Available'
+        : widget.module.status;
+
+    return Semantics(
+      container: true,
+      label: '${widget.module.title}. $description. $availability.',
+      button: enabled,
+      enabled: enabled,
+      onTap: widget.onTap,
+      child: ExcludeSemantics(
+        child: Material(
+          color: widget.palette.surface.withValues(alpha: enabled ? 1 : 0.72),
+          borderRadius: BorderRadius.circular(19),
+          child: InkWell(
+            onTap: widget.onTap,
+            canRequestFocus: enabled,
+            focusColor: scheme.primary.withValues(alpha: 0.18),
+            onFocusChange: (hasFocus) {
+              if (_hasKeyboardFocus != hasFocus) {
+                setState(() => _hasKeyboardFocus = hasFocus);
+              }
+            },
             borderRadius: BorderRadius.circular(19),
-            border: Border.all(color: accent.withValues(alpha: enabled ? 0.30 : 0.16)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(19),
+                border: Border.all(
+                  color: _hasKeyboardFocus
+                      ? scheme.primary
+                      : accent.withValues(alpha: enabled ? 0.30 : 0.16),
+                  width: _hasKeyboardFocus ? 2.5 : 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.13),
-                      borderRadius: BorderRadius.circular(13),
-                    ),
-                    child: Icon(module.icon, color: accent, size: 22),
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.13),
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                        child: Icon(widget.module.icon, color: accent, size: 22),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        enabled
+                            ? Icons.arrow_outward_rounded
+                            : widget.module.status == 'OVERVIEW'
+                                ? Icons.dashboard_outlined
+                                : Icons.lock_outline_rounded,
+                        size: 15,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ],
                   ),
-                  const Spacer(),
-                  Icon(
-                    enabled
-                        ? Icons.arrow_outward_rounded
-                        : module.status == 'OVERVIEW'
-                            ? Icons.dashboard_outlined
-                            : Icons.lock_outline_rounded,
-                    size: 15,
-                    color: scheme.onSurfaceVariant,
+                  const SizedBox(height: 12),
+                  Text(
+                    widget.module.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: scheme.onSurface,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        widget.module.description,
+                        softWrap: true,
+                        style: TextStyle(
+                          color: scheme.onSurfaceVariant,
+                          fontSize: 11,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.module.status,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.05,
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Text(
-                module.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                  height: 1.2,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    module.description,
-                    softWrap: true,
-                    style: TextStyle(
-                      color: scheme.onSurfaceVariant,
-                      fontSize: 11,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                module.status,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: accent,
-                  fontSize: 8,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.05,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
