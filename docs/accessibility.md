@@ -111,3 +111,24 @@ This increment does not establish full WCAG 2.2 AA conformance. Browser-level ke
 ## Definition of done
 
 A screen is ready only when its primary tasks are available without sight, without colour perception, without a pointer, without precise gestures, and with enlarged text; instructions and results are available without sound; and no accessibility setting changes the underlying security decision.
+
+
+## 12. Feature-screen semantics and dynamic state
+
+Implemented on the dedicated feature-screen accessibility branch:
+
+- Link Check, QR Check, Message Check, Intelligence, Privacy, Academy and Response expose their primary screen titles as semantic headings.
+- Link, QR and message analysis results publish concise live-region summaries when a result becomes available. Detailed findings remain available as ordinary readable content; the announcement does not replace or conceal them.
+- Intelligence publishes the updated reference-entry count as a live-region status when search or category filters change.
+- Privacy and Academy progress indicators expose descriptive labels and current values. Their changing progress summaries are also announced through live regions.
+- Academy answer feedback is exposed as a live region so correct and incorrect responses are not communicated only through visual styling.
+- Existing standard Flutter controls (text fields, buttons, filter chips, expansion tiles and checklist controls) remain the interaction primitives; no custom pointer-only controls or altered security logic were introduced.
+
+Automated semantic-tree tests cover heading flags, analysis-result announcements, Intelligence result counts and Privacy/Academy progress values. These tests establish the intended Flutter semantics tree only. They do not prove that TalkBack, NVDA, VoiceOver, browser screen readers or Switch Access announce or navigate the screens correctly on real devices.
+
+### Native assistive-technology validation still required
+
+- Android: enable TalkBack in Settings > Accessibility > TalkBack, then test the seven feature screens with touch exploration, swipe navigation, headings navigation, actions and result announcements. Test Switch Access separately.
+- Windows: test the deployed web app with Narrator and at least one supported browser/screen-reader combination such as NVDA with Firefox or Chrome.
+- Browser keyboard: test Tab, Shift+Tab, Enter, Space, focus visibility, overlays and escape/return behaviour.
+- Record OS, browser, screen-reader version, viewport, text scale, observed announcement, expected announcement and pass/fail for each test. Do not mark a platform complete from widget tests alone.
