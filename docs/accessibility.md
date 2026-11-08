@@ -144,3 +144,14 @@ Implemented in the onboarding/settings accessibility increment:
 - The existing Material controls remain in place for keyboard and assistive-technology compatibility; this increment does not replace them with custom controls.
 
 This is partial coverage of delivery-sequence item 2, not completion of the onboarding/settings audit. Keyboard traversal, focus restoration after language selection, screen-reader testing, large-text visual checks and full theme contrast review remain outstanding. Automated widget tests verify Flutter semantics only and do not establish native assistive-technology compatibility or WCAG conformance.
+
+## 14. Contrast and interaction regression coverage
+
+Added in the accessibility interaction-validation increment:
+
+- The Obsidian violet secondary accent is lightened to meet the 4.5:1 text contrast threshold against both its background and card surface.
+- A regression test checks primary, secondary, success, warning and danger accents across all four palettes against both the app background and surface.
+- Dashboard language and appearance icon actions are checked for minimum 48×48 logical-pixel targets.
+- Keyboard regression coverage exercises forward traversal, reverse traversal with Shift+Tab, and Enter activation of a dashboard destination.
+
+These automated checks validate selected palette pairs, selected dashboard targets and Flutter's widget-level focus behaviour. They do not replace a complete text/background contrast inventory, browser keyboard testing, real-device touch testing, or TalkBack, NVDA, VoiceOver and Switch Access validation. WCAG 2.2 AA remains a target, not a conformance claim.
