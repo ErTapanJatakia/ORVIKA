@@ -67,6 +67,48 @@ void main() {
       }
     });
 
+    test('Russian and Hindi packs cover the first checker interface batch', () {
+      const checkerKeys = [
+        'checker.link.heading',
+        'checker.link.description',
+        'checker.link.input',
+        'checker.link.action',
+        'checker.link.result',
+        'checker.link.notice',
+        'checker.qr.heading',
+        'checker.qr.description',
+        'checker.qr.input',
+        'checker.qr.hint',
+        'checker.qr.action',
+        'checker.qr.result',
+        'checker.qr.destination',
+        'checker.qr.notice',
+        'checker.message.heading',
+        'checker.message.description',
+        'checker.message.input',
+        'checker.message.hint',
+        'checker.message.action',
+        'checker.message.result',
+        'checker.message.links',
+        'checker.message.notice',
+        'checker.severity.info',
+        'checker.severity.caution',
+        'checker.severity.warning',
+      ];
+      for (final code in ['ru', 'hi']) {
+        final localization =
+            OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in checkerKeys) {
+          expect(
+            localization.hasTranslation(key),
+            isTrue,
+            reason: '$code is missing checker UI key $key',
+          );
+          expect(localization.text(key), isNot(key));
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
