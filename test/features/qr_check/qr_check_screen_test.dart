@@ -91,6 +91,22 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('camera session requires a second explicit user action', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: QrCheckScreen()));
+    await tester.tap(find.text('Scan QR / barcode with camera'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Allow camera for this scan'), findsOneWidget);
+    expect(find.text('Camera access is requested only when you start scanning.'),
+        findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.byTooltip('Close scanner'));
+    await tester.pumpAndSettle();
+    expect(find.text('Scan QR / barcode with camera'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('QR Check remains usable with RTL and 200 percent text scaling',
       (tester) async {
     tester.view.devicePixelRatio = 1;
