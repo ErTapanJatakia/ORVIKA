@@ -39,7 +39,14 @@ Future<void> _openLinkCheck(
   await tester.tap(moduleFinder);
   await tester.pumpAndSettle();
 
-  expect(find.text('Inspect before you connect.'), findsOneWidget);
+  expect(
+    find.text(
+      language == 'ar'
+          ? 'تحقّق قبل الاتصال.'
+          : 'Inspect before you connect.',
+    ),
+    findsOneWidget,
+  );
 }
 
 Future<void> _revealLinkCheckControl(
@@ -145,7 +152,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await _openLinkCheck(tester, language: 'ar');
 
-    final context = tester.element(find.text('Inspect before you connect.'));
+    final context = tester.element(find.text('تحقّق قبل الاتصال.'));
     expect(Directionality.of(context), TextDirection.rtl);
     expect(MediaQuery.textScalerOf(context).scale(10), 10);
     await _revealLinkCheckControl(tester, find.byType(TextField));
@@ -165,7 +172,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await _openLinkCheck(tester, textScale: 2);
 
-    final context = tester.element(find.text('Inspect before you connect.'));
+    final context = tester.element(find.text('تحقّق قبل الاتصال.'));
     expect(Directionality.of(context), TextDirection.ltr);
     expect(MediaQuery.textScalerOf(context).scale(10), 20);
     await _revealLinkCheckControl(tester, find.byType(TextField));
