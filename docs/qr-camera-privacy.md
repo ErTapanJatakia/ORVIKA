@@ -39,3 +39,13 @@ Browsers and operating systems own camera permission prompts and persistence. On
 ## Validation boundaries
 
 Automated Flutter tests can validate UI contracts and existing analyzer behavior. They cannot prove photo-picker behavior, image-format decoding, or barcode detection across every OS/browser. Real-device/browser validation is required for Android and major browsers. No universal every-format or every-browser guarantee is made.
+
+## Camera scanning formats and Web dependency
+
+The camera integration supports QR codes and a broad set of 1D/2D formats, including Aztec, Codabar, Code 39/93/128, Data Matrix, EAN-8/13, ITF, PDF417, UPC-A/E and DataBar variants. Actual availability varies by platform, OS version and Web backend.
+
+The Web camera implementation uses the native `BarcodeDetector` API where available and falls back to ZXing WebAssembly in browsers such as Firefox. The fallback WASM decoder is downloaded from jsDelivr by the package. This is a decoder-library download, not an upload of camera frames, selected images or decoded payloads. It remains an external runtime dependency.
+
+Camera use on the Web requires a secure context (HTTPS, or an eligible localhost context), a browser that exposes camera capture, and user permission. Embedded browsers, iframe permission policies, device hardware, enterprise policy and browser versions can restrict access.
+
+The package supports Android, iOS, macOS and Web camera scanning. It does not provide native Linux or Windows camera scanning. Browser-based ORVIKA Web may run on Linux/Windows where the browser exposes camera capture; native desktop scanning is not provided by the current app.

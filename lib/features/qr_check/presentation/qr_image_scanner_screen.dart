@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 
 import '../domain/qr_image_decoder.dart';
@@ -84,7 +85,10 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
       _codes = const [];
     });
     try {
-      final results = await decodeQrImage(bytes: bytes, path: path);
+      final results = await decodeQrImage(
+        bytes: bytes,
+        path: kIsWeb ? (_imageName ?? path) : path,
+      );
       if (!mounted) return;
       setState(() {
         _codes = results;
