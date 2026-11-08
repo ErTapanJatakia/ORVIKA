@@ -98,7 +98,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   Semantics(
                     container: true,
                     liveRegion: true,
-                    label: 'Link analysis complete. ${result.findings.length} findings.',
+                    label: l10n.textWithParameters('checker.link.complete', fallback: 'Link analysis complete. {count} findings.', parameters: {'count': result.findings.length}),
                     child: const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 24),
