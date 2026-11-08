@@ -2,6 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/features/response/presentation/response_screen.dart';
 
+Finder _responseScrollable() => find.descendant(
+      of: find.byType(ResponseScreen),
+      matching: find.byType(Scrollable),
+    ).first;
+
+Future<void> _reveal(WidgetTester tester, Finder target) async {
+  await tester.scrollUntilVisible(
+    target,
+    180,
+    scrollable: _responseScrollable(),
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets(
     'Response remains readable across narrow, tablet and desktop widths',
@@ -39,7 +53,10 @@ void main() {
           reason: 'Response content should remain readable at width $width',
         );
         expect(find.text('An account may be compromised'), findsOneWidget);
-        expect(find.textContaining('does not detect incidents'), findsOneWidget);
+
+        final disclaimer = find.textContaining('does not detect incidents');
+        await _reveal(tester, disclaimer);
+        expect(disclaimer, findsOneWidget);
         expect(tester.takeException(), isNull,
             reason: 'Response layout overflow at width $width');
       }
@@ -66,7 +83,7 @@ void main() {
 
     for (final title in playbooks) {
       final tile = find.text(title);
-      await tester.ensureVisible(tile);
+      await _reveal(tester, tile);
       await tester.tap(tile);
       await tester.pumpAndSettle();
 
@@ -110,7 +127,7 @@ void main() {
     expect(MediaQuery.textScalerOf(tester.element(heading)).scale(10), 20);
 
     final firstPlaybook = find.text('An account may be compromised');
-    await tester.ensureVisible(firstPlaybook);
+    await _reveal(tester, firstPlaybook);
     await tester.tap(firstPlaybook);
     await tester.pumpAndSettle();
 
