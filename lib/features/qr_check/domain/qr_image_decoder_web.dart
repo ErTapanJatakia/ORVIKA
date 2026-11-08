@@ -45,7 +45,7 @@ Future<List<QrImageCode>> decodeQrImage({
               format: barcode.format.toDart,
             ))
         .toList(growable: false);
-  } on JSException {
+  } catch (_) {
     throw UnsupportedError(
       'This browser does not provide image barcode detection. Try a supported browser or use live camera scanning.',
     );
