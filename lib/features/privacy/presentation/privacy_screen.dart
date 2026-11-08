@@ -175,6 +175,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                           semanticsLabel: 'Privacy review progress',
                           semanticsValue: '${reviewed} of ${total} practices reviewed',
                         ),
+                        Semantics(
+                          container: true,
+                          liveRegion: true,
+                          label: 'Privacy review progress: ${reviewed} of ${total} practices reviewed',
+                          child: const SizedBox.shrink(),
+                        ),
                         const SizedBox(height: 12),
                         Text(
                           'Your progress is saved locally on this device. A checkmark means you reviewed the guidance—not that ORVIKA verified or changed a setting.',
