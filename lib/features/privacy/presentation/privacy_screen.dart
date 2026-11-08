@@ -178,7 +178,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         Semantics(
                           container: true,
                           liveRegion: true,
-                          label: 'Privacy review progress: $reviewed of $total practices reviewed',
+                          label: 'Privacy progress update: $reviewed of $total practices reviewed',
                           child: const SizedBox.shrink(),
                         ),
                         const SizedBox(height: 12),
