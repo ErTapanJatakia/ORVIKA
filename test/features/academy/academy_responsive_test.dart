@@ -59,13 +59,19 @@ void main() {
     final correctAnswer = find.text(
       'Use the bank app or a known official contact route independently',
     );
+    final answerButton = find.ancestor(
+      of: correctAnswer,
+      matching: find.byType(OutlinedButton),
+    );
+    expect(answerButton, findsOneWidget);
+
     await tester.scrollUntilVisible(
-      correctAnswer,
+      answerButton,
       240,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    await tester.tap(correctAnswer);
+    await tester.tap(answerButton);
     await tester.pumpAndSettle();
 
     expect(find.text('1 of 8 lessons completed'), findsOneWidget);
