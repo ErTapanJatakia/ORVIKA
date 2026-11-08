@@ -12,35 +12,22 @@
   <link rel="apple-touch-icon" href="icons/orvika-192.svg">
   <link rel="manifest" href="manifest.json">
   <title>ORVIKA — Check Before You Trust</title>
-  <!-- Set the exact project-specific path supplied by Vercel after enabling Web Analytics. -->
+  <!-- Configure the exact static-site script path provided by Vercel. -->
   <meta name="vercel-analytics-script" content="">
 </head>
 <body>
   <script>
+    window.va = window.va || function () {
+      (window.vaq = window.vaq || []).push(arguments);
+    };
     (function () {
-      window.va = window.va || function () {
-        (window.vaq = window.vaq || []).push(arguments);
-      };
-      window.va('beforeSend', function (event) {
-        try {
-          var url = new URL(event.url, window.location.origin);
-          return Object.assign({}, event, { url: url.origin + url.pathname });
-        } catch (_) {
-          return null;
-        }
-      });
-      window.orvikaAnalyticsTrack = function (eventName, moduleName) {
-        var allowedModules = ['Link Check', 'QR Check', 'Message Check', 'Intelligence', 'Privacy', 'Academy', 'Response'];
-        if (eventName !== 'module_opened' || allowedModules.indexOf(moduleName) === -1) return;
-        window.va('event', { name: 'module_opened', data: { module: moduleName } });
-      };
-      var configuredPath = document.querySelector('meta[name="vercel-analytics-script"]').getAttribute('content').trim();
-      if (/^\/[A-Za-z0-9/_-]+\/script\.js$/.test(configuredPath)) {
-        var script = document.createElement('script');
-        script.defer = true;
-        script.src = configuredPath;
-        document.head.appendChild(script);
-      }
+      var pathElement = document.querySelector('meta[name="vercel-analytics-script"]');
+      var scriptPath = pathElement ? pathElement.getAttribute('content').trim() : '';
+      if (!/^\\/[A-Za-z0-9/_-]+\\/script\\.js$/.test(scriptPath)) return;
+      var script = document.createElement('script');
+      script.defer = true;
+      script.src = scriptPath;
+      document.head.appendChild(script);
     })();
   </script>
   <script src="flutter_bootstrap.js" async></script>
