@@ -99,7 +99,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                   Semantics(
                     container: true,
                     liveRegion: true,
-                    label: 'Message inspection complete. ${result.findings.length} findings. ${result.detectedLinks.length} web addresses detected.',
+                    label: l10n.textWithParameters('checker.message.complete', fallback: 'Message inspection complete. {findings} findings. {links} web addresses detected.', parameters: {'findings': result.findings.length, 'links': result.detectedLinks.length}),
                     child: const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 22),
