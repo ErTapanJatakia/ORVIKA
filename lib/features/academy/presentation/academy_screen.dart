@@ -110,17 +110,36 @@ class _AcademyScreenState extends State<AcademyScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Wrap(
-                          alignment: WrapAlignment.spaceBetween,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: [
-                            Text('$progress of ${lessons.length} lessons completed',
-                              style: const TextStyle(fontWeight: FontWeight.w800)),
-                            Text('${(progress / lessons.length * 100).round()}%',
-                              style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w800)),
-                          ],
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final label = Text(
+                              '$progress of ${lessons.length} lessons completed',
+                              style: const TextStyle(fontWeight: FontWeight.w800),
+                            );
+                            final percentage = Text(
+                              '${(progress / lessons.length * 100).round()}%',
+                              style: TextStyle(
+                                color: scheme.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            );
+                            if (constraints.maxWidth < 320) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  label,
+                                  const SizedBox(height: 4),
+                                  percentage,
+                                ],
+                              );
+                            }
+                            return Row(
+                              children: [
+                                Expanded(child: label),
+                                percentage,
+                              ],
+                            );
+                          },
                         ),
                         const SizedBox(height: 10),
                         LinearProgressIndicator(value: progress / lessons.length),
