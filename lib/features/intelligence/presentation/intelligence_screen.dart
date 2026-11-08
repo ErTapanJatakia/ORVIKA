@@ -49,11 +49,14 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
-              Text(
-                'Understand the signal.',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+              Semantics(
+                header: true,
+                child: Text(
+                  'Understand the signal.',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -123,6 +126,12 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
               ],
             ),
             const SizedBox(height: 10),
+            Semantics(
+              container: true,
+              liveRegion: true,
+              label: '${entries.length} reference entries',
+              child: const SizedBox.shrink(),
+            ),
             if (entries.isEmpty)
               const Card(
                 child: Padding(
