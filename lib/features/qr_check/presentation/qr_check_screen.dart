@@ -64,7 +64,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
           children: [
             Semantics(
               header: true,
-              child: const Text(
+              child: Text(
                 l10n.text('checker.qr.heading', 'Look before you scan.'),
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
               ),
@@ -120,7 +120,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                             color: result.isValid ? scheme.primary : scheme.error,
                           ),
                           const SizedBox(width: 9),
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               l10n.text('checker.qr.result', 'Inspection result'),
                               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
