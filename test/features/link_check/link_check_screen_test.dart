@@ -163,7 +163,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField), 'https://example.com');
     await _revealLinkCheckControl(tester, find.text(_linkAction('ar')));
-    await tester.tap(find.text('Analyse address'));
+    await tester.tap(find.text(_linkAction('ar')));
     await tester.pumpAndSettle();
     expect(find.text('Analysis findings'), findsOneWidget);
     expect(tester.takeException(), isNull);
