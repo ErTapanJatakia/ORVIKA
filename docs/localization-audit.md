@@ -27,16 +27,17 @@ Their visible labels, helper text, actions, empty states, dialogs and progress m
 
 ## This implementation increment
 
-- The shared feature app bar now resolves the seven known feature titles through existing `module.*` localization keys.
-- Unknown/custom app-bar titles remain unchanged, preserving compatibility for other callers.
-- Widget tests cover Russian and Hindi title rendering, default English behavior, and custom-title fallback.
-- A localization contract test checks that every authored non-English pack contains all seven feature-title keys.
+- The shared feature app bar resolves the seven known feature titles through existing `module.*` localization keys. Unknown/custom app-bar titles remain unchanged.
+- Link Check, QR Check and Message Check now resolve their main instructions, input labels/hints, primary actions, result headings, destination/link headings and scope notices through the existing lookup API.
+- Russian and Hindi draft packs contain authored strings for those three checker interfaces and severity labels. Other language packs intentionally use the explicit English fallback until their screen-level strings are authored and reviewed.
+- Analyzer-generated finding titles, details, normalized addresses and result notices remain canonical analyzer output; this increment does not translate or alter security evidence.
+- Widget tests cover Russian and Hindi checker rendering plus English fallback for a language without a screen-level translation. Localization contract tests cover the new Russian/Hindi key set and the seven feature titles.
 
 ## Remaining implementation work
 
-1. Route all feature-screen user-facing strings through the existing localization API, preserving explicit English fallbacks.
-2. Expand reviewed translation coverage before changing any draft pack's reviewed status.
-3. Translate screen-specific labels, helper text, dialogs, errors, empty states, results and learning content—not only navigation titles.
+1. Complete screen-level localization for Intelligence, Privacy, Academy and Response, then review any remaining checker strings.
+2. Expand screen-level translation coverage beyond Russian and Hindi without changing draft packs to reviewed status.
+3. Translate dialogs, errors, empty states, result framing and learning content—not only primary labels.
 4. Test language switching across every module, RTL layout (Arabic and Urdu), long strings, narrow viewports and 200% text scaling.
 5. Keep security-analysis output, scoring, parsing and data-flow behavior unchanged; this work is presentation-only.
 6. Treat automated tests as localization regression evidence, not as proof of translation quality. Native-speaker review remains necessary before promoting draft packs.
