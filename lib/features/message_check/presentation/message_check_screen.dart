@@ -61,7 +61,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
               children: [
                 Semantics(
                   header: true,
-                  child: const Text(
+                  child: Text(
                     l10n.text('checker.message.heading', 'Pause. Inspect. Then respond.'),
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
                   ),
@@ -109,7 +109,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             l10n.text('checker.message.result', 'Review findings'),
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.w700),
