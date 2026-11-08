@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/features/link_check/presentation/link_check_screen.dart';
 import 'package:orvika/features/qr_check/presentation/qr_check_screen.dart';
 import 'package:orvika/features/message_check/presentation/message_check_screen.dart';
+import 'package:orvika/features/intelligence/presentation/intelligence_screen.dart';
+import 'package:orvika/features/privacy/presentation/privacy_screen.dart';
 
 Widget _localizedApp(String languageCode, Widget child) {
   return MaterialApp(
@@ -40,6 +43,25 @@ void main() {
     expect(find.text('Текст сообщения'), findsOneWidget);
     await tester.ensureVisible(find.text('Проверить сообщение'));
     expect(find.text('Проверить сообщение'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+
+  testWidgets('Intelligence renders Russian interface strings', (tester) async {
+    await tester.pumpWidget(_localizedApp('ru', const IntelligenceScreen()));
+    expect(find.text('Понимайте сигналы.'), findsOneWidget);
+    expect(find.text('Поиск индикаторов'), findsOneWidget);
+    expect(find.text('АВТОНОМНЫЙ СПРАВОЧНИК'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Privacy renders Hindi interface strings', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(_localizedApp('hi', const PrivacyScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('अपनी गोपनीयता पर नियंत्रण रखें।'), findsOneWidget);
+    expect(find.text('खाते'), findsOneWidget);
+    expect(find.text('मैंने इस अभ्यास की समीक्षा कर ली है'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 
