@@ -95,6 +95,17 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
+      final settingsScrollable = find.descendant(
+        of: find.byType(ListView),
+        matching: find.byType(Scrollable),
+      ).first;
+      await tester.scrollUntilVisible(
+        find.text('Accessibility'),
+        200,
+        scrollable: settingsScrollable,
+      );
+      await tester.pumpAndSettle();
+
       expect(find.text('Accessibility'), findsOneWidget);
       expect(tester.getSize(find.byType(ListView)).width, lessThanOrEqualTo(760));
       expect(tester.takeException(), isNull,
@@ -152,6 +163,17 @@ void main() {
         ),
       ),
     ));
+    await tester.pumpAndSettle();
+
+    final settingsScrollable = find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first;
+    await tester.scrollUntilVisible(
+      find.text('Accessibility'),
+      160,
+      scrollable: settingsScrollable,
+    );
     await tester.pumpAndSettle();
 
     final settingsHeading = find.text('Accessibility');
