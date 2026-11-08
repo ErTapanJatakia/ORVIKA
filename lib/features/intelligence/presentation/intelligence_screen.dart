@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
+import '../../../core/localization/orvika_localizations.dart';
 
 import '../domain/intelligence_library.dart';
 
@@ -23,10 +24,10 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
   }
 
   String _categoryLabel(IntelligenceCategory category) => switch (category) {
-        IntelligenceCategory.links => 'Links',
-        IntelligenceCategory.messages => 'Messages',
-        IntelligenceCategory.qrCodes => 'QR codes',
-        IntelligenceCategory.accountSafety => 'Account safety',
+        IntelligenceCategory.links => OrvikaLocalizations.of(context).text('intelligence.category.links', 'Links'),
+        IntelligenceCategory.messages => OrvikaLocalizations.of(context).text('intelligence.category.messages', 'Messages'),
+        IntelligenceCategory.qrCodes => OrvikaLocalizations.of(context).text('intelligence.category.qr', 'QR codes'),
+        IntelligenceCategory.accountSafety => OrvikaLocalizations.of(context).text('intelligence.category.accounts', 'Account safety'),
       };
 
   IconData _categoryIcon(IntelligenceCategory category) => switch (category) {
@@ -39,6 +40,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     final entries = _library.search(query: _controller.text, category: _category);
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(title: 'Intelligence'),
@@ -52,7 +54,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
               Semantics(
                 header: true,
                 child: Text(
-                  'Understand the signal.',
+                  l10n.text('intelligence.heading', 'Understand the signal.'),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
@@ -60,7 +62,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'A practical, on-device reference to common digital-risk indicators and safer next steps.',
+                l10n.text('intelligence.description', 'A practical, on-device reference to common digital-risk indicators and safer next steps.'),
                 style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
               ),
               const SizedBox(height: 16),
@@ -68,13 +70,13 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                 controller: _controller,
                 onChanged: (_) => setState(() {}),
                 decoration: InputDecoration(
-                  labelText: 'Search indicators',
-                  hintText: 'Try “OTP”, “Punycode” or “payment”',
+                  labelText: l10n.text('intelligence.search', 'Search indicators'),
+                  hintText: l10n.text('intelligence.searchHint', 'Try “OTP”, “Punycode” or “payment”'),
                   prefixIcon: const Icon(Icons.search_rounded),
                   suffixIcon: _controller.text.isEmpty
                       ? null
                       : IconButton(
-                          tooltip: 'Clear search',
+                          tooltip: l10n.text('intelligence.clear', 'Clear search'),
                           onPressed: () {
                             _controller.clear();
                             setState(() {});
@@ -90,7 +92,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                 runSpacing: 8,
                 children: [
                   ChoiceChip(
-                    label: const Text('All'),
+                    label: Text(l10n.text('intelligence.filter.all', 'All')),
                     selected: _category == null,
                     onSelected: (_) => setState(() => _category = null),
                   ),
@@ -107,7 +109,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    '${entries.length} reference entries',
+                    l10n.textWithParameters('intelligence.count', fallback: '{count} reference entries', parameters: {'count': entries.length}),
                     style: TextStyle(
                       color: scheme.onSurfaceVariant,
                       fontWeight: FontWeight.w700,
@@ -116,7 +118,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                   ),
                 ),
                 const Text(
-                  'OFFLINE REFERENCE',
+                  l10n.text('intelligence.offline', 'OFFLINE REFERENCE'),
                   style: TextStyle(
                     fontSize: 10,
                     letterSpacing: 1,
@@ -129,14 +131,14 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
             Semantics(
               container: true,
               liveRegion: true,
-              label: '${entries.length} reference entries',
+              label: l10n.textWithParameters('intelligence.count', fallback: '{count} reference entries', parameters: {'count': entries.length}),
               child: const SizedBox.shrink(),
             ),
             if (entries.isEmpty)
               const Card(
                 child: Padding(
                   padding: EdgeInsets.all(18),
-                  child: Text('No matching indicators. Try another search term or category.'),
+                  child: Text(l10n.text('intelligence.empty', 'No matching indicators. Try another search term or category.')),
                 ),
               ),
             for (final entry in entries)
@@ -152,16 +154,16 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                   childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   expandedCrossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _DetailSection(label: 'WHAT TO NOTICE', value: entry.signal),
-                    _DetailSection(label: 'WHAT IT MEANS', value: entry.meaning),
-                    _DetailSection(label: 'SAFER NEXT STEP', value: entry.action),
-                    _DetailSection(label: 'IMPORTANT LIMIT', value: entry.limit),
+                    _DetailSection(label: l10n.text('intelligence.detail.notice', 'WHAT TO NOTICE'), value: entry.signal),
+                    _DetailSection(label: l10n.text('intelligence.detail.meaning', 'WHAT IT MEANS'), value: entry.meaning),
+                    _DetailSection(label: l10n.text('intelligence.detail.next', 'SAFER NEXT STEP'), value: entry.action),
+                    _DetailSection(label: l10n.text('intelligence.detail.limit', 'IMPORTANT LIMIT'), value: entry.limit),
                   ],
                 ),
               ),
             const SizedBox(height: 8),
             Text(
-              'This is a curated educational reference, not a live threat-intelligence feed, reputation service or verdict about a person, message or website. Entries are general guidance and may not fit every situation.',
+              l10n.text('intelligence.notice', 'This is a curated educational reference, not a live threat-intelligence feed, reputation service or verdict about a person, message or website. Entries are general guidance and may not fit every situation.'),
               style: TextStyle(
                 color: scheme.onSurfaceVariant,
                 fontSize: 12,
