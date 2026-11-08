@@ -66,7 +66,7 @@ void main() {
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Your safety toolkit'), findsOneWidget);
+    expect(linkCardTitle, findsOneWidget);
     expect(
       FocusManager.instance.primaryFocus,
       same(invokingFocus),
