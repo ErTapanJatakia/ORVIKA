@@ -64,7 +64,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   header: true,
                   child: Text(
                     l10n.text('checker.link.heading', 'Inspect before you connect.'),
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -84,8 +84,8 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   decoration: InputDecoration(
                     labelText: l10n.text('checker.link.input', 'Website address'),
                     hintText: 'https://example.com',
-                    prefixIcon: Icon(Icons.link_rounded),
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.link_rounded),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 12),
