@@ -167,12 +167,19 @@ class _AcademyScreenState extends State<AcademyScreen> {
                 for (final category in AcademyCategory.values) ...[
                   Padding(
                     padding: const EdgeInsets.only(top: 18, bottom: 8),
-                    child: Row(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 9,
+                      runSpacing: 4,
                       children: [
                         Icon(_categoryIcon(category), color: scheme.primary, size: 20),
-                        const SizedBox(width: 9),
-                        Text(_categoryLabel(category),
-                          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                        Text(
+                          _categoryLabel(category),
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
                       ],
                     ),
                   ),
