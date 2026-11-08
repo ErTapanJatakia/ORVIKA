@@ -55,7 +55,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not save this review on the device.')),
+          SnackBar(content: Text(l10n.text('privacy.error.save', 'Could not save this review on the device.'))),
         );
       }
     }
@@ -65,16 +65,16 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reset review progress?'),
-        content: const Text('This clears only the checklist marks stored on this device. It does not change any device or account settings.'),
+        title: Text(OrvikaLocalizations.of(context).text('privacy.reset.title', 'Reset review progress?')),
+        content: Text(OrvikaLocalizations.of(context).text('privacy.reset.description', 'This clears only the checklist marks stored on this device. It does not change any device or account settings.')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(OrvikaLocalizations.of(context).text('common.cancel', 'Cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Reset progress'),
+            child: Text(OrvikaLocalizations.of(context).text('privacy.reset.action', 'Reset progress')),
           ),
         ],
       ),
@@ -87,7 +87,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not clear saved review progress.')),
+          SnackBar(content: Text(l10n.text('privacy.error.clear', 'Could not clear saved review progress.'))),
         );
       }
     }
