@@ -57,7 +57,7 @@ class OrvikaPalette {
 
   static const obsidian = OrvikaPalette(
     background: Color(0xFF081426), surface: Color(0xFF10233B),
-    primary: Color(0xFF00D5FF), secondary: Color(0xFF795CFF),
+    primary: Color(0xFF00D5FF), secondary: Color(0xFFA58BFF),
     success: Color(0xFF20D69A), warning: Color(0xFFFFB547),
     danger: Color(0xFFFF5263), isDark: true,
   );
