@@ -82,7 +82,7 @@ void main() {
     );
 
     await tester.enterText(find.byType(TextField), 'http://example.com');
-    await tester.tap(find.text(_linkAction('ar')));
+    await tester.tap(find.text('Analyse address'));
     await tester.pumpAndSettle();
 
     expect(find.text('Analysis findings'), findsOneWidget);
