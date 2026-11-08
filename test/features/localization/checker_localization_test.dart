@@ -8,6 +8,8 @@ import 'package:orvika/features/qr_check/presentation/qr_check_screen.dart';
 import 'package:orvika/features/message_check/presentation/message_check_screen.dart';
 import 'package:orvika/features/intelligence/presentation/intelligence_screen.dart';
 import 'package:orvika/features/privacy/presentation/privacy_screen.dart';
+import 'package:orvika/features/academy/presentation/academy_screen.dart';
+import 'package:orvika/features/response/presentation/response_screen.dart';
 
 Widget _localizedApp(String languageCode, Widget child) {
   return MaterialApp(
@@ -66,6 +68,31 @@ void main() {
     await tester.tap(firstPractice);
     await tester.pumpAndSettle();
     expect(find.text('मैंने इस अभ्यास की समीक्षा कर ली है'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+
+  testWidgets('Academy renders Russian interface and localized progress', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(_localizedApp('ru', const AcademyScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Формируйте более безопасные цифровые привычки.'), findsOneWidget);
+    expect(find.text('Безопасность аккаунтов'), findsOneWidget);
+    expect(find.text('Завершено уроков: 0 из 8'), findsOneWidget);
+    expect(find.text('КЛЮЧЕВЫЕ МОМЕНТЫ'), findsWidgets);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Response renders Hindi guidance labels and preserves playbook content', (tester) async {
+    await tester.pumpWidget(_localizedApp('hi', const ResponseScreen()));
+    expect(find.text('जानें कि अगला कदम क्या है।'), findsOneWidget);
+    expect(find.textContaining('यदि किसी को तत्काल शारीरिक खतरा है'), findsOneWidget);
+    final firstScenario = find.byType(ExpansionTile).first;
+    await tester.ensureVisible(firstScenario);
+    await tester.tap(firstScenario);
+    await tester.pumpAndSettle();
+    expect(find.text('पहली प्राथमिकता'), findsOneWidget);
+    expect(find.text('चरण-दर-चरण'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
