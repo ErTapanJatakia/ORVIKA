@@ -152,7 +152,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               Semantics(
                 container: true,
                 liveRegion: true,
-                label: 'QR inspection complete. ${result.title}. Severity ${_severityLabel(result.severity)}. ${result.linkFindings.length} link findings.',
+                label: l10n.textWithParameters('checker.qr.complete', fallback: 'QR inspection complete. {title}. Severity {severity}. {count} link findings.', parameters: {'title': result.title, 'severity': _severityLabel(result.severity), 'count': result.linkFindings.length}),
                 child: const SizedBox.shrink(),
               ),
               const SizedBox(height: 24),
@@ -190,7 +190,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                       ),
                       if (_detectedCodeFormat != null) ...[
                         const SizedBox(height: 10),
-                        Text('Detected code format: ${_detectedCodeFormat!.toUpperCase()}',
+                        Text(l10n.textWithParameters('checker.qr.detectedFormat', fallback: 'Detected code format: {format}', parameters: {'format': _detectedCodeFormat!.toUpperCase()}),
                             style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w700)),
                       ],
                       const SizedBox(height: 14),
