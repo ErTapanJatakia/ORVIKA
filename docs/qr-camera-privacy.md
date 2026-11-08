@@ -10,6 +10,7 @@ QR Check retains its existing manual paste-and-inspect workflow. The camera path
 - The camera is requested only after the user opens the scanner and presses **Allow camera for this scan**.
 - The first non-empty decoded value stops the camera before the value is returned to QR Check.
 - Leaving the scanner disposes its controller; the user can also stop an active session explicitly.
+- The camera is paused and released when the app/browser lifecycle reports that the app is inactive or backgrounded, and is restarted only if the user had explicitly started that scan and the scan has not already completed.
 - Camera frames are not requested for persistence or uploaded by ORVIKA. The decoded value remains in the existing in-memory input/result state.
 - ORVIKA does not store a remembered camera-consent flag or permission state.
 
