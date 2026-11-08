@@ -55,7 +55,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.text('privacy.error.save', 'Could not save this review on the device.'))),
+          SnackBar(content: Text(OrvikaLocalizations.of(context).text('privacy.error.save', 'Could not save this review on the device.'))),
         );
       }
     }
@@ -87,7 +87,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.text('privacy.error.clear', 'Could not clear saved review progress.'))),
+          SnackBar(content: Text(OrvikaLocalizations.of(context).text('privacy.error.clear', 'Could not clear saved review progress.'))),
         );
       }
     }
