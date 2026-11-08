@@ -31,11 +31,14 @@ class ResponseScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
-          Text(
-            'Know your next step.',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+          Semantics(
+            header: true,
+            child: Text(
+              'Know your next step.',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
           ),
           const SizedBox(height: 8),
           Text(
