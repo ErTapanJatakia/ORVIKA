@@ -222,7 +222,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                               style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45)),
                             const SizedBox(height: 12),
                             Text(l10n.text('academy.keyPoints', 'KEY POINTS'),
-                              style: TextStyle(fontSize: 10, letterSpacing: 0.8, fontWeight: FontWeight.w800)),
+                              style: const TextStyle(fontSize: 10, letterSpacing: 0.8, fontWeight: FontWeight.w800)),
                             const SizedBox(height: 6),
                             for (final point in lesson.keyPoints)
                               Padding(
@@ -270,7 +270,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                                   liveRegion: true,
                                   child: Text(
                                     _answers[lesson.id] == lesson.correctIndex
-                                        ? l10n.text('academy.correct', 'Correct.') + ' ${lesson.explanation}'
+                                        ? '${l10n.text('academy.correct', 'Correct.')} ${lesson.explanation}'
                                         : l10n.text('academy.tryAgain', 'Not quite. Review the key points and try again.'), 
                                     style: TextStyle(
                                       color: _answers[lesson.id] == lesson.correctIndex
