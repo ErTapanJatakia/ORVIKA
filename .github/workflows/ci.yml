@@ -14,6 +14,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  android-validation:
+    name: Android release build validation
+    uses: ./.github/workflows/android-build.yml
+
   flutter:
     name: Analyze, test, build and deploy Web
     runs-on: ubuntu-24.04
