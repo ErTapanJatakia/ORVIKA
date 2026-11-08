@@ -131,7 +131,7 @@ void main() {
 
     final progress = find.bySemanticsLabel('Privacy review progress: 0 of 12 practices reviewed');
     expect(progress, findsOneWidget);
-    expect(double.parse(tester.getSemantics(progress).value!), 0.0);
+    expect(double.parse(tester.getSemantics(progress).value), 0.0);
     final announcement = find.bySemanticsLabel(
       RegExp(r'Privacy review progress:'),
     );
@@ -152,7 +152,7 @@ void main() {
 
     final progress = find.bySemanticsLabel('Academy lesson completion: 0 of 8 lessons completed');
     expect(progress, findsOneWidget);
-    expect(double.parse(tester.getSemantics(progress).value!), 0.0);
+    expect(double.parse(tester.getSemantics(progress).value), 0.0);
     final announcement = find.bySemanticsLabel(
       RegExp(r'Academy progress:'),
     );
