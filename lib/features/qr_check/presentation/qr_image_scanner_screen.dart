@@ -231,7 +231,11 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
             if (_codes.isNotEmpty) ...[
               const SizedBox(height: 18),
               Text(
-                l10n.textWithParameters('checker.image.detectedCount', fallback: 'Detected {count} codes', parameters: {'count': _codes.length}),
+                l10n.textWithParameters(
+                  _codes.length == 1 ? 'checker.image.detectedOne' : 'checker.image.detectedMany',
+                  fallback: _codes.length == 1 ? 'Detected {count} code' : 'Detected {count} codes',
+                  parameters: {'count': _codes.length},
+                ),
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
