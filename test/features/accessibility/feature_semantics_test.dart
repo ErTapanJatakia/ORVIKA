@@ -34,7 +34,7 @@ void main() {
 
       final headingSemantics = tester.getSemantics(find.text(heading));
       expect(
-        headingSemantics.hasFlag(SemanticsFlag.isHeader),
+        headingSemantics.flagsCollection.isHeader,
         isTrue,
         reason: '$heading should be exposed as a heading',
       );
@@ -56,7 +56,7 @@ void main() {
     );
     expect(announcement, findsOneWidget);
     expect(
-      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
   });
@@ -76,7 +76,7 @@ void main() {
     );
     expect(announcement, findsOneWidget);
     expect(
-      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
   });
@@ -99,7 +99,7 @@ void main() {
     );
     expect(announcement, findsOneWidget);
     expect(
-      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
   });
@@ -116,7 +116,7 @@ void main() {
     final announcement = find.bySemanticsLabel('1 reference entries');
     expect(announcement, findsOneWidget);
     expect(
-      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
   });
@@ -137,7 +137,7 @@ void main() {
     );
     expect(announcement, findsOneWidget);
     expect(
-      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
   });
@@ -158,7 +158,7 @@ void main() {
     );
     expect(announcement, findsOneWidget);
     expect(
-      tester.getSemantics(announcement).hasFlag(SemanticsFlag.isLiveRegion),
+      tester.getSemantics(announcement).flagsCollection.isLiveRegion,
       isTrue,
     );
   });
@@ -183,7 +183,7 @@ void main() {
     final feedback = find.bySemanticsLabel(RegExp(r'Correct\.'));
     expect(feedback, findsOneWidget);
     expect(
-      tester.getSemantics(feedback).hasFlag(SemanticsFlag.isLiveRegion),
+      tester.getSemantics(feedback).flagsCollection.isLiveRegion,
       isTrue,
     );
   });
