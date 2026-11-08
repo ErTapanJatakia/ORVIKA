@@ -66,7 +66,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               header: true,
               child: Text(
                 l10n.text('checker.qr.heading', 'Look before you scan.'),
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
               ),
             ),
             const SizedBox(height: 8),
@@ -87,8 +87,8 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                 labelText: l10n.text('checker.qr.input', 'Decoded QR content'),
                 hintText: l10n.text('checker.qr.hint', 'Paste the text or destination decoded from a QR code'),
                 alignLabelWithHint: true,
-                prefixIcon: Icon(Icons.qr_code_2_rounded),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.qr_code_2_rounded),
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -123,7 +123,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                           Expanded(
                             child: Text(
                               l10n.text('checker.qr.result', 'Inspection result'),
-                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                             ),
                           ),
                           Text(
