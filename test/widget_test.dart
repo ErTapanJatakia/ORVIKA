@@ -7,6 +7,7 @@ import 'package:orvika/main.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'helpers/dashboard_test_helpers.dart';
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'}));
@@ -58,6 +59,7 @@ void main() {
     expect(find.text('ORVIKA'), findsOneWidget);
     expect(find.text('Check before\nyou trust.'), findsOneWidget);
     expect(find.byType(OrvikaOwlMark), findsWidgets);
+    await revealDashboardContent(tester);
     expect(find.text('Sentinel'), findsOneWidget);
     expect(find.text('Link Check'), findsOneWidget);
     expect(find.text('QR Check'), findsOneWidget);
@@ -110,6 +112,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     await tester.ensureVisible(find.text('QR Check'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('QR Check'));
@@ -135,6 +138,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     await tester.ensureVisible(find.text('Link Check'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Link Check'));
@@ -193,6 +197,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     await tester.ensureVisible(find.text('Academy'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Academy'));
@@ -208,6 +213,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     await tester.ensureVisible(find.text('Response'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Response'));
@@ -227,6 +233,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     await tester.ensureVisible(find.text('Privacy'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Privacy'));
@@ -313,11 +320,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('language-hi')));
     await tester.pumpAndSettle();
     expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
-    expect(find.text('लिंक जाँच'), findsOneWidget);
     expect(find.text('भरोसा करने से पहले जाँचें।'), findsOneWidget);
     expect(find.text('डिवाइस पर जाँच'), findsOneWidget);
-    expect(find.text('गोपनीयता सर्वोपरि'), findsOneWidget);
     expect(find.byTooltip('भाषा बदलें'), findsOneWidget);
+    await revealDashboardContent(tester);
+    expect(find.text('लिंक जाँच'), findsOneWidget);
+    expect(find.text('गोपनीयता सर्वोपरि'), findsOneWidget);
 
     expect(
       OrvikaLocalizations.of(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).language.code,
@@ -462,6 +470,7 @@ void main() {
     // before asserting that the app-wide MediaQuery and theme are applied there.
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
+    await revealDashboardContent(tester);
     expect(find.text('Your safety toolkit'), findsOneWidget);
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
     expect(MediaQuery.of(dashboardContext).textScaler.scale(10), 12.5);
@@ -682,6 +691,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     final linkCardTitle = find.text('Link Check');
     await tester.ensureVisible(linkCardTitle);
     await tester.pumpAndSettle();
