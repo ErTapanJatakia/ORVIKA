@@ -15,7 +15,27 @@ void main() {
         256,
         256,
       );
-      final rgba = _toRgba(matrix);
+
+      final results = decodeQrImagePixels(
+        width: matrix.width,
+        height: matrix.height,
+        rgba: _toRgba(matrix),
+      );
+
+      expect(results, hasLength(1));
+      expect(results.single.value, payload);
+      expect(results.single.format, 'qrCode');
+    });
+
+    test('decodes colourful QR modules using channel-specific contrast', () {
+      const payload = 'ORVIKA-COLOUR-QR';
+      final matrix = MultiFormatWriter().encode(
+        payload,
+        BarcodeFormat.qrCode,
+        320,
+        320,
+      );
+      final rgba = _toColourRgba(matrix);
 
       final results = decodeQrImagePixels(
         width: matrix.width,
@@ -36,12 +56,11 @@ void main() {
         420,
         140,
       );
-      final rgba = _toRgba(matrix);
 
       final results = decodeQrImagePixels(
         width: matrix.width,
         height: matrix.height,
-        rgba: rgba,
+        rgba: _toRgba(matrix),
       );
 
       expect(results, hasLength(1));
@@ -71,6 +90,28 @@ Uint8List _toRgba(BitMatrix matrix) {
       rgba[offset] = value;
       rgba[offset + 1] = value;
       rgba[offset + 2] = value;
+      rgba[offset + 3] = 255;
+    }
+  }
+  return rgba;
+}
+
+Uint8List _toColourRgba(BitMatrix matrix) {
+  final rgba = Uint8List(matrix.width * matrix.height * 4);
+  for (var y = 0; y < matrix.height; y++) {
+    for (var x = 0; x < matrix.width; x++) {
+      final offset = (y * matrix.width + x) * 4;
+      // A green background and magenta modules have weak luminance contrast
+      // but strong individual-channel contrast.
+      if (matrix.get(x, y)) {
+        rgba[offset] = 255;
+        rgba[offset + 1] = 0;
+        rgba[offset + 2] = 255;
+      } else {
+        rgba[offset] = 0;
+        rgba[offset + 1] = 255;
+        rgba[offset + 2] = 0;
+      }
       rgba[offset + 3] = 255;
     }
   }
