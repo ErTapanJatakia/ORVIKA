@@ -71,11 +71,11 @@ async function main() {
         console.log(`${label} production response diagnostics: ${JSON.stringify(headerDiagnostics)}`);
 
         const hsts = headers['strict-transport-security'] || '';
-        const hstsMaxAge = hsts.match(/(?:^|;)\\s*max-age=(\\d+)/i);
+        const hstsMaxAge = hsts.match(/(?:^|;)\s*max-age=(\\d+)/i);
         assert(
           hstsMaxAge
             && Number(hstsMaxAge[1]) >= 31536000
-            && /(?:^|;)\\s*includeSubDomains(?:;|$)/i.test(hsts),
+            && /(?:^|;)\s*includeSubDomains(?:;|$)/i.test(hsts),
           `${label}: HSTS must set max-age of at least one year and includeSubDomains; response diagnostics logged above`,
         );
         assert.equal(headers['x-content-type-options'], 'nosniff', `${label}: nosniff header missing`);
