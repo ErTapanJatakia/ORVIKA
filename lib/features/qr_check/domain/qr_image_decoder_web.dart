@@ -19,7 +19,7 @@ extension type _DetectedBarcode._(JSObject _) implements JSObject {
   external JSString get format;
 }
 
-const int _maxDecodePixels = 16 * 1024 * 1024;
+const int _maxDecodePixels = 8 * 1024 * 1024;
 
 Future<List<QrImageCode>> decodeQrImage({
   required Uint8List bytes,
@@ -61,8 +61,8 @@ Future<List<QrImageCode>> decodeQrImage({
     final scale = sourcePixels > _maxDecodePixels
         ? math.sqrt(_maxDecodePixels / sourcePixels)
         : 1.0;
-    final decodeWidth = math.max(1, (sourceWidth * scale).floor());
-    final decodeHeight = math.max(1, (sourceHeight * scale).floor());
+    final decodeWidth = math.max(1, (sourceWidth * scale).floor()).toInt();
+    final decodeHeight = math.max(1, (sourceHeight * scale).floor()).toInt();
 
     final canvas = web.document.createElement('canvas') as web.HTMLCanvasElement;
     canvas.width = decodeWidth;
