@@ -71,7 +71,7 @@ async function main() {
         console.log(`${label} production response diagnostics: ${JSON.stringify(headerDiagnostics)}`);
 
         const hsts = headers['strict-transport-security'] || '';
-        const hstsMaxAge = hsts.match(/(?:^|;)\s*max-age=(\\d+)/i);
+        const hstsMaxAge = hsts.match(/(?:^|;)\s*max-age=(\d+)/i);
         assert(
           hstsMaxAge
             && Number(hstsMaxAge[1]) >= 31536000
