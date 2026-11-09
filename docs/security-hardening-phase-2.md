@@ -8,6 +8,7 @@ Implementation branch: `security/privacy-assurance-phase-2`
 - Pin the Flutter SDK used by CI and Android validation to the verified `3.47.9` release tag, whose commit is `c197ca5199e9ee5661e865596c9c07294dfab51c`. Fetch the tag as well as the shallow history so Flutter's version metadata and Dart SDK constraints resolve correctly.
 - Pin GitHub Actions checkout and artifact upload dependencies to verified full commit SHAs.
 - Add baseline Vercel response headers: HSTS, nosniff, frame denial, strict-origin referrer policy and a camera-only same-origin Permissions Policy.
+- Disable Vercel Git-triggered deployments with `git.deploymentEnabled: false`; GitHub Actions remains the sole deployment authority and uses the Vercel CLI to deploy the tested prebuilt `build/web` output. This does not disable CLI deployments.
 - Extend the production browser smoke test to assert those headers and successful loading of critical Flutter/PWA assets.
 - Add an in-app privacy notice and a dedicated product privacy notice document.
 - Add a security vulnerability reporting policy.
@@ -20,7 +21,7 @@ Implementation branch: `security/privacy-assurance-phase-2`
 - Vercel CLI installation remains version-floating in the current deployment workflow; pin it after verifying the exact CLI version and deployment compatibility.
 - No licence file is added. The repository owner must choose and authorize reuse/distribution terms; absence of a licence does not grant public reuse rights.
 - GitHub branch protection, secret-scanning alerts and full Git-history secret scanning require owner/dashboard-level verification not available to this code change.
-- No production Vercel dashboard configuration is changed by this PR.
+- No Vercel dashboard settings are changed by this PR; the Git auto-deployment policy is version-controlled in `vercel.json`.
 
 ## Validation
 
