@@ -26,13 +26,13 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   String? _imageName;
   List<QrImageCode> _codes = const [];
   bool _loading = false;
+  bool _recoveringLostData = false;
   String? _message;
 
   @override
   void initState() {
     super.initState();
-    // Disable picker interaction until Android lost-data recovery has settled.
-    _loading = true;
+    _recoveringLostData = true;
     _retrieveLostImage();
   }
 
@@ -43,6 +43,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
       final files = response.files ??
           (response.file == null ? const <XFile>[] : <XFile>[response.file!]);
       if (files.isNotEmpty) {
+        setState(() => _loading = true);
         await _loadSelectedImage(files.first);
         for (final unused in files.skip(1)) {
           if (!kIsWeb) await deleteTemporaryQrImage(unused.path);
@@ -58,7 +59,12 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     } catch (_) {
       // Recovery is best-effort; the manual picker remains available.
     } finally {
-      if (mounted && _loading) setState(() => _loading = false);
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _recoveringLostData = false;
+        });
+      }
     }
   }
 
@@ -116,6 +122,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   }
 
   Future<void> _chooseImage() async {
+    if (_loading || _recoveringLostData) return;
     setState(() {
       _loading = true;
       _message = null;
@@ -246,7 +253,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
             ),
             const SizedBox(height: 18),
             OutlinedButton.icon(
-              onPressed: _loading ? null : _chooseImage,
+              onPressed: _loading || _recoveringLostData ? null : _chooseImage,
               icon: const Icon(Icons.photo_library_outlined),
               label: Text(bytes == null
                   ? l10n.text('checker.image.choose', 'Choose image')
