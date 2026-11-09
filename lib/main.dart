@@ -1393,10 +1393,16 @@ class _TopBar extends StatelessWidget {
               Text(
                 OrvikaLocalizations(selectedLanguage).text(
                   'brand.descriptor', 'PERSONAL CYBER SAFETY INTELLIGENCE'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 softWrap: true,
                 style: TextStyle(
-                  color: scheme.onSurfaceVariant, fontSize: 8,
-                  letterSpacing: 1.05, fontWeight: FontWeight.w700),
+                  color: scheme.onSurfaceVariant,
+                  fontSize: 8,
+                  letterSpacing: 1.05,
+                  fontWeight: FontWeight.w700,
+                  height: 1.25,
+                ),
               ),
             ],
           ),
@@ -1475,7 +1481,15 @@ class _TopBar extends StatelessWidget {
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(Icons.palette_outlined, size: 17, color: palette.primary),
               const SizedBox(width: 7),
-              Text(selectedTheme.label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: scheme.onSurface)),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 112),
+                child: Text(
+                  selectedTheme.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: scheme.onSurface),
+                ),
+              ),
               const SizedBox(width: 3),
               Icon(Icons.expand_more_rounded, size: 17, color: scheme.onSurfaceVariant),
             ]),
@@ -1486,9 +1500,9 @@ class _TopBar extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final textScale = MediaQuery.textScalerOf(context).scale(10) / 10;
+        final effectiveTextScale = MediaQuery.textScalerOf(context).scale(10) / 10;
         final compact = constraints.maxWidth < 760 ||
-            (textScale >= 1.5 && constraints.maxWidth < 1020);
+            (effectiveTextScale >= 1.5 && constraints.maxWidth < 1020);
         if (compact) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1510,6 +1524,110 @@ class _TopBar extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _HeroPanel extends StatelessWidget {
+  const _HeroPanel({required this.palette, required this.language});
+  final OrvikaPalette palette;
+  final OrvikaLanguage language;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 420 ? 18 : 26,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: palette.primary.withValues(alpha: 0.28)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
+          colors: [
+            Color.lerp(palette.surface, palette.primary, palette.isDark ? 0.13 : 0.055)!,
+            palette.surface,
+            Color.lerp(palette.surface, palette.secondary, palette.isDark ? 0.17 : 0.06)!,
+          ],
+        ),
+        boxShadow: [BoxShadow(
+          color: palette.secondary.withValues(alpha: palette.isDark ? 0.10 : 0.045),
+          blurRadius: 34, spreadRadius: 1)],
+      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final textScale = MediaQuery.textScalerOf(context).scale(10) / 10;
+        final compact = constraints.maxWidth < 680 ||
+            (textScale >= 1.5 && constraints.maxWidth < 900);
+        final veryNarrow = constraints.maxWidth < 360;
+        final owl = OrvikaOwlMark(
+          size: compact ? (veryNarrow ? 72 : constraints.maxWidth < 440 ? 84 : 96) : 148,
+          palette: palette,
+        );
+        final copyContent = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              OrvikaLocalizations(language).text('hero.eyebrow', 'SEE THE RISK. VERIFY THE SIGNAL.'),
+              softWrap: true,
+              style: TextStyle(
+                color: palette.primary,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              OrvikaLocalizations(language).text('hero.title', 'Check before\nyou trust.'),
+              softWrap: true,
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                color: scheme.onSurface,
+                fontSize: compact ? (veryNarrow ? 32 : 38) : 48,
+                fontWeight: FontWeight.w900,
+                height: 1.06,
+                letterSpacing: compact ? -0.7 : -1.1,
+              ),
+            ),
+            const SizedBox(height: 13),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Text(
+                OrvikaLocalizations(language).text('hero.description', 'A clearer way to inspect digital signals, understand risk and make informed decisions.'),
+                softWrap: true,
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14, height: 1.55),
+              ),
+            ),
+            const SizedBox(height: 17),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              _StatusPill(label: OrvikaLocalizations(language).text('hero.onDevice', 'ON-DEVICE CHECKS'), color: palette.success),
+              _StatusPill(label: OrvikaLocalizations(language).text('hero.explainable', 'EXPLAINABLE FINDINGS'), color: palette.primary),
+            ]),
+          ],
+        );
+        if (compact) {
+          return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Align(alignment: AlignmentDirectional.centerEnd, child: owl),
+            SizedBox(height: veryNarrow ? 2 : 6),
+            copyContent,
+          ]);
+        }
+        return Row(children: [
+          Expanded(child: copyContent),
+          const SizedBox(width: 22),
+          Container(
+            width: 190, height: 190, alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: palette.primary.withValues(alpha: 0.045),
+              border: Border.all(color: palette.primary.withValues(alpha: 0.18)),
+            ),
+            child: owl,
+          ),
+        ]);
+      }),
     );
   }
 }
