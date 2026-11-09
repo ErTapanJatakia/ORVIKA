@@ -56,7 +56,7 @@ List<QrImageCode> decodeQrImagePixels({
       final range = maxValue - minValue;
       for (var index = 0; index < pixelCount; index++) {
         final value = pixels[index] & 0xff;
-        final stretched = ((value - minValue) * 255 ~/ range).clamp(0, 255);
+        final stretched = ((value - minValue) * 255 ~/ range).clamp(0, 255).toInt();
         pixels[index] =
             0xff000000 | (stretched << 16) | (stretched << 8) | stretched;
       }
