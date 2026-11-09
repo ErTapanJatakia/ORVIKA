@@ -70,7 +70,14 @@ async function main() {
         };
         console.log(`${label} production response diagnostics: ${JSON.stringify(headerDiagnostics)}`);
 
-        assert.match(headers['strict-transport-security'] || '', /max-age=31536000/, `${label}: HSTS header missing; response diagnostics logged above`);
+        const hsts = headers['strict-transport-security'] || '';
+        const hstsMaxAge = hsts.match(/(?:^|;)\\s*max-age=(\\d+)/i);
+        assert(
+          hstsMaxAge
+            && Number(hstsMaxAge[1]) >= 31536000
+            && /(?:^|;)\\s*includeSubDomains(?:;|$)/i.test(hsts),
+          `${label}: HSTS must set max-age of at least one year and includeSubDomains; response diagnostics logged above`,
+        );
         assert.equal(headers['x-content-type-options'], 'nosniff', `${label}: nosniff header missing`);
         assert.equal(headers['x-frame-options'], 'DENY', `${label}: frame protection header missing`);
         assert.equal(headers['referrer-policy'], 'strict-origin-when-cross-origin', `${label}: referrer policy missing`);
