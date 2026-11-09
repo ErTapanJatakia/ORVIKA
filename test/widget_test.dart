@@ -8,6 +8,23 @@ import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future<void> _dragUntilBuilt(
+  WidgetTester tester,
+  Finder scrollView,
+  Finder target,
+  Offset delta, {
+  int maxAttempts = 30,
+}) async {
+  for (var attempt = 0;
+      attempt < maxAttempts && target.evaluate().isEmpty;
+      attempt++) {
+    await tester.drag(scrollView, delta);
+    await tester.pumpAndSettle();
+  }
+  expect(target, findsOneWidget,
+      reason: 'Expected lazy dashboard content to be built after scrolling.');
+}
+
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'}));
 
@@ -462,13 +479,16 @@ void main() {
     // before asserting that the app-wide MediaQuery and theme are applied there.
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Your safety toolkit'),
-      180,
-      scrollable: find.byType(Scrollable).first,
+    final dashboardHeading = find.text('Your safety toolkit');
+    await _dragUntilBuilt(
+      tester,
+      find.byType(CustomScrollView),
+      dashboardHeading,
+      const Offset(0, 180),
     );
+    await tester.ensureVisible(dashboardHeading);
     await tester.pumpAndSettle();
-    expect(find.text('Your safety toolkit'), findsOneWidget);
+    expect(dashboardHeading, findsOneWidget);
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
     expect(MediaQuery.of(dashboardContext).textScaler.scale(10), 12.5);
     // ignore: deprecated_member_use

@@ -42,8 +42,25 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
 
-      - name: Build release-mode APK
-        run: flutter build apk --release --no-pub
+      - name: Build release-mode APK (retry transient dependency failures)
+        shell: bash
+        run: |
+          # Maven Central / upstream artifact mirrors can intermittently return
+          # HTTP 5xx/504 while Gradle downloads the Kotlin compiler. Retry the
+          # complete build with backoff; preserve a hard failure after 3 attempts.
+          for attempt in 1 2 3; do
+            echo "Android release build attempt ${attempt}/3"
+            if flutter build apk --release --no-pub; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              delay=$((attempt * 30))
+              echo "Build failed; waiting ${delay}s before retrying."
+              sleep "$delay"
+            fi
+          done
+          echo "Android release build failed after 3 attempts." >&2
+          exit 1
 
       - name: Verify APK and record integrity
         id: apk

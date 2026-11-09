@@ -32,11 +32,21 @@ void main() {
       await tester.pumpWidget(const OrvikaApp());
       await tester.pumpAndSettle();
 
-      await tester.scrollUntilVisible(
-        find.text('Your safety toolkit'),
-        180,
-        scrollable: find.byType(Scrollable).first,
-      );
+      final dashboardHeading = find.text('Your safety toolkit');
+      // The heading is inside lazily built sliver content. Scroll the known
+      // dashboard viewport directly until the sliver child is mounted; do not
+      // ask scrollUntilVisible to resolve a Scrollable finder before it exists.
+      for (var attempt = 0;
+          attempt < 30 && dashboardHeading.evaluate().isEmpty;
+          attempt++) {
+        await tester.drag(
+          find.byType(CustomScrollView),
+          const Offset(0, -180),
+        );
+        await tester.pumpAndSettle();
+      }
+      expect(dashboardHeading, findsOneWidget);
+      await tester.ensureVisible(dashboardHeading);
       await tester.pumpAndSettle();
       expect(find.text('Your safety toolkit'), findsOneWidget,
           reason: 'Dashboard heading missing at ${viewport.width}x${viewport.height}');
