@@ -1798,8 +1798,8 @@ class _ModuleCardState extends State<_ModuleCard> {
                         softWrap: true,
                         style: TextStyle(
                           color: scheme.onSurfaceVariant,
-                          fontSize: 11,
-                          height: 1.4,
+                          fontSize: 13,
+                          height: 1.45,
                         ),
                       ),
                     ),
