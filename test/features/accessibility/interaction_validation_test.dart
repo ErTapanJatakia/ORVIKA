@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:orvika/helpers/dashboard_test_helpers.dart';
 
 double _contrastRatio(Color foreground, Color background) {
   final first = foreground.computeLuminance();
@@ -74,6 +75,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     final linkCardTitle = find.text('Link Check');
     await tester.ensureVisible(linkCardTitle);
     await tester.pumpAndSettle();
