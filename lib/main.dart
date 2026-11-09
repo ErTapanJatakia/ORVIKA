@@ -979,6 +979,8 @@ class SentinelDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = selectedTheme.palette;
     final scheme = Theme.of(context).colorScheme;
+    final viewportWidth = MediaQuery.sizeOf(context).width;
+    final pagePadding = viewportWidth < 420 ? 16.0 : viewportWidth < 760 ? 20.0 : 28.0;
     return Scaffold(
       body: DecoratedBox(
         decoration: BoxDecoration(
@@ -999,7 +1001,7 @@ class SentinelDashboard extends StatelessWidget {
               child: CustomScrollView(
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
+                    padding: EdgeInsets.fromLTRB(pagePadding, 18, pagePadding, 40),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         _TopBar(
@@ -1086,8 +1088,8 @@ class SentinelDashboard extends StatelessWidget {
                                         ? 2
                                         : 1;
                             final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
-                            final cardExtent = (190 + ((textScale - 1).clamp(0, 1.5) * 160))
-                                .clamp(190, 430)
+                            final cardExtent = (212 + ((textScale - 1).clamp(0, 1.5) * 176))
+                                .clamp(212, 476)
                                 .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
@@ -1383,8 +1385,8 @@ class _TopBar extends StatelessWidget {
                   'brand.descriptor', 'PERSONAL CYBER SAFETY INTELLIGENCE'),
                 softWrap: true,
                 style: TextStyle(
-                  color: scheme.onSurfaceVariant, fontSize: 8,
-                  letterSpacing: 1.05, fontWeight: FontWeight.w700),
+                  color: scheme.onSurfaceVariant, fontSize: 8.5,
+                  letterSpacing: 0.8, fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -1729,7 +1731,7 @@ class _ModuleCardState extends State<_ModuleCard> {
             },
             borderRadius: BorderRadius.circular(19),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(19),
                 border: Border.all(
@@ -1773,8 +1775,8 @@ class _ModuleCardState extends State<_ModuleCard> {
                     style: TextStyle(
                       color: scheme.onSurface,
                       fontWeight: FontWeight.w800,
-                      fontSize: 15,
-                      height: 1.2,
+                      fontSize: 16,
+                      height: 1.25,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -1786,22 +1788,18 @@ class _ModuleCardState extends State<_ModuleCard> {
                         softWrap: true,
                         style: TextStyle(
                           color: scheme.onSurfaceVariant,
-                          fontSize: 11,
-                          height: 1.4,
+                          fontSize: 12.5,
+                          height: 1.45,
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    widget.module.status,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: _StatusPill(
+                      label: availability.toUpperCase(),
                       color: accent,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.05,
                     ),
                   ),
                 ],
@@ -1858,8 +1856,8 @@ class _TrustNote extends StatelessWidget {
               ),
               style: TextStyle(
                 color: scheme.onSurfaceVariant,
-                fontSize: 12,
-                height: 1.5,
+                fontSize: 12.5,
+                height: 1.55,
               ),
             ),
           ),
