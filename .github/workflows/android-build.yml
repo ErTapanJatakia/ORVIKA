@@ -43,7 +43,7 @@ jobs:
         run: flutter create --platforms=android --org dev.orvika --project-name orvika --no-pub .
 
       - name: Resolve dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
       - name: Build release-mode APK
         run: flutter build apk --release --no-pub
