@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 
 import '../domain/qr_image_decoder.dart';
+import '../domain/qr_image_file_cleanup.dart';
 import '../../../core/localization/orvika_localizations.dart';
 
 class QrImageScannerScreen extends StatefulWidget {
@@ -18,15 +20,109 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   static const int _maxImageBytes = 20 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
 
+  XFile? _selectedFile;
   Uint8List? _imageBytes;
   String? _imagePath;
   String? _imageName;
   List<QrImageCode> _codes = const [];
   bool _loading = false;
+  bool _recoveringLostData = false;
   String? _message;
 
-  Future<void> _chooseImage() async {
+  @override
+  void initState() {
+    super.initState();
+    _recoveringLostData = true;
+    _retrieveLostImage();
+  }
+
+  Future<void> _retrieveLostImage() async {
+    try {
+      final response = await _picker.retrieveLostData();
+      if (!mounted) return;
+      final files = response.files ??
+          (response.file == null ? const <XFile>[] : <XFile>[response.file!]);
+      if (files.isNotEmpty) {
+        setState(() => _loading = true);
+        await _loadSelectedImage(files.first);
+        for (final unused in files.skip(1)) {
+          if (!kIsWeb) await deleteTemporaryQrImage(unused.path);
+        }
+      } else if (response.exception != null) {
+        setState(() {
+          _message = OrvikaLocalizations.of(context).text(
+            'checker.image.error.selection',
+            'The image could not be selected. Check the file and try again.',
+          );
+        });
+      }
+    } catch (_) {
+      // Recovery is best-effort; the manual picker remains available.
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _recoveringLostData = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _cleanupSelectedFile() async {
+    final previous = _selectedFile;
+    _selectedFile = null;
+    if (previous == null || kIsWeb) return;
+    await deleteTemporaryQrImage(previous.path);
+  }
+
+  Future<void> _loadSelectedImage(XFile selected) async {
     final l10n = OrvikaLocalizations.of(context);
+    try {
+      final length = await selected.length();
+      if (length <= 0) {
+        if (!kIsWeb) await deleteTemporaryQrImage(selected.path);
+        if (!mounted) return;
+        setState(() {
+          _message = l10n.text('checker.image.error.empty', 'The selected image is empty or could not be read.');
+          _loading = false;
+        });
+        return;
+      }
+      if (length > _maxImageBytes) {
+        if (!kIsWeb) await deleteTemporaryQrImage(selected.path);
+        if (!mounted) return;
+        setState(() {
+          _message = l10n.text('checker.image.error.tooLarge', 'Please choose an image smaller than 20 MB.');
+          _loading = false;
+        });
+        return;
+      }
+
+      final bytes = await selected.readAsBytes();
+      if (!mounted) {
+        if (!kIsWeb) await deleteTemporaryQrImage(selected.path);
+        return;
+      }
+      await _cleanupSelectedFile();
+      setState(() {
+        _selectedFile = selected;
+        _imageBytes = bytes;
+        _imagePath = selected.path;
+        _imageName = selected.name;
+        _loading = false;
+      });
+    } catch (_) {
+      if (!kIsWeb) await deleteTemporaryQrImage(selected.path);
+      if (!mounted) return;
+      setState(() {
+        _message = l10n.text('checker.image.error.selection', 'The image could not be selected. Check the file and try again.');
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _chooseImage() async {
+    if (_loading || _recoveringLostData) return;
     setState(() {
       _loading = true;
       _message = null;
@@ -37,40 +133,24 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
         source: ImageSource.gallery,
         requestFullMetadata: false,
       );
-      if (!mounted) return;
+      if (!mounted) {
+        if (selected != null && !kIsWeb) {
+          await deleteTemporaryQrImage(selected.path);
+        }
+        return;
+      }
       if (selected == null) {
         setState(() => _loading = false);
         return;
       }
-
-      final length = await selected.length();
-      if (length <= 0) {
-        setState(() {
-          _message = l10n.text('checker.image.error.empty', 'The selected image is empty or could not be read.');
-          _loading = false;
-        });
-        return;
-      }
-      if (length > _maxImageBytes) {
-        setState(() {
-          _message = l10n.text('checker.image.error.tooLarge', 'Please choose an image smaller than 20 MB.');
-          _loading = false;
-        });
-        return;
-      }
-
-      final bytes = await selected.readAsBytes();
-      if (!mounted) return;
-      setState(() {
-        _imageBytes = bytes;
-        _imagePath = selected.path;
-        _imageName = selected.name;
-        _loading = false;
-      });
+      await _loadSelectedImage(selected);
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _message = l10n.text('checker.image.error.selection', 'The image could not be selected. Check the file and try again.');
+        _message = OrvikaLocalizations.of(context).text(
+          'checker.image.error.selection',
+          'The image could not be selected. Check the file and try again.',
+        );
         _loading = false;
       });
     }
@@ -121,7 +201,9 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     }
   }
 
-  void _clearImage() {
+  Future<void> _clearImage() async {
+    await _cleanupSelectedFile();
+    if (!mounted) return;
     setState(() {
       _imageBytes = null;
       _imagePath = null;
@@ -134,6 +216,11 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   @override
   void dispose() {
     _imageBytes = null;
+    final selected = _selectedFile;
+    _selectedFile = null;
+    if (selected != null && !kIsWeb) {
+      unawaited(deleteTemporaryQrImage(selected.path));
+    }
     super.dispose();
   }
 
@@ -161,12 +248,12 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'ORVIKA accesses only the image you select for this scan. The image and decoded content stay on this device and are cleared when you leave this screen.',
+              'ORVIKA accesses only the image you select for this scan. Selected image bytes are analysed on this device and cleared when you leave this screen. The operating system or browser may temporarily cache the selected file.',
               style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
             ),
             const SizedBox(height: 18),
             OutlinedButton.icon(
-              onPressed: _loading ? null : _chooseImage,
+              onPressed: _loading || _recoveringLostData ? null : _chooseImage,
               icon: const Icon(Icons.photo_library_outlined),
               label: Text(bytes == null
                   ? l10n.text('checker.image.choose', 'Choose image')

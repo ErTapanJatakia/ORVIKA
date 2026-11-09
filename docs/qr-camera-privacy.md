@@ -18,8 +18,10 @@ QR Check retains its existing manual paste-and-inspect workflow. Live camera sca
 
 - Image scanning is offered through the operating system's selected-photo picker or the browser's file chooser after the user taps **Choose image**.
 - ORVIKA does not request broad or persistent gallery/storage access and does not save a remembered image-library permission.
-- Only the selected image is read. The selected image bytes are held in memory for the active scanner route and released when the image is cleared or the route is disposed.
-- The selected image and decoded content are not uploaded by this feature. The image is not written to ORVIKA application storage.
+- Only the selected image is read. Selected image bytes are held in memory for the active scanner route and released when the image is cleared or the route is disposed.
+- On native platforms, the picker may provide a temporary cache file. ORVIKA best-effort deletes that file when it is replaced, cleared, rejected, or the scanner route is disposed. Operating-system cleanup may still govern files left behind after abrupt process termination.
+- On Web, the browser owns the selected File object and its temporary lifetime; ORVIKA revokes its generated decoder object URL after use.
+- The selected image and decoded content are not uploaded by this feature. ORVIKA does not intentionally copy the selected image into persistent application storage.
 - Images larger than 20 MiB are rejected before decoding to bound memory use.
 - Multiple codes found in one image are listed; the user selects which code to inspect.
 - The image picker and underlying OS/browser determine which image types can be selected. Actual decoding depends on the platform's image decoder; JPEG, PNG, WebP, GIF and BMP are common targets, while HEIC/HEIF, TIFF, AVIF and other formats vary by OS/browser. No universal support for every image format is claimed.
@@ -38,7 +40,7 @@ Browsers and operating systems own camera permission prompts and persistence. On
 
 ## Validation boundaries
 
-Automated Flutter tests can validate UI contracts and existing analyzer behavior. They cannot prove photo-picker behavior, image-format decoding, or barcode detection across every OS/browser. Real-device/browser validation is required for Android and major browsers. No universal every-format or every-browser guarantee is made.
+Automated Flutter tests can validate UI contracts and existing analyzer behavior. They cannot prove photo-picker behaviour, temporary-file deletion under abrupt process termination, image-format decoding, or barcode detection across every OS/browser. Android lost-picker-data recovery is attempted on scanner-screen initialization; native-device testing is still required. Real-device/browser validation is required for Android and major browsers. No universal every-format or every-browser guarantee is made.
 
 ## Camera scanning formats and Web dependency
 

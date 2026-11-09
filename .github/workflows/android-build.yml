@@ -42,6 +42,8 @@ jobs:
       - name: Generate isolated Android platform scaffold
         run: flutter create --platforms=android --org dev.orvika --project-name orvika --no-pub .
 
+      # This job generates an ephemeral Android scaffold; the primary Flutter
+      # CI job enforces the committed lockfile before the Android-only build.
       - name: Resolve dependencies
         run: flutter pub get
 
