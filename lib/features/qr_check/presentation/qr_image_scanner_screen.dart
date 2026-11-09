@@ -38,9 +38,14 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     try {
       final response = await _picker.retrieveLostData();
       if (!mounted) return;
-      final files = response.files;
-      if (files != null && files.isNotEmpty) {
+      final files = response.files ??
+          (response.file == null ? const <XFile>[] : <XFile>[response.file!]);
+      if (files.isNotEmpty) {
+        setState(() => _loading = true);
         await _loadSelectedImage(files.first);
+        for (final unused in files.skip(1)) {
+          if (!kIsWeb) await deleteTemporaryQrImage(unused.path);
+        }
       } else if (response.exception != null) {
         setState(() {
           _message = OrvikaLocalizations.of(context).text(
