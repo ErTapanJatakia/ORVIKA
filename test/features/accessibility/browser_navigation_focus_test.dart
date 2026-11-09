@@ -45,6 +45,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    await revealDashboardContent(tester);
     final linkCardTitle = find.text('Link Check');
     await tester.ensureVisible(linkCardTitle);
     await tester.pumpAndSettle();
