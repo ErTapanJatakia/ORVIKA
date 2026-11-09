@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:orvika/helpers/dashboard_test_helpers.dart';
+import '../../helpers/dashboard_test_helpers.dart';
 
 double _contrastRatio(Color foreground, Color background) {
   final first = foreground.computeLuminance();
