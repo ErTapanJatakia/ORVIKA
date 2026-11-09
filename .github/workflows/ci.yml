@@ -60,8 +60,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
-      - name: Validate browser smoke-test script syntax
-        run: node --check .github/scripts/orvika-browser-smoke.cjs
+      - name: Validate deployment verification scripts
+        run: |
+          node --check .github/scripts/orvika-browser-smoke.cjs
+          node --check .github/scripts/verify-vercel-output.cjs
 
       - name: Validate Vercel deployment and header configuration
         run: |
@@ -126,6 +128,10 @@ jobs:
           VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
           VERCEL_PROJECT_ID: prj_bHaSgv8y0tcFEGDJaEppYx8I0ZV0
         run: vercel build --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
+
+      - name: Verify generated Vercel security-header routes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: node .github/scripts/verify-vercel-output.cjs
 
       - name: Deploy prebuilt Web output to Vercel
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
