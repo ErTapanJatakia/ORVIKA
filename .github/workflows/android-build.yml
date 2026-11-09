@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Select JDK 17
         shell: bash
@@ -32,7 +32,10 @@ jobs:
       - name: Install Flutter SDK
         shell: bash
         run: |
-          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
+          git -C "$RUNNER_TEMP/flutter" checkout --detach FETCH_HEAD
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
 
@@ -70,7 +73,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validation APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: orvika-android-release-mode-validation
           path: build/app/outputs/flutter-apk/app-release.apk

@@ -1121,6 +1121,18 @@ class SentinelDashboard extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         _TrustNote(palette: palette, language: selectedLanguage),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: TextButton.icon(
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const OrvikaPrivacyNoticeScreen(),
+                              ),
+                            ),
+                            icon: const Icon(Icons.privacy_tip_outlined, size: 17),
+                            label: const Text('How ORVIKA handles data'),
+                          ),
+                        ),
                         const SizedBox(height: 24),
                         Center(
                           child: Text(
@@ -1894,4 +1906,79 @@ _SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
       module.status,
     ),
   );
+}
+
+/// Plain-language product privacy disclosure. Kept separate from the
+/// Privacy self-audit module, which covers the user's own device practices.
+class OrvikaPrivacyNoticeScreen extends StatelessWidget {
+  const OrvikaPrivacyNoticeScreen({super.key});
+
+  static const _sections = <(String, String)>[
+    (
+      'What ORVIKA analyses',
+      'Link Check, Message Check and QR Check perform their documented checks on the device. ORVIKA does not intentionally upload submitted URLs, message text, decoded QR payloads, selected images or camera frames to an ORVIKA analysis server. Findings are presented as indicators, not proof that a destination or message is safe or malicious.',
+    ),
+    (
+      'Web analytics',
+      'The hosted Web version uses Vercel Web Analytics for basic page-view measurement. ORVIKA does not add submitted analysis content, account identifiers or custom security-analysis events to analytics. Vercel processes technical request information under its own privacy documentation: https://vercel.com/docs/analytics/privacy-policy.',
+    ),
+    (
+      'Camera and selected images',
+      'Camera access starts only after you explicitly start a scan. A selected image is read for the active scan and is not intentionally uploaded by ORVIKA. Browser and operating-system permissions are controlled by your platform; revoke them in your browser or device settings when needed.',
+    ),
+    (
+      'External runtime dependency',
+      'In some Web browsers, the QR camera scanner can download a ZXing WebAssembly decoder from jsDelivr. This downloads decoder code to the browser; it is not an upload of camera frames, selected images or decoded QR content.',
+    ),
+    (
+      'Information stored on your device',
+      'ORVIKA stores interface preferences such as language, theme and accessibility settings, plus Privacy checklist review progress, using local application/browser preference storage. These values are not submitted as security-analysis inputs. They may remain until you clear ORVIKA application data or the browser site data.',
+    ),
+    (
+      'Accounts, cloud services and limitations',
+      'The current application does not require an ORVIKA account and does not provide cloud synchronisation of analysis history. Some features may require an internet connection to load the Web application, analytics or a browser decoder dependency. Do not treat an ORVIKA result as a guarantee or as a substitute for independent verification.',
+    ),
+    (
+      'Questions and security reports',
+      'For security concerns, use the repository Security tab and its private vulnerability reporting option when available. Do not publish exploit details or personal information in a public issue.',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(title: const Text('ORVIKA Privacy Notice')),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 820),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+            children: [
+              Text(
+                'Your analysis stays on your device by design. This notice explains the product’s current data practices and the limited external services used by the Web version.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Last reviewed: 9 November 2026 · Applies to the current ORVIKA prototype',
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+              for (final section in _sections) ...[
+                Text(section.$1, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                SelectableText(section.$2, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.55)),
+                const SizedBox(height: 18),
+              ],
+              Text(
+                'This notice describes the current implementation, not a guarantee that every platform or future feature has identical behaviour. Recheck this notice when ORVIKA adds network-connected services or changes analytics.',
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

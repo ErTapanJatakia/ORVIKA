@@ -5,6 +5,7 @@ const baseUrl = (process.env.ORVIKA_BASE_URL || 'https://orvika-web.vercel.app')
 const pageErrors = [];
 const consoleErrors = [];
 const failedRequests = [];
+const criticalAssetResponses = [];
 
 async function main() {
   const browser = await chromium.launch({ headless: true });
@@ -17,6 +18,13 @@ async function main() {
     page.on('pageerror', (error) => pageErrors.push(error.message));
     page.on('console', (message) => {
       if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('response', (response) => {
+      const url = new URL(response.url());
+      const sameOrigin = url.origin === new URL(baseUrl).origin;
+      if (sameOrigin && /\/(flutter_bootstrap\.js|main\.dart\.js|manifest\.json|favicon\.svg)$/.test(url.pathname)) {
+        criticalAssetResponses.push({ path: url.pathname, status: response.status() });
+      }
     });
     page.on('requestfailed', (request) => {
       failedRequests.push({
@@ -33,10 +41,21 @@ async function main() {
       });
       assert(response, `${label}: navigation returned no HTTP response`);
       assert.equal(response.status(), 200, `${label}: unexpected HTTP status`);
+      const headers = response.headers();
+      assert.match(headers['strict-transport-security'] || '', /max-age=31536000/, `${label}: HSTS header missing`);
+      assert.equal(headers['x-content-type-options'], 'nosniff', `${label}: nosniff header missing`);
+      assert.equal(headers['x-frame-options'], 'DENY', `${label}: frame protection header missing`);
+      assert.equal(headers['referrer-policy'], 'strict-origin-when-cross-origin', `${label}: referrer policy missing`);
+      assert.match(headers['permissions-policy'] || '', /camera=\(self\)/, `${label}: camera permission policy missing`);
 
       // Flutter Web renderer internals vary by engine version. Inspect light DOM
       // and nested shadow roots rather than relying on one private tag selector.
-      await page.waitForTimeout(4000);
+      await page.waitForFunction(() => {
+        const selectors = ['flutter-view', 'flt-glass-pane', 'flt-scene-host'];
+        if (selectors.some((selector) => document.querySelector(selector))) return true;
+        return Array.from(document.querySelectorAll('*')).some((element) =>
+          element.shadowRoot && selectors.some((selector) => element.shadowRoot.querySelector(selector)));
+      }, { timeout: 20000 }).catch(() => {});
       const renderer = await page.evaluate(() => {
         function deepExists(selector, root = document) {
           if (root.querySelector(selector)) return true;
@@ -95,6 +114,10 @@ async function main() {
     const favicon = await page.request.get(new URL('favicon.svg', `${baseUrl}/`).toString());
     assert.equal(favicon.status(), 200, 'ORVIKA favicon did not return HTTP 200');
 
+    assert(criticalAssetResponses.some((item) => item.path.endsWith('/flutter_bootstrap.js') && item.status === 200), 'Flutter bootstrap asset did not load successfully');
+    assert(criticalAssetResponses.some((item) => item.path.endsWith('/main.dart.js') && item.status === 200), 'Flutter application bundle did not load successfully');
+    assert(criticalAssetResponses.some((item) => item.path.endsWith('/manifest.json') && item.status === 200), 'PWA manifest asset did not load successfully');
+    assert(criticalAssetResponses.every((item) => item.status === 200), `Critical asset returned an error: ${JSON.stringify(criticalAssetResponses)}`);
     assert.deepEqual(pageErrors, [], `Browser runtime errors: ${pageErrors.join(' | ')}`);
     console.log(`Browser console errors (diagnostic): ${JSON.stringify(consoleErrors)}`);
     console.log('ORVIKA production browser smoke tests passed.');

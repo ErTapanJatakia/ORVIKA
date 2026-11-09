@@ -10,3 +10,17 @@ build/
 .vscode/
 coverage/
 .DS_Store
+# Local environment and deployment configuration
+.env
+.env.*
+!.env.example
+.vercel/
+
+# Signing material and private credentials
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.p8
+*.key
+key.properties
