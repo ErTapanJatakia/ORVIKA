@@ -997,6 +997,13 @@ class SentinelDashboard extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1180),
               child: CustomScrollView(
+                // Keep one predictable dashboard scroll surface across touch
+                // and pointer devices. Desktop users retain a visible scrollbar,
+                // and dragging content dismisses an active on-screen keyboard.
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                scrollBehavior: const MaterialScrollBehavior().copyWith(
+                  scrollbars: true,
+                ),
                 slivers: [
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
@@ -1134,18 +1141,45 @@ class SentinelDashboard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        Center(
-                          child: Text(
-                            OrvikaLocalizations(selectedLanguage).text('footer.motto', 'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL'),
-                            textAlign: TextAlign.center,
-                            softWrap: true,
-                            style: TextStyle(
-                              color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
-                              fontSize: 10,
-                              letterSpacing: MediaQuery.textScalerOf(context).scale(10) > 12
-                                  ? 0.55
-                                  : 1.2,
-                              fontWeight: FontWeight.w700),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 760),
+                              child: Container(
+                                key: const ValueKey('dashboard-footer'),
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                  vertical: 17,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: palette.surface.withValues(alpha: 0.58),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: scheme.outline.withValues(alpha: 0.22),
+                                  ),
+                                ),
+                                child: Text(
+                                  OrvikaLocalizations(selectedLanguage).text(
+                                    'footer.motto',
+                                    'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL',
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    color: scheme.onSurfaceVariant.withValues(alpha: 0.9),
+                                    fontSize: 10,
+                                    height: 1.5,
+                                    letterSpacing:
+                                        MediaQuery.textScalerOf(context).scale(10) > 12
+                                            ? 0.55
+                                            : 1.2,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ]),
