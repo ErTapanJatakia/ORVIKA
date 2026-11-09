@@ -5,7 +5,7 @@ Implementation branch: `security/privacy-assurance-phase-2`
 
 ## Implemented in this batch
 
-- Pin the Flutter SDK used by CI and Android validation to the verified stable commit `c197ca5199e9ee5661e865596c9c07294dfab51c` (Flutter 3.47.9).
+- Pin the Flutter SDK used by CI and Android validation to the verified `3.47.9` release tag, whose commit is `c197ca5199e9ee5661e865596c9c07294dfab51c`. Fetch the tag as well as the shallow history so Flutter's version metadata and Dart SDK constraints resolve correctly.
 - Pin GitHub Actions checkout and artifact upload dependencies to verified full commit SHAs.
 - Add baseline Vercel response headers: HSTS, nosniff, frame denial, strict-origin referrer policy and a camera-only same-origin Permissions Policy.
 - Extend the production browser smoke test to assert those headers and successful loading of critical Flutter/PWA assets.
