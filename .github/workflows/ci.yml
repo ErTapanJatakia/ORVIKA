@@ -63,9 +63,9 @@ jobs:
       - name: Validate browser smoke-test script syntax
         run: node --check .github/scripts/orvika-browser-smoke.cjs
 
-      - name: Validate Vercel header configuration
+      - name: Validate Vercel deployment and header configuration
         run: |
-          node -e "const c=require('./vercel.json'); const h=(c.headers||[]).flatMap(x=>x.headers||[]); for (const k of ['Strict-Transport-Security','X-Content-Type-Options','X-Frame-Options','Referrer-Policy','Permissions-Policy']) if (!h.some(x=>x.key===k)) throw new Error('Missing Vercel response header: '+k);"
+          node -e "const c=require('./vercel.json'); const h=(c.headers||[]).flatMap(x=>x.headers||[]); for (const k of ['Strict-Transport-Security','X-Content-Type-Options','X-Frame-Options','Referrer-Policy','Permissions-Policy']) if (!h.some(x=>x.key===k)) throw new Error('Missing Vercel response header: '+k); if (c.git?.deploymentEnabled !== false) throw new Error('Vercel Git auto-deployments must remain disabled; GitHub Actions is the deployment authority.'); if (c.outputDirectory !== 'build/web') throw new Error('Vercel outputDirectory must remain build/web for the prebuilt Flutter Web artifact.');"
 
       - name: Install Flutter SDK
         shell: bash
