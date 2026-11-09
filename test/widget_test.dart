@@ -462,6 +462,12 @@ void main() {
     // before asserting that the app-wide MediaQuery and theme are applied there.
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Your safety toolkit'),
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     expect(find.text('Your safety toolkit'), findsOneWidget);
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
     expect(MediaQuery.of(dashboardContext).textScaler.scale(10), 12.5);
