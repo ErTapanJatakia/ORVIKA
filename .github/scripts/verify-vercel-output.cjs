@@ -9,13 +9,23 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 assert.equal(config.version, 3, 'Unexpected Vercel Build Output API config version');
 assert(Array.isArray(config.routes), 'Vercel Build Output API config has no routes array');
 
+function hasValidHsts(value) {
+  const header = String(value || '');
+  const maxAge = header.match(/(?:^|;)\\s*max-age=(\\d+)/i);
+  return Boolean(
+    maxAge
+      && Number(maxAge[1]) >= 31536000
+      && /(?:^|;)\\s*includeSubDomains(?:;|$)/i.test(header),
+  );
+}
+
 const required = {
-  'strict-transport-security': /max-age=31536000(?:;|$)/i,
+  'strict-transport-security': hasValidHsts,
   'x-content-type-options': /^nosniff$/i,
   'x-frame-options': /^DENY$/i,
   'referrer-policy': /^strict-origin-when-cross-origin$/i,
   'permissions-policy': /camera=\\(self\\)/i,
-};
+};;
 
 function matchesPath(route, pathname) {
   if (typeof route.src !== 'string') return false;
@@ -39,7 +49,7 @@ for (const pathname of ['/', '/index.html']) {
 
   const completeHeaderRoute = headerRoutes.find((route) => {
     const headers = normalizeHeaders(route.headers);
-    return Object.entries(required).every(([name, pattern]) => pattern.test(headers[name] || ''));
+    return Object.entries(required).every(([name, matcher]) => (typeof matcher === 'function' ? matcher(headers[name]) : matcher.test(headers[name] || '')));
   });
 
   assert(
