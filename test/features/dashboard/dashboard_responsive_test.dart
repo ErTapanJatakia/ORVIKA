@@ -32,6 +32,12 @@ void main() {
       await tester.pumpWidget(const OrvikaApp());
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(
+        find.text('Your safety toolkit'),
+        180,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
       expect(find.text('Your safety toolkit'), findsOneWidget,
           reason: 'Dashboard heading missing at ${viewport.width}x${viewport.height}');
       expect(find.byType(CustomScrollView), findsOneWidget);
