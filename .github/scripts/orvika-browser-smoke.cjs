@@ -156,7 +156,9 @@ async function main() {
 
     assert(criticalAssetResponses.some((item) => item.path.endsWith('/flutter_bootstrap.js') && item.status === 200), 'Flutter bootstrap asset did not load successfully');
     assert(criticalAssetResponses.some((item) => item.path.endsWith('/main.dart.js') && item.status === 200), 'Flutter application bundle did not load successfully');
-    assert(criticalAssetResponses.some((item) => item.path.endsWith('/manifest.json') && item.status === 200), 'PWA manifest asset did not load successfully');
+    // The manifest is fetched through Playwright's APIRequestContext above, not
+    // the page response event stream. Its HTTP status and parsed branding are
+    // asserted directly, so do not require it in criticalAssetResponses.
     assert(criticalAssetResponses.every((item) => item.status === 200), `Critical asset returned an error: ${JSON.stringify(criticalAssetResponses)}`);
     assert.deepEqual(pageErrors, [], `Browser runtime errors: ${pageErrors.join(' | ')}`);
     console.log(`Browser console errors (diagnostic): ${JSON.stringify(consoleErrors)}`);
