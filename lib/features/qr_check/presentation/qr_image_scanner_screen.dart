@@ -157,7 +157,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
           children: [
             Text(
               l10n.text('checker.image.instruction', 'Choose an image containing a QR code or barcode.'),
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
             ),
             const SizedBox(height: 8),
             Text(
