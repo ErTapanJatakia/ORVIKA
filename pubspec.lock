@@ -514,6 +514,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.2"
+  stream_channel:
+    dependency: transitive
+    description:
+      name: stream_channel
+      sha256: "969e04c80b8bcdf826f8f16579c7b14d780458bd97f56d107d3950fdbeef059d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
+  term_glyph:
+    dependency: transitive
+    description:
+      name: term_glyph
+      sha256: "7f554798625ea768a7518313e58f83891c7f5024f88e46e7182a4558850a4b8e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
   string_scanner:
     dependency: transitive
     description:
