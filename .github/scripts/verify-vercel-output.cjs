@@ -11,7 +11,7 @@ assert(Array.isArray(config.routes), 'Vercel Build Output API config has no rout
 
 function hasValidHsts(value) {
   const header = String(value || '');
-  const maxAge = header.match(/(?:^|;)\s*max-age=(\\d+)/i);
+  const maxAge = header.match(/(?:^|;)\s*max-age=(\d+)/i);
   return Boolean(
     maxAge
       && Number(maxAge[1]) >= 31536000
