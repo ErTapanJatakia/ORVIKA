@@ -1757,13 +1757,13 @@ class _ModuleCardState extends State<_ModuleCard> {
                   Row(
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
                           color: accent.withValues(alpha: 0.13),
-                          borderRadius: BorderRadius.circular(13),
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Icon(widget.module.icon, color: accent, size: 22),
+                        child: Icon(widget.module.icon, color: accent, size: 24),
                       ),
                       const Spacer(),
                       Icon(
@@ -1777,7 +1777,7 @@ class _ModuleCardState extends State<_ModuleCard> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Text(
                     widget.module.title,
                     maxLines: 2,
@@ -1785,11 +1785,11 @@ class _ModuleCardState extends State<_ModuleCard> {
                     style: TextStyle(
                       color: scheme.onSurface,
                       fontWeight: FontWeight.w800,
-                      fontSize: 15,
-                      height: 1.2,
+                      fontSize: 16,
+                      height: 1.25,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 8),
                   Expanded(
                     child: Align(
                       alignment: Alignment.topLeft,
@@ -1804,16 +1804,28 @@ class _ModuleCardState extends State<_ModuleCard> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.module.status,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: accent,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.05,
+                  const SizedBox(height: 10),
+                  Container(
+                    constraints: const BoxConstraints(minHeight: 26),
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: accent.withValues(alpha: 0.28),
+                      ),
+                    ),
+                    child: Text(
+                      widget.module.status,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: accent,
+                        fontSize: 10,
+                        height: 1.2,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.75,
+                      ),
                     ),
                   ),
                 ],
