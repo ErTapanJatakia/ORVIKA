@@ -80,15 +80,7 @@ jobs:
           "$RUNNER_TEMP/flutter/bin/flutter" --version
 
       - name: Install dependencies
-        run: flutter pub get
-
-      - name: Export resolved dependency lockfile (bootstrap only)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: orvika-pubspec-lock-bootstrap
-          path: pubspec.lock
-          if-no-files-found: error
-          retention-days: 1
+        run: flutter pub get --enforce-lockfile
 
       - name: Analyze
         run: flutter analyze --fatal-infos
