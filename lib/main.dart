@@ -1086,8 +1086,8 @@ class SentinelDashboard extends StatelessWidget {
                                         ? 2
                                         : 1;
                             final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
-                            final cardExtent = (190 + ((textScale - 1).clamp(0, 1.5) * 160))
-                                .clamp(190, 430)
+                            final cardExtent = (210 + ((textScale - 1).clamp(0, 1.5) * 170))
+                                .clamp(210, 465)
                                 .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
