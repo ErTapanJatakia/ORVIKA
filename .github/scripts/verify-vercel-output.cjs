@@ -14,28 +14,38 @@ const required = {
   'x-content-type-options': /^nosniff$/i,
   'x-frame-options': /^DENY$/i,
   'referrer-policy': /^strict-origin-when-cross-origin$/i,
-  'permissions-policy': /camera=\(self\)/i,
+  'permissions-policy': /camera=\\(self\\)/i,
 };
 
-const candidates = config.routes.filter((route) => {
-  if (typeof route.src !== 'string' || !route.headers || typeof route.headers !== 'object') return false;
+function matchesPath(route, pathname) {
+  if (typeof route.src !== 'string') return false;
   try {
-    return new RegExp(route.src).test('/') && new RegExp(route.src).test('/index.html');
-  } catch {
-    return false;
+    return new RegExp(route.src).test(pathname);
+  } catch (error) {
+    throw new Error(`Invalid Vercel route regex "${route.src}": ${error.message}`);
   }
-});
+}
 
-console.log(`Vercel output route candidates for / and /index.html: ${JSON.stringify(candidates, null, 2)}`);
-assert(candidates.length > 0, 'No generated Vercel response-header route matches both / and /index.html');
-
-const normalized = candidates.map((route) =>
-  Object.fromEntries(Object.entries(route.headers).map(([key, value]) => [key.toLowerCase(), String(value)])),
-);
-for (const [name, pattern] of Object.entries(required)) {
-  assert(
-    normalized.some((headers) => pattern.test(headers[name] || '')),
-    `Generated Vercel output is missing required response header: ${name}`,
+function normalizeHeaders(headers) {
+  return Object.fromEntries(
+    Object.entries(headers || {}).map(([key, value]) => [key.toLowerCase(), String(value)]),
   );
 }
-console.log('Generated Vercel output contains all required security headers for / and /index.html.');
+
+for (const pathname of ['/', '/index.html']) {
+  const matchingRoutes = config.routes.filter((route) => matchesPath(route, pathname));
+  const headerRoutes = matchingRoutes.filter((route) => route.headers && typeof route.headers === 'object');
+  console.log(`Vercel output routes matching ${pathname}: ${JSON.stringify(matchingRoutes, null, 2)}`);
+
+  const completeHeaderRoute = headerRoutes.find((route) => {
+    const headers = normalizeHeaders(route.headers);
+    return Object.entries(required).every(([name, pattern]) => pattern.test(headers[name] || ''));
+  });
+
+  assert(
+    completeHeaderRoute,
+    `No single generated Vercel response-header route applies all required security headers to ${pathname}`,
+  );
+}
+
+console.log('Generated Vercel output applies the complete required security-header set to / and /index.html.');
