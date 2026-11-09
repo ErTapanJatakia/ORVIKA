@@ -8,8 +8,9 @@ import 'qr_image_decoder.dart';
 
 /// Decodes RGBA pixels with the bundled, pure-Dart ZXing fallback.
 ///
-/// This keeps Web image scanning independent of the browser BarcodeDetector API
-/// and avoids sending image content to an external service.
+/// Several local luminance interpretations are attempted because colourful
+/// codes can have poor contrast after a conventional RGB-to-gray conversion.
+/// No image data leaves the current process.
 List<QrImageCode> decodeQrImagePixels({
   required int width,
   required int height,
@@ -24,31 +25,69 @@ List<QrImageCode> decodeQrImagePixels({
     throw const FormatException('The selected image pixels could not be read.');
   }
 
-  final argb = Int32List(pixelCount);
-  for (var index = 0; index < pixelCount; index++) {
-    final offset = index * 4;
-    final alpha = rgba[offset + 3];
-    final red = (rgba[offset] * alpha + 255 * (255 - alpha)) ~/ 255;
-    final green = (rgba[offset + 1] * alpha + 255 * (255 - alpha)) ~/ 255;
-    final blue = (rgba[offset + 2] * alpha + 255 * (255 - alpha)) ~/ 255;
-    argb[index] = 0xff000000 | (red << 16) | (green << 8) | blue;
+  final channels = <int>[0, 1, 2, -1];
+  final results = <String, QrImageCode>{};
+
+  for (final channel in channels) {
+    final pixels = Int32List(pixelCount);
+    var minValue = 255;
+    var maxValue = 0;
+
+    for (var index = 0; index < pixelCount; index++) {
+      final offset = index * 4;
+      final alpha = rgba[offset + 3];
+      final red = _composite(rgba[offset], alpha);
+      final green = _composite(rgba[offset + 1], alpha);
+      final blue = _composite(rgba[offset + 2], alpha);
+      final value = switch (channel) {
+        0 => red,
+        1 => green,
+        2 => blue,
+        _ => (red * 299 + green * 587 + blue * 114) ~/ 1000,
+      };
+      if (value < minValue) minValue = value;
+      if (value > maxValue) maxValue = value;
+      pixels[index] = 0xff000000 | (value << 16) | (value << 8) | value;
+    }
+
+    // Stretch luminance to the full range when a photograph or design has
+    // compressed contrast. Avoid amplifying essentially flat images.
+    if (maxValue - minValue >= 24) {
+      final range = maxValue - minValue;
+      for (var index = 0; index < pixelCount; index++) {
+        final value = pixels[index] & 0xff;
+        final stretched = ((value - minValue) * 255 ~/ range).clamp(0, 255);
+        pixels[index] =
+            0xff000000 | (stretched << 16) | (stretched << 8) | stretched;
+      }
+    }
+
+    final bitmap = BinaryBitmap(
+      HybridBinarizer(RGBLuminanceSource(width, height, pixels)),
+    );
+
+    try {
+      final decoded = GenericMultipleBarcodeReader(MultiFormatReader())
+          .decodeMultiple(
+        bitmap,
+        const DecodeHint(alsoInverted: true, tryHarder: true),
+      );
+      for (final result in decoded) {
+        if (result.text.trim().isEmpty) continue;
+        final code = (
+          value: result.text,
+          format: result.barcodeFormat.name,
+        );
+        results.putIfAbsent('${code.format}: ${code.value}', () => code);
+      }
+      if (results.isNotEmpty) break;
+    } on NotFoundException {
+      // Try the next channel/contrast interpretation before giving up.
+    }
   }
 
-  final bitmap = BinaryBitmap(
-    HybridBinarizer(RGBLuminanceSource(width, height, argb)),
-  );
-
-  try {
-    final decoded = GenericMultipleBarcodeReader(MultiFormatReader())
-        .decodeMultiple(bitmap, const DecodeHint(alsoInverted: true));
-    return decoded
-        .where((result) => result.text.trim().isNotEmpty)
-        .map((result) => (
-              value: result.text,
-              format: result.barcodeFormat.name,
-            ))
-        .toList(growable: false);
-  } on NotFoundException {
-    return const [];
-  }
+  return results.values.toList(growable: false);
 }
+
+int _composite(int value, int alpha) =>
+    (value * alpha + 255 * (255 - alpha)) ~/ 255;
