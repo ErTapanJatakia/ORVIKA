@@ -34,7 +34,8 @@ These values represent app preferences or progress markers. The inspected write 
 - If that API is absent, rejects the image format, or returns no result, ORVIKA falls back to the bundled pure-Dart `zxing_lib` decoder. The fallback supports QR, common 1D formats (including Code 128, Code 39, EAN/UPC and ITF), Data Matrix, Aztec, PDF417 and MaxiCode.
 - The browser decodes the selected image into an in-memory canvas pixel buffer. Images above 16 megapixels are downscaled before fallback decoding to bound memory and CPU use.
 - The fallback is part of the application bundle: it does not fetch JavaScript/WASM from a CDN, call a remote decoder, or upload image bytes. The temporary object URL is revoked after scanning.
-- The pure-Dart fallback prioritises compatibility and local processing; it can be slower and less accurate than native platform decoders. A no-result outcome is not proof that an image contains no barcode.
+- The pixel decoder tries red, green, blue and weighted-luminance interpretations, stretches usable contrast, and enables ZXing's `tryHarder` and inverted-image hints. These local attempts improve resilience to coloured foregrounds/backgrounds and some low-contrast designs; they do not guarantee decoding of decorative, distorted, occluded or logo-covered codes.
+- The pure-Dart fallback prioritises compatibility and local processing; it can be slower and less accurate than native platform decoders. A no-result outcome is not proof that an image contains no barcode. Browser-specific image decoding, canvas and file-format support still require real-browser validation.
 
 ## Analytics boundary
 
