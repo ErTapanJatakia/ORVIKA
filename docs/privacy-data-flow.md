@@ -20,9 +20,17 @@ The Academy screen stores completed lesson identifiers under `academy.completed.
 
 These values represent app preferences or progress markers. The inspected write paths do not store submitted URLs, decoded QR payloads, message text, credentials or security-analysis findings.
 
+## QR image picker lifecycle
+
+- Image selection begins only after the user explicitly opens QR Check image scanning and chooses an image.
+- The selected image bytes and decoded result are held in the active scanner route's memory. They are not added to SharedPreferences or sent by the QR analysis code path.
+- Native picker implementations may copy the selected image into an application cache file. ORVIKA best-effort deletes the selected temporary file when it is replaced, cleared, rejected, or the scanner route is disposed. A force-stop or process termination can prevent application cleanup; remaining cache files are subject to operating-system cache lifecycle and cleanup.
+- On Web, the browser owns the selected file object. ORVIKA revokes the temporary object URL created for image decoding.
+- This source-level review does not prove that every OS/browser, extension, backup system or crash-reporting mechanism is free of access to temporary data. Real-device lifecycle validation remains required.
+
 ## Analytics boundary
 
-The Vercel integration remains a static page-view-only integration as documented in [analytics.md](analytics.md). This audit does not add events, route instrumentation, user identifiers or security-analysis telemetry. The existing production Network-tab and dashboard verification remains the evidence for deployment-level analytics operation.
+The Vercel integration remains a static page-view-only integration as documented in [analytics.md](analytics.md). It measures aggregate page-view and basic technical visitor metrics; ORVIKA does not add custom feature events, route instrumentation, user identifiers or security-analysis telemetry. Hosting/CDN infrastructure may independently process request metadata such as IP address, browser headers and security logs. This application-source audit does not establish the provider's exact retention or prove that no technical personal data is processed. The existing production Network-tab and dashboard verification remains the evidence for deployment-level analytics operation.
 
 ## Automated regression coverage
 
