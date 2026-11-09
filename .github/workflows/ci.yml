@@ -58,12 +58,22 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Validate browser smoke-test script syntax
+        run: node --check .github/scripts/orvika-browser-smoke.cjs
+
+      - name: Validate Vercel deployment and header configuration
+        run: |
+          node -e "const c=require('./vercel.json'); const h=(c.headers||[]).flatMap(x=>x.headers||[]); for (const k of ['Strict-Transport-Security','X-Content-Type-Options','X-Frame-Options','Referrer-Policy','Permissions-Policy']) if (!h.some(x=>x.key===k)) throw new Error('Missing Vercel response header: '+k); if (c.git?.deploymentEnabled !== false) throw new Error('Vercel Git auto-deployments must remain disabled; GitHub Actions is the deployment authority.'); if (c.outputDirectory !== 'build/web') throw new Error('Vercel outputDirectory must remain build/web for the prebuilt Flutter Web artifact.');"
 
       - name: Install Flutter SDK
         shell: bash
         run: |
-          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          git -C "$RUNNER_TEMP/flutter" checkout --detach 3.47.9
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
 
