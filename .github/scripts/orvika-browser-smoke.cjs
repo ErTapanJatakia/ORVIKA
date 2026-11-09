@@ -55,7 +55,7 @@ async function main() {
         if (selectors.some((selector) => document.querySelector(selector))) return true;
         return Array.from(document.querySelectorAll('*')).some((element) =>
           element.shadowRoot && selectors.some((selector) => element.shadowRoot.querySelector(selector)));
-      }, { timeout: 20000 }).catch(() => {});
+      }, undefined, { timeout: 20000 }).catch(() => {});
       const renderer = await page.evaluate(() => {
         function deepExists(selector, root = document) {
           if (root.querySelector(selector)) return true;

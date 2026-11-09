@@ -60,6 +60,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
+      - name: Validate browser smoke-test script syntax
+        run: node --check .github/scripts/orvika-browser-smoke.cjs
+
+      - name: Validate Vercel header configuration
+        run: |
+          node -e "const c=require('./vercel.json'); const h=(c.headers||[]).flatMap(x=>x.headers||[]); for (const k of ['Strict-Transport-Security','X-Content-Type-Options','X-Frame-Options','Referrer-Policy','Permissions-Policy']) if (!h.some(x=>x.key===k)) throw new Error('Missing Vercel response header: '+k);"
+
       - name: Install Flutter SDK
         shell: bash
         run: |
