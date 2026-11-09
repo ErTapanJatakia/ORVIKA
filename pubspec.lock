@@ -495,11 +495,8 @@ packages:
     version: "2.4.1"
   sky_engine:
     dependency: transitive
-    description:
-      name: sky_engine
-      sha256: "8cbb64c9b4a65e5aeb4c4d8d88d4a98f6b11b5f7a0e1a6f0f7d6c7b1f8b2c0d2"
-      url: "https://pub.dev"
-    source: hosted
+    description: flutter
+    source: sdk
     version: "0.0.0"
   source_span:
     dependency: transitive
