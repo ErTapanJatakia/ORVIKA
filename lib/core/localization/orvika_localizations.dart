@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'orvika_language.dart';
+import 'orvika_feature_translations.dart';
 
 class OrvikaLocalizations {
   const OrvikaLocalizations(this.language);
@@ -648,11 +649,17 @@ class OrvikaLocalizations {
   static const Set<String> rightToLeftLanguageCodes = {'ar', 'ur', 'he', 'fa', 'ps'};
   bool get usesRightToLeftLayout => rightToLeftLanguageCodes.contains(language.code);
 
-  Map<String, String> get _translations => switch (language.code) {
+  Map<String, String> get _baseTranslations => switch (language.code) {
         'ru' => _russian, 'hi' => _hindiDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
         'it' => _italianDraft, 'pa' => _punjabiDraft, 'ur' => _urduDraft,
         'ar' => _arabicDraft, 'mr' => _marathiDraft, 'gu' => _gujaratiDraft,
         'sa' => _sanskritDraft, _ => const <String, String>{},
+      };
+
+  /// Phase-two checker strings override or extend the initial language packs.
+  Map<String, String> get _translations => {
+        ..._baseTranslations,
+        ...OrvikaFeatureTranslations.forCode(language.code),
       };
 
   /// True only when the selected language contains an authored value for [key].

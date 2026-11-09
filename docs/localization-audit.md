@@ -49,3 +49,41 @@ Their visible labels, helper text, actions, empty states, dialogs and progress m
 ## Validation boundaries
 
 No claim of complete localization, native-speaker review, full Material framework translation, or full RTL conformance is made by this audit. Android device and Aurora OS runtime validation remain separate follow-up activities.
+
+
+## Phase 2 — checker control coverage (9 November 2026)
+
+- Added a dedicated offline feature-translation overlay for the eleven existing authored packs: Russian, Hindi, German, French, Italian, Punjabi, Urdu, Arabic, Marathi, Gujarati and Sanskrit.
+- The phase-two key set covers primary Link Check, QR Check and Message Check headings, input labels and primary actions; shared severity labels; and the two QR acquisition actions (camera and selected image).
+- QR camera and image acquisition remain opt-in. Only presentation labels changed; camera permission flow, image selection, decoding, analyzer behavior and result semantics are unchanged.
+- The image-scanner instruction and image-selection/size/empty-image/no-code/generic decode error copy now resolve through localization keys with explicit English fallbacks. Decoder-provided platform/format diagnostics remain canonical English because their wording originates outside the authored UI copy.
+- Added contract tests asserting every phase-two key exists in all eleven authored packs, explicit English fallback for an un-authored language, and RTL metadata for Arabic and Urdu. Widget tests verify French and Arabic QR acquisition labels render.
+- Translation packs remain draft where previously classified as draft. No language has been promoted to reviewed status.
+- Detailed descriptions, analyzer-generated findings, incident-response instructions, legal/privacy disclosures, Academy curriculum and Intelligence reference content remain outside this increment. These require specialist and native-speaker review before translation.
+
+## Phase 2 validation boundary
+
+Automated coverage verifies key presence and widget rendering, not linguistic correctness, regional appropriateness, typography quality or complete RTL conformance. Human review by fluent speakers remains required. This is a partial expansion of feature UI coverage, not a claim of full localization.
+
+
+## Phase 2 — extended hard-coded UI review (9 November 2026)
+
+The broader source review extended beyond the three primary checker forms:
+
+- QR camera scanner title, close tooltip, explicit camera-start/requesting labels and stop-camera action now resolve through localization keys.
+- QR image scanner title, close tooltip, choose/choose-another, preview fallback, scan progress/action, clear action, detected-code count and result-selection instruction now resolve through localization keys.
+- Privacy checklist reset dialog title/body/actions and persistence error messages now resolve through localization keys.
+- The shared feature app bar already resolves the known feature titles through the existing `module.*` keys.
+- These newly keyed scanner and privacy strings intentionally use explicit English fallback until translations are authored and reviewed. They are no longer untracked literals embedded in widget code, but they are not claimed as translated in the eleven draft packs.
+- Scanner permission/error explanations, image-decoder diagnostics, security-analysis findings and the detailed privacy/analytics disclosures remain canonical English. They communicate platform behavior, limitations or data-handling claims and require specialist/native-speaker review before translation.
+- Privacy checklist practice titles and guidance are content, not decorative UI chrome; they remain canonical pending review.
+- Automated fallback-contract tests cover representative new camera, image and privacy controls. This is not a linguistic-quality test.
+
+### Milestone closure criteria
+
+The Phase 2 implementation can be considered code-complete only when all visible widget-owned controls, titles, dialogs, errors and empty-state labels have a localization key or a documented canonical-English exception; tests cover the key/fallback contract; and CI passes on the final PR head. Translation quality, native-speaker sign-off, complete RTL behavior and physical-device/browser checks remain separate acceptance activities and must not be inferred from CI.
+
+
+### Audit correction — current Phase 2 head
+
+The initial audit table above records the pre-localization baseline and should be read as a historical snapshot, not the current state. On the current Phase 2 branch, Link Check, QR Check and Message Check already resolve their primary form copy, result headings/notices and severity labels through localization lookup. Their result announcements and QR detected-format label have also now been moved behind localization keys. Scanner controls and Privacy reset/error controls are keyed as detailed above. A key with no authored value intentionally falls back to English; keying and translation coverage are tracked separately.

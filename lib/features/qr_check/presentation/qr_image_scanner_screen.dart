@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 
 import '../domain/qr_image_decoder.dart';
+import '../../../core/localization/orvika_localizations.dart';
 
 class QrImageScannerScreen extends StatefulWidget {
   const QrImageScannerScreen({super.key});
@@ -25,6 +26,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   String? _message;
 
   Future<void> _chooseImage() async {
+    final l10n = OrvikaLocalizations.of(context);
     setState(() {
       _loading = true;
       _message = null;
@@ -44,14 +46,14 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
       final length = await selected.length();
       if (length <= 0) {
         setState(() {
-          _message = 'The selected image is empty or could not be read.';
+          _message = l10n.text('checker.image.error.empty', 'The selected image is empty or could not be read.');
           _loading = false;
         });
         return;
       }
       if (length > _maxImageBytes) {
         setState(() {
-          _message = 'Please choose an image smaller than 20 MB.';
+          _message = l10n.text('checker.image.error.tooLarge', 'Please choose an image smaller than 20 MB.');
           _loading = false;
         });
         return;
@@ -68,13 +70,14 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _message = 'The image could not be selected. Check the file and try again.';
+        _message = l10n.text('checker.image.error.selection', 'The image could not be selected. Check the file and try again.');
         _loading = false;
       });
     }
   }
 
   Future<void> _decodeImage() async {
+    final l10n = OrvikaLocalizations.of(context);
     final bytes = _imageBytes;
     final path = _imagePath;
     if (bytes == null || path == null || _loading) return;
@@ -93,7 +96,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
       setState(() {
         _codes = results;
         _message = results.isEmpty
-            ? 'No supported QR code or barcode was detected. Try a clearer image with the code fully visible.'
+            ? l10n.text('checker.image.error.noCode', 'No supported QR code or barcode was detected. Try a clearer image with the code fully visible.')
             : null;
         _loading = false;
       });
@@ -112,7 +115,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _message = 'This image could not be decoded on this device or browser.';
+        _message = l10n.text('checker.image.error.decode', 'This image could not be decoded on this device or browser.');
         _loading = false;
       });
     }
@@ -137,12 +140,13 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     final bytes = _imageBytes;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan from image'),
+        title: Text(l10n.text('checker.image.title', 'Scan from image')),
         leading: IconButton(
-          tooltip: 'Close image scanner',
+          tooltip: l10n.text('checker.image.close', 'Close image scanner'),
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
         ),
@@ -151,9 +155,9 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
           children: [
-            const Text(
-              'Choose an image containing a QR code or barcode.',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+            Text(
+              l10n.text('checker.image.instruction', 'Choose an image containing a QR code or barcode.'),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
             ),
             const SizedBox(height: 8),
             Text(
@@ -164,7 +168,9 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
             OutlinedButton.icon(
               onPressed: _loading ? null : _chooseImage,
               icon: const Icon(Icons.photo_library_outlined),
-              label: Text(bytes == null ? 'Choose image' : 'Choose another image'),
+              label: Text(bytes == null
+                  ? l10n.text('checker.image.choose', 'Choose image')
+                  : l10n.text('checker.image.chooseAnother', 'Choose another image')),
             ),
             if (bytes != null) ...[
               const SizedBox(height: 14),
@@ -178,16 +184,16 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
                       child: Image.memory(
                         bytes,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => const Padding(
-                          padding: EdgeInsets.all(24),
-                          child: Text('Preview unavailable for this image format.'),
+                        errorBuilder: (_, __, ___) => Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(l10n.text('checker.image.previewUnavailable', 'Preview unavailable for this image format.')),
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: Text(
-                        _imageName ?? 'Selected image',
+                        _imageName ?? l10n.text('checker.image.selected', 'Selected image'),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: scheme.onSurfaceVariant),
@@ -200,12 +206,14 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
               FilledButton.icon(
                 onPressed: _loading ? null : _decodeImage,
                 icon: const Icon(Icons.document_scanner_outlined),
-                label: Text(_loading ? 'Scanning image…' : 'Detect codes in image'),
+                label: Text(_loading
+                    ? l10n.text('checker.image.scanning', 'Scanning image…')
+                    : l10n.text('checker.image.detect', 'Detect codes in image')),
               ),
               TextButton.icon(
                 onPressed: _loading ? null : _clearImage,
                 icon: const Icon(Icons.delete_outline),
-                label: const Text('Clear selected image'),
+                label: Text(l10n.text('checker.image.clear', 'Clear selected image')),
               ),
             ],
             if (_loading) ...[
@@ -225,7 +233,11 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
             if (_codes.isNotEmpty) ...[
               const SizedBox(height: 18),
               Text(
-                'Detected ${_codes.length}${_codes.length == 1 ? ' code' : ' codes'}',
+                l10n.textWithParameters(
+                  _codes.length == 1 ? 'checker.image.detectedOne' : 'checker.image.detectedMany',
+                  fallback: _codes.length == 1 ? 'Detected {count} code' : 'Detected {count} codes',
+                  parameters: {'count': _codes.length},
+                ),
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
@@ -244,7 +256,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
                   ),
                 ),
               Text(
-                'Select a result to inspect its decoded content. Nothing is opened or executed automatically.',
+                l10n.text('checker.image.selectResult', 'Select a result to inspect its decoded content. Nothing is opened or executed automatically.'),
                 style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
               ),
             ],

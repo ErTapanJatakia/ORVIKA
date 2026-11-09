@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../../core/localization/orvika_localizations.dart';
+
 /// A deliberately opt-in, one-result camera session.
 ///
 /// The scanner never starts automatically. Camera capture is started only
@@ -140,11 +142,12 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan a code'),
+        title: Text(l10n.text('checker.camera.title', 'Scan a code')),
         leading: IconButton(
-          tooltip: 'Close scanner',
+          tooltip: l10n.text('checker.camera.close', 'Close scanner'),
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
         ),
@@ -230,14 +233,14 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                             },
                       icon: const Icon(Icons.no_photography_outlined),
                       label: Text(_starting
-                          ? 'Requesting camera access…'
-                          : 'Allow camera for this scan'),
+                          ? l10n.text('checker.camera.requesting', 'Requesting camera access…')
+                          : l10n.text('checker.camera.allow', 'Allow camera for this scan')),
                     )
                   else
                     OutlinedButton.icon(
                       onPressed: _stopCamera,
                       icon: const Icon(Icons.stop_circle_outlined),
-                      label: const Text('Stop camera'),
+                      label: Text(l10n.text('checker.camera.stop', 'Stop camera')),
                     ),
                   const SizedBox(height: 8),
                   Text(
