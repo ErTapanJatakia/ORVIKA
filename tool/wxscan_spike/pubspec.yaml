@@ -1,5 +1,5 @@
 name: orvika_wxscan_spike
-description: Isolated browser feasibility harness for wxscan; not part of the production app.
+description: Isolated browser runtime and decoder feasibility harness for wxscan; not part of the production app.
 publish_to: none
 version: 0.0.1
 
@@ -17,3 +17,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/models/detect.tflite
+    - assets/models/sr.tflite
+    - assets/fixtures/qr.png
