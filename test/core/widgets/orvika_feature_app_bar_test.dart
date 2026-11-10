@@ -45,9 +45,7 @@ void main() {
     );
 
     expect(
-      tester.getSemantics(find.text('Custom Screen')).hasFlag(
-            SemanticsFlag.isHeader,
-          ),
+      tester.getSemantics(find.text('Custom Screen')).flagsCollection.isHeader,
       isTrue,
     );
   });
