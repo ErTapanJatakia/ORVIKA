@@ -40,5 +40,14 @@ void main() {
     expect(find.text('PRESERVE USEFUL INFORMATION'), findsOneWidget);
     expect(find.text('AVOID'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
+
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+    expect(
+      tester.getSemantics(find.text('FIRST PRIORITY')).hasFlag(
+            SemanticsFlag.isHeader,
+          ),
+      isTrue,
+    );
   });
 }
