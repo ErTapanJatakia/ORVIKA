@@ -16,20 +16,11 @@
   <meta name="vercel-analytics-script" content="/_vercel/insights/script.js">
 </head>
 <body>
-  <script>
-    window.va = window.va || function () {
-      (window.vaq = window.vaq || []).push(arguments);
-    };
-    (function () {
-      var pathElement = document.querySelector('meta[name="vercel-analytics-script"]');
-      var scriptPath = pathElement ? pathElement.getAttribute('content').trim() : '';
-      if (!/^\/[A-Za-z0-9/_-]+\/script\.js$/.test(scriptPath)) return;
-      var script = document.createElement('script');
-      script.defer = true;
-      script.src = scriptPath;
-      document.head.appendChild(script);
-    })();
-  </script>
+  <script
+    src="orvika-analytics-bootstrap.js"
+    defer
+    integrity="sha384-h/LxWtQkj0B9Wu3MLMdrovbgImMUUtniDf1ZsbuJJfF5ueWJ1Nrs3laSkhIADBQP"
+    crossorigin="anonymous"></script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
