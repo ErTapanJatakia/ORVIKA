@@ -16,20 +16,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: wxscan-spike-${{ github.ref }}
+  group: wxscan-spike-\${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   web-feasibility:
-    name: Build pinned wxscan Web runtime and isolated harness
+    name: Build and exercise wxscan Web runtime in Chromium and Firefox
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout ORVIKA
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
-      # wxscan 0.1.7 pins scanner tag v0.1.0, but that release currently
-      # returns 404 for wxscan_wasm.wasm. Build the same upstream Rust source
-      # ourselves instead of weakening the package's checksum verification.
       - name: Checkout pinned wxscan Rust sources
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -74,6 +71,34 @@ jobs:
           "$RUNNER_TEMP/flutter/bin/flutter" --version
           "$RUNNER_TEMP/flutter/bin/dart" --version
 
+      - name: Download and verify pinned CNN model weights
+        working-directory: tool/wxscan_spike
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/models assets/fixtures
+          base="https://raw.githubusercontent.com/wilinz/wxscan-weights/f60bbdbaa8dc8662050948328ae4faa957a5e0cd/models"
+          curl --fail --location --silent --show-error "$base/detect.tflite" -o assets/models/detect.tflite
+          curl --fail --location --silent --show-error "$base/sr.tflite" -o assets/models/sr.tflite
+          echo "de3753a21b953f3f41372e07087cb23e7f698bae01909225ea47f575e65dc0f2  assets/models/detect.tflite" | sha256sum --check -
+          echo "5e73c5723b827b58244c8a90c696bbd6219b5a65d742a7bdc235002b4741bb65  assets/models/sr.tflite" | sha256sum --check -
+
+      - name: Generate deterministic synthetic QR fixture
+        working-directory: tool/wxscan_spike
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check "qrcode[pil]==8.2" "Pillow==12.0.0"
+          python3 - <<'PY'
+          import qrcode
+          from qrcode.constants import ERROR_CORRECT_H
+          qr = qrcode.QRCode(version=None, error_correction=ERROR_CORRECT_H, box_size=12, border=4)
+          qr.add_data("ORVIKA-WXSCAN-FEASIBILITY-2026")
+          qr.make(fit=True)
+          qr.make_image(fill_color="black", back_color="white").convert("RGB").save("assets/fixtures/qr.png")
+          PY
+          test -s assets/fixtures/qr.png
+
       - name: Resolve isolated dependency
         working-directory: tool/wxscan_spike
         run: flutter pub get
@@ -88,7 +113,6 @@ jobs:
           mkdir -p web/wxscan
           cp "$package_root/lib/src/web/assets/wxscan_worker.js" web/wxscan/
           cp "$GITHUB_WORKSPACE/_rust/wxscan-rs/target/wasm32-unknown-unknown/wasm/wxscan_wasm.wasm" web/wxscan/
-
           lock="$package_root/tool/web.lock"
           value() { grep "^$1=" "$lock" | head -1 | cut -d= -f2-; }
           repo=$(value TFLITE_REPO)
@@ -110,7 +134,7 @@ jobs:
         working-directory: tool/wxscan_spike
         run: flutter build web --release
 
-      - name: Verify browser runtime is packaged
+      - name: Verify browser runtime and model assets are packaged
         working-directory: tool/wxscan_spike
         shell: bash
         run: |
@@ -118,3 +142,26 @@ jobs:
           for file in wxscan_worker.js wxscan_wasm.wasm wxscan_tflite.js wxscan_tflite.wasm; do
             test -s "build/web/wxscan/$file"
           done
+          grep -R -q "detect.tflite" build/web/assets
+          grep -R -q "sr.tflite" build/web/assets
+
+      - name: Install Playwright browsers
+        working-directory: tool/wxscan_spike
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium firefox
+
+      - name: Exercise worker and CNN decode in Chromium and Firefox
+        working-directory: tool/wxscan_spike
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory build/web > "$RUNNER_TEMP/wxscan-http.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          BROWSER=chromium node scripts/browser_smoke.mjs
+          BROWSER=firefox node scripts/browser_smoke.mjs
