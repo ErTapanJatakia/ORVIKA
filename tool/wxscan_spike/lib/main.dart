@@ -31,6 +31,10 @@ class _SpikeAppState extends State<_SpikeApp> {
     _runBrowserDecode();
   }
 
+  void _setStatus(String value) {
+    if (mounted) setState(() => _status = 'WXSCAN_STATUS:$value');
+  }
+
   Future<Uint8List> _asset(String path) async {
     final data = await rootBundle.load(path);
     return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -39,29 +43,35 @@ class _SpikeAppState extends State<_SpikeApp> {
   Future<void> _runBrowserDecode() async {
     WxScanner? scanner;
     try {
+      _setStatus('LOADING_MODELS');
       final detect = await _asset('assets/models/detect.tflite');
       final superResolution = await _asset('assets/models/sr.tflite');
       final fixture = await _asset('assets/fixtures/qr.png');
+      _setStatus('CREATING_SCANNER');
       scanner = await WxScanner.create(
         detectModel: detect,
         srModel: superResolution,
-      );
+      ).timeout(const Duration(seconds: 45));
+      _setStatus('CHECKING_MODELS');
       if (!scanner.hasDetector || !scanner.hasSuperResolution) {
         throw StateError(
           'CNN models did not load (detector=${scanner.hasDetector}, '
           'superResolution=${scanner.hasSuperResolution})',
         );
       }
-      final outcome = await scanner.scanImage(fixture);
+      _setStatus('SCANNING');
+      final outcome = await scanner
+          .scanImage(fixture)
+          .timeout(const Duration(seconds: 60));
       final decoded = outcome.results.any((result) => result.text == _expected);
       if (!decoded) {
         throw StateError(
           'Synthetic QR was not decoded; results=${outcome.results.length}',
         );
       }
-      if (mounted) setState(() => _status = 'WXSCAN_STATUS:PASS');
+      _setStatus('PASS');
     } catch (error) {
-      if (mounted) setState(() => _status = 'WXSCAN_STATUS:FAIL: $error');
+      _setStatus('FAIL: $error');
     } finally {
       await scanner?.dispose();
     }
