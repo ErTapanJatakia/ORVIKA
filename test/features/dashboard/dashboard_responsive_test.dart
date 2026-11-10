@@ -33,18 +33,17 @@ void main() {
       await tester.pumpAndSettle();
 
       final dashboardHeading = find.text('Your safety toolkit');
-      // The heading is inside lazily built sliver content. Scroll the known
-      // dashboard viewport directly until the sliver child is mounted; do not
-      // ask scrollUntilVisible to resolve a Scrollable finder before it exists.
-      for (var attempt = 0;
-          attempt < 30 && dashboardHeading.evaluate().isEmpty;
-          attempt++) {
-        await tester.drag(
-          find.byType(CustomScrollView),
-          const Offset(0, -180),
-        );
-        await tester.pumpAndSettle();
-      }
+      final dashboardScrollable = find.descendant(
+        of: find.byType(CustomScrollView),
+        matching: find.byType(Scrollable),
+      ).first;
+      await tester.scrollUntilVisible(
+        dashboardHeading,
+        240,
+        scrollable: dashboardScrollable,
+        maxScrolls: 30,
+      );
+      await tester.pumpAndSettle();
       expect(dashboardHeading, findsOneWidget);
       await tester.ensureVisible(dashboardHeading);
       await tester.pumpAndSettle();
