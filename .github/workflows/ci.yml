@@ -67,7 +67,7 @@ jobs:
 
       - name: Validate Vercel deployment and header configuration
         run: |
-          node -e "const c=require('./vercel.json'); const h=Object.fromEntries((c.headers||[]).flatMap(x=>x.headers||[]).map(x=>[x.key.toLowerCase(),x.value])); const required=['strict-transport-security','x-content-type-options','x-frame-options','referrer-policy','permissions-policy','content-security-policy','cross-origin-embedder-policy','cross-origin-opener-policy']; for (const k of required) if (!h[k]) throw new Error('Missing Vercel response header: '+k); if (!/default-src 'self'/.test(h['content-security-policy']) || !/script-src[^;]*'wasm-unsafe-eval'/.test(h['content-security-policy']) || /script-src[^;]*'unsafe-eval'/.test(h['content-security-policy'])) throw new Error('CSP is missing required Flutter-safe directives or permits unsafe-eval.'); if (h['cross-origin-embedder-policy'] !== 'credentialless') throw new Error('Unexpected COEP policy.'); if (h['cross-origin-opener-policy'] !== 'same-origin-allow-popups') throw new Error('Unexpected COOP policy.'); if (c.git?.deploymentEnabled !== false) throw new Error('Vercel Git auto-deployments must remain disabled; GitHub Actions is the deployment authority.'); if (c.outputDirectory !== 'build/web') throw new Error('Vercel outputDirectory must remain build/web for the prebuilt Flutter Web artifact.');"
+          node -e "const c=require('./vercel.json'); const h=Object.fromEntries((c.headers||[]).flatMap(x=>x.headers||[]).map(x=>[x.key.toLowerCase(),x.value])); const required=['strict-transport-security','x-content-type-options','x-frame-options','referrer-policy','permissions-policy','content-security-policy','cross-origin-embedder-policy','cross-origin-opener-policy']; for (const k of required) if (!h[k]) throw new Error('Missing Vercel response header: '+k); if (!/default-src 'none'/.test(h['content-security-policy']) || !/script-src[^;]*'wasm-unsafe-eval'/.test(h['content-security-policy']) || /script-src[^;]*'unsafe-eval'/.test(h['content-security-policy'])) throw new Error('CSP is missing required Flutter-safe directives or permits unsafe-eval.'); if (h['cross-origin-embedder-policy'] !== 'credentialless') throw new Error('Unexpected COEP policy.'); if (h['cross-origin-opener-policy'] !== 'same-origin-allow-popups') throw new Error('Unexpected COOP policy.'); if (c.git?.deploymentEnabled !== false) throw new Error('Vercel Git auto-deployments must remain disabled; GitHub Actions is the deployment authority.'); if (c.outputDirectory !== 'build/web') throw new Error('Vercel outputDirectory must remain build/web for the prebuilt Flutter Web artifact.');"
 
       - name: Install Flutter SDK
         shell: bash
@@ -89,7 +89,7 @@ jobs:
         run: flutter test --reporter expanded
 
       - name: Build Web
-        run: flutter build web --release
+        run: flutter build web --release --csp --no-web-resources-cdn
 
       - name: Install Vercel CLI
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
