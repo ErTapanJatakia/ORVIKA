@@ -22,9 +22,13 @@ that the configured paths survive a release Web build.
 - CNN model weights are optional in the package, but without them the package
   explicitly documents reduced detection capability. A proper accuracy test
   must include pinned model files and verify their SHA-256 values.
-- Its native build hook downloads/builds Rust and TensorFlow Lite assets.
-  This spike must report any network/build dependency; runtime scanning must
-  not depend on a third-party CDN or remote service.
+- Its native build hook downloads/builds Rust and TensorFlow Lite assets. The
+  package's `fetch_web` command also invokes Dart build hooks and its pinned
+  scanner release asset currently returns HTTP 404. The feasibility workflow
+  therefore follows the package maintainer's own demo approach: build the
+  scanner from a pinned upstream source commit, fetch only the pinned LiteRT
+  runtime files, and verify both runtime checksums. This avoids weakening
+  integrity checks or invoking an unnecessary host-native build hook.
 
 ## First-stage acceptance
 
