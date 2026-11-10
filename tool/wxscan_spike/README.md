@@ -1,62 +1,43 @@
 # ORVIKA wxscan Web feasibility spike
 
-This directory is an isolated experiment. It is not imported by the production
+This is an isolated browser runtime experiment. It is not imported by the production
 application and does not change the production scanner.
 
-## Purpose
+## What CI now proves
 
-Verify that wxscan 0.1.7 resolves under the Flutter SDK pinned by ORVIKA CI,
-that its browser worker/WebAssembly payload can be fetched and packaged, and
-that the configured paths survive a release Web build.
+- wxscan 0.1.7 resolves under the pinned Flutter SDK.
+- The scanner WebAssembly is built from a pinned upstream Rust source commit.
+- The LiteRT JavaScript/Wasm runtime is pinned and SHA-256 verified.
+- The package's worker is copied from the resolved package.
+- The official WeChat QR CNN detector and super-resolution TFLite models are
+  fetched from a pinned weights-repository commit and SHA-256 verified.
+- A deterministic synthetic QR fixture is generated in CI (never committed).
+- The Flutter Web harness starts the actual worker, asserts both CNN stages
+  loaded, scans the fixture through `WxScanner.scanImage`, and checks its
+  expected payload in headless Chromium and Firefox.
 
-## Current compatibility findings
+## Model provenance and privacy
 
-- ORVIKA CI pins Flutter 3.47.9.
-- wxscan 0.1.7 declares Dart >=3.10 and Flutter >=3.38.1.
-- The production app currently declares Dart >=3.4.0. Do not raise that
-  production constraint for this spike.
-- wxscan is an advanced QR decoder, not a replacement for ZXing's broader
-  1D/2D barcode format support.
-- Its browser implementation uses a worker and four local files. Three are
-  fetched by `dart run wxscan:fetch_web`; the worker is supplied by the package.
-- CNN model weights are optional in the package, but without them the package
-  explicitly documents reduced detection capability. A proper accuracy test
-  must include pinned model files and verify their SHA-256 values.
-- Its native build hook downloads/builds Rust and TensorFlow Lite assets. The
-  package's `fetch_web` command also invokes Dart build hooks and its pinned
-  scanner release asset currently returns HTTP 404. The feasibility workflow
-  therefore follows the package maintainer's own demo approach: build the
-  scanner from a pinned upstream source commit, fetch only the pinned LiteRT
-  runtime files, and verify both runtime checksums. This avoids weakening
-  integrity checks or invoking an unnecessary host-native build hook.
+The two model files are Apache-2.0 derivatives of the WeChatCV QR models. Their
+upstream checksums are checked before packaging. Model weights are public
+algorithm assets, not user data. No reference photograph, QR payload from a
+personal code, or other user content is uploaded or committed.
 
-## First-stage acceptance
+The synthetic fixture is generated locally in the CI runner. At runtime, the
+browser decodes it into pixels and wxscan processes those pixels in a local
+WebAssembly worker. No remote decoder, CDN scanner, camera permission, or
+image upload is involved.
 
-1. Dependency resolution succeeds without changing the production
-   `pubspec.yaml` or `pubspec.lock`.
-2. `dart run wxscan:fetch_web` creates the expected local Web payload.
-3. Flutter Web release compilation succeeds with local worker/Wasm paths.
-4. The resulting build contains the worker, scanner Wasm, TFLite loader and
-   TFLite Wasm files.
-5. No production scanner code, analytics, CSP, deployment settings or
-   personal reference images are changed.
+## Still not proven
 
-## Not yet proven
+- Decoding the user's private stylised QR photographs.
+- Whether this CNN pipeline materially improves those particular dot modules,
+  custom finder patterns, logo overlay, perspective and display artefacts.
+- Brave-specific behaviour (Chromium is tested; Brave requires a separate
+  real-browser check).
+- Mobile performance, memory use, bundle transfer cost and native-platform
+  compatibility.
 
-- Runtime worker startup in Firefox, Chrome and Brave.
-- Decoding the user's two private stylised QR photographs.
-- Whether the CNN models improve this particular dot-pattern/custom-finder/
-  central-logo sample.
-- Android/iOS native build compatibility and binary-size impact.
-- Full performance and memory behaviour on mobile devices.
-
-Do not integrate this package into production unless the first-stage checks
-pass and a separate browser test proves a measurable improvement on the
-reference sample while retaining ordinary QR and Code 128 coverage.
-
-## Privacy
-
-Reference photographs must remain private and must never be committed to this
-public repository. Use only synthetic fixtures in repository tests. All image
-bytes for any future runtime test must remain in browser memory and must not
-be uploaded to a remote decoder.
+Do not integrate into production unless the browser runtime tests pass and a
+separate manual test demonstrates a measurable improvement on the private
+reference images while preserving the existing ZXing QR and barcode coverage.
