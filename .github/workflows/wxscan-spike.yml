@@ -165,3 +165,11 @@ jobs:
           done
           BROWSER=chromium node scripts/browser_smoke.mjs
           BROWSER=firefox node scripts/browser_smoke.mjs
+
+      - name: Upload isolated browser harness for private reference testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: wxscan-private-reference-harness
+          path: tool/wxscan_spike/build/web/
+          if-no-files-found: error
+          retention-days: 1
