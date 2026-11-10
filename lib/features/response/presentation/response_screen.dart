@@ -161,9 +161,9 @@ class _ResponseSection extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-              color: scheme.primary,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
+                color: scheme.primary,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
                 letterSpacing: 0.8,
               ),
             ),
