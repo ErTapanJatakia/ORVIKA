@@ -1,0 +1,74 @@
+name: ORVIKA wxscan Web Feasibility
+
+on:
+  push:
+    branches: [spike/wxscan-web-feasibility]
+    paths:
+      - "tool/wxscan_spike/**"
+      - ".github/workflows/wxscan-spike.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "tool/wxscan_spike/**"
+      - ".github/workflows/wxscan-spike.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wxscan-spike-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-feasibility:
+    name: Resolve wxscan and build isolated Web harness
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Install pinned Flutter SDK
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          git -C "$RUNNER_TEMP/flutter" checkout --detach 3.47.9
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+          dart --version
+
+      - name: Resolve isolated dependency
+        working-directory: tool/wxscan_spike
+        run: flutter pub get
+
+      - name: Fetch pinned browser runtime assets
+        working-directory: tool/wxscan_spike
+        run: dart run wxscan:fetch_web
+
+      - name: Verify expected browser payload
+        working-directory: tool/wxscan_spike
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in wxscan_worker.js wxscan_wasm.wasm wxscan_tflite.js wxscan_tflite.wasm; do
+            test -s "web/wxscan/$file"
+            sha256sum "web/wxscan/$file"
+          done
+
+      - name: Analyze isolated harness
+        working-directory: tool/wxscan_spike
+        run: flutter analyze --fatal-infos
+
+      - name: Build isolated Flutter Web release
+        working-directory: tool/wxscan_spike
+        run: flutter build web --release
+
+      - name: Verify deployed payload is packaged
+        working-directory: tool/wxscan_spike
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in wxscan_worker.js wxscan_wasm.wasm wxscan_tflite.js wxscan_tflite.wasm; do
+            test -s "build/web/wxscan/$file"
+          done
