@@ -8,19 +8,23 @@ import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> _dragUntilBuilt(
+Future<void> _scrollUntilBuilt(
   WidgetTester tester,
   Finder scrollView,
-  Finder target,
-  Offset delta, {
+  Finder target, {
   int maxAttempts = 30,
 }) async {
-  for (var attempt = 0;
-      attempt < maxAttempts && target.evaluate().isEmpty;
-      attempt++) {
-    await tester.drag(scrollView, delta);
-    await tester.pumpAndSettle();
-  }
+  final scrollable = find.descendant(
+    of: scrollView,
+    matching: find.byType(Scrollable),
+  ).first;
+  await tester.scrollUntilVisible(
+    target,
+    240,
+    scrollable: scrollable,
+    maxScrolls: maxAttempts,
+  );
+  await tester.pumpAndSettle();
   expect(target, findsOneWidget,
       reason: 'Expected lazy dashboard content to be built after scrolling.');
 }
@@ -480,11 +484,10 @@ void main() {
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     final dashboardHeading = find.text('Your safety toolkit');
-    await _dragUntilBuilt(
+    await _scrollUntilBuilt(
       tester,
       find.byType(CustomScrollView),
       dashboardHeading,
-      const Offset(0, 180),
     );
     await tester.ensureVisible(dashboardHeading);
     await tester.pumpAndSettle();
