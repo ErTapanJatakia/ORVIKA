@@ -42,7 +42,6 @@ void main() {
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
 
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     expect(
       tester.getSemantics(find.text('FIRST PRIORITY')).flagsCollection.isHeader,
       isTrue,
