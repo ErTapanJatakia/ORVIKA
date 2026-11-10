@@ -33,10 +33,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final dashboardHeading = find.text('Your safety toolkit');
-      final dashboardScrollable = find.descendant(
-        of: find.byType(CustomScrollView),
-        matching: find.byType(Scrollable),
-      ).first;
+      final dashboardScrollable = find.byType(Scrollable).first;
       await tester.scrollUntilVisible(
         dashboardHeading,
         240,
