@@ -12,11 +12,7 @@ assert(Array.isArray(config.routes), 'Vercel Build Output API config has no rout
 function hasValidHsts(value) {
   const header = String(value || '');
   const maxAge = header.match(/(?:^|;)\s*max-age=(\d+)/i);
-  return Boolean(
-    maxAge
-      && Number(maxAge[1]) >= 31536000
-      && /(?:^|;)\s*includeSubDomains(?:;|$)/i.test(header),
-  );
+  return Boolean(maxAge && Number(maxAge[1]) >= 31536000 && /(?:^|;)\s*includeSubDomains(?:;|$)/i.test(header));
 }
 
 const required = {
@@ -25,10 +21,12 @@ const required = {
   'x-frame-options': /^DENY$/i,
   'referrer-policy': /^strict-origin-when-cross-origin$/i,
   'permissions-policy': /camera=\(self\)/i,
-  'content-security-policy': (value) => /default-src 'self'/i.test(value)
+  'content-security-policy': (value) => /default-src 'none'/i.test(value)
     && /script-src[^;]*'wasm-unsafe-eval'/i.test(value)
     && /object-src 'none'/i.test(value)
     && /frame-ancestors 'none'/i.test(value)
+    && /base-uri 'self'/i.test(value)
+    && /form-action 'self'/i.test(value)
     && !/script-src[^;]*'unsafe-eval'/i.test(value),
   'cross-origin-embedder-policy': /^credentialless$/i,
   'cross-origin-opener-policy': /^same-origin-allow-popups$/i,
@@ -44,9 +42,7 @@ function matchesPath(route, pathname) {
 }
 
 function normalizeHeaders(headers) {
-  return Object.fromEntries(
-    Object.entries(headers || {}).map(([key, value]) => [key.toLowerCase(), String(value)]),
-  );
+  return Object.fromEntries(Object.entries(headers || {}).map(([key, value]) => [key.toLowerCase(), String(value)]));
 }
 
 for (const pathname of ['/', '/index.html']) {
@@ -57,16 +53,11 @@ for (const pathname of ['/', '/index.html']) {
   const completeHeaderRoute = headerRoutes.find((route) => {
     const headers = normalizeHeaders(route.headers);
     return Object.entries(required).every(([name, matcher]) => (
-      typeof matcher === 'function'
-        ? matcher(headers[name] || '')
-        : matcher.test(headers[name] || '')
+      typeof matcher === 'function' ? matcher(headers[name] || '') : matcher.test(headers[name] || '')
     ));
   });
 
-  assert(
-    completeHeaderRoute,
-    `No single generated Vercel response-header route applies all required security headers to ${pathname}`,
-  );
+  assert(completeHeaderRoute, `No single generated Vercel response-header route applies all required security headers to ${pathname}`);
 }
 
 console.log('Generated Vercel output applies the complete required security-header set to / and /index.html.');
