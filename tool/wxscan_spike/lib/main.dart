@@ -12,7 +12,7 @@ void main() {
   configureWxScanWeb(
     const WxScanWebPaths(
       workerUrl: 'wxscan/wxscan_worker.js',
-      wasmUrl: 'wxscan_wasm.wasm',
+      wasmUrl: 'wxscan/wxscan_wasm.wasm',
       tfliteUrl: './wxscan_tflite.js',
     ),
   );
