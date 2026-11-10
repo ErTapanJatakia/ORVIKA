@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: wxscan-spike-${{ github.ref }}
+  group: wxscan-spike-\${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -57,9 +57,9 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .cargo
-          printf '[patch.crates-io]\\ncvlite = { path = "../cvlite" }\\nwxing = { path = "../wxing" }\\n' > .cargo/config.toml
+          printf '[patch.crates-io]\ncvlite = { path = "../cvlite" }\nwxing = { path = "../wxing" }\n' > .cargo/config.toml
           rustup toolchain install 1.95.0 --profile minimal --target wasm32-unknown-unknown
-          RUSTFLAGS="-C target-feature=+simd128" \\
+          RUSTFLAGS="-C target-feature=+simd128" \
             cargo +1.95.0 build -p wxscan-wasm --target wasm32-unknown-unknown --profile wasm
           test -s target/wasm32-unknown-unknown/wasm/wxscan_wasm.wasm
 
@@ -94,8 +94,8 @@ jobs:
           repo=$(value TFLITE_REPO)
           tag=$(value TFLITE_TAG)
           for file in wxscan_tflite.js wxscan_tflite.wasm; do
-            curl --fail --location --silent --show-error \\
-              "https://github.com/$repo/releases/download/$tag/$file" \\
+            curl --fail --location --silent --show-error \
+              "https://github.com/$repo/releases/download/$tag/$file" \
               -o "web/wxscan/$file"
           done
           echo "$(value TFLITE_JS_SHA256)  web/wxscan/wxscan_tflite.js" | sha256sum --check -
