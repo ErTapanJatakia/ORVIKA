@@ -41,3 +41,27 @@ image upload is involved.
 Do not integrate into production unless the browser runtime tests pass and a
 separate manual test demonstrates a measurable improvement on the private
 reference images while preserving the existing ZXing QR and barcode coverage.
+
+## Private reference-image check
+
+After the CI workflow passes, download the short-lived
+`wxscan-private-reference-harness` artifact from that workflow run. It contains
+only the compiled harness, public model assets and synthetic fixture; it does
+not contain any personal reference images.
+
+On a local machine:
+
+1. Extract the artifact ZIP.
+2. Start a static server in the extracted directory: `python3 -m http.server 4173`.
+3. Open `http://localhost:4173` in Chromium or Firefox.
+4. Wait for the page title to become `WXSCAN_STATUS:PASS`.
+5. Use the visible **Select a private QR reference image** control and choose
+   one reference photograph at a time.
+6. Read the page title: `WXSCAN_STATUS:REFERENCE_DECODED_n` means one or more
+   codes were detected; `WXSCAN_STATUS:REFERENCE_NO_DECODE` means none were
+   detected. The QR payload itself is never displayed in the status.
+
+The selected file is read with the browser FileReader and passed directly to
+the local WebAssembly scanner. It is not sent to the static server or any
+remote decoder. Keep the photographs on the local device and do not attach
+them to a public issue, pull request, or repository commit.
