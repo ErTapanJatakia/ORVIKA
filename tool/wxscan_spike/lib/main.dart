@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:web/web.dart' as web;
 import 'package:wxscan/web.dart';
 import 'package:wxscan/wxscan.dart';
 
@@ -28,11 +29,14 @@ class _SpikeAppState extends State<_SpikeApp> {
   @override
   void initState() {
     super.initState();
+    web.window.document.title = 'WXSCAN_STATUS:BOOTING';
     _runBrowserDecode();
   }
 
   void _setStatus(String value) {
-    if (mounted) setState(() => _status = 'WXSCAN_STATUS:$value');
+    final status = 'WXSCAN_STATUS:$value';
+    web.window.document.title = status;
+    if (mounted) setState(() => _status = status);
   }
 
   Future<Uint8List> _asset(String path) async {
