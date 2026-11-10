@@ -32,8 +32,16 @@ void main() {
       await tester.pumpWidget(const OrvikaApp());
       await tester.pumpAndSettle();
 
+      expect(find.byType(SentinelDashboard), findsOneWidget,
+          reason: 'Dashboard must finish loading at ${viewport.width}x${viewport.height}');
       final dashboardHeading = find.text('Your safety toolkit');
-      final dashboardScrollable = find.byType(Scrollable).first;
+      final dashboardScrollView = find.byType(CustomScrollView);
+      expect(dashboardScrollView, findsOneWidget,
+          reason: 'Dashboard scroll view missing at ${viewport.width}x${viewport.height}');
+      final dashboardScrollable = find.descendant(
+        of: dashboardScrollView,
+        matching: find.byType(Scrollable),
+      ).first;
       await tester.scrollUntilVisible(
         dashboardHeading,
         240,
