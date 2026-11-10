@@ -142,8 +142,8 @@ jobs:
           for file in wxscan_worker.js wxscan_wasm.wasm wxscan_tflite.js wxscan_tflite.wasm; do
             test -s "build/web/wxscan/$file"
           done
-          grep -R -q "detect.tflite" build/web/assets
-          grep -R -q "sr.tflite" build/web/assets
+          test -s build/web/assets/assets/models/detect.tflite
+          test -s build/web/assets/assets/models/sr.tflite
 
       - name: Install Playwright browsers
         working-directory: tool/wxscan_spike
