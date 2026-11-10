@@ -23,16 +23,17 @@ try {
   await page.goto('http://127.0.0.1:4173', { waitUntil: 'networkidle' });
   try {
     await page.waitForFunction(() =>
-      document.body.innerText.includes('WXSCAN_STATUS:PASS') ||
-      document.body.innerText.includes('WXSCAN_STATUS:FAIL'),
+      document.title.includes('WXSCAN_STATUS:PASS') ||
+      document.title.includes('WXSCAN_STATUS:FAIL'),
       null,
       { timeout: 130000 },
     );
   } catch (error) {
-    console.error('LAST_APP_STATUS:', await page.locator('body').innerText());
+    console.error('LAST_APP_TITLE:', await page.title());
+    console.error('LAST_APP_BODY:', await page.locator('body').innerText());
     throw error;
   }
-  const status = await page.locator('body').innerText();
+  const status = await page.title();
   console.log(status);
   if (!status.includes('WXSCAN_STATUS:PASS')) {
     throw new Error(`wxscan browser smoke failed in ${browserName}: ${status}`);
