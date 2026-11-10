@@ -48,6 +48,7 @@ void main() {
       tester.getSemantics(find.text('Custom Screen')).flagsCollection.isHeader,
       isTrue,
     );
+    semantics.dispose();
   });
 
   testWidgets('feature titles use the selected Russian language pack',
