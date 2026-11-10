@@ -13,6 +13,7 @@ try {
   await page.waitForFunction(() =>
     document.body.innerText.includes('WXSCAN_STATUS:PASS') ||
     document.body.innerText.includes('WXSCAN_STATUS:FAIL'),
+    null,
     { timeout: 90000 },
   );
   const status = await page.locator('body').innerText();
