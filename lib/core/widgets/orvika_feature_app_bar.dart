@@ -36,7 +36,10 @@ class OrvikaFeatureAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) => AppBar(
-        title: Text(_localizedTitle(context)),
+        title: Semantics(
+          header: true,
+          child: Text(_localizedTitle(context)),
+        ),
         actions: actions,
         backgroundColor: backgroundColor,
       );
