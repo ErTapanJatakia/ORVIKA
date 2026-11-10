@@ -4,7 +4,10 @@ const browserName = process.env.BROWSER ?? 'chromium';
 const browserType = browserName === 'firefox' ? firefox : chromium;
 const browser = await browserType.launch({ headless: true });
 try {
-  const page = await browser.newPage();
+  // Pin a valid BCP-47 locale so runner host locale settings cannot leak
+  // malformed values (for example en_US) into Flutter's Intl startup.
+  const context = await browser.newContext({ locale: 'en-US' });
+  const page = await context.newPage();
   page.on('pageerror', error => console.error('PAGE_ERROR:', error.message));
   page.on('console', message => {
     if (message.type() === 'error') console.error('BROWSER_CONSOLE:', message.text());
