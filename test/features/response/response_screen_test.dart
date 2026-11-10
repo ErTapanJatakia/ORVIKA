@@ -44,9 +44,7 @@ void main() {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
     expect(
-      tester.getSemantics(find.text('FIRST PRIORITY')).hasFlag(
-            SemanticsFlag.isHeader,
-          ),
+      tester.getSemantics(find.text('FIRST PRIORITY')).flagsCollection.isHeader,
       isTrue,
     );
   });
