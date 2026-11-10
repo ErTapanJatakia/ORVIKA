@@ -156,13 +156,16 @@ class _ResponseSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: scheme.primary,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.8,
+          Semantics(
+            header: true,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: scheme.primary,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
             ),
           ),
           const SizedBox(height: 6),
