@@ -47,5 +47,6 @@ void main() {
       tester.getSemantics(find.text('FIRST PRIORITY')).flagsCollection.isHeader,
       isTrue,
     );
+    semantics.dispose();
   });
 }
