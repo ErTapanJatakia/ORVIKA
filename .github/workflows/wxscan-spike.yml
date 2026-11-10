@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: wxscan-spike-\${{ github.ref }}
+  group: wxscan-spike-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
