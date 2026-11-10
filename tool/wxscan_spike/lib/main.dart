@@ -53,6 +53,15 @@ class _SpikeAppState extends State<_SpikeApp> {
     input.id = 'reference-image';
     input.type = 'file';
     input.accept = 'image/*';
+    input.title = 'Select a private QR reference image';
+    input.setAttribute('aria-label', 'Select a private QR reference image');
+    input.style.setProperty('position', 'fixed');
+    input.style.setProperty('top', '16px');
+    input.style.setProperty('left', '16px');
+    input.style.setProperty('z-index', '2147483647');
+    input.style.setProperty('padding', '8px');
+    input.style.setProperty('background', '#ffffff');
+    input.style.setProperty('color', '#111111');
     web.document.body?.append(input);
     input.addEventListener('change', (web.Event event) {
       final files = input.files;
