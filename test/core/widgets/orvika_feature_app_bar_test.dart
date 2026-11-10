@@ -30,6 +30,26 @@ void main() {
     expect(find.byType(OrvikaFeatureAppBar), findsOneWidget);
   });
 
+  testWidgets('feature app-bar title is exposed as a semantic heading',
+      (tester) async {
+    final semantics = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          appBar: OrvikaFeatureAppBar(title: 'Custom Screen'),
+          body: SizedBox.expand(),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getSemantics(find.text('Custom Screen')).flagsCollection.isHeader,
+      isTrue,
+    );
+    semantics.dispose();
+  });
+
   testWidgets('feature titles use the selected Russian language pack',
       (tester) async {
     await tester.pumpWidget(
