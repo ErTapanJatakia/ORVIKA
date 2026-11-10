@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:js_interop';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
@@ -8,7 +12,7 @@ void main() {
   configureWxScanWeb(
     const WxScanWebPaths(
       workerUrl: 'wxscan/wxscan_worker.js',
-      wasmUrl: 'wxscan/wxscan_wasm.wasm',
+      wasmUrl: 'wxscan_wasm.wasm',
       tfliteUrl: './wxscan_tflite.js',
     ),
   );
@@ -25,6 +29,7 @@ class _SpikeApp extends StatefulWidget {
 class _SpikeAppState extends State<_SpikeApp> {
   static const _expected = 'ORVIKA-WXSCAN-FEASIBILITY-2026';
   String _status = 'WXSCAN_STATUS:LOADING';
+  WxScanner? _scanner;
 
   @override
   void initState() {
@@ -44,18 +49,63 @@ class _SpikeAppState extends State<_SpikeApp> {
     return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   }
 
+  void _installPrivateReferencePicker() {
+    final input = web.document.createElement('input') as web.HTMLInputElement;
+    input.id = 'reference-image';
+    input.type = 'file';
+    input.accept = 'image/*';
+    web.document.body?.append(input);
+    input.addEventListener('change', (web.Event event) {
+      final files = input.files;
+      if (files == null || files.length == 0) return;
+      final file = files.item(0);
+      if (file == null) return;
+      final reader = web.FileReader();
+      reader.addEventListener('load', (web.Event _) {
+        final dataUrl = (reader.result as JSString).toDart;
+        final encoded = dataUrl.substring(dataUrl.indexOf(',') + 1);
+        _scanPrivateReference(Uint8List.fromList(base64Decode(encoded)));
+      }.toJS);
+      reader.addEventListener('error', (web.Event _) {
+        _setStatus('REFERENCE_READ_ERROR');
+      }.toJS);
+      reader.readAsDataURL(file);
+    }.toJS);
+  }
+
+  Future<void> _scanPrivateReference(Uint8List bytes) async {
+    final scanner = _scanner;
+    if (scanner == null) {
+      _setStatus('REFERENCE_SCANNER_NOT_READY');
+      return;
+    }
+    try {
+      _setStatus('REFERENCE_SCANNING');
+      final outcome = await scanner
+          .scanImage(bytes)
+          .timeout(const Duration(seconds: 90));
+      _setStatus(
+        outcome.results.isEmpty
+            ? 'REFERENCE_NO_DECODE'
+            : 'REFERENCE_DECODED_${outcome.results.length}',
+      );
+    } catch (error) {
+      _setStatus('REFERENCE_ERROR: $error');
+    }
+  }
+
   Future<void> _runBrowserDecode() async {
-    WxScanner? scanner;
     try {
       _setStatus('LOADING_MODELS');
       final detect = await _asset('assets/models/detect.tflite');
       final superResolution = await _asset('assets/models/sr.tflite');
       final fixture = await _asset('assets/fixtures/qr.png');
       _setStatus('CREATING_SCANNER');
-      scanner = await WxScanner.create(
+      final scanner = await WxScanner.create(
         detectModel: detect,
         srModel: superResolution,
       ).timeout(const Duration(seconds: 45));
+      _scanner = scanner;
       _setStatus('CHECKING_MODELS');
       if (!scanner.hasDetector || !scanner.hasSuperResolution) {
         throw StateError(
@@ -63,7 +113,7 @@ class _SpikeAppState extends State<_SpikeApp> {
           'superResolution=${scanner.hasSuperResolution})',
         );
       }
-      _setStatus('SCANNING');
+      _setStatus('SCANNING_SYNTHETIC');
       final outcome = await scanner
           .scanImage(fixture)
           .timeout(const Duration(seconds: 60));
@@ -73,11 +123,10 @@ class _SpikeAppState extends State<_SpikeApp> {
           'Synthetic QR was not decoded; results=${outcome.results.length}',
         );
       }
+      _installPrivateReferencePicker();
       _setStatus('PASS');
     } catch (error) {
       _setStatus('FAIL: $error');
-    } finally {
-      await scanner?.dispose();
     }
   }
 
