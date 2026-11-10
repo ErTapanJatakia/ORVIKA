@@ -21,11 +21,47 @@ concurrency:
 
 jobs:
   web-feasibility:
-    name: Resolve wxscan and build isolated Web harness
+    name: Build pinned wxscan Web runtime and isolated harness
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
+      - name: Checkout ORVIKA
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      # wxscan 0.1.7 pins scanner tag v0.1.0, but that release currently
+      # returns 404 for wxscan_wasm.wasm. Build the same upstream Rust source
+      # ourselves instead of weakening the package's checksum verification.
+      - name: Checkout pinned wxscan Rust sources
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: wilinz/wxscan-rs
+          ref: 707aac6bf9e5b0415494f1bd70fbc213463e3809
+          path: _rust/wxscan-rs
+
+      - name: Checkout pinned Rust workspace dependencies
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: wilinz/cvlite
+          ref: 6a1b0370720c2ee813be5845280cfe98005c254c
+          path: _rust/cvlite
+
+      - name: Checkout pinned Rust workspace dependencies
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: wilinz/wxing
+          ref: eb8fb50b8091de3b65e75a034e42a40009a8f34c
+          path: _rust/wxing
+
+      - name: Build wxscan WebAssembly from pinned source
+        working-directory: _rust/wxscan-rs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .cargo
+          printf '[patch.crates-io]\\ncvlite = { path = "../cvlite" }\\nwxing = { path = "../wxing" }\\n' > .cargo/config.toml
+          rustup toolchain install 1.95.0 --profile minimal --target wasm32-unknown-unknown
+          RUSTFLAGS="-C target-feature=+simd128" \\
+            cargo +1.95.0 build -p wxscan-wasm --target wasm32-unknown-unknown --profile wasm
+          test -s target/wasm32-unknown-unknown/wasm/wxscan_wasm.wasm
 
       - name: Install pinned Flutter SDK
         shell: bash
@@ -42,19 +78,29 @@ jobs:
         working-directory: tool/wxscan_spike
         run: flutter pub get
 
-      - name: Fetch pinned browser runtime assets
-        working-directory: tool/wxscan_spike
-        run: dart run wxscan:fetch_web
-
-      - name: Verify expected browser payload
+      - name: Assemble browser runtime with pinned checksums
         working-directory: tool/wxscan_spike
         shell: bash
         run: |
           set -euo pipefail
-          for file in wxscan_worker.js wxscan_wasm.wasm wxscan_tflite.js wxscan_tflite.wasm; do
-            test -s "web/wxscan/$file"
-            sha256sum "web/wxscan/$file"
+          package_root=$(find "$HOME/.pub-cache/hosted/pub.dev" -maxdepth 1 -type d -name 'wxscan-0.1.7' -print -quit)
+          test -n "$package_root"
+          mkdir -p web/wxscan
+          cp "$package_root/lib/src/web/assets/wxscan_worker.js" web/wxscan/
+          cp "$GITHUB_WORKSPACE/_rust/wxscan-rs/target/wasm32-unknown-unknown/wasm/wxscan_wasm.wasm" web/wxscan/
+
+          lock="$package_root/tool/web.lock"
+          value() { grep "^$1=" "$lock" | head -1 | cut -d= -f2-; }
+          repo=$(value TFLITE_REPO)
+          tag=$(value TFLITE_TAG)
+          for file in wxscan_tflite.js wxscan_tflite.wasm; do
+            curl --fail --location --silent --show-error \\
+              "https://github.com/$repo/releases/download/$tag/$file" \\
+              -o "web/wxscan/$file"
           done
+          echo "$(value TFLITE_JS_SHA256)  web/wxscan/wxscan_tflite.js" | sha256sum --check -
+          echo "$(value TFLITE_WASM_SHA256)  web/wxscan/wxscan_tflite.wasm" | sha256sum --check -
+          test "$(find web/wxscan -maxdepth 1 -type f | wc -l)" -eq 4
 
       - name: Analyze isolated harness
         working-directory: tool/wxscan_spike
@@ -64,7 +110,7 @@ jobs:
         working-directory: tool/wxscan_spike
         run: flutter build web --release
 
-      - name: Verify deployed payload is packaged
+      - name: Verify browser runtime is packaged
         working-directory: tool/wxscan_spike
         shell: bash
         run: |
