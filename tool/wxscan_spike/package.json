@@ -1,0 +1,6 @@
+{
+  "name": "orvika-wxscan-browser-smoke",
+  "private": true,
+  "version": "0.0.1",
+  "devDependencies": { "playwright": "1.55.0" }
+}
