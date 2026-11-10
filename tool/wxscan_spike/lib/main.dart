@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:js_interop';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
