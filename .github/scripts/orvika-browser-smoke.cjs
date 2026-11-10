@@ -64,7 +64,8 @@ async function main() {
           serviceWorkers: 'blocked',
           headers: Object.fromEntries(
             ['strict-transport-security', 'x-content-type-options', 'x-frame-options',
-              'referrer-policy', 'permissions-policy', 'server', 'x-vercel-id',
+              'referrer-policy', 'permissions-policy', 'content-security-policy',
+              'cross-origin-embedder-policy', 'cross-origin-opener-policy', 'server', 'x-vercel-id',
               'cache-control', 'age', 'via'].map((name) => [name, headers[name] || null]),
           ),
         };
@@ -81,6 +82,13 @@ async function main() {
         assert.equal(headers['x-content-type-options'], 'nosniff', `${label}: nosniff header missing`);
         assert.equal(headers['x-frame-options'], 'DENY', `${label}: frame protection header missing`);
         assert.equal(headers['referrer-policy'], 'strict-origin-when-cross-origin', `${label}: referrer policy missing`);
+        const csp = headers['content-security-policy'] || '';
+        assert.match(csp, /default-src 'none'/, `${label}: restrictive default-src policy missing`);
+        assert.match(csp, /script-src[^;]*'wasm-unsafe-eval'/, `${label}: Flutter WebAssembly policy missing`);
+        assert.doesNotMatch(csp, /script-src[^;]*'unsafe-eval'/, `${label}: unsafe-eval must remain blocked`);
+        assert.match(csp, /connect-src 'self'/, `${label}: connect-src must remain same-origin`);
+        assert.equal(headers['cross-origin-embedder-policy'], 'credentialless', `${label}: COEP missing`);
+        assert.equal(headers['cross-origin-opener-policy'], 'same-origin-allow-popups', `${label}: COOP missing`);
         assert.match(headers['permissions-policy'] || '', /camera=\(self\)/, `${label}: camera permission policy missing`);
 
         // Flutter Web renderer internals vary by engine version. Inspect light DOM
