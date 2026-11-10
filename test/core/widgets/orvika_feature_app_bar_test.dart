@@ -33,7 +33,6 @@ void main() {
   testWidgets('feature app-bar title is exposed as a semantic heading',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
 
     await tester.pumpWidget(
       const MaterialApp(
