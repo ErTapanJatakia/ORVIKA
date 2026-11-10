@@ -33,10 +33,30 @@ try {
     console.error('LAST_APP_BODY:', await page.locator('body').innerText());
     throw error;
   }
-  const status = await page.title();
-  console.log(status);
-  if (!status.includes('WXSCAN_STATUS:PASS')) {
-    throw new Error(`wxscan browser smoke failed in ${browserName}: ${status}`);
+  const syntheticStatus = await page.title();
+  console.log('SYNTHETIC:', syntheticStatus);
+  if (syntheticStatus !== 'WXSCAN_STATUS:PASS') {
+    throw new Error(`wxscan synthetic browser smoke failed in ${browserName}: ${syntheticStatus}`);
+  }
+
+  // Exercise the same local FileReader path used for private reference photos.
+  await page.locator('#reference-image').setInputFiles('assets/fixtures/qr.png');
+  try {
+    await page.waitForFunction(
+      () => document.title.startsWith('WXSCAN_STATUS:REFERENCE_DECODED_') ||
+        document.title === 'WXSCAN_STATUS:REFERENCE_NO_DECODE' ||
+        document.title.startsWith('WXSCAN_STATUS:REFERENCE_ERROR'),
+      null,
+      { timeout: 100000 },
+    );
+  } catch (error) {
+    console.error('LAST_REFERENCE_STATUS:', await page.title());
+    throw error;
+  }
+  const referenceStatus = await page.title();
+  console.log('FILE_PICKER:', referenceStatus);
+  if (!referenceStatus.startsWith('WXSCAN_STATUS:REFERENCE_DECODED_')) {
+    throw new Error(`wxscan local file-picker smoke failed in ${browserName}: ${referenceStatus}`);
   }
 } finally {
   await browser.close();
