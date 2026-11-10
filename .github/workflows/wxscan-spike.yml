@@ -36,7 +36,7 @@ jobs:
           git -C "$RUNNER_TEMP/flutter" checkout --detach 3.47.9
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
-          dart --version
+          "$RUNNER_TEMP/flutter/bin/dart" --version
 
       - name: Resolve isolated dependency
         working-directory: tool/wxscan_spike
