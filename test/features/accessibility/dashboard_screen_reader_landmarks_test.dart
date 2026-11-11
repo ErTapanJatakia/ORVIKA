@@ -32,10 +32,8 @@ void main() {
         reason: 'The module collection should remain a separate heading landmark.',
       );
 
-      final linkCheck = find.byWidgetPredicate(
-        (widget) =>
-            widget is Semantics &&
-            widget.properties.label?.startsWith('Link Check.') == true,
+      final linkCheck = find.bySemanticsLabel(
+        RegExp(r'^Link Check\\.'),
       );
       expect(linkCheck, findsOneWidget);
       final linkSemantics = tester.getSemantics(linkCheck);
