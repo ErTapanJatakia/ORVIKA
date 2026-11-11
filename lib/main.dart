@@ -979,6 +979,8 @@ class SentinelDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = selectedTheme.palette;
     final scheme = Theme.of(context).colorScheme;
+    final viewportWidth = MediaQuery.sizeOf(context).width;
+    final pagePadding = viewportWidth < 420 ? 16.0 : viewportWidth < 760 ? 20.0 : 28.0;
     return Scaffold(
       body: DecoratedBox(
         decoration: BoxDecoration(
@@ -1006,7 +1008,7 @@ class SentinelDashboard extends StatelessWidget {
                 ),
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
+                    padding: EdgeInsets.fromLTRB(pagePadding, 18, pagePadding, 40),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         _TopBar(
@@ -1093,8 +1095,8 @@ class SentinelDashboard extends StatelessWidget {
                                         ? 2
                                         : 1;
                             final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
-                            final cardExtent = (210 + ((textScale - 1).clamp(0, 1.5) * 170))
-                                .clamp(210, 465)
+                            final cardExtent = (212 + ((textScale - 1).clamp(0, 1.5) * 176))
+                                .clamp(212, 476)
                                 .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
@@ -1956,8 +1958,8 @@ class _TrustNote extends StatelessWidget {
               ),
               style: TextStyle(
                 color: scheme.onSurfaceVariant,
-                fontSize: 12,
-                height: 1.5,
+                fontSize: 12.5,
+                height: 1.55,
               ),
             ),
           ),
