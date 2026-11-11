@@ -48,7 +48,7 @@ jobs:
           # Android validation is retained for all application, platform,
           # dependency, and Android-workflow changes. It is skipped only when
           # every changed file is documentation, plus this dispatcher workflow.
-          if grep -qvE '^(docs/.*|[^/]+\.md|\.github/workflows/ci\.yml)$' <<< "$files"; then
+          if grep -qvE '^(docs/.*|[^/]+\.md|\.github/workflows/(ci|cloudflare-pages)\.yml)$' <<< "$files"; then
             echo "android=true" >> "$GITHUB_OUTPUT"
           else
             echo "android=false" >> "$GITHUB_OUTPUT"
