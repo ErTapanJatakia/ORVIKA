@@ -140,6 +140,11 @@ jobs:
       - name: Install Wrangler
         run: npm install --global wrangler@4
 
+      - name: Compile Pages Functions before deployment
+        run: |
+          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          test -s "$RUNNER_TEMP/orvika-pages-worker.js"
+
       - name: Create Cloudflare Pages project if it does not exist
         shell: bash
         env:
