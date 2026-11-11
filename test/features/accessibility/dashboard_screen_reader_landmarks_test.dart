@@ -32,13 +32,23 @@ void main() {
         reason: 'The module collection should remain a separate heading landmark.',
       );
 
-      // The module card deliberately excludes its visual descendants from the
-      // semantics tree and exposes one labelled Semantics ancestor instead.
-      // Locate that ancestor through the widget tree, then inspect its actual
-      // semantics node rather than relying on a label finder that cannot see
-      // descendants hidden by ExcludeSemantics.
+      // The dashboard grid is lazily built inside its scroll view. Bring the
+      // Link Check card into the viewport before inspecting its semantics.
+      final dashboardScrollable = find.descendant(
+        of: find.byType(CustomScrollView),
+        matching: find.byType(Scrollable),
+      ).first;
       final linkCheckTitle = find.text('Link Check');
+      await tester.scrollUntilVisible(
+        linkCheckTitle,
+        240,
+        scrollable: dashboardScrollable,
+      );
+      await tester.pumpAndSettle();
       expect(linkCheckTitle, findsOneWidget);
+
+      // The card excludes its visual descendants from the semantics tree and
+      // exposes one labelled Semantics ancestor instead.
       final linkCheckSemantics = find.ancestor(
         of: linkCheckTitle,
         matching: find.byType(Semantics),
