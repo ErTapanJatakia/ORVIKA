@@ -78,6 +78,8 @@ jobs:
           node --check .github/scripts/verify-vercel-output.cjs
           node --check functions/_middleware.js
           npm run test:edge
+          npx --yes wrangler@4 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          test -s "$RUNNER_TEMP/orvika-pages-worker.js"
 
       - name: Validate Vercel deployment and header configuration
         run: |
