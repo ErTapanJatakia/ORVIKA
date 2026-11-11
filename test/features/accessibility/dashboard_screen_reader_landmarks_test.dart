@@ -35,7 +35,7 @@ void main() {
       final linkCheck = find.byWidgetPredicate(
         (widget) =>
             widget is Semantics &&
-            widget.label?.startsWith('Link Check.') == true,
+            widget.properties.label?.startsWith('Link Check.') == true,
       );
       expect(linkCheck, findsOneWidget);
       final linkSemantics = tester.getSemantics(linkCheck);
