@@ -22,7 +22,9 @@ function withSecurityHeaders(response) {
   return secured;
 }
 
-export async function onRequest({ request, next }) {
+export async function onRequest(context) {
+  const { request } = context;
+
   if (!ALLOWED_METHODS.has(request.method.toUpperCase())) {
     const response = new Response(null, {
       status: 405,
@@ -36,7 +38,23 @@ export async function onRequest({ request, next }) {
   }
 
   const pathname = new URL(request.url).pathname;
-  if (/%(?![0-9a-f]{2})/i.test(pathname) || /%(?:0[0-9a-f]|1[0-9a-f]|7f)/i.test(pathname)) {
+  let decodedPathname;
+
+  try {
+    decodedPathname = decodeURIComponent(pathname);
+  } catch {
+    return withSecurityHeaders(new Response(null, {
+      status: 400,
+      headers: { "Cache-Control": "no-store" },
+    }));
+  }
+
+  const hasControlCharacters = /[\\u0000-\\u001f\\u007f]/.test(decodedPathname);
+  const hasHiddenPathSegment = decodedPathname
+    .split("/")
+    .some((segment) => segment.startsWith(".") && segment !== ".well-known");
+
+  if (hasControlCharacters || hasHiddenPathSegment) {
     const response = new Response(null, {
       status: 400,
       headers: {
@@ -47,5 +65,5 @@ export async function onRequest({ request, next }) {
     return withSecurityHeaders(response);
   }
 
-  return withSecurityHeaders(await next());
+  return withSecurityHeaders(await context.next());
 }
