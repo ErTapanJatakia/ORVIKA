@@ -33,7 +33,7 @@ void main() {
       );
 
       final linkCheck = find.bySemanticsLabel(
-        RegExp(r'^Link Check\\.'),
+        RegExp(r'^Link Check'),
       );
       expect(linkCheck, findsOneWidget);
       final linkSemantics = tester.getSemantics(linkCheck);
