@@ -16,7 +16,7 @@ const expectedHeaders = {
 async function invoke(method, url = "https://orvika.pages.dev/") {
   let nextCalled = false;
   const response = await onRequest({
-    request: new Request(url, { method }),
+    request: { method, url },
     next: async () => {
       nextCalled = true;
       return new Response("static asset", {
