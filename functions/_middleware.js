@@ -49,7 +49,7 @@ export async function onRequest(context) {
     }));
   }
 
-  const hasControlCharacters = /[\\u0000-\\u001f\\u007f]/.test(decodedPathname);
+  const hasControlCharacters = /[\u0000-\u001f\u007f]/.test(decodedPathname);
   const hasHiddenPathSegment = decodedPathname
     .split("/")
     .some((segment) => segment.startsWith(".") && segment !== ".well-known");
