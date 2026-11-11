@@ -3,6 +3,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future<void> _scrollUntilBuilt(
+  WidgetTester tester,
+  Finder scrollView,
+  Finder target, {
+  int maxAttempts = 24,
+}) async {
+  for (var attempt = 0; attempt < maxAttempts; attempt++) {
+    if (target.evaluate().isNotEmpty) return;
+    await tester.drag(scrollView, const Offset(0, -420));
+    await tester.pumpAndSettle();
+  }
+  expect(
+    target,
+    findsOneWidget,
+    reason: 'Dashboard content was not built after deterministic outer-scroll increments.',
+  );
+}
+
 void main() {
   const viewports = <({double width, double height, double textScale})>[
     (width: 320, height: 640, textScale: 1.0),
@@ -50,25 +68,15 @@ void main() {
           reason: 'Expected one dashboard scroll surface at ${viewport.width}x${viewport.height}',
         );
 
-        // Scroll in deterministic increments rather than relying on
-        // scrollUntilVisible's nested-scrollable selection in this sliver/grid
-        // composition. The target is asserted only after it has been built.
-        await tester.drag(scrollView, const Offset(0, -900));
-        await tester.pumpAndSettle();
-
+        // Increment the outer dashboard scroll until each lazy sliver target
+        // is mounted. This avoids relying on nested Scrollable discovery.
         final heading = find.text('Your safety toolkit');
-        expect(
-          heading,
-          findsOneWidget,
-          reason: 'Dashboard heading was not built at ${viewport.width}x${viewport.height}',
-        );
-        await tester.ensureVisible(heading);
-        await tester.pumpAndSettle();
+        await _scrollUntilBuilt(tester, scrollView, heading);
+        expect(heading, findsOneWidget);
 
         final moduleDescription =
             find.text('Inspect website addresses before you open them.');
-        await tester.ensureVisible(moduleDescription);
-        await tester.pumpAndSettle();
+        await _scrollUntilBuilt(tester, scrollView, moduleDescription);
         expect(
           moduleDescription,
           findsOneWidget,
@@ -82,8 +90,10 @@ void main() {
 
         await tester.drag(scrollView, const Offset(0, -10000));
         await tester.pumpAndSettle();
+        final trustNote = find.textContaining('ORVIKA is an early prototype');
+        await _scrollUntilBuilt(tester, scrollView, trustNote);
         expect(
-          find.textContaining('ORVIKA is an early prototype'),
+          trustNote,
           findsOneWidget,
           reason: 'Trust note/footer was not reachable at ${viewport.width}x${viewport.height}',
         );
