@@ -67,6 +67,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
+      - name: Test Cloudflare Pages request guard
+        run: node --test .github/scripts/cloudflare-middleware.test.mjs
+
+      - name: Validate Cloudflare Pages Functions bundle
+        run: npx --yes wrangler@4 pages functions build functions --outdir "$RUNNER_TEMP/orvika-pages-functions"
+
       - name: Validate deployment verification scripts
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
