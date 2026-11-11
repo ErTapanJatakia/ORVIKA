@@ -69,6 +69,20 @@ test("rejects encoded control characters in URL paths", async () => {
   assert.equal(response.status, 400);
 });
 
+test("rejects dotfile probes, including encoded dot segments", async () => {
+  for (const path of ["/.env", "/.git/config", "/config/%2Eenv"]) {
+    const { response, nextCalled } = await invoke("GET", `https://orvika.pages.dev${path}`);
+    assert.equal(nextCalled, false, path);
+    assert.equal(response.status, 400, path);
+  }
+});
+
+test("allows the .well-known namespace for future platform association files", async () => {
+  const { response, nextCalled } = await invoke("GET", "https://orvika.pages.dev/.well-known/assetlinks.json");
+  assert.equal(nextCalled, true);
+  assert.equal(response.status, 200);
+});
+
 test("adds the complete security-header policy to passed-through responses", async () => {
   const { response } = await invoke("GET");
 
