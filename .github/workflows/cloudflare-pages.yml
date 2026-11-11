@@ -25,6 +25,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
+      - name: Validate Cloudflare Pages edge middleware
+        run: |
+          node --check functions/_middleware.js
+          npm run test:edge
+
       - name: Validate Cloudflare configuration
         shell: bash
         env:
@@ -134,6 +139,11 @@ jobs:
 
       - name: Install Wrangler
         run: npm install --global wrangler@4
+
+      - name: Compile Pages Functions before deployment
+        run: |
+          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          test -s "$RUNNER_TEMP/orvika-pages-worker.js"
 
       - name: Create Cloudflare Pages project if it does not exist
         shell: bash
