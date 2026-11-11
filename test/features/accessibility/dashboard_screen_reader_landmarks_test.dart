@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/widgets.dart';
 import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,11 +32,19 @@ void main() {
         reason: 'The module collection should remain a separate heading landmark.',
       );
 
-      final linkCheck = find.bySemanticsLabel(
-        RegExp(r'^Link Check'),
+      // The module card deliberately excludes its visual descendants from the
+      // semantics tree and exposes one labelled Semantics ancestor instead.
+      // Locate that ancestor through the widget tree, then inspect its actual
+      // semantics node rather than relying on a label finder that cannot see
+      // descendants hidden by ExcludeSemantics.
+      final linkCheckTitle = find.text('Link Check');
+      expect(linkCheckTitle, findsOneWidget);
+      final linkCheckSemantics = find.ancestor(
+        of: linkCheckTitle,
+        matching: find.byType(Semantics),
       );
-      expect(linkCheck, findsOneWidget);
-      final linkSemantics = tester.getSemantics(linkCheck);
+      expect(linkCheckSemantics, findsWidgets);
+      final linkSemantics = tester.getSemantics(linkCheckSemantics.first);
       expect(linkSemantics.flagsCollection.isButton, isTrue);
       expect(linkSemantics.flagsCollection.isEnabled, isTrue);
       expect(tester.takeException(), isNull);
