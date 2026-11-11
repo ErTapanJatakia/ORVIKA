@@ -1,0 +1,179 @@
+name: ORVIKA Cloudflare Pages Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_cloudflare:
+        description: "Build and deploy the validated main-branch Web app to Cloudflare Pages"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orvika-cloudflare-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and deploy Cloudflare Pages
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_cloudflare == true
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Validate Cloudflare configuration
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_PAGES_PROJECT; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Repository secret/variable $name is not configured."
+              exit 1
+            fi
+          done
+          if [[ ! "$CLOUDFLARE_ACCOUNT_ID" =~ ^[a-f0-9]{32}$ ]]; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID must be the 32-character Cloudflare account ID."
+            exit 1
+          fi
+          if [[ ! "$CLOUDFLARE_PAGES_PROJECT" =~ ^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$ ]]; then
+            echo "::error::CLOUDFLARE_PAGES_PROJECT must be a valid lowercase Pages project name."
+            exit 1
+          fi
+
+      - name: Install Flutter SDK
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          git -C "$RUNNER_TEMP/flutter" checkout --detach 3.47.9
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+
+      - name: Install dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Test
+        run: flutter test --reporter expanded
+
+      - name: Build Web
+        run: |
+          flutter build web --release --csp --no-web-resources-cdn
+          test -s build/web/canvaskit/canvaskit.js
+          test -s build/web/canvaskit/canvaskit.wasm
+
+      - name: Generate Cloudflare Pages security headers from verified policy
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
+          const required = [
+            'strict-transport-security',
+            'x-content-type-options',
+            'x-frame-options',
+            'referrer-policy',
+            'permissions-policy',
+            'content-security-policy',
+            'cross-origin-embedder-policy',
+            'cross-origin-opener-policy',
+          ];
+          const headers = new Map();
+          for (const route of config.headers ?? []) {
+            for (const header of route.headers ?? []) {
+              headers.set(header.key.toLowerCase(), header.value);
+            }
+          }
+          for (const name of required) {
+            if (!headers.has(name)) throw new Error(`Missing required security header: ${name}`);
+          }
+          const csp = headers.get('content-security-policy');
+          if (!/default-src 'none'/.test(csp) ||
+              !/script-src[^;]*'wasm-unsafe-eval'/.test(csp) ||
+              /script-src[^;]*'unsafe-eval'/.test(csp)) {
+            throw new Error('CSP is missing required Flutter-safe directives or permits unsafe-eval.');
+          }
+          if (headers.get('cross-origin-embedder-policy') !== 'credentialless') {
+            throw new Error('Unexpected COEP policy.');
+          }
+          if (headers.get('cross-origin-opener-policy') !== 'same-origin-allow-popups') {
+            throw new Error('Unexpected COOP policy.');
+          }
+          const output = ['/*'];
+          for (const name of required) {
+            const original = [...(config.headers ?? [])]
+              .flatMap(route => route.headers ?? [])
+              .find(header => header.key.toLowerCase() === name);
+            output.push(`  ${original.key}: ${original.value}`);
+          }
+          fs.writeFileSync('build/web/_headers', output.join('\n') + '\n');
+          console.log('Generated Cloudflare Pages _headers from the repository security policy.');
+          NODE
+
+      - name: Verify Cloudflare Pages output
+        shell: bash
+        run: |
+          test -s build/web/index.html
+          test -s build/web/flutter_bootstrap.js
+          test -s build/web/main.dart.js
+          test -s build/web/_headers
+          grep -q "Content-Security-Policy:" build/web/_headers
+          ! grep -E "Content-Security-Policy:.*script-src[^\n]*'unsafe-eval'" build/web/_headers
+          echo "Flutter Web output and required response-header policy are present."
+
+      - name: Install Wrangler
+        run: npm install --global wrangler@4
+
+      - name: Create Cloudflare Pages project if it does not exist
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          set -euo pipefail
+          status="$(curl --silent --show-error --output "$RUNNER_TEMP/pages-project.json" --write-out '%{http_code}' \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$CLOUDFLARE_PAGES_PROJECT")"
+          if [ "$status" = "200" ]; then
+            echo "Cloudflare Pages project already exists."
+          elif [ "$status" = "404" ]; then
+            npx wrangler pages project create "$CLOUDFLARE_PAGES_PROJECT" --production-branch main
+          else
+            echo "::error::Could not verify Cloudflare Pages project (HTTP $status)."
+            cat "$RUNNER_TEMP/pages-project.json"
+            exit 1
+          fi
+
+      - name: Deploy approved production build to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: npx wrangler pages deploy build/web --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=main
+
+      - name: Publish deployment summary
+        env:
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          {
+            echo "## ORVIKA Cloudflare Pages deployment"
+            echo
+            echo "- Project: `$CLOUDFLARE_PAGES_PROJECT`"
+            echo "- Production branch: `main`"
+            echo "- URL: https://$CLOUDFLARE_PAGES_PROJECT.pages.dev"
+            echo "- Deployment was explicitly requested through workflow_dispatch."
+            echo "- Security headers were generated from the verified repository policy."
+            echo "- Vercel deployment was not modified."
+          } >> "$GITHUB_STEP_SUMMARY"
