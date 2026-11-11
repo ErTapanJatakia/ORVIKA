@@ -5,6 +5,13 @@ on:
     branches: [main, "feat/**"]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: "Deploy the validated main-branch build to Vercel production"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -95,11 +102,11 @@ jobs:
           test -s build/web/canvaskit/canvaskit.wasm
 
       - name: Install Vercel CLI
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         run: npm install --global vercel@latest
 
       - name: Link Vercel project without Git integration
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         shell: bash
         env:
           VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
@@ -109,7 +116,7 @@ jobs:
           printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
 
       - name: Configure Vercel project build settings
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
@@ -117,7 +124,7 @@ jobs:
         run: vercel project update orvika-web --yes --framework other --build-command "echo 'Using prebuilt Flutter Web output'" --output-directory "build/web" --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
 
       - name: Pull Vercel production configuration
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
@@ -125,7 +132,7 @@ jobs:
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
 
       - name: Prepare Vercel deployment
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
@@ -133,11 +140,11 @@ jobs:
         run: vercel build --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
 
       - name: Verify generated Vercel security-header routes
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         run: node .github/scripts/verify-vercel-output.cjs
 
       - name: Deploy prebuilt Web output to Vercel
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
@@ -145,13 +152,13 @@ jobs:
         run: vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
 
       - name: Install Playwright Chromium
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
           npx playwright install --with-deps chromium
 
       - name: Browser smoke test production deployment
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         env:
           ORVIKA_BASE_URL: https://orvika-web.vercel.app
         run: node .github/scripts/orvika-browser-smoke.cjs
