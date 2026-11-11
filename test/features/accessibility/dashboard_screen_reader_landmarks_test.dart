@@ -55,10 +55,10 @@ void main() {
       );
       expect(linkCheckSemantics, findsWidgets);
       final linkSemantics = tester.getSemantics(linkCheckSemantics.first);
-      expect(linkSemantics.flagsCollection.isButton, isTrue);
+      expect(linkSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
       expect(
-        linkSemantics.flagsCollection.isEnabled,
-        Tristate.isTrue,
+        linkSemantics.hasFlag(SemanticsFlag.isEnabled),
+        isTrue,
         reason: 'The enabled module should expose its enabled state to assistive technology.',
       );
       expect(tester.takeException(), isNull);
