@@ -25,6 +25,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
+      - name: Validate Cloudflare Pages edge middleware
+        run: |
+          node --check functions/_middleware.js
+          npm run test:edge
+
       - name: Validate Cloudflare configuration
         shell: bash
         env:
