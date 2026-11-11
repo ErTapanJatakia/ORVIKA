@@ -71,6 +71,8 @@ jobs:
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
           node --check .github/scripts/verify-vercel-output.cjs
+          node --check functions/_middleware.js
+          npm run test:edge
 
       - name: Validate Vercel deployment and header configuration
         run: |
