@@ -121,7 +121,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     final reviewed = _reviewedIds.length;
     return Scaffold(
       appBar: OrvikaFeatureAppBar(
-        title: 'Privacy',
+        title: l10n.text('module.privacy', 'Privacy'),
         actions: [
           if (!_isLoading && reviewed > 0)
             IconButton(
