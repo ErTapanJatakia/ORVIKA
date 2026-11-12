@@ -7,6 +7,7 @@ import '../domain/intelligence_library.dart';
 import '../../../core/localization/german_intelligence_content.dart';
 import '../../../core/localization/italian_intelligence_content.dart';
 import '../../../core/localization/french_intelligence_content.dart';
+import '../../../core/localization/spanish_intelligence_content.dart';
 
 class IntelligenceScreen extends StatefulWidget {
   const IntelligenceScreen({super.key});
@@ -148,7 +149,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
             for (final sourceEntry in entries)
               Builder(
                 builder: (context) {
-                  final entry = l10n.language.code == 'fr' ? FrenchIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'it' ? ItalianIntelligenceContent.localize(sourceEntry, l10n.language.code) : GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
+                  final entry = l10n.language.code == 'es' ? SpanishIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'fr' ? FrenchIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'it' ? ItalianIntelligenceContent.localize(sourceEntry, l10n.language.code) : GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
                   return Card(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: ExpansionTile(
