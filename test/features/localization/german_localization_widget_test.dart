@@ -23,7 +23,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(_app(const AcademyScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Akademie'), findsOneWidget);
+    expect(find.text('Lernbereich'), findsOneWidget);
     expect(find.text('Prüfe den Absender, nicht den Anzeigenamen'), findsOneWidget);
     expect(find.textContaining('Namen, Logos und Profilbilder'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -50,7 +50,7 @@ void main() {
   testWidgets('German Intelligence renders translated reference entries', (tester) async {
     await tester.pumpWidget(_app(const IntelligenceScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Intelligenz'), findsOneWidget);
+    expect(find.text('Intelligence'), findsOneWidget);
     expect(find.text('Unverschlüsseltes HTTP'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -58,7 +58,7 @@ void main() {
   testWidgets('German checker screens render localized headings and controls', (tester) async {
     await tester.pumpWidget(_app(const LinkCheckScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Prüfen, bevor Sie sich verbinden.'), findsOneWidget);
+    expect(find.text('Prüfen, bevor Sie eine Verbindung herstellen.'), findsOneWidget);
     expect(find.text('Webadresse'), findsOneWidget);
     await tester.pumpWidget(_app(const QrCheckScreen()));
     await tester.pumpAndSettle();
@@ -66,7 +66,7 @@ void main() {
     expect(find.text('Dekodierter QR-Inhalt'), findsOneWidget);
     await tester.pumpWidget(_app(const MessageCheckScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Anhalten. Prüfen. Dann antworten.'), findsOneWidget);
+    expect(find.text('Halten Sie inne. Prüfen Sie. Antworten Sie dann.'), findsOneWidget);
     expect(find.text('Nachrichtentext'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
