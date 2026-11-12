@@ -198,7 +198,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                             ),
                           const Divider(),
                           Text(
-                            l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : GermanCheckerContent.localizeLinkNotice(result.notice, l10n.language.code),
+                            l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : GermanCheckerContent.localizeLinkNotice(result.notice, l10n.language.code),
                             style: TextStyle(
                               color: scheme.onSurfaceVariant,
                               fontSize: 12,
