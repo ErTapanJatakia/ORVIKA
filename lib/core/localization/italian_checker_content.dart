@@ -95,7 +95,10 @@ class ItalianCheckerContent {
       title: title,
       detail: detail,
       severity: result.severity,
-      payloadType: result.payloadType,
+      kind: result.kind,
+      normalizedUrl: result.normalizedUrl,
+      linkFindings: result.linkFindings,
+      isValid: result.isValid,
     );
   }
 }
