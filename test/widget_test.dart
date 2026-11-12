@@ -67,6 +67,32 @@ void main() {
     }
   });
 
+  testWidgets('saved draft language falls back safely without overwriting preference', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'hi',
+    });
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose your language'), findsOneWidget);
+    expect(find.text('Your safety toolkit'), findsNothing);
+    expect(find.bySemanticsLabel(
+      'Languages listed: 191. Available to select: 2',
+    ), findsOneWidget);
+
+    final hindiTile = tester.widget<ListTile>(
+      find.byKey(const ValueKey('language-hi')),
+    );
+    expect(hindiTile.onTap, isNull);
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('appearance.language'), 'hi');
+  });
+
   testWidgets('completed onboarding is not shown on the next launch', (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
