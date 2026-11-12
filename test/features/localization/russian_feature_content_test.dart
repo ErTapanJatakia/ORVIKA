@@ -95,10 +95,29 @@ void main() {
           'Сетевые запросы не выполнялись.');
     });
 
-    test('retains named placeholders in Russian UI notices', () {
+    test('covers scanner controls, errors and privacy disclosures', () {
+      const keys = [
+        'checker.camera.title', 'checker.camera.close', 'checker.camera.notice.title',
+        'checker.camera.notice.body', 'checker.camera.permissionDenied',
+        'checker.camera.unavailable', 'checker.camera.previewError',
+        'checker.camera.requesting', 'checker.camera.allow', 'checker.camera.stop',
+        'checker.camera.formats', 'checker.image.title', 'checker.image.close',
+        'checker.image.instruction', 'checker.image.error.selection',
+        'checker.image.error.empty', 'checker.image.error.tooLarge',
+        'checker.image.error.noCode', 'checker.image.error.decode',
+        'checker.image.privacyNotice', 'checker.image.choose',
+        'checker.image.chooseAnother', 'checker.image.previewUnavailable',
+        'checker.image.selected', 'checker.image.scanning', 'checker.image.detect',
+        'checker.image.clear', 'checker.image.selectResult',
+      ];
+      for (final key in keys) {
+        expect(l10n.hasTranslation(key), isTrue, reason: 'Missing Russian scanner key: $key');
+        expect(l10n.text(key), isNot(key), reason: 'Untranslated Russian scanner key: $key');
+      }
       expect(l10n.text('checker.camera.previewError'), contains('{error}'));
-      expect(l10n.text('checker.qr.detectedFormat', 'Detected code format: {format}'), contains('{format}'));
+      expect(l10n.text('checker.qr.detectedFormat'), contains('{format}'));
       expect(l10n.text('privacy.analytics.notice'), contains('Vercel Web Analytics'));
+      expect(l10n.text('privacy.device.notice'), contains('ORVIKA'));
     });
   });
 }
