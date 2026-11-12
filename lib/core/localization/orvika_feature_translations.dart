@@ -53,6 +53,8 @@ class OrvikaFeatureTranslations {
       'checker.severity.info': 'INFO',
       'checker.severity.caution': 'VORSICHT',
       'checker.severity.warning': 'WARNUNG',
+      'privacy.analytics.notice': 'Website-Analyse: ORVIKA verwendet Vercel Web Analytics für aggregierte Seitenaufrufe sowie grundlegende Kennzahlen zu Gerät, Browser, Referrer und ungefährer Region. Im Vercel-Hobby-Tarif sind keine benutzerdefinierten Ereignisse zur Funktionsnutzung verfügbar. ORVIKA übermittelt keine eingefügten URLs, Nachrichtentexte, dekodierten QR-Inhalte, Zugangsdaten oder Ergebnisse von Sicherheitsanalysen als Analysedaten. Die Website-Analyse ist von der Sicherheitsanalyse auf dem Gerät getrennt. Laut Vercel verwendet Web Analytics keine Cookies; Besucher-Hashes laufen nach 24 Stunden ab.',
+      'privacy.device.notice': 'ORVIKA scannt dein Gerät nicht, untersucht keine installierten Apps, liest keine Kontodaten und ändert keine Berechtigungen. Einstellungen und Bezeichnungen unterscheiden sich je nach Plattform. Nutze die offiziellen Einstellungen und Dokumentationen des jeweiligen Betriebssystems oder Dienstes.',
     },
     'fr': {
       'checker.link.heading': 'Vérifiez avant de vous connecter.',
