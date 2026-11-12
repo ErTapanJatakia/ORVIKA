@@ -28,19 +28,58 @@ jobs:
     outputs:
       android: ${{ steps.scope.outputs.android }}
     steps:
-      - name: Classify pull request changes
+      - name: Classify changed files for Android validation
         id: scope
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_SHA: ${{ github.sha }}
         run: |
-          # PR checks are the authoritative per-change validation. Android
-          # release validation runs on main after an application-code batch
-          # has been merged, avoiding a costly APK build on every PR update.
+          # PRs receive fast Web/Flutter validation. Android release builds
+          # run only after application-runtime changes land on main.
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "android=false" >> "$GITHUB_OUTPUT"
-          else
+            exit 0
+          fi
+
+          # Manual dispatch is reserved for explicitly requested deployment
+          # validation; it must not trigger an unrelated Android APK build.
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "android=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ -z "$PUSH_BEFORE" || "$PUSH_BEFORE" =~ ^0+$ ]]; then
             echo "android=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          compare_url="https://api.github.com/repos/$GITHUB_REPOSITORY/compare/$PUSH_BEFORE...$PUSH_SHA"
+          if ! response="$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$compare_url")"; then
+            echo "Unable to classify push diff; running Android validation as a safe fallback."
+            echo "android=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          total_files="$(jq -r '.files | length' <<< "$response")"
+          reported_files="$(jq -r '.total_files // 0' <<< "$response")"
+          if (( reported_files > total_files )); then
+            echo "Diff exceeds the API file listing; running Android validation as a safe fallback."
+            echo "android=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if jq -e '[.files[].filename] | any(test("^(lib/|assets/|android/|pubspec\\.yaml$|pubspec\\.lock$)"))' \
+            <<< "$response" >/dev/null; then
+            echo "Application runtime files changed; Android validation required."
+            echo "android=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No application runtime files changed; skipping Android validation."
+            echo "android=false" >> "$GITHUB_OUTPUT"
           fi
 
   android-validation:
