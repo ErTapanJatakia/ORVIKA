@@ -8,6 +8,8 @@ import '../domain/privacy_checklist.dart';
 import '../../../core/localization/german_privacy_content.dart';
 import '../../../core/localization/italian_privacy_content.dart';
 import '../../../core/localization/french_privacy_content.dart';
+import '../../../core/localization/spanish_privacy_content.dart';
+import '../../../core/localization/portuguese_privacy_content.dart';
 
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});
@@ -214,7 +216,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       ],
                     ),
                   ),
-                  for (final practice in _checklist.byCategory(category).map((item) => l10n.language.code == 'fr' ? FrenchPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianPrivacyContent.localize(item, l10n.language.code) : GermanPrivacyContent.localize(item, l10n.language.code)))
+                  for (final practice in _checklist.byCategory(category).map((item) => l10n.language.code == 'pt' ? PortuguesePrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianPrivacyContent.localize(item, l10n.language.code) : GermanPrivacyContent.localize(item, l10n.language.code)))
                     Card(
                       margin: const EdgeInsets.only(bottom: 9),
                       child: ExpansionTile(
