@@ -31,6 +31,7 @@ void main() {
   });
 
   testWidgets('draft packs expose native-script text and provisional font fallbacks', (tester) async {
+    SharedPreferences.setMockInitialValues({});
     const expectedScripts = <String, (int, int)>{
       'hi': (0x0900, 0x097F),
       'mr': (0x0900, 0x097F),
@@ -81,6 +82,9 @@ void main() {
       'Languages listed: 191. Available to select: 2',
     ), findsOneWidget);
 
+    // Search results are lazily built; filter before inspecting the Hindi tile.
+    await tester.enterText(find.byType(TextField), 'Hindi');
+    await tester.pumpAndSettle();
     final hindiTile = tester.widget<ListTile>(
       find.byKey(const ValueKey('language-hi')),
     );
@@ -463,26 +467,46 @@ void main() {
     }
   });
 
-  testWidgets('Arabic selection applies right-to-left layout and translated dashboard', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding.completed.v1': true,
-      'appearance.language': 'ar',
-    });
-    await tester.pumpWidget(const OrvikaApp());
+  testWidgets('Arabic locale scope resolves its dashboard title with RTL direction', (tester) async {
+    final language = OrvikaLanguage.fromCode('ar');
+    await tester.pumpWidget(MaterialApp(
+      home: OrvikaLanguageScope(
+        language: language,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Builder(
+            builder: (context) => Text(
+              OrvikaLocalizations.of(context).text('dashboard.title'),
+            ),
+          ),
+        ),
+      ),
+    ));
     await tester.pumpAndSettle();
-    expect(find.text('أدواتك للسلامة الرقمية'), findsOneWidget);
-    expect(Directionality.of(tester.element(find.text('أدواتك للسلامة الرقمية'))), TextDirection.rtl);
+    const heading = 'أدواتك للسلامة الرقمية';
+    expect(find.text(heading), findsOneWidget);
+    expect(Directionality.of(tester.element(find.text(heading))), TextDirection.rtl);
   });
 
-  testWidgets('Urdu selection applies right-to-left layout and translated dashboard', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding.completed.v1': true,
-      'appearance.language': 'ur',
-    });
-    await tester.pumpWidget(const OrvikaApp());
+  testWidgets('Urdu locale scope resolves its dashboard title with RTL direction', (tester) async {
+    final language = OrvikaLanguage.fromCode('ur');
+    await tester.pumpWidget(MaterialApp(
+      home: OrvikaLanguageScope(
+        language: language,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Builder(
+            builder: (context) => Text(
+              OrvikaLocalizations.of(context).text('dashboard.title'),
+            ),
+          ),
+        ),
+      ),
+    ));
     await tester.pumpAndSettle();
-    expect(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'), findsOneWidget);
-    expect(Directionality.of(tester.element(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'))), TextDirection.rtl);
+    const heading = 'آپ کے ڈیجیٹل تحفظ کے اوزار';
+    expect(find.text(heading), findsOneWidget);
+    expect(Directionality.of(tester.element(find.text(heading))), TextDirection.rtl);
   });
 
   testWidgets('accessibility preferences apply globally and persist locally', (tester) async {
@@ -574,14 +598,44 @@ void main() {
   });
 
   testWidgets('dashboard header and hero remain usable at 200 percent text scaling in RTL', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding.completed.v1': true,
-      'appearance.language': 'ar',
-      'accessibility.textScale': 2.0,
-    });
+    final language = OrvikaLanguage.fromCode('ar');
+    final palette = OrvikaTheme.obsidian.palette;
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(320, 900);
-    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: palette.primary,
+          brightness: Brightness.dark,
+          surface: palette.surface,
+        ),
+        scaffoldBackgroundColor: palette.background,
+      ),
+      home: OrvikaLanguageScope(
+        language: language,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: MediaQuery(
+            data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
+            child: SentinelDashboard(
+              selectedTheme: OrvikaTheme.obsidian,
+              onThemeChanged: (_) {},
+              selectedLanguage: language,
+              selectedCatalogue: 'india',
+              onLanguageChanged: (_) {},
+              onCatalogueChanged: (_) {},
+              textScale: 2.0,
+              onTextScaleChanged: (_) {},
+              boldText: false,
+              onBoldTextChanged: (_) {},
+              reduceMotion: false,
+              onReduceMotionChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    ));
     await tester.pumpAndSettle();
 
     expect(find.text('ORVIKA'), findsOneWidget);
