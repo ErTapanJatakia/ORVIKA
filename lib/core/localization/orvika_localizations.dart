@@ -762,7 +762,10 @@ class OrvikaLocalizations {
 
   /// Resolves a key using the existing positional-fallback API.
   String text(String key, [String? fallback]) =>
-      _translations[key] ?? fallback ?? key;
+      _translations[key] ??
+      OrvikaFeatureTranslations.forCode(language.code)[key] ??
+      fallback ??
+      key;
 
   /// Resolves a key and interpolates named placeholders such as {count}.
   /// Missing parameters remain visible to make incomplete call sites detectable.
@@ -771,7 +774,10 @@ class OrvikaLocalizations {
     String? fallback,
     Map<String, Object?> parameters = const {},
   }) {
-    final resolved = _translations[key] ?? fallback ?? key;
+    final resolved = _translations[key] ??
+        OrvikaFeatureTranslations.forCode(language.code)[key] ??
+        fallback ??
+        key;
     return resolved.replaceAllMapped(
       RegExp(r'\{([a-zA-Z][a-zA-Z0-9_]*)\}'),
       (match) {
