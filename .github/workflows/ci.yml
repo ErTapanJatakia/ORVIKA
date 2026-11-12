@@ -2,7 +2,7 @@ name: ORVIKA CI
 
 on:
   push:
-    branches: [main, "feat/**"]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -34,29 +34,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" != "refs/heads/main" ]; then
+          # PR checks are the authoritative per-change validation. Android
+          # release validation runs on main after an application-code batch
+          # has been merged, avoiding a costly APK build on every PR update.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "android=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [ "${{ github.event_name }}" != "pull_request" ]; then
-            echo "android=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          files="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files" --jq '.[].filename')"
-          if [ -z "$files" ]; then
-            echo "Could not retrieve changed files; failing closed." >&2
-            exit 1
-          fi
-
-          # Android validation is retained for all application, platform,
-          # dependency, and Android-workflow changes. It is skipped only when
-          # every changed file is documentation, plus this dispatcher workflow.
-          if grep -qvE '^(docs/.*|[^/]+\.md|package\.json|functions/.*|test/edge/.*|\.github/workflows/(ci|cloudflare-pages)\.yml)$' <<< "$files"; then
-            echo "android=true" >> "$GITHUB_OUTPUT"
           else
-            echo "android=false" >> "$GITHUB_OUTPUT"
+            echo "android=true" >> "$GITHUB_OUTPUT"
           fi
 
   android-validation:
