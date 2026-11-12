@@ -35,7 +35,7 @@ class ResponseScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(title: 'Response'),
+      appBar: OrvikaFeatureAppBar(title: l10n.text('module.response', 'Response')),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
