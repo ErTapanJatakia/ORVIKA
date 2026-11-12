@@ -269,6 +269,40 @@ void main() {
       }
     });
 
+    test('Marathi and Sanskrit cover the full baseline except approved safety notices', () {
+      const fallbackOnlyKeys = {
+        'intelligence.notice',
+        'privacy.progressNote',
+        'academy.progressNote',
+        'academy.notice',
+        'response.urgent',
+        'response.notice',
+      };
+      final source = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\\{([a-zA-Z][a-zA-Z0-9_]*)\\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final code in ['mr', 'sa']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+          if (fallbackOnlyKeys.contains(key)) {
+            expect(localization.hasTranslation(key), isFalse,
+                reason: '$code must retain the approved fallback for $key');
+            continue;
+          }
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing baseline key $key');
+          expect(localization.text(key), isNot(key));
+          expect(
+            placeholders(localization.text(key)),
+            placeholders(source.text(key)),
+            reason: '$code must preserve placeholders for $key',
+          );
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
