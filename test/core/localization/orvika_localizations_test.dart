@@ -40,6 +40,32 @@ void main() {
       expect(OrvikaLanguage.fromCode('ce').hasReviewedTranslation, isFalse);
     });
 
+    test('Devanagari script coverage includes Hindi and related languages', () {
+      for (final code in ['hi', 'mr', 'ne', 'sa', 'mai', 'doi', 'kok', 'brx', 'bho']) {
+        expect(
+          OrvikaLanguage.fromCode(code).usesDevanagariScript,
+          isTrue,
+          reason: '$code should use the bundled Devanagari font',
+        );
+      }
+      expect(OrvikaLanguage.fromCode('gu').usesDevanagariScript, isFalse);
+      expect(OrvikaLanguage.fromCode('ur').usesDevanagariScript, isFalse);
+    });
+
+    test('Hindi draft covers every required interface translation key', () {
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('hi'));
+      final missing = OrvikaLocalizations.requiredTranslationKeys
+          .where((key) => !localization.hasTranslation(key))
+          .toList();
+      expect(missing, isEmpty, reason: 'Hindi draft is missing required keys: $missing');
+      expect(OrvikaLocalizations.requiredTranslationKeys.length, 138);
+      expect(
+        OrvikaLanguage.fromCode('hi').hasReviewedTranslation,
+        isFalse,
+        reason: 'Key coverage alone does not replace native-language review',
+      );
+    });
+
     test('all authored language packs cover every feature app-bar title', () {
       const featureTitleKeys = [
         'module.link',
