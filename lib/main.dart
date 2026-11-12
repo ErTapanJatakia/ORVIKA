@@ -528,21 +528,31 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                   color: selected ? palette.primary : scheme.onSurfaceVariant,
                                 ),
                                 title: Text(language.name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                                subtitle: Text(language.nativeName),
+                                subtitle: Text(
+                                  language.hasReviewedTranslation
+                                      ? language.nativeName
+                                      : '${language.nativeName} · Coming soon',
+                                ),
                                 trailing: language.hasReviewedTranslation
-                                  ? const Icon(Icons.verified_outlined, size: 17)
-                                  : language.hasDraftTranslation
-                                      ? const Tooltip(message: 'Draft translation — native-speaker review required', child: Icon(Icons.edit_note_rounded, size: 19))
-                                      : null,
-                                onTap: () {
-                                  setState(() => _selected = language);
-                                  widget.onLanguageChanged(language);
-                                  if (widget.showContinueButton) {
-                                    widget.onContinue?.call();
-                                  } else {
-                                    Navigator.of(context).popUntil((route) => route.isFirst);
-                                  }
-                                },
+                                  ? const Tooltip(
+                                      message: 'Complete translation available',
+                                      child: Icon(Icons.verified_outlined, size: 17),
+                                    )
+                                  : const Tooltip(
+                                      message: 'Full app translation is not available yet',
+                                      child: Icon(Icons.lock_outline_rounded, size: 17),
+                                    ),
+                                onTap: language.hasReviewedTranslation
+                                    ? () {
+                                        setState(() => _selected = language);
+                                        widget.onLanguageChanged(language);
+                                        if (widget.showContinueButton) {
+                                          widget.onContinue?.call();
+                                        } else {
+                                          Navigator.of(context).popUntil((route) => route.isFirst);
+                                        }
+                                      }
+                                    : null,
                                 ),
                               );
                             },
