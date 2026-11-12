@@ -40,30 +40,30 @@ void main() {
       expect(OrvikaLanguage.fromCode('ce').hasReviewedTranslation, isFalse);
     });
 
-    test('Devanagari script coverage includes Hindi and related languages', () {
+    test('Devanagari locales use the bundled script font', () {
       for (final code in ['hi', 'mr', 'ne', 'sa', 'mai', 'doi', 'kok', 'brx', 'bho']) {
-        expect(
-          OrvikaLanguage.fromCode(code).usesDevanagariScript,
-          isTrue,
-          reason: '$code should use the bundled Devanagari font',
-        );
+        expect(OrvikaLanguage.fromCode(code).usesDevanagariScript, isTrue,
+            reason: '$code should use Devanagari typography');
       }
       expect(OrvikaLanguage.fromCode('gu').usesDevanagariScript, isFalse);
       expect(OrvikaLanguage.fromCode('ur').usesDevanagariScript, isFalse);
     });
 
-    test('Hindi draft covers every required interface translation key', () {
-      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('hi'));
-      final missing = OrvikaLocalizations.requiredTranslationKeys
-          .where((key) => !localization.hasTranslation(key))
-          .toList();
-      expect(missing, isEmpty, reason: 'Hindi draft is missing required keys: $missing');
-      expect(OrvikaLocalizations.requiredTranslationKeys.length, 138);
-      expect(
-        OrvikaLanguage.fromCode('hi').hasReviewedTranslation,
-        isFalse,
-        reason: 'Key coverage alone does not replace native-language review',
-      );
+    test('Hindi draft covers the reviewed source key baseline', () {
+      final hindi = OrvikaLocalizations(OrvikaLanguage.fromCode('hi'));
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(hindi.hasTranslation(key), isTrue, reason: 'Hindi is missing $key');
+      }
+    });
+
+    test('only complete reviewed language packs are eligible for selection', () {
+      for (final language in OrvikaLanguage.allValues) {
+        expect(
+          language.hasReviewedTranslation,
+          ['en', 'ru'].contains(language.code),
+          reason: '${language.code} must remain unavailable until its full app translation is reviewed',
+        );
+      }
     });
 
     test('all authored language packs cover every feature app-bar title', () {

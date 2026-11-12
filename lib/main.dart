@@ -131,6 +131,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
       final preferences = await SharedPreferences.getInstance();
       final savedName = preferences.getString(_themePreferenceKey);
       final savedLanguage = preferences.getString('appearance.language');
+      final restoredLanguage = OrvikaLanguage.fromCode(savedLanguage);
+      final hasReviewedSavedLanguage =
+          savedLanguage != null && restoredLanguage.hasReviewedTranslation;
       final savedCatalogue = preferences.getString('appearance.languageCatalogue') ?? 'russia';
       final completed = preferences.getBool('onboarding.completed.v1') ?? false;
       final textScale = preferences.getDouble('accessibility.textScale') ?? 1.0;
@@ -139,8 +142,13 @@ class _OrvikaAppState extends State<OrvikaApp> {
       if (!mounted) return;
       setState(() {
         _selectedCatalogue = savedCatalogue;
-        _selectedLanguage = OrvikaLanguage.fromCode(savedLanguage);
-        _hasSelectedLanguage = savedLanguage != null;
+        // Never restore an incomplete draft into the live application UI.
+        // Keep the stored preference untouched so the user's previous choice
+        // is not silently overwritten; show the language picker instead.
+        _selectedLanguage = hasReviewedSavedLanguage
+            ? restoredLanguage
+            : OrvikaLanguage.english;
+        _hasSelectedLanguage = hasReviewedSavedLanguage;
         if (savedName != null) {
           for (final theme in OrvikaTheme.values) {
             if (theme.name == savedName) {
@@ -242,8 +250,13 @@ class _OrvikaAppState extends State<OrvikaApp> {
   @override
   Widget build(BuildContext context) {
     final palette = _selectedTheme.palette;
-    final scriptFontFallbacks = <String>[
+    // Inter and Space Grotesk are Latin-first brand fonts. These system
+    // fallback names are best-effort only: font availability differs by
+    // platform and browser. Release-grade Indic rendering still requires
+    // locally bundled, licensed script fonts and device-level visual tests.
+    const scriptFontFallbacks = <String>[
       'NotoSansDevanagari',
+      'Noto Sans Devanagari',
       'Noto Sans Gujarati',
       'Noto Nastaliq Urdu',
       'Noto Naskh Arabic',
@@ -315,7 +328,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: appFontFamily,
+        fontFamily: 'Inter',
         textTheme: _boldText
             ? brandTextTheme.copyWith(
                 displayLarge: brandTextTheme.displayLarge?.copyWith(fontWeight: FontWeight.w900),
@@ -436,6 +449,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
           language.nativeName.toLowerCase().contains(query) ||
           language.code.toLowerCase().contains(query);
     }).toList(growable: false);
+    final selectableCount =
+        filtered.where((language) => language.hasReviewedTranslation).length;
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -526,21 +541,37 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                   color: selected ? palette.primary : scheme.onSurfaceVariant,
                                 ),
                                 title: Text(language.name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                                subtitle: Text(language.nativeName),
+                                subtitle: Text(
+                                  language.hasReviewedTranslation
+                                      ? language.nativeName
+                                      : isRussian
+                                          ? '${language.nativeName} · Скоро появится'
+                                          : '${language.nativeName} · Coming soon',
+                                ),
                                 trailing: language.hasReviewedTranslation
-                                  ? const Icon(Icons.verified_outlined, size: 17)
-                                  : language.hasDraftTranslation
-                                      ? const Tooltip(message: 'Draft translation — native-speaker review required', child: Icon(Icons.edit_note_rounded, size: 19))
-                                      : null,
-                                onTap: () {
-                                  setState(() => _selected = language);
-                                  widget.onLanguageChanged(language);
-                                  if (widget.showContinueButton) {
-                                    widget.onContinue?.call();
-                                  } else {
-                                    Navigator.of(context).popUntil((route) => route.isFirst);
-                                  }
-                                },
+                                  ? Tooltip(
+                                      message: isRussian
+                                          ? 'Полный перевод доступен'
+                                          : 'Complete translation available',
+                                      child: const Icon(Icons.verified_outlined, size: 17),
+                                    )
+                                  : Tooltip(
+                                      message: isRussian
+                                          ? 'Полный перевод приложения пока недоступен'
+                                          : 'Full app translation is not available yet',
+                                      child: const Icon(Icons.lock_outline_rounded, size: 17),
+                                    ),
+                                onTap: language.hasReviewedTranslation
+                                    ? () {
+                                        setState(() => _selected = language);
+                                        widget.onLanguageChanged(language);
+                                        if (widget.showContinueButton) {
+                                          widget.onContinue?.call();
+                                        } else {
+                                          Navigator.of(context).popUntil((route) => route.isFirst);
+                                        }
+                                      }
+                                    : null,
                                 ),
                               );
                             },
@@ -551,15 +582,15 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     container: true,
                     liveRegion: true,
                     label: isRussian
-                        ? 'Доступно языков: ${filtered.length}'
-                        : '${filtered.length} ${filtered.length == 1 ? 'language' : 'languages'} available',
+                        ? 'Языков в списке: ${filtered.length}. Доступно для выбора: $selectableCount'
+                        : 'Languages listed: ${filtered.length}. Available to select: $selectableCount',
                     child: const SizedBox.shrink(),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     isRussian
-                      ? 'Перевод интерфейса проверен для русского и английского. Для хинди и некоторых других языков подготовлены черновики, требующие проверки носителями языков; непереведённые разделы остаются на английском.'
-                      : 'English and Russian have reviewed interface translations. Hindi and selected additional languages have unreviewed drafts; languages without an available translation use English.',
+                      ? 'Полный перевод интерфейса проверен только для русского и английского. Черновики других языков, включая хинди, пока недоступны для выбора и требуют полной проверки; непереведённые разделы остаются на английском.'
+                      : 'Only English and Russian currently have complete, reviewed interface translations. Drafts such as Hindi remain unavailable until the entire app is translated and reviewed; untranslated content uses English.',
                     style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
                   ),
                 ],

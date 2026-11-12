@@ -44,7 +44,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final announcement = find.bySemanticsLabel('0 languages available');
+    final announcement = find.bySemanticsLabel(
+      'Languages listed: 0. Available to select: 0',
+    );
     expect(announcement, findsOneWidget);
     expect(
       tester.getSemantics(announcement).flagsCollection.isLiveRegion,
