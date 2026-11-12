@@ -242,9 +242,21 @@ class _OrvikaAppState extends State<OrvikaApp> {
   @override
   Widget build(BuildContext context) {
     final palette = _selectedTheme.palette;
+    final scriptFontFallbacks = <String>[
+      'NotoSansDevanagari',
+      'Noto Sans Gujarati',
+      'Noto Nastaliq Urdu',
+      'Noto Naskh Arabic',
+      'Noto Sans Arabic',
+    ];
+    final appFontFamily =
+        _selectedLanguage.usesDevanagariScript ? 'NotoSansDevanagari' : 'Inter';
     final baseTextTheme = ThemeData(
       brightness: palette.isDark ? Brightness.dark : Brightness.light,
-    ).textTheme.apply(fontFamily: 'Inter');
+    ).textTheme.apply(
+      fontFamily: appFontFamily,
+      fontFamilyFallback: scriptFontFallbacks,
+    );
     final brandTextTheme = baseTextTheme.copyWith(
       displayLarge: baseTextTheme.displayLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
       displayMedium: baseTextTheme.displayMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
@@ -303,7 +315,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Inter',
+        fontFamily: appFontFamily,
         textTheme: _boldText
             ? brandTextTheme.copyWith(
                 displayLarge: brandTextTheme.displayLarge?.copyWith(fontWeight: FontWeight.w900),
