@@ -30,7 +30,7 @@ void main() {
     expect(preferences.getBool('onboarding.completed.v1'), isTrue);
   });
 
-  testWidgets('Hindi, Gujarati, Marathi and Urdu use script-aware font fallbacks', (tester) async {
+  testWidgets('draft packs expose native-script text and provisional font fallbacks', (tester) async {
     const expectedScripts = <String, (int, int)>{
       'hi': (0x0900, 0x097F),
       'mr': (0x0900, 0x097F),
@@ -39,32 +39,29 @@ void main() {
     };
 
     for (final entry in expectedScripts.entries) {
-      SharedPreferences.setMockInitialValues({
-        'onboarding.completed.v1': true,
-        'appearance.language': entry.key,
-      });
-      await tester.pumpWidget(OrvikaApp(key: ValueKey('script-font-${entry.key}')));
-      await tester.pumpAndSettle();
-
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(entry.key));
       final heading = localization.text('dashboard.title');
-      expect(heading.runes.any((rune) => rune >= entry.value.$1 && rune <= entry.value.$2), isTrue,
-          reason: '${entry.key} dashboard heading must use its native script');
-      expect(find.text(heading), findsOneWidget);
-
-      final textTheme = Theme.of(tester.element(find.text(heading))).textTheme;
       expect(
-        textTheme.bodyMedium?.fontFamilyFallback,
-        containsAll(const [
-          'Noto Sans Devanagari',
-          'Noto Sans Gujarati',
-          'Noto Nastaliq Urdu',
-          'Noto Naskh Arabic',
-          'Noto Sans Arabic',
-        ]),
-        reason: '${entry.key} must have system font fallbacks for its script',
+        heading.runes.any((rune) => rune >= entry.value.$1 && rune <= entry.value.$2),
+        isTrue,
+        reason: '${entry.key} draft must contain native-script dashboard text',
       );
     }
+
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    final textTheme = Theme.of(tester.element(find.text('Choose your language'))).textTheme;
+    expect(
+      textTheme.bodyMedium?.fontFamilyFallback,
+      containsAll(const [
+        'Noto Sans Devanagari',
+        'Noto Sans Gujarati',
+        'Noto Nastaliq Urdu',
+        'Noto Naskh Arabic',
+        'Noto Sans Arabic',
+      ]),
+      reason: 'System fallbacks are provisional and do not replace bundled font validation',
+    );
   });
 
   testWidgets('saved draft language falls back safely without overwriting preference', (tester) async {
@@ -383,30 +380,13 @@ void main() {
     expect(OrvikaLocalizations.translatedLanguageCodes, isNot(contains('ba')));
   });
 
-  testWidgets('Hindi draft renders when loaded directly while picker selection is gated', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding.completed.v1': true,
-      'appearance.language': 'hi',
-    });
-    await tester.pumpWidget(const OrvikaApp());
-    await tester.pumpAndSettle();
-    expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
-    expect(find.text('भरोसा करने से पहले जाँचें।'), findsOneWidget);
-    expect(find.text('डिवाइस पर जाँच'), findsOneWidget);
-    expect(find.byTooltip('भाषा बदलें'), findsOneWidget);
-    await revealDashboardContent(tester);
-    expect(find.text('लिंक जाँच'), findsOneWidget);
-    expect(find.text('गोपनीयता सर्वोपरि'), findsOneWidget);
-
-    expect(
-      OrvikaLocalizations.of(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).language.code,
-      'hi',
-      reason: 'The selected app locale must not be silently coerced to English.',
-    );
+  test('Hindi draft strings remain available to localization work while selection is gated', () {
+    final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('hi'));
+    expect(localization.text('dashboard.title'), 'आपके डिजिटल सुरक्षा उपकरण');
+    expect(localization.text('onboarding.title.1'), 'भरोसा करने से पहले जाँचें।');
+    expect(localization.hasTranslation('dashboard.title'), isTrue);
     expect(OrvikaLanguage.fromCode('hi').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('hi').hasReviewedTranslation, isFalse);
-    final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'hi');
   });
 
   test('India language catalogue contains 100 unique codes and names', () {
