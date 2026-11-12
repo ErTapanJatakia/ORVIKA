@@ -13,6 +13,7 @@ import '../../../core/localization/italian_checker_content.dart';
 import '../../../core/localization/french_checker_content.dart';
 import '../../../core/localization/spanish_checker_content.dart';
 import '../../../core/localization/portuguese_checker_content.dart';
+import '../../../core/localization/russian_checker_content.dart';
 
 class QrCheckScreen extends StatefulWidget {
   const QrCheckScreen({super.key});
@@ -93,7 +94,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
-    final result = _result == null ? null : l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeQr(_result!, l10n.language.code) : GermanCheckerContent.localizeQr(_result!, l10n.language.code);
+    final result = _result == null ? null : l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeQr(_result!, l10n.language.code) : GermanCheckerContent.localizeQr(_result!, l10n.language.code);
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(
         title: 'QR Check',
