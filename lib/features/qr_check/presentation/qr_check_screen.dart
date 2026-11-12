@@ -96,8 +96,8 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
     final l10n = OrvikaLocalizations.of(context);
     final result = _result == null ? null : l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeQr(_result!, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeQr(_result!, l10n.language.code) : GermanCheckerContent.localizeQr(_result!, l10n.language.code);
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(
-        title: 'QR Check',
+      appBar: OrvikaFeatureAppBar(
+        title: l10n.text('module.qr', 'QR Check'),
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
