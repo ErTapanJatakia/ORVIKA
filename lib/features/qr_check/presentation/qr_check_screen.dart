@@ -9,6 +9,7 @@ import '../../../core/localization/orvika_localizations.dart';
 import '../../link_check/domain/url_analyzer.dart';
 import '../domain/qr_payload_analyzer.dart';
 import '../../../core/localization/german_checker_content.dart';
+import '../../../core/localization/italian_checker_content.dart';
 
 class QrCheckScreen extends StatefulWidget {
   const QrCheckScreen({super.key});
@@ -89,7 +90,7 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
-    final result = _result == null ? null : GermanCheckerContent.localizeQr(_result!, l10n.language.code);
+    final result = _result == null ? null : l10n.language.code == 'it' ? ItalianCheckerContent.localizeQr(_result!, l10n.language.code) : GermanCheckerContent.localizeQr(_result!, l10n.language.code);
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(
         title: 'QR Check',
