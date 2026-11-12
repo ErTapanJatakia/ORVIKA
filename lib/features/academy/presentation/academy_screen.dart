@@ -5,6 +5,7 @@ import '../../../core/localization/orvika_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/academy_curriculum.dart';
+import '../../../core/localization/german_academy_content.dart';
 
 class AcademyScreen extends StatefulWidget {
   const AcademyScreen({super.key});
@@ -84,7 +85,9 @@ class _AcademyScreenState extends State<AcademyScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
-    const lessons = AcademyCurriculum.lessons;
+    final lessons = AcademyCurriculum.lessons
+        .map((lesson) => GermanAcademyContent.localize(lesson, l10n.language.code))
+        .toList(growable: false);
     final progress = _completed.length;
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(title: 'Academy'),
@@ -198,7 +201,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                       ],
                     ),
                   ),
-                  for (final lesson in const AcademyCurriculum().byCategory(category))
+                  for (final lesson in lessons.where((lesson) => lesson.category == category))
                     Card(
                       margin: const EdgeInsets.only(bottom: 10),
                       child: Padding(
