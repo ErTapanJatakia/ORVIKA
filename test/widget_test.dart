@@ -45,7 +45,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final heading = find.text(
-        OrvikaLocalizations(OrvikaLanguage.fromCode(code)).text('dashboard.title'),
+        OrvikaLocalizations(OrvikaLanguage.fromCode(code)).text(
+          'dashboard.title',
+          'Your safety toolkit',
+        ),
       );
       expect(heading, findsOneWidget);
       final textTheme = Theme.of(tester.element(heading)).textTheme;
