@@ -6,6 +6,11 @@ class OrvikaLanguage {
   final String nativeName;
 
   String get label => '$name — $nativeName';
+
+  /// True when this locale's standard writing system is Devanagari.
+  bool get usesDevanagariScript => const {
+        'hi', 'mr', 'ne', 'sa', 'mai', 'doi', 'kok', 'brx', 'bho'
+      }.contains(code);
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
   bool get hasDraftTranslation => const {
         'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'

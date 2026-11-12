@@ -12,6 +12,13 @@ import 'helpers/dashboard_test_helpers.dart';
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'}));
 
+  testWidgets('bundled Devanagari font asset is available offline', (tester) async {
+    final fontData = await rootBundle.load(
+      'assets/fonts/NotoSansDevanagari[wdth,wght].ttf',
+    );
+    expect(fontData.lengthInBytes, greaterThan(500000));
+  });
+
   testWidgets('first launch language selection immediately opens the dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
