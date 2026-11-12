@@ -35,6 +35,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Datenschutz'), findsOneWidget);
     expect(find.text('Verwende einzigartige Passwörter für wichtige Konten'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.textContaining('Website-Analyse: ORVIKA verwendet Vercel Web Analytics'),
+      500,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.textContaining('Website-Analyse: ORVIKA verwendet Vercel Web Analytics'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -58,7 +63,7 @@ void main() {
   testWidgets('German checker screens render localized headings and controls', (tester) async {
     await tester.pumpWidget(_app(const LinkCheckScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Prüfen, bevor Sie eine Verbindung herstellen.'), findsOneWidget);
+    expect(find.text('Prüfen, bevor Sie sich verbinden.'), findsOneWidget);
     expect(find.text('Webadresse'), findsOneWidget);
     await tester.pumpWidget(_app(const QrCheckScreen()));
     await tester.pumpAndSettle();
