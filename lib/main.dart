@@ -116,7 +116,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
   bool _hasSelectedLanguage = false;
   bool _isLoadingPreferences = true;
   bool _hasCompletedOnboarding = false;
-  double _textScale = 1.0;
+  double _textScale = 0.5;
   bool _boldText = false;
   bool _reduceMotion = false;
 
@@ -136,7 +136,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
           savedLanguage != null && restoredLanguage.hasReviewedTranslation;
       final savedCatalogue = preferences.getString('appearance.languageCatalogue') ?? 'russia';
       final completed = preferences.getBool('onboarding.completed.v1') ?? false;
-      final textScale = preferences.getDouble('accessibility.textScale') ?? 1.0;
+      final textScale = preferences.getDouble('accessibility.textScale') ?? 0.5;
       final boldText = preferences.getBool('accessibility.boldText') ?? false;
       final reduceMotion = preferences.getBool('accessibility.reduceMotion') ?? false;
       if (!mounted) return;
@@ -158,7 +158,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
           }
         }
         _hasCompletedOnboarding = completed;
-        _textScale = textScale.clamp(0.85, 2.0).toDouble();
+        _textScale = ((textScale.clamp(0.5, 2.0) * 20).round() / 20).toDouble();
         _boldText = boldText;
         _reduceMotion = reduceMotion;
         _isLoadingPreferences = false;
@@ -223,7 +223,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
   }
 
   Future<void> _setTextScale(double value) async {
-    final safeValue = value.clamp(0.85, 2.0).toDouble();
+    final safeValue = ((value.clamp(0.5, 2.0) * 20).round() / 20).toDouble();
     setState(() => _textScale = safeValue);
     final preferences = await SharedPreferences.getInstance();
     await preferences.setDouble('accessibility.textScale', safeValue);
@@ -1387,34 +1387,34 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           const Divider(height: 28),
           Semantics(
             header: true,
-            child: Text('Accessibility', style: Theme.of(context).textTheme.titleLarge),
+            child: Text(OrvikaLocalizations(_selectedLanguage).text('settings.accessibility.title', 'Accessibility'), style: Theme.of(context).textTheme.titleLarge),
           ),
           const SizedBox(height: 6),
-          Text('These preferences are stored on this device. Operating-system accessibility settings remain respected.',
+          Text(OrvikaLocalizations(_selectedLanguage).text('settings.accessibility.help', 'These preferences are stored on this device. Operating-system accessibility settings remain respected.'),
             style: TextStyle(color: scheme.onSurfaceVariant)),
           const SizedBox(height: 12),
-          Text('Text size', style: Theme.of(context).textTheme.titleMedium),
+          Text(OrvikaLocalizations(_selectedLanguage).text('settings.textSize', 'Text size'), style: Theme.of(context).textTheme.titleMedium),
           Semantics(
-            label: 'Text size', value: '${(_textScale * 100).round()} percent',
+            label: OrvikaLocalizations(_selectedLanguage).text('settings.textSize', 'Text size'), value: '${(_textScale * 100).round()}%',
             child: Slider(
-              min: 0.85, max: 2.0, divisions: 23, value: _textScale,
+              min: 0.5, max: 2.0, divisions: 30, value: _textScale,
               label: '${(_textScale * 100).round()}%',
               onChanged: (value) { setState(() => _textScale = value); widget.onTextScaleChanged(value); },
             ),
           ),
-          Text('${(_textScale * 100).round()}% · 85%–200%',
+          Text('${(_textScale * 100).round()}% · ${OrvikaLocalizations(_selectedLanguage).text('settings.textSize.range', '50%–200%')}',
             style: TextStyle(color: scheme.onSurfaceVariant)),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Bold text'),
-            subtitle: const Text('Increase text weight throughout the app.'),
+            title: Text(OrvikaLocalizations(_selectedLanguage).text('settings.boldText', 'Bold text')), 
+            subtitle: Text(OrvikaLocalizations(_selectedLanguage).text('settings.boldText.help', 'Increase text weight throughout the app.')), 
             value: _boldText,
             onChanged: (value) { setState(() => _boldText = value); widget.onBoldTextChanged(value); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Reduce motion'),
-            subtitle: const Text('Request reduced or disabled interface animations.'),
+            title: Text(OrvikaLocalizations(_selectedLanguage).text('settings.reduceMotion', 'Reduce motion')), 
+            subtitle: Text(OrvikaLocalizations(_selectedLanguage).text('settings.reduceMotion.help', 'Request reduced or disabled interface animations.')), 
             value: _reduceMotion,
             onChanged: (value) { setState(() => _reduceMotion = value); widget.onReduceMotionChanged(value); },
           ),
