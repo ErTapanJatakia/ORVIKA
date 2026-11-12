@@ -6,6 +6,13 @@ class OrvikaLanguage {
   final String nativeName;
 
   String get label => '$name — $nativeName';
+
+  /// Languages whose standard app script is Devanagari. One bundled font
+  /// provides consistent shaping and glyph coverage across these locales.
+  bool get usesDevanagariScript => const {
+        'hi', 'mr', 'ne', 'sa', 'mai', 'doi', 'kok', 'brx', 'bho'
+      }.contains(code);
+
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
   bool get hasDraftTranslation => const {
         'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'
