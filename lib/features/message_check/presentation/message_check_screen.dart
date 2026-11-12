@@ -54,8 +54,8 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
     final l10n = OrvikaLocalizations.of(context);
     final result = _result;
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(
-        title: 'Message Check',
+      appBar: OrvikaFeatureAppBar(
+        title: l10n.text('module.message', 'Message Check'),
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
