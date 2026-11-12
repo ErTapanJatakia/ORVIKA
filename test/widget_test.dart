@@ -32,10 +32,10 @@ void main() {
 
   testWidgets('Hindi, Gujarati, Marathi and Urdu use script-aware font fallbacks', (tester) async {
     const expectedScripts = <String, Range>[
-      'hi': Range(0x0900, 0x097F),
+      'hi': (0x0900, 0x097F),
       'mr': Range(0x0900, 0x097F),
-      'gu': Range(0x0A80, 0x0AFF),
-      'ur': Range(0x0600, 0x06FF),
+      'gu': (0x0A80, 0x0AFF),
+      'ur': (0x0600, 0x06FF),
     ];
 
     for (final entry in expectedScripts.entries) {
@@ -48,7 +48,7 @@ void main() {
 
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(entry.key));
       final heading = localization.text('dashboard.title');
-      expect(heading.runes.any((rune) => rune >= entry.value.start && rune <= entry.value.end), isTrue,
+      expect(heading.runes.any((rune) => rune >= entry.value.$1 && rune <= entry.value.$2), isTrue,
           reason: '${entry.key} dashboard heading must use its native script');
       expect(find.text(heading), findsOneWidget);
 
