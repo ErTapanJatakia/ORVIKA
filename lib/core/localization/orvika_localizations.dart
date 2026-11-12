@@ -7,6 +7,10 @@ class OrvikaLocalizations {
 
   final OrvikaLanguage language;
 
+  /// Keys in the reviewed Russian source pack, used as the coverage baseline.
+  static Set<String> get requiredTranslationKeys =>
+      Set<String>.unmodifiable(_russian.keys);
+
   static const Map<String, String> _russian = {
     'skip': 'Пропустить',
     'continue': 'Продолжить',
