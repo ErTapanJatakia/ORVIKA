@@ -44,6 +44,9 @@ void main() {
     expect(find.text('Аналитика'), findsOneWidget);
     expect(find.text('Понимайте сигналы.'), findsOneWidget);
     expect(find.text('Незашифрованное HTTP-соединение'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'незашифрованное');
+    await tester.pumpAndSettle();
+    expect(find.text('Незашифрованное HTTP-соединение'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(russianApp(const LinkCheckScreen()));
