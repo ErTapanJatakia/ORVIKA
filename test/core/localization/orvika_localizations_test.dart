@@ -231,12 +231,38 @@ void main() {
         'response.category.identity', 'response.firstPriority', 'response.steps',
         'response.preserve', 'response.avoid', 'response.limit',
       ];
+      final source = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\\{([a-zA-Z][a-zA-Z0-9_]*)\\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
       for (final code in ['mr', 'sa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in keys) {
           expect(localization.hasTranslation(key), isTrue,
               reason: '$code is missing interface key $key');
           expect(localization.text(key), isNot(key));
+          expect(
+            placeholders(localization.text(key)),
+            placeholders(source.text(key)),
+            reason: '$code must preserve interpolation placeholders for $key',
+          );
+        }
+
+        final privacyProgress = localization.textWithParameters(
+          'privacy.progress',
+          parameters: const {'reviewed': 3, 'total': 8},
+        );
+        final academyProgress = localization.textWithParameters(
+          'academy.progress',
+          parameters: const {'completed': 3, 'total': 8},
+        );
+        if (code == 'mr') {
+          expect(privacyProgress, 'तपासलेल्या बाबी: 8 पैकी 3');
+          expect(academyProgress, 'पूर्ण झालेले धडे: 8 पैकी 3');
+        } else {
+          expect(privacyProgress, 'परीक्षिताः विषयाः: 3/8');
+          expect(academyProgress, 'पूर्णाः पाठाः: 3/8');
         }
       }
     });
