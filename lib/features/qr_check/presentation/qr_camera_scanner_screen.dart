@@ -46,6 +46,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
   }
 
   Future<void> _startCamera() async {
+    final l10n = OrvikaLocalizations.of(context);
     if (_starting || _cameraActive || !_cameraRequested) return;
     setState(() {
       _starting = true;
@@ -57,7 +58,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
       if (!_controller.value.hasCameraPermission) {
         setState(() {
           _statusMessage =
-              'Camera permission was not granted. Check your browser or device settings, or continue by pasting decoded content.';
+              l10n.text('checker.camera.permissionDenied', 'Camera permission was not granted. Check your browser or device settings, or continue by pasting decoded content.');
         });
       } else {
         setState(() => _cameraActive = true);
@@ -66,7 +67,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
       if (!mounted) return;
       setState(() {
         _statusMessage =
-            'Camera access is unavailable or was denied. Check that this page uses HTTPS, that a camera is connected, and that your browser or device permits camera access. You can still paste decoded content.';
+            l10n.text('checker.camera.unavailable', 'Camera access is unavailable or was denied. Check that this page uses HTTPS, that a camera is connected, and that your browser or device permits camera access. You can still paste decoded content.');
       });
     } finally {
       if (mounted) setState(() => _starting = false);
@@ -160,13 +161,13 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Camera access is requested only when you start scanning.',
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                  Text(
+                    l10n.text('checker.camera.notice.title', 'Camera access is requested only when you start scanning.'),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'ORVIKA processes the decoded value on this device. It does not save camera frames or automatically open links, join networks, save contacts or make payments. Camera permission prompts and persistence are controlled by your browser or operating system.',
+                    l10n.text('checker.camera.notice.body', 'ORVIKA processes the decoded value on this device. It does not save camera frames or automatically open links, join networks, save contacts or make payments. Camera permission prompts and persistence are controlled by your browser or operating system.'),
                     style: TextStyle(color: scheme.onSurfaceVariant, height: 1.4),
                   ),
                 ],
@@ -190,7 +191,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                         child: Padding(
                           padding: const EdgeInsets.all(24),
                           child: Text(
-                            'Camera preview could not start. ${error.errorCode.name}',
+                            l10n.textWithParameters('checker.camera.previewError', fallback: 'Camera preview could not start. {error}', parameters: {'error': error.errorCode.name}),
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: Colors.white),
                           ),
@@ -244,7 +245,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                     ),
                   const SizedBox(height: 8),
                   Text(
-                    'Supported formats depend on the camera, operating system and scanning backend. Unsupported devices can use the existing paste-and-check option.',
+                    l10n.text('checker.camera.formats', 'Supported formats depend on the camera, operating system and scanning backend. Unsupported devices can use the existing paste-and-check option.'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: scheme.onSurfaceVariant, fontSize: 11, height: 1.35),
