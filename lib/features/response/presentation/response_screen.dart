@@ -4,6 +4,7 @@ import '../../../core/widgets/orvika_feature_app_bar.dart';
 import '../../../core/localization/orvika_localizations.dart';
 
 import '../domain/response_playbooks.dart';
+import '../../../core/localization/german_response_content.dart';
 
 class ResponseScreen extends StatelessWidget {
   const ResponseScreen({super.key});
@@ -75,7 +76,7 @@ class ResponseScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                for (final playbook in ResponsePlaybooks.playbooks)
+                for (final playbook in ResponsePlaybooks.playbooks.map((item) => GermanResponseContent.localize(item, l10n.language.code)))
                   Card(
                     margin: const EdgeInsets.only(bottom: 10),
                     child: ExpansionTile(
