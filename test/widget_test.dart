@@ -30,6 +30,43 @@ void main() {
     expect(preferences.getBool('onboarding.completed.v1'), isTrue);
   });
 
+  testWidgets('Hindi, Gujarati, Marathi and Urdu use script-aware font fallbacks', (tester) async {
+    const expectedScripts = <String, Range>[
+      'hi': Range(0x0900, 0x097F),
+      'mr': Range(0x0900, 0x097F),
+      'gu': Range(0x0A80, 0x0AFF),
+      'ur': Range(0x0600, 0x06FF),
+    ];
+
+    for (final entry in expectedScripts.entries) {
+      SharedPreferences.setMockInitialValues({
+        'onboarding.completed.v1': true,
+        'appearance.language': entry.key,
+      });
+      await tester.pumpWidget(const OrvikaApp());
+      await tester.pumpAndSettle();
+
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(entry.key));
+      final heading = localization.text('dashboard.title');
+      expect(heading.runes.any((rune) => rune >= entry.value.start && rune <= entry.value.end), isTrue,
+          reason: '${entry.key} dashboard heading must use its native script');
+      expect(find.text(heading), findsOneWidget);
+
+      final textTheme = Theme.of(tester.element(find.text(heading))).textTheme;
+      expect(
+        textTheme.bodyMedium?.fontFamilyFallback,
+        containsAll(const [
+          'Noto Sans Devanagari',
+          'Noto Sans Gujarati',
+          'Noto Nastaliq Urdu',
+          'Noto Naskh Arabic',
+          'Noto Sans Arabic',
+        ]),
+        reason: '${entry.key} must have system font fallbacks for its script',
+      );
+    }
+  });
+
   testWidgets('completed onboarding is not shown on the next launch', (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
