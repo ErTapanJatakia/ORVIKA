@@ -49,7 +49,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
     final l10n = OrvikaLocalizations.of(context);
     final entries = _library.search(query: _controller.text, category: _category);
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(title: 'Intelligence'),
+      appBar: OrvikaFeatureAppBar(title: l10n.text('module.intelligence', 'Intelligence')),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
