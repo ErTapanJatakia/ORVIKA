@@ -269,8 +269,8 @@ void main() {
       }
     });
 
-    test('Marathi and Sanskrit cover the full baseline except approved safety notices', () {
-      const fallbackOnlyKeys = {
+    test('Marathi covers the complete baseline; Sanskrit retains approved safety fallbacks', () {
+      const sanskritFallbackOnlyKeys = {
         'intelligence.notice',
         'privacy.progressNote',
         'academy.progressNote',
@@ -286,9 +286,9 @@ void main() {
       for (final code in ['mr', 'sa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in OrvikaLocalizations.requiredTranslationKeys) {
-          if (fallbackOnlyKeys.contains(key)) {
+          if (code == 'sa' && sanskritFallbackOnlyKeys.contains(key)) {
             expect(localization.hasTranslation(key), isFalse,
-                reason: '$code must retain the approved fallback for $key');
+                reason: 'Sanskrit must retain the approved fallback for $key');
             continue;
           }
           expect(localization.hasTranslation(key), isTrue,
