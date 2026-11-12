@@ -242,9 +242,23 @@ class _OrvikaAppState extends State<OrvikaApp> {
   @override
   Widget build(BuildContext context) {
     final palette = _selectedTheme.palette;
+    // Inter and Space Grotesk are Latin-first brand fonts. Keep them for
+    // Latin text, but provide platform font fallbacks for scripts they do not
+    // cover. These names resolve to installed system fonts on Android, iOS,
+    // Windows, macOS and browsers; no remote font request is required.
+    const scriptFontFallbacks = <String>[
+      'Noto Sans Devanagari',
+      'Noto Sans Gujarati',
+      'Noto Nastaliq Urdu',
+      'Noto Naskh Arabic',
+      'Noto Sans Arabic',
+    ];
     final baseTextTheme = ThemeData(
       brightness: palette.isDark ? Brightness.dark : Brightness.light,
-    ).textTheme.apply(fontFamily: 'Inter');
+    ).textTheme.apply(
+      fontFamily: 'Inter',
+      fontFamilyFallback: scriptFontFallbacks,
+    );
     final brandTextTheme = baseTextTheme.copyWith(
       displayLarge: baseTextTheme.displayLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
       displayMedium: baseTextTheme.displayMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
