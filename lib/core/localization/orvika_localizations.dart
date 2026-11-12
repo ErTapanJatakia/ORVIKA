@@ -7,6 +7,11 @@ class OrvikaLocalizations {
 
   final OrvikaLanguage language;
 
+  /// Complete set of interface keys required by the reviewed Russian source
+  /// pack. Draft packs can use this to report exact translation coverage.
+  static Set<String> get requiredTranslationKeys =>
+      Set<String>.unmodifiable(_russian.keys);
+
   static const Map<String, String> _russian = {
     'skip': 'Пропустить',
     'continue': 'Продолжить',
@@ -173,6 +178,7 @@ class OrvikaLocalizations {
     'settings.language.help': 'ऐप की भाषा चुनें। यह सेटिंग केवल इसी डिवाइस पर सहेजी जाती है।',
     'settings.appearance': 'अपना रूप-रंग चुनें',
     'settings.saved': 'आपकी पसंद इसी डिवाइस पर सहेजी जाती है। ORVIKA रूप-रंग की सेटिंग सर्वर पर नहीं भेजता।',
+    'settings.accessibility': 'सुलभता संबंधी सूचना: उच्च-कंट्रास्ट मोड अधिक स्पष्ट संकेत-रंगों और साफ़ दृश्य विभाजन का उपयोग करता है। चेतावनियों के साथ हमेशा पाठ दिया जाता है; रंग अकेला संकेतक नहीं है।',
     'module.sentinel': 'सुरक्षा अवलोकन',
     'module.sentinel.description': 'सुरक्षा की समग्र स्थिति और हाल की जाँचें।',
     'module.link': 'लिंक जाँच',
