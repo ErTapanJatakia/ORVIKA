@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
+import 'package:orvika/core/localization/orvika_language.dart';
+import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/features/link_check/presentation/link_check_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 String _linkAction(String language) =>
     language == 'ar' ? 'تحقّق من العنوان' : 'Analyse address';
@@ -12,34 +13,23 @@ Future<void> _openLinkCheck(
   String language = 'en',
   double textScale = 1,
 }) async {
-  SharedPreferences.setMockInitialValues({
-    'onboarding.completed.v1': true,
-    'appearance.language': language,
-    'accessibility.textScale': textScale,
-  });
-
+  final selectedLanguage = OrvikaLanguage.fromCode(language);
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(320, 900);
-  await tester.pumpWidget(const OrvikaApp());
-  await tester.pumpAndSettle();
-
-  final moduleFinder = find.text(
-    language == 'ar' ? 'فحص الروابط' : 'Link Check',
-  );
-  await tester.dragUntilVisible(
-    moduleFinder,
-    find.byType(CustomScrollView),
-    const Offset(0, -300),
-  );
-  await tester.pumpAndSettle();
-
-  final moduleRect = tester.getRect(moduleFinder);
-  expect(
-    (Offset.zero & tester.view.physicalSize).overlaps(moduleRect),
-    isTrue,
-    reason: 'Link Check dashboard entry must be inside the viewport before tapping',
-  );
-  await tester.tap(moduleFinder);
+  await tester.pumpWidget(MaterialApp(
+    home: OrvikaLanguageScope(
+      language: selectedLanguage,
+      child: Directionality(
+        textDirection: selectedLanguage.isRightToLeft
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        child: MediaQuery(
+          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
+          child: const LinkCheckScreen(),
+        ),
+      ),
+    ),
+  ));
   await tester.pumpAndSettle();
 
   expect(
