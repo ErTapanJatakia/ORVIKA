@@ -71,7 +71,7 @@ void main() {
     expect(find.text('Dekodierter QR-Inhalt'), findsOneWidget);
     await tester.pumpWidget(_app(const MessageCheckScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Halten Sie inne. Prüfen Sie. Antworten Sie dann.'), findsOneWidget);
+    expect(find.text('Anhalten. Prüfen. Dann antworten.'), findsOneWidget);
     expect(find.text('Nachrichtentext'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
