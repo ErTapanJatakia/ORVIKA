@@ -616,21 +616,25 @@ void main() {
         language: language,
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: MediaQuery(
-            data: MediaQueryData(textScaler: TextScaler.linear(2.0)),
-            child: SentinelDashboard(
-              selectedTheme: OrvikaTheme.obsidian,
-              onThemeChanged: (_) {},
-              selectedLanguage: language,
-              selectedCatalogue: 'india',
-              onLanguageChanged: (_) {},
-              onCatalogueChanged: (_) {},
-              textScale: 2.0,
-              onTextScaleChanged: (_) {},
-              boldText: false,
-              onBoldTextChanged: (_) {},
-              reduceMotion: false,
-              onReduceMotionChanged: (_) {},
+          child: Builder(
+            builder: (context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(2.0),
+              ),
+              child: SentinelDashboard(
+                selectedTheme: OrvikaTheme.obsidian,
+                onThemeChanged: (_) {},
+                selectedLanguage: language,
+                selectedCatalogue: 'india',
+                onLanguageChanged: (_) {},
+                onCatalogueChanged: (_) {},
+                textScale: 2.0,
+                onTextScaleChanged: (_) {},
+                boldText: false,
+                onBoldTextChanged: (_) {},
+                reduceMotion: false,
+                onReduceMotionChanged: (_) {},
+              ),
             ),
           ),
         ),
