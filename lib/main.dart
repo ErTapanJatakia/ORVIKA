@@ -1097,8 +1097,8 @@ class SentinelDashboard extends StatelessWidget {
                             final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
                             // Reserve enough vertical room for the longest module summaries,
                             // including narrower multi-column cards and larger text.
-                            final cardExtent = (260 + ((textScale - 1).clamp(0, 1.5) * 180))
-                                .clamp(260, 476)
+                            final cardExtent = (260 + ((textScale - 1).clamp(0, 1.5) * 240))
+                                .clamp(260, 620)
                                 .toDouble();
                             return GridView.builder(
                               shrinkWrap: true,
