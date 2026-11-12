@@ -619,7 +619,7 @@ void main() {
           child: Builder(
             builder: (context) => MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                textScaler: TextScaler.linear(2.0),
+                textScaler: const TextScaler.linear(2.0),
               ),
               child: SentinelDashboard(
                 selectedTheme: OrvikaTheme.obsidian,
