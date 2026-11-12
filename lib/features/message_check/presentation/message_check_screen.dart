@@ -47,7 +47,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
-    final result = _result == null ? null : _result!.copyWith();
+    final result = _result;
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(
         title: 'Message Check',
@@ -116,7 +116,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                                 fontSize: 17, fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 14),
-                          for (final finding in result.findings)
+                          for (final finding in result.findings.map((item) => GermanCheckerContent.localizeFinding(item, l10n.language.code)))
                             Padding(
                               padding: const EdgeInsets.only(bottom: 15),
                               child: Row(
@@ -177,7 +177,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                               ),
                           ],
                           const Divider(),
-                          Text(result.notice,
+                          Text(GermanCheckerContent.localizeMessageNotice(l10n.language.code),
                               style: TextStyle(
                                   color: scheme.onSurfaceVariant,
                                   fontSize: 12,
