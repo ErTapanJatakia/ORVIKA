@@ -71,3 +71,13 @@ Phase 2 also keys checker result announcements and the QR detected-format label.
 Marathi (`mr`) and Sanskrit (`sa`) now include draft translations for the Intelligence, Privacy, Academy and Response screen headings and interface controls, including search/filter labels, progress labels, category names and action labels. This batch deliberately does not translate detailed security findings, privacy/legal disclosures, emergency guidance, or incident-response instructions. Those remain in the canonical fallback language until qualified specialist and native-speaker review.
 
 The added strings are draft content, not reviewed translations. Both languages remain unavailable in the language picker. Automated coverage tests verify the authored interface keys only; they do not establish linguistic accuracy, accessibility quality, or complete screen localization. Native-speaker review and visual checks on representative devices are still required before any promotion.
+
+
+## Script typography and writing direction
+
+- Devanagari locales use the locally bundled Noto Sans Devanagari variable font.
+- Gujarati (gu) uses the locally bundled Noto Sans Gujarati variable font; Gujarati is not routed through the Devanagari family.
+- Urdu (ur) uses the locally bundled Noto Nastaliq Urdu variable font to preserve Nastaliq-specific glyph forms and vertical metrics.
+- The app selects the primary font from the language's script metadata and retains explicit script fallbacks. Font assets and their SIL Open Font License 1.1 texts are bundled for offline rendering.
+- RTL layout is driven by the language's writing-direction metadata rather than a hard-coded two-language check. Current metadata includes Arabic, Urdu, Hebrew, Persian and Pashto; this does not mean those languages have complete translations or are selectable.
+- Automated tests verify font-family selection and direction metadata. They do not prove visual shaping, line-height suitability, bidirectional punctuation behavior or screen-reader quality on every platform. Urdu Nastaliq in particular requires real-device and browser review before any language pack can be promoted.

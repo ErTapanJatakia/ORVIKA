@@ -11,6 +11,20 @@ class OrvikaLanguage {
   bool get usesDevanagariScript => const {
         'hi', 'mr', 'ne', 'sa', 'mai', 'doi', 'kok', 'brx', 'bho'
       }.contains(code);
+
+  /// Gujarati has a distinct script and must not rely on device font fallback.
+  bool get usesGujaratiScript => code == 'gu';
+
+  /// Urdu uses Nastaliq shaping and metrics rather than a generic Arabic face.
+  bool get usesUrduScript => code == 'ur';
+
+  /// Bundled font selected for the language's primary writing system.
+  String get preferredFontFamily {
+    if (usesDevanagariScript) return 'NotoSansDevanagari';
+    if (usesGujaratiScript) return 'NotoSansGujarati';
+    if (usesUrduScript) return 'NotoNastaliqUrdu';
+    return 'Inter';
+  }
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
   bool get hasDraftTranslation => const {
         'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'

@@ -49,6 +49,25 @@ void main() {
       expect(OrvikaLanguage.fromCode('ur').usesDevanagariScript, isFalse);
     });
 
+    test('Gujarati and Urdu use bundled script-specific font families', () {
+      final gujarati = OrvikaLanguage.fromCode('gu');
+      expect(gujarati.usesGujaratiScript, isTrue);
+      expect(gujarati.preferredFontFamily, 'NotoSansGujarati');
+      final urdu = OrvikaLanguage.fromCode('ur');
+      expect(urdu.usesUrduScript, isTrue);
+      expect(urdu.preferredFontFamily, 'NotoNastaliqUrdu');
+      expect(OrvikaLanguage.fromCode('ar').usesUrduScript, isFalse);
+      expect(OrvikaLanguage.fromCode('hi').preferredFontFamily, 'NotoSansDevanagari');
+      expect(OrvikaLanguage.fromCode('en').preferredFontFamily, 'Inter');
+    });
+
+    test('all declared RTL locales expose RTL layout metadata', () {
+      for (final code in ['ar', 'ur', 'he', 'fa', 'ps']) {
+        expect(OrvikaLanguage.fromCode(code).isRightToLeft, isTrue);
+      }
+      expect(OrvikaLanguage.fromCode('gu').isRightToLeft, isFalse);
+    });
+
     test('Hindi draft covers the reviewed source key baseline', () {
       final hindi = OrvikaLocalizations(OrvikaLanguage.fromCode('hi'));
       for (final key in OrvikaLocalizations.requiredTranslationKeys) {

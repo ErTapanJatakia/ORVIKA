@@ -19,6 +19,24 @@ void main() {
     expect(fontData.lengthInBytes, greaterThan(500000));
   });
 
+  testWidgets('Gujarati and Urdu font assets and their licenses are bundled offline', (tester) async {
+    for (final asset in [
+      'assets/fonts/NotoSansGujarati[wdth,wght].ttf',
+      'assets/fonts/NotoNastaliqUrdu[wght].ttf',
+    ]) {
+      final fontData = await rootBundle.load(asset);
+      expect(fontData.lengthInBytes, greaterThan(500000), reason: asset);
+    }
+
+    for (final license in [
+      'assets/fonts/OFL-NotoSansGujarati.txt',
+      'assets/fonts/OFL-NotoNastaliqUrdu.txt',
+    ]) {
+      final licenseText = await rootBundle.loadString(license);
+      expect(licenseText, contains('SIL OPEN FONT LICENSE Version 1.1'));
+    }
+  });
+
   testWidgets('first launch language selection immediately opens the dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
