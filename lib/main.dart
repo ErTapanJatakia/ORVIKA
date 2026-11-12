@@ -256,29 +256,34 @@ class _OrvikaAppState extends State<OrvikaApp> {
     // locally bundled, licensed script fonts and device-level visual tests.
     const scriptFontFallbacks = <String>[
       'NotoSansDevanagari',
+      'NotoSansGujarati',
+      'NotoNastaliqUrdu',
       'Noto Sans Devanagari',
       'Noto Sans Gujarati',
       'Noto Nastaliq Urdu',
       'Noto Naskh Arabic',
       'Noto Sans Arabic',
     ];
-    final appFontFamily =
-        _selectedLanguage.usesDevanagariScript ? 'NotoSansDevanagari' : 'Inter';
+    final appFontFamily = _selectedLanguage.preferredFontFamily;
     final baseTextTheme = ThemeData(
       brightness: palette.isDark ? Brightness.dark : Brightness.light,
     ).textTheme.apply(
       fontFamily: appFontFamily,
       fontFamilyFallback: scriptFontFallbacks,
     );
-    final brandTextTheme = baseTextTheme.copyWith(
-      displayLarge: baseTextTheme.displayLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
-      displayMedium: baseTextTheme.displayMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
-      displaySmall: baseTextTheme.displaySmall?.copyWith(fontFamily: 'SpaceGrotesk'),
-      headlineLarge: baseTextTheme.headlineLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
-      headlineMedium: baseTextTheme.headlineMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
-      headlineSmall: baseTextTheme.headlineSmall?.copyWith(fontFamily: 'SpaceGrotesk'),
-      titleLarge: baseTextTheme.titleLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
-    );
+    // Keep the Latin brand display face for English/Russian; script-specific
+    // locales use their bundled family for headings as well as body text.
+    final brandTextTheme = appFontFamily == 'Inter'
+        ? baseTextTheme.copyWith(
+            displayLarge: baseTextTheme.displayLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
+            displayMedium: baseTextTheme.displayMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
+            displaySmall: baseTextTheme.displaySmall?.copyWith(fontFamily: 'SpaceGrotesk'),
+            headlineLarge: baseTextTheme.headlineLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
+            headlineMedium: baseTextTheme.headlineMedium?.copyWith(fontFamily: 'SpaceGrotesk'),
+            headlineSmall: baseTextTheme.headlineSmall?.copyWith(fontFamily: 'SpaceGrotesk'),
+            titleLarge: baseTextTheme.titleLarge?.copyWith(fontFamily: 'SpaceGrotesk'),
+          )
+        : baseTextTheme;
     final scheme = ColorScheme.fromSeed(
       seedColor: palette.primary,
       brightness: palette.isDark ? Brightness.dark : Brightness.light,
@@ -314,8 +319,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
             container: true,
             explicitChildNodes: true,
             child: Directionality(
-              textDirection: const {'ar', 'ur'}.contains(_selectedLanguage.code)
-                  ? TextDirection.rtl : TextDirection.ltr,
+              textDirection: _selectedLanguage.isRightToLeft
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
               child: OrvikaLanguageScope(
                 language: _selectedLanguage,
                 child: child ?? const SizedBox.shrink(),
@@ -328,7 +334,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Inter',
+        fontFamily: appFontFamily,
         textTheme: _boldText
             ? brandTextTheme.copyWith(
                 displayLarge: brandTextTheme.displayLarge?.copyWith(fontWeight: FontWeight.w900),

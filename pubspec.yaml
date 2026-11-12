@@ -24,6 +24,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/fonts/OFL-NotoSansGujarati.txt
+    - assets/fonts/OFL-NotoNastaliqUrdu.txt
   fonts:
     - family: SpaceGrotesk
       fonts:
@@ -34,3 +37,9 @@ flutter:
     - family: NotoSansDevanagari
       fonts:
         - asset: assets/fonts/NotoSansDevanagari[wdth,wght].ttf
+    - family: NotoSansGujarati
+      fonts:
+        - asset: assets/fonts/NotoSansGujarati[wdth,wght].ttf
+    - family: NotoNastaliqUrdu
+      fonts:
+        - asset: assets/fonts/NotoNastaliqUrdu[wght].ttf
