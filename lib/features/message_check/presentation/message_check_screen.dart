@@ -5,6 +5,7 @@ import '../../../core/localization/orvika_localizations.dart';
 
 import '../../link_check/domain/url_analyzer.dart';
 import '../domain/message_analyzer.dart';
+import '../../../core/localization/german_checker_content.dart';
 
 class MessageCheckScreen extends StatefulWidget {
   const MessageCheckScreen({super.key});
@@ -46,7 +47,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
-    final result = _result;
+    final result = _result == null ? null : _result!.copyWith();
     return Scaffold(
       appBar: const OrvikaFeatureAppBar(
         title: 'Message Check',
