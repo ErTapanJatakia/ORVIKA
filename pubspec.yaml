@@ -31,3 +31,6 @@ flutter:
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter[opsz,wght].ttf
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari[wdth,wght].ttf
