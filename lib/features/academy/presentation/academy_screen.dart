@@ -95,7 +95,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
         .toList(growable: false);
     final progress = _completed.length;
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(title: 'Academy'),
+      appBar: OrvikaFeatureAppBar(title: l10n.text('module.academy', 'Academy')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Center(
