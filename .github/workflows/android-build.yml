@@ -65,13 +65,7 @@ jobs:
           SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
           echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
           {
-            echo "### Android release-mode build"
-            echo
-            echo "- APK: `$APK`"
-            echo "- Size: $(du -h "$APK" | cut -f 1)"
-            echo "- SHA-256: `$SHA256`"
-            echo "- Application ID: `dev.orvika.orvika` (provisional CI identity)"
-            echo "- Signing: Flutter-generated debug signing; **not suitable for distribution**."
+            printf '%s\n'               '### Android release-mode build'               ''               "- APK: $APK"               "- Size: $(du -h "$APK" | cut -f 1)"               "- SHA-256: $SHA256"               '- Application ID: dev.orvika.orvika (provisional CI identity)'               '- Signing: Flutter-generated debug signing; not suitable for distribution.'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validation APK
