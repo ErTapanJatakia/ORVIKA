@@ -206,6 +206,103 @@ void main() {
       }
     });
 
+    test('Marathi and Sanskrit draft packs cover the extended interface controls', () {
+      const keys = [
+        'intelligence.heading', 'intelligence.description', 'intelligence.search',
+        'intelligence.searchHint', 'intelligence.clear', 'intelligence.filter.all',
+        'intelligence.category.links', 'intelligence.category.messages',
+        'intelligence.category.qr', 'intelligence.category.accounts',
+        'intelligence.count', 'intelligence.offline', 'intelligence.empty',
+        'intelligence.detail.notice', 'intelligence.detail.meaning',
+        'intelligence.detail.next', 'intelligence.detail.limit',
+        'privacy.category.accounts', 'privacy.category.device', 'privacy.category.apps',
+        'privacy.category.browsing', 'privacy.reset.tooltip', 'privacy.reset.title',
+        'privacy.reset.description', 'privacy.reset.action', 'privacy.error.save',
+        'privacy.error.clear', 'privacy.heading',
+        'privacy.description', 'privacy.progress', 'privacy.progressSemantics',
+        'privacy.progressUpdate', 'privacy.detail.why', 'privacy.detail.action',
+        'privacy.detail.limit', 'privacy.reviewed',
+        'academy.heading', 'academy.description', 'academy.category.accounts',
+        'academy.category.social', 'academy.category.device',
+        'academy.category.payments', 'academy.progress',
+        'academy.progressSemantics', 'academy.progressUpdate', 'academy.reset',
+        'academy.keyPoints', 'academy.knowledgeCheck', 'academy.correct',
+        'academy.tryAgain', 'academy.completed', 'response.heading',
+        'response.description', 'response.category.accounts',
+        'response.category.payments', 'response.category.device',
+        'response.category.identity', 'response.firstPriority', 'response.steps',
+        'response.preserve', 'response.avoid', 'response.limit',
+      ];
+      final source = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\{([a-zA-Z][a-zA-Z0-9_]*)\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final code in ['mr', 'sa']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in keys) {
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing interface key $key');
+          expect(localization.text(key), isNot(key));
+          expect(
+            placeholders(localization.text(key)),
+            placeholders(source.text(key)),
+            reason: '$code must preserve interpolation placeholders for $key',
+          );
+        }
+
+        final privacyProgress = localization.textWithParameters(
+          'privacy.progress',
+          parameters: const {'reviewed': 3, 'total': 8},
+        );
+        final academyProgress = localization.textWithParameters(
+          'academy.progress',
+          parameters: const {'completed': 3, 'total': 8},
+        );
+        if (code == 'mr') {
+          expect(privacyProgress, 'तपासलेल्या बाबी: 8 पैकी 3');
+          expect(academyProgress, 'पूर्ण झालेले धडे: 8 पैकी 3');
+        } else {
+          expect(privacyProgress, 'परीक्षिताः विषयाः: 3/8');
+          expect(academyProgress, 'पूर्णाः पाठाः: 3/8');
+        }
+      }
+    });
+
+    test('Marathi covers the complete baseline; Sanskrit retains approved safety fallbacks', () {
+      const sanskritFallbackOnlyKeys = {
+        'intelligence.notice',
+        'privacy.progressNote',
+        'academy.progressNote',
+        'academy.notice',
+        'response.urgent',
+        'response.notice',
+      };
+      final source = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\{([a-zA-Z][a-zA-Z0-9_]*)\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final code in ['mr', 'sa']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+          if (code == 'sa' && sanskritFallbackOnlyKeys.contains(key)) {
+            expect(localization.hasTranslation(key), isFalse,
+                reason: 'Sanskrit must retain the approved fallback for $key');
+            continue;
+          }
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing baseline key $key');
+          expect(localization.text(key), isNot(key));
+          expect(
+            placeholders(localization.text(key)),
+            placeholders(source.text(key)),
+            reason: '$code must preserve placeholders for $key',
+          );
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
