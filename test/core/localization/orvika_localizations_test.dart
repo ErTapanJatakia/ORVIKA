@@ -40,6 +40,16 @@ void main() {
       expect(OrvikaLanguage.fromCode('ce').hasReviewedTranslation, isFalse);
     });
 
+    test('only complete reviewed language packs are eligible for selection', () {
+      for (final language in OrvikaLanguage.allValues) {
+        expect(
+          language.hasReviewedTranslation,
+          ['en', 'ru'].contains(language.code),
+          reason: '${language.code} must remain unavailable until its full app translation is reviewed',
+        );
+      }
+    });
+
     test('all authored language packs cover every feature app-bar title', () {
       const featureTitleKeys = [
         'module.link',

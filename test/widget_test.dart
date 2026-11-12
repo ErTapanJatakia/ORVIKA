@@ -30,6 +30,72 @@ void main() {
     expect(preferences.getBool('onboarding.completed.v1'), isTrue);
   });
 
+  testWidgets('draft packs expose native-script text and provisional font fallbacks', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    const expectedScripts = <String, (int, int)>{
+      'hi': (0x0900, 0x097F),
+      'mr': (0x0900, 0x097F),
+      'gu': (0x0A80, 0x0AFF),
+      'ur': (0x0600, 0x06FF),
+    };
+
+    for (final entry in expectedScripts.entries) {
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(entry.key));
+      final heading = localization.text('dashboard.title');
+      expect(
+        heading.runes.any((rune) => rune >= entry.value.$1 && rune <= entry.value.$2),
+        isTrue,
+        reason: '${entry.key} draft must contain native-script dashboard text',
+      );
+    }
+
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    final textTheme = Theme.of(tester.element(find.text('Choose your language'))).textTheme;
+    expect(
+      textTheme.bodyMedium?.fontFamilyFallback,
+      containsAll(const [
+        'Noto Sans Devanagari',
+        'Noto Sans Gujarati',
+        'Noto Nastaliq Urdu',
+        'Noto Naskh Arabic',
+        'Noto Sans Arabic',
+      ]),
+      reason: 'System fallbacks are provisional and do not replace bundled font validation',
+    );
+  });
+
+  testWidgets('saved draft language falls back safely without overwriting preference', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'hi',
+    });
+    final semantics = tester.ensureSemantics();
+    try {
+      await tester.pumpWidget(const OrvikaApp());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Choose your language'), findsOneWidget);
+      expect(find.text('Your safety toolkit'), findsNothing);
+      expect(find.bySemanticsLabel(
+        'Languages listed: 191. Available to select: 2',
+      ), findsOneWidget);
+
+      // Search results are lazily built; filter before inspecting the Hindi tile.
+      await tester.enterText(find.byType(TextField), 'Hindi');
+      await tester.pumpAndSettle();
+      final hindiTile = tester.widget<ListTile>(
+        find.byKey(const ValueKey('language-hi')),
+      );
+      expect(hindiTile.onTap, isNull);
+
+      final preferences = await SharedPreferences.getInstance();
+      expect(preferences.getString('appearance.language'), 'hi');
+    } finally {
+      semantics.dispose();
+    }
+  });
+
   testWidgets('completed onboarding is not shown on the next launch', (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
@@ -39,16 +105,25 @@ void main() {
     expect(find.text('Check before you trust.'), findsNothing);
   });
 
-  testWidgets('first launch language picker does not require a separate Continue action', (tester) async {
+  testWidgets('first launch language picker disables languages without complete translations', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
     expect(find.text('Continue'), findsNothing);
     await tester.enterText(find.byType(TextField), 'Hindi');
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-hi')));
+
+    final hindiTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-hi')));
+    expect(hindiTile.onTap, isNull);
+    expect(find.text('हिन्दी · Coming soon'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'English');
     await tester.pumpAndSettle();
-    expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
+    final englishTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-en')));
+    expect(englishTile.onTap, isNotNull);
+    await tester.tap(find.byKey(const ValueKey('language-en')));
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
   });
 
   testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
@@ -311,31 +386,13 @@ void main() {
     expect(OrvikaLocalizations.translatedLanguageCodes, isNot(contains('ba')));
   });
 
-  testWidgets('Hindi draft localizes dashboard immediately after selection', (tester) async {
-    SharedPreferences.setMockInitialValues({});
-    await tester.pumpWidget(const OrvikaApp());
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Hindi');
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-hi')));
-    await tester.pumpAndSettle();
-    expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
-    expect(find.text('भरोसा करने से पहले जाँचें।'), findsOneWidget);
-    expect(find.text('डिवाइस पर जाँच'), findsOneWidget);
-    expect(find.byTooltip('भाषा बदलें'), findsOneWidget);
-    await revealDashboardContent(tester);
-    expect(find.text('लिंक जाँच'), findsOneWidget);
-    expect(find.text('गोपनीयता सर्वोपरि'), findsOneWidget);
-
-    expect(
-      OrvikaLocalizations.of(tester.element(find.text('आपके डिजिटल सुरक्षा उपकरण'))).language.code,
-      'hi',
-      reason: 'The selected app locale must not be silently coerced to English.',
-    );
+  test('Hindi draft strings remain available to localization work while selection is gated', () {
+    final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('hi'));
+    expect(localization.text('dashboard.title'), 'आपके डिजिटल सुरक्षा उपकरण');
+    expect(localization.text('onboarding.title.1'), 'भरोसा करने से पहले जाँचें।');
+    expect(localization.hasTranslation('dashboard.title'), isTrue);
     expect(OrvikaLanguage.fromCode('hi').hasDraftTranslation, isTrue);
     expect(OrvikaLanguage.fromCode('hi').hasReviewedTranslation, isFalse);
-    final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'hi');
   });
 
   test('India language catalogue contains 100 unique codes and names', () {
@@ -378,11 +435,12 @@ void main() {
     await tester.enterText(find.byType(TextField), 'Chechen');
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('language-ce')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('language-ce')));
-    await tester.pumpAndSettle();
+    final chechenTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-ce')));
+    expect(chechenTile.onTap, isNull);
+    expect(find.text('Нохчийн мотт · Coming soon'), findsOneWidget);
 
     final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'ce');
+    expect(preferences.getString('appearance.language'), isNull);
   });
 
 
@@ -411,26 +469,46 @@ void main() {
     }
   });
 
-  testWidgets('Arabic selection applies right-to-left layout and translated dashboard', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding.completed.v1': true,
-      'appearance.language': 'ar',
-    });
-    await tester.pumpWidget(const OrvikaApp());
+  testWidgets('Arabic locale scope resolves its dashboard title with RTL direction', (tester) async {
+    final language = OrvikaLanguage.fromCode('ar');
+    await tester.pumpWidget(MaterialApp(
+      home: OrvikaLanguageScope(
+        language: language,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Builder(
+            builder: (context) => Text(
+              OrvikaLocalizations.of(context).text('dashboard.title'),
+            ),
+          ),
+        ),
+      ),
+    ));
     await tester.pumpAndSettle();
-    expect(find.text('أدواتك للسلامة الرقمية'), findsOneWidget);
-    expect(Directionality.of(tester.element(find.text('أدواتك للسلامة الرقمية'))), TextDirection.rtl);
+    const heading = 'أدواتك للسلامة الرقمية';
+    expect(find.text(heading), findsOneWidget);
+    expect(Directionality.of(tester.element(find.text(heading))), TextDirection.rtl);
   });
 
-  testWidgets('Urdu selection applies right-to-left layout and translated dashboard', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding.completed.v1': true,
-      'appearance.language': 'ur',
-    });
-    await tester.pumpWidget(const OrvikaApp());
+  testWidgets('Urdu locale scope resolves its dashboard title with RTL direction', (tester) async {
+    final language = OrvikaLanguage.fromCode('ur');
+    await tester.pumpWidget(MaterialApp(
+      home: OrvikaLanguageScope(
+        language: language,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Builder(
+            builder: (context) => Text(
+              OrvikaLocalizations.of(context).text('dashboard.title'),
+            ),
+          ),
+        ),
+      ),
+    ));
     await tester.pumpAndSettle();
-    expect(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'), findsOneWidget);
-    expect(Directionality.of(tester.element(find.text('آپ کے ڈیجیٹل تحفظ کے اوزار'))), TextDirection.rtl);
+    const heading = 'آپ کے ڈیجیٹل تحفظ کے اوزار';
+    expect(find.text(heading), findsOneWidget);
+    expect(Directionality.of(tester.element(find.text(heading))), TextDirection.rtl);
   });
 
   testWidgets('accessibility preferences apply globally and persist locally', (tester) async {
@@ -522,14 +600,48 @@ void main() {
   });
 
   testWidgets('dashboard header and hero remain usable at 200 percent text scaling in RTL', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'onboarding.completed.v1': true,
-      'appearance.language': 'ar',
-      'accessibility.textScale': 2.0,
-    });
+    final language = OrvikaLanguage.fromCode('ar');
+    final palette = OrvikaTheme.obsidian.palette;
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(320, 900);
-    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: palette.primary,
+          brightness: Brightness.dark,
+          surface: palette.surface,
+        ),
+        scaffoldBackgroundColor: palette.background,
+      ),
+      home: OrvikaLanguageScope(
+        language: language,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Builder(
+            builder: (context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(2.0),
+              ),
+              child: SentinelDashboard(
+                selectedTheme: OrvikaTheme.obsidian,
+                onThemeChanged: (_) {},
+                selectedLanguage: language,
+                selectedCatalogue: 'india',
+                onLanguageChanged: (_) {},
+                onCatalogueChanged: (_) {},
+                textScale: 2.0,
+                onTextScaleChanged: (_) {},
+                boldText: false,
+                onBoldTextChanged: (_) {},
+                reduceMotion: false,
+                onReduceMotionChanged: (_) {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
     await tester.pumpAndSettle();
 
     expect(find.text('ORVIKA'), findsOneWidget);
