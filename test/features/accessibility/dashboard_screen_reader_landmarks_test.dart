@@ -54,10 +54,10 @@ void main() {
         matching: find.byType(Semantics),
       );
       expect(linkCheckSemantics, findsWidgets);
-      final linkSemantics = tester.getSemantics(linkCheckSemantics.first);
-      expect(linkSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
+      final linkSemanticsWidget = tester.widget<Semantics>(linkCheckSemantics.first);
+      expect(linkSemanticsWidget.properties.button, isTrue);
       expect(
-        linkSemantics.hasFlag(SemanticsFlag.isEnabled),
+        linkSemanticsWidget.properties.enabled,
         isTrue,
         reason: 'The enabled module should expose its enabled state to assistive technology.',
       );
