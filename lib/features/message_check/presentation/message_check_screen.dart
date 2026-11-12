@@ -8,6 +8,7 @@ import '../domain/message_analyzer.dart';
 import '../../../core/localization/german_checker_content.dart';
 import '../../../core/localization/italian_checker_content.dart';
 import '../../../core/localization/french_checker_content.dart';
+import '../../../core/localization/spanish_checker_content.dart';
 
 class MessageCheckScreen extends StatefulWidget {
   const MessageCheckScreen({super.key});
@@ -118,7 +119,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                                 fontSize: 17, fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 14),
-                          for (final finding in result.findings.map((item) => l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
+                          for (final finding in result.findings.map((item) => l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
                             Padding(
                               padding: const EdgeInsets.only(bottom: 15),
                               child: Row(
@@ -179,7 +180,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                               ),
                           ],
                           const Divider(),
-                          Text(l10n.language.code == 'fr' ? FrenchCheckerContent.localizeMessageNotice(l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeMessageNotice(l10n.language.code) : GermanCheckerContent.localizeMessageNotice(l10n.language.code),
+                          Text(l10n.language.code == 'es' ? SpanishCheckerContent.localizeMessageNotice(l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeMessageNotice(l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeMessageNotice(l10n.language.code) : GermanCheckerContent.localizeMessageNotice(l10n.language.code),
                               style: TextStyle(
                                   color: scheme.onSurfaceVariant,
                                   fontSize: 12,
