@@ -12,6 +12,7 @@ class OrvikaFeatureTranslations {
       'checker.qr.heading': 'Проверьте, прежде чем сканировать.',
       'checker.qr.input': 'Декодированное содержимое QR-кода',
       'checker.qr.action': 'Проверить содержимое QR-кода',
+      'checker.qr.detectedFormat': 'Обнаруженный формат кода: {format}',
       'checker.qr.scanCamera': 'Сканировать QR-код или штрихкод камерой',
       'checker.qr.scanImage': 'Сканировать QR-код или штрихкод на изображении',
       'checker.message.heading': 'Остановитесь. Проверьте. Затем отвечайте.',
