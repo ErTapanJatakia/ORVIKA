@@ -40,6 +40,22 @@ void main() {
       expect(OrvikaLanguage.fromCode('ce').hasReviewedTranslation, isFalse);
     });
 
+    test('Devanagari locales use the bundled script font', () {
+      for (final code in ['hi', 'mr', 'ne', 'sa', 'mai', 'doi', 'kok', 'brx', 'bho']) {
+        expect(OrvikaLanguage.fromCode(code).usesDevanagariScript, isTrue,
+            reason: '$code should use Devanagari typography');
+      }
+      expect(OrvikaLanguage.fromCode('gu').usesDevanagariScript, isFalse);
+      expect(OrvikaLanguage.fromCode('ur').usesDevanagariScript, isFalse);
+    });
+
+    test('Hindi draft covers the reviewed source key baseline', () {
+      final hindi = OrvikaLocalizations(OrvikaLanguage.fromCode('hi'));
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(hindi.hasTranslation(key), isTrue, reason: 'Hindi is missing $key');
+      }
+    });
+
     test('only complete reviewed language packs are eligible for selection', () {
       for (final language in OrvikaLanguage.allValues) {
         expect(
