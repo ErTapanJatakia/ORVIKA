@@ -254,7 +254,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 ],
                 const SizedBox(height: 12),
                 Text(
-                  'Website analytics: ORVIKA uses Vercel Web Analytics for aggregated page views and basic device, browser, referrer and approximate location metrics. On the Vercel Hobby plan, custom feature-usage events are not available. ORVIKA does not send pasted URLs, message text, decoded QR content, credentials or security-analysis findings as analytics data. Website analytics is separate from on-device security analysis. Vercel states that Web Analytics does not use cookies and that visitor hashes expire after 24 hours.',
+                  l10n.text('privacy.analytics.notice', 'Website analytics: ORVIKA uses Vercel Web Analytics for aggregated page views and basic device, browser, referrer and approximate location metrics. On the Vercel Hobby plan, custom feature-usage events are not available. ORVIKA does not send pasted URLs, message text, decoded QR content, credentials or security-analysis findings as analytics data. Website analytics is separate from on-device security analysis. Vercel states that Web Analytics does not use cookies and that visitor hashes expire after 24 hours.'),
                   style: TextStyle(
                     color: scheme.onSurfaceVariant,
                     fontSize: 12,
@@ -263,7 +263,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'ORVIKA does not scan your device, inspect installed apps, read account data or change permissions. Settings and labels vary by platform. Use each operating system or service’s official settings and documentation.',
+                  l10n.text('privacy.device.notice', 'ORVIKA does not scan your device, inspect installed apps, read account data or change permissions. Settings and labels vary by platform. Use each operating system or service’s official settings and documentation.'),
                   style: TextStyle(
                     color: scheme.onSurfaceVariant,
                     fontSize: 12,
