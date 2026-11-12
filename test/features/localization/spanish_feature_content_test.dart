@@ -23,9 +23,9 @@ void main() {
     });
 
     test('preserves named placeholders in progress and dynamic strings', () {
-      expect(l10n.textWithParameters('privacy.progressUpdate', parameters: const {'count': 3, 'total': 12}),
+      expect(l10n.textWithParameters('privacy.progressUpdate', parameters: const {'reviewed': 3, 'total': 12}),
           'Progreso actualizado: 3 de 12 prácticas revisadas.');
-      expect(l10n.textWithParameters('academy.progressUpdate', parameters: const {'count': 2, 'total': 8}),
+      expect(l10n.textWithParameters('academy.progressUpdate', parameters: const {'completed': 2, 'total': 8}),
           'Progreso actualizado: 2 de 8 lecciones completadas.');
     });
 
