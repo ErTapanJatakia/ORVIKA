@@ -248,7 +248,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'ORVIKA accesses only the image you select for this scan. Selected image bytes are analysed on this device and cleared when you leave this screen. The operating system or browser may temporarily cache the selected file.',
+              l10n.text('checker.image.privacyNotice', 'ORVIKA accesses only the image you select for this scan. Selected image bytes are analysed on this device and cleared when you leave this screen. The operating system or browser may temporarily cache the selected file.'),
               style: TextStyle(color: scheme.onSurfaceVariant, height: 1.45),
             ),
             const SizedBox(height: 18),

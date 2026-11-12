@@ -4,6 +4,7 @@ import '../../../core/widgets/orvika_feature_app_bar.dart';
 import '../../../core/localization/orvika_localizations.dart';
 
 import '../domain/intelligence_library.dart';
+import '../../../core/localization/german_intelligence_content.dart';
 
 class IntelligenceScreen extends StatefulWidget {
   const IntelligenceScreen({super.key});
@@ -142,8 +143,11 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                 ),
               ),
             ),
-            for (final entry in entries)
-              Card(
+            for (final sourceEntry in entries)
+              Builder(
+                builder: (context) {
+                  final entry = GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
+                  return Card(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: ExpansionTile(
                   leading: Icon(_categoryIcon(entry.category), color: scheme.primary),
@@ -161,6 +165,8 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                     _DetailSection(label: l10n.text('intelligence.detail.limit', 'IMPORTANT LIMIT'), value: entry.limit),
                   ],
                 ),
+              );
+                },
               ),
             const SizedBox(height: 8),
             Text(
