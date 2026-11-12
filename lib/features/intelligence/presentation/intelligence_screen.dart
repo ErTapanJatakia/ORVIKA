@@ -47,7 +47,19 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
-    final entries = _library.search(query: _controller.text, category: _category);
+    final normalizedQuery = _controller.text.trim().toLowerCase();
+    final entries = l10n.language.code == 'ru'
+        ? _library.search(query: '', category: _category).where((sourceEntry) {
+            final translated = RussianIntelligenceContent.localize(sourceEntry, 'ru');
+            return normalizedQuery.isEmpty ||
+                <String>[
+                  sourceEntry.title, sourceEntry.signal, sourceEntry.meaning,
+                  sourceEntry.action, sourceEntry.limit, translated.title,
+                  translated.signal, translated.meaning, translated.action,
+                  translated.limit,
+                ].any((value) => value.toLowerCase().contains(normalizedQuery));
+          }).toList(growable: false)
+        : _library.search(query: _controller.text, category: _category);
     return Scaffold(
       appBar: OrvikaFeatureAppBar(title: l10n.text('module.intelligence', 'Intelligence')),
       body: SafeArea(
