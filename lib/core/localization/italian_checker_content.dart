@@ -36,8 +36,8 @@ class ItalianCheckerContent {
     final translated = _findings[finding.title];
     if (translated == null) return finding;
     var detail = translated.detail;
-    final portMatch = RegExp(r'port (\\d+)').firstMatch(finding.detail);
-    final countMatch = RegExp(r'^(\\d+) web address').firstMatch(finding.detail);
+    final portMatch = RegExp(r'port (\d+)').firstMatch(finding.detail);
+    final countMatch = RegExp(r'^(\d+) web address').firstMatch(finding.detail);
     if (portMatch != null) detail = detail.replaceAll('{port}', portMatch.group(1)!);
     if (countMatch != null) detail = detail.replaceAll('{count}', countMatch.group(1)!);
     return LinkFinding(title: translated.title, detail: detail, severity: finding.severity);
