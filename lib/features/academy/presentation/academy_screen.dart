@@ -8,6 +8,7 @@ import '../domain/academy_curriculum.dart';
 import '../../../core/localization/german_academy_content.dart';
 import '../../../core/localization/italian_academy_content.dart';
 import '../../../core/localization/french_academy_content.dart';
+import '../../../core/localization/spanish_academy_content.dart';
 
 class AcademyScreen extends StatefulWidget {
   const AcademyScreen({super.key});
@@ -88,7 +89,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     final lessons = AcademyCurriculum.lessons
-        .map((lesson) => l10n.language.code == 'fr' ? FrenchAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'it' ? ItalianAcademyContent.localize(lesson, l10n.language.code) : GermanAcademyContent.localize(lesson, l10n.language.code))
+        .map((lesson) => l10n.language.code == 'es' ? SpanishAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'fr' ? FrenchAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'it' ? ItalianAcademyContent.localize(lesson, l10n.language.code) : GermanAcademyContent.localize(lesson, l10n.language.code))
         .toList(growable: false);
     final progress = _completed.length;
     return Scaffold(
