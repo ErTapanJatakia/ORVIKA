@@ -64,3 +64,10 @@ QR camera and image scanner controls, plus Privacy checklist reset/error control
 
 
 Phase 2 also keys checker result announcements and the QR detected-format label. Where a key has no authored translation in a selected language, the app uses its explicit English fallback. Key coverage must not be reported as translated coverage.
+
+
+## Phase-three Marathi and Sanskrit interface batch
+
+Marathi (`mr`) and Sanskrit (`sa`) now include draft translations for the Intelligence, Privacy, Academy and Response screen headings and interface controls, including search/filter labels, progress labels, category names and action labels. This batch deliberately does not translate detailed security findings, privacy/legal disclosures, emergency guidance, or incident-response instructions. Those remain in the canonical fallback language until qualified specialist and native-speaker review.
+
+The added strings are draft content, not reviewed translations. Both languages remain unavailable in the language picker. Automated coverage tests verify the authored interface keys only; they do not establish linguistic accuracy, accessibility quality, or complete screen localization. Native-speaker review and visual checks on representative devices are still required before any promotion.

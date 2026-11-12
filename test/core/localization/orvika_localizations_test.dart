@@ -206,6 +206,41 @@ void main() {
       }
     });
 
+    test('Marathi and Sanskrit draft packs cover the extended interface controls', () {
+      const keys = [
+        'intelligence.heading', 'intelligence.description', 'intelligence.search',
+        'intelligence.searchHint', 'intelligence.clear', 'intelligence.filter.all',
+        'intelligence.category.links', 'intelligence.category.messages',
+        'intelligence.category.qr', 'intelligence.category.accounts',
+        'intelligence.count', 'intelligence.offline', 'intelligence.empty',
+        'intelligence.detail.notice', 'intelligence.detail.meaning',
+        'intelligence.detail.next', 'intelligence.detail.limit',
+        'privacy.category.accounts', 'privacy.category.device', 'privacy.category.apps',
+        'privacy.category.browsing', 'privacy.reset.tooltip', 'privacy.heading',
+        'privacy.description', 'privacy.progress', 'privacy.progressSemantics',
+        'privacy.progressUpdate', 'privacy.detail.why', 'privacy.detail.action',
+        'privacy.detail.limit', 'privacy.reviewed',
+        'academy.heading', 'academy.description', 'academy.category.accounts',
+        'academy.category.social', 'academy.category.device',
+        'academy.category.payments', 'academy.progress',
+        'academy.progressSemantics', 'academy.progressUpdate', 'academy.reset',
+        'academy.keyPoints', 'academy.knowledgeCheck', 'academy.correct',
+        'academy.tryAgain', 'academy.completed', 'response.heading',
+        'response.description', 'response.category.accounts',
+        'response.category.payments', 'response.category.device',
+        'response.category.identity', 'response.firstPriority', 'response.steps',
+        'response.preserve', 'response.avoid', 'response.limit',
+      ];
+      for (final code in ['mr', 'sa']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in keys) {
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing interface key $key');
+          expect(localization.text(key), isNot(key));
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
