@@ -76,16 +76,25 @@ void main() {
     expect(find.text('Check before you trust.'), findsNothing);
   });
 
-  testWidgets('first launch language picker does not require a separate Continue action', (tester) async {
+  testWidgets('first launch language picker disables languages without complete translations', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
     expect(find.text('Continue'), findsNothing);
     await tester.enterText(find.byType(TextField), 'Hindi');
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-hi')));
+
+    final hindiTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-hi')));
+    expect(hindiTile.onTap, isNull);
+    expect(find.text('हिन्दी · Coming soon'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'English');
     await tester.pumpAndSettle();
-    expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
+    final englishTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-en')));
+    expect(englishTile.onTap, isNotNull);
+    await tester.tap(find.byKey(const ValueKey('language-en')));
+    await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
   });
 
   testWidgets('ORVIKA dashboard presents its visual identity and core modules', (tester) async {
@@ -348,13 +357,12 @@ void main() {
     expect(OrvikaLocalizations.translatedLanguageCodes, isNot(contains('ba')));
   });
 
-  testWidgets('Hindi draft localizes dashboard immediately after selection', (tester) async {
-    SharedPreferences.setMockInitialValues({});
+  testWidgets('Hindi draft renders when loaded directly while picker selection is gated', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'hi',
+    });
     await tester.pumpWidget(const OrvikaApp());
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Hindi');
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-hi')));
     await tester.pumpAndSettle();
     expect(find.text('आपके डिजिटल सुरक्षा उपकरण'), findsOneWidget);
     expect(find.text('भरोसा करने से पहले जाँचें।'), findsOneWidget);
@@ -415,11 +423,12 @@ void main() {
     await tester.enterText(find.byType(TextField), 'Chechen');
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('language-ce')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('language-ce')));
-    await tester.pumpAndSettle();
+    final chechenTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-ce')));
+    expect(chechenTile.onTap, isNull);
+    expect(find.text('Нохчийн мотт · Coming soon'), findsOneWidget);
 
     final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'ce');
+    expect(preferences.getString('appearance.language'), isNull);
   });
 
 
