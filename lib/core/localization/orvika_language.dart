@@ -27,7 +27,7 @@ class OrvikaLanguage {
   }
   bool get hasReviewedTranslation => code == 'en' || code == 'ru';
   bool get hasDraftTranslation => const {
-        'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa'
+        'hi', 'de', 'fr', 'pa', 'ur', 'it', 'ar', 'mr', 'gu', 'sa', 'es', 'pt'
       }.contains(code);
 
   /// Languages temporarily withheld from the app's selectable UI catalogue.
