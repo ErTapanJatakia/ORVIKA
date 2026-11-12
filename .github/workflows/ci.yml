@@ -66,9 +66,11 @@ jobs:
           fi
 
           total_files="$(jq -r '.files | length' <<< "$response")"
-          reported_files="$(jq -r '.total_files // 0' <<< "$response")"
-          if (( reported_files > total_files )); then
-            echo "Diff exceeds the API file listing; running Android validation as a safe fallback."
+          # The compare endpoint caps its changed-file list at 300 entries.
+          # At that boundary, conservatively validate Android rather than
+          # risk overlooking an application-runtime file beyond the listing.
+          if (( total_files >= 300 )); then
+            echo "Diff reaches the API file-list limit; running Android validation as a safe fallback."
             echo "android=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
