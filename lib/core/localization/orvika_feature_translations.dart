@@ -1,8 +1,7 @@
-/// Phase-two translations for the primary checker controls.
+/// Shared feature-level UI translations for checker and privacy surfaces.
 ///
-/// These strings are intentionally limited to interface labels and actions.
-/// Analyzer findings, security explanations and legal/privacy notices remain
-/// in their canonical source language until reviewed by qualified specialists.
+/// Detailed analyzer findings and curated feature content are maintained in
+/// dedicated locale packs so stable identifiers and security logic stay canonical.
 class OrvikaFeatureTranslations {
   static const Map<String, Map<String, String>> _packs = {
     'ru': {
