@@ -10,6 +10,7 @@ import '../../../core/localization/italian_checker_content.dart';
 import '../../../core/localization/french_checker_content.dart';
 import '../../../core/localization/spanish_checker_content.dart';
 import '../../../core/localization/portuguese_checker_content.dart';
+import '../../../core/localization/russian_checker_content.dart';
 
 class MessageCheckScreen extends StatefulWidget {
   const MessageCheckScreen({super.key});
@@ -120,7 +121,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                                 fontSize: 17, fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 14),
-                          for (final finding in result.findings.map((item) => l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
+                          for (final finding in result.findings.map((item) => l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
                             Padding(
                               padding: const EdgeInsets.only(bottom: 15),
                               child: Row(
