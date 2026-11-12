@@ -269,8 +269,8 @@ void main() {
       }
     });
 
-    test('Marathi covers the complete baseline; Sanskrit retains approved safety fallbacks', () {
-      const sanskritFallbackOnlyKeys = {
+    test('Marathi and Sanskrit cover the full baseline except approved safety notices', () {
+      const fallbackOnlyKeys = {
         'intelligence.notice',
         'privacy.progressNote',
         'academy.progressNote',
@@ -286,11 +286,94 @@ void main() {
       for (final code in ['mr', 'sa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in OrvikaLocalizations.requiredTranslationKeys) {
-          if (code == 'sa' && sanskritFallbackOnlyKeys.contains(key)) {
+          if (fallbackOnlyKeys.contains(key)) {
             expect(localization.hasTranslation(key), isFalse,
-                reason: 'Sanskrit must retain the approved fallback for $key');
+                reason: '$code must retain the approved fallback for $key');
             continue;
           }
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing baseline key $key');
+          expect(localization.text(key), isNot(key));
+          expect(
+            placeholders(localization.text(key)),
+            placeholders(source.text(key)),
+            reason: '$code must preserve placeholders for $key',
+          );
+        }
+      }
+    });
+
+    test('Gujarati and Urdu cover the extended checker interface', () {
+      const keys = [
+        'checker.link.description',
+        'checker.link.result',
+        'checker.link.notice',
+        'checker.qr.description',
+        'checker.qr.hint',
+        'checker.qr.result',
+        'checker.qr.destination',
+        'checker.qr.notice',
+        'checker.message.description',
+        'checker.message.hint',
+        'checker.message.result',
+        'checker.message.links',
+        'checker.message.notice',
+      ];
+      for (final code in ['gu', 'ur']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in keys) {
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing checker interface key $key');
+          expect(localization.text(key), isNot(key));
+        }
+      }
+    });
+
+    test('Gujarati and Urdu checker translations preserve placeholders and script direction', () {
+      const keys = [
+        'checker.link.description',
+        'checker.link.result',
+        'checker.link.notice',
+        'checker.qr.description',
+        'checker.qr.hint',
+        'checker.qr.result',
+        'checker.qr.destination',
+        'checker.qr.notice',
+        'checker.message.description',
+        'checker.message.hint',
+        'checker.message.result',
+        'checker.message.links',
+        'checker.message.notice',
+      ];
+      final source = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\{([a-zA-Z][a-zA-Z0-9_]*)\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final code in ['gu', 'ur']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in keys) {
+          expect(
+            placeholders(localization.text(key)),
+            placeholders(source.text(key)),
+            reason: '$code must preserve placeholders for $key',
+          );
+        }
+      }
+      expect(OrvikaLanguage.fromCode('ur').isRightToLeft, isTrue);
+      expect(OrvikaLanguage.fromCode('gu').isRightToLeft, isFalse);
+    });
+
+
+    test('Gujarati and Urdu cover the complete baseline with safety notices', () {
+      final source = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\{([a-zA-Z][a-zA-Z0-9_]*)\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final code in ['gu', 'ur']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in OrvikaLocalizations.requiredTranslationKeys) {
           expect(localization.hasTranslation(key), isTrue,
               reason: '$code is missing baseline key $key');
           expect(localization.text(key), isNot(key));
