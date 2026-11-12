@@ -5,6 +5,7 @@ import '../../../core/localization/orvika_localizations.dart';
 
 import '../domain/intelligence_library.dart';
 import '../../../core/localization/german_intelligence_content.dart';
+import '../../../core/localization/italian_intelligence_content.dart';
 
 class IntelligenceScreen extends StatefulWidget {
   const IntelligenceScreen({super.key});
@@ -146,7 +147,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
             for (final sourceEntry in entries)
               Builder(
                 builder: (context) {
-                  final entry = GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
+                  final entry = l10n.language.code == 'it' ? ItalianIntelligenceContent.localize(sourceEntry, l10n.language.code) : GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
                   return Card(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: ExpansionTile(
