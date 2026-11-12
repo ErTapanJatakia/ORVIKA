@@ -23,9 +23,13 @@ Future<void> _openLinkCheck(
         textDirection: selectedLanguage.isRightToLeft
             ? TextDirection.rtl
             : TextDirection.ltr,
-        child: MediaQuery(
-          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
-          child: const LinkCheckScreen(),
+        child: Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: TextScaler.linear(textScale),
+            ),
+            child: const LinkCheckScreen(),
+          ),
         ),
       ),
     ),
