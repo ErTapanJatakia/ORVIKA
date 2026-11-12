@@ -33,7 +33,7 @@ void main() {
   testWidgets('Hindi, Gujarati, Marathi and Urdu use script-aware font fallbacks', (tester) async {
     const expectedScripts = <String, Range>[
       'hi': (0x0900, 0x097F),
-      'mr': Range(0x0900, 0x097F),
+      'mr': (0x0900, 0x097F),
       'gu': (0x0A80, 0x0AFF),
       'ur': (0x0600, 0x06FF),
     ];
