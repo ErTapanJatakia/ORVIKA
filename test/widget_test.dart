@@ -30,6 +30,33 @@ void main() {
     expect(preferences.getBool('onboarding.completed.v1'), isTrue);
   });
 
+  testWidgets('bundled Devanagari font loads and is selected for Devanagari locales', (tester) async {
+    final fontData = await rootBundle.load(
+      'assets/fonts/NotoSansDevanagari[wdth,wght].ttf',
+    );
+    expect(fontData.lengthInBytes, greaterThan(500000));
+
+    for (final code in ['hi', 'mr', 'ne', 'sa', 'mai', 'doi', 'kok', 'brx', 'bho']) {
+      SharedPreferences.setMockInitialValues({
+        'onboarding.completed.v1': true,
+        'appearance.language': code,
+      });
+      await tester.pumpWidget(OrvikaApp(key: ValueKey('devanagari-font-$code')));
+      await tester.pumpAndSettle();
+
+      final heading = find.text(
+        OrvikaLocalizations(OrvikaLanguage.fromCode(code)).text('dashboard.title'),
+      );
+      expect(heading, findsOneWidget);
+      final textTheme = Theme.of(tester.element(heading)).textTheme;
+      expect(
+        textTheme.bodyMedium?.fontFamily,
+        'NotoSansDevanagari',
+        reason: '$code should use the bundled Devanagari family',
+      );
+    }
+  });
+
   testWidgets('completed onboarding is not shown on the next launch', (tester) async {
     SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
     await tester.pumpWidget(const OrvikaApp());
