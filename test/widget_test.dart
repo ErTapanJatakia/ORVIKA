@@ -71,27 +71,29 @@ void main() {
       'appearance.language': 'hi',
     });
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
+    try {
+      await tester.pumpWidget(const OrvikaApp());
+      await tester.pumpAndSettle();
 
-    await tester.pumpWidget(const OrvikaApp());
-    await tester.pumpAndSettle();
+      expect(find.text('Choose your language'), findsOneWidget);
+      expect(find.text('Your safety toolkit'), findsNothing);
+      expect(find.bySemanticsLabel(
+        'Languages listed: 191. Available to select: 2',
+      ), findsOneWidget);
 
-    expect(find.text('Choose your language'), findsOneWidget);
-    expect(find.text('Your safety toolkit'), findsNothing);
-    expect(find.bySemanticsLabel(
-      'Languages listed: 191. Available to select: 2',
-    ), findsOneWidget);
+      // Search results are lazily built; filter before inspecting the Hindi tile.
+      await tester.enterText(find.byType(TextField), 'Hindi');
+      await tester.pumpAndSettle();
+      final hindiTile = tester.widget<ListTile>(
+        find.byKey(const ValueKey('language-hi')),
+      );
+      expect(hindiTile.onTap, isNull);
 
-    // Search results are lazily built; filter before inspecting the Hindi tile.
-    await tester.enterText(find.byType(TextField), 'Hindi');
-    await tester.pumpAndSettle();
-    final hindiTile = tester.widget<ListTile>(
-      find.byKey(const ValueKey('language-hi')),
-    );
-    expect(hindiTile.onTap, isNull);
-
-    final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'hi');
+      final preferences = await SharedPreferences.getInstance();
+      expect(preferences.getString('appearance.language'), 'hi');
+    } finally {
+      semantics.dispose();
+    }
   });
 
   testWidgets('completed onboarding is not shown on the next launch', (tester) async {
