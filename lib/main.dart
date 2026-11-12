@@ -255,16 +255,19 @@ class _OrvikaAppState extends State<OrvikaApp> {
     // platform and browser. Release-grade Indic rendering still requires
     // locally bundled, licensed script fonts and device-level visual tests.
     const scriptFontFallbacks = <String>[
+      'NotoSansDevanagari',
       'Noto Sans Devanagari',
       'Noto Sans Gujarati',
       'Noto Nastaliq Urdu',
       'Noto Naskh Arabic',
       'Noto Sans Arabic',
     ];
+    final appFontFamily =
+        _selectedLanguage.usesDevanagariScript ? 'NotoSansDevanagari' : 'Inter';
     final baseTextTheme = ThemeData(
       brightness: palette.isDark ? Brightness.dark : Brightness.light,
     ).textTheme.apply(
-      fontFamily: 'Inter',
+      fontFamily: appFontFamily,
       fontFamilyFallback: scriptFontFallbacks,
     );
     final brandTextTheme = baseTextTheme.copyWith(
