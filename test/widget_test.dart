@@ -36,7 +36,7 @@ void main() {
       'mr': (0x0900, 0x097F),
       'gu': (0x0A80, 0x0AFF),
       'ur': (0x0600, 0x06FF),
-    ];
+    };
 
     for (final entry in expectedScripts.entries) {
       SharedPreferences.setMockInitialValues({
