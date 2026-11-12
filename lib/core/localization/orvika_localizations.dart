@@ -1197,7 +1197,7 @@ class OrvikaLocalizations {
   /// Language packs currently containing authored ORVIKA strings.
   /// A picker entry alone is never evidence of translation coverage.
   static const Set<String> translatedLanguageCodes = {
-    'ru', 'es', 'hi', 'de', 'fr', 'it', 'pt', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
+    'ru', 'es', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
   };
 
   static const Set<String> rightToLeftLanguageCodes = {'ar', 'ur', 'he', 'fa', 'ps'};
