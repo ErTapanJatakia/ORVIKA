@@ -43,7 +43,7 @@ void main() {
         'onboarding.completed.v1': true,
         'appearance.language': entry.key,
       });
-      await tester.pumpWidget(const OrvikaApp());
+      await tester.pumpWidget(OrvikaApp(key: ValueKey('script-font-${entry.key}')));
       await tester.pumpAndSettle();
 
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(entry.key));
