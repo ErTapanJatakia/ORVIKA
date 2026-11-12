@@ -55,8 +55,8 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(
-        title: 'Link Check',
+      appBar: OrvikaFeatureAppBar(
+        title: l10n.text('module.link', 'Link Check'),
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
