@@ -6,6 +6,7 @@ import '../../../core/localization/orvika_localizations.dart';
 import '../../link_check/domain/url_analyzer.dart';
 import '../domain/message_analyzer.dart';
 import '../../../core/localization/german_checker_content.dart';
+import '../../../core/localization/italian_checker_content.dart';
 
 class MessageCheckScreen extends StatefulWidget {
   const MessageCheckScreen({super.key});
@@ -116,7 +117,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                                 fontSize: 17, fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 14),
-                          for (final finding in result.findings.map((item) => GermanCheckerContent.localizeFinding(item, l10n.language.code)))
+                          for (final finding in result.findings.map((item) => l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
                             Padding(
                               padding: const EdgeInsets.only(bottom: 15),
                               child: Row(
@@ -177,7 +178,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                               ),
                           ],
                           const Divider(),
-                          Text(GermanCheckerContent.localizeMessageNotice(l10n.language.code),
+                          Text(l10n.language.code == 'it' ? ItalianCheckerContent.localizeMessageNotice(l10n.language.code) : GermanCheckerContent.localizeMessageNotice(l10n.language.code),
                               style: TextStyle(
                                   color: scheme.onSurfaceVariant,
                                   fontSize: 12,
