@@ -1667,15 +1667,18 @@ class _HeroPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Text(
-              OrvikaLocalizations(language).text('hero.title', 'Check before\nyou trust.'),
-              softWrap: true,
-              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                color: scheme.onSurface,
-                fontSize: compact ? (veryNarrow ? 32 : 38) : 48,
-                fontWeight: FontWeight.w900,
-                height: 1.06,
-                letterSpacing: compact ? -0.7 : -1.1,
+            Semantics(
+              header: true,
+              child: Text(
+                OrvikaLocalizations(language).text('hero.title', 'Check before\nyou trust.'),
+                softWrap: true,
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontSize: compact ? (veryNarrow ? 32 : 38) : 48,
+                  fontWeight: FontWeight.w900,
+                  height: 1.06,
+                  letterSpacing: compact ? -0.7 : -1.1,
+                ),
               ),
             ),
             const SizedBox(height: 13),

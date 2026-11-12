@@ -788,6 +788,14 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
+    final heroHeading = find.text('Check before\nyou trust.');
+    expect(heroHeading, findsOneWidget);
+    expect(
+      tester.getSemantics(heroHeading).getSemanticsData().flagsCollection.isHeader,
+      isTrue,
+      reason: 'The primary dashboard message must be exposed as a screen-reader heading.',
+    );
+
     final dashboardHeading = find.text('Your safety toolkit');
     expect(dashboardHeading, findsOneWidget);
     expect(
