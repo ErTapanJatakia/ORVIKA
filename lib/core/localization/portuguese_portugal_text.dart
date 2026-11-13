@@ -98,8 +98,10 @@ class PortuguesePortugalText {
     'checker.qr.destination': 'Destino detetado',
     'checker.qr.notice': 'A leitura com a câmara só começa depois de selecionar explicitamente «Digitalizar» e, em seguida, «Permitir acesso à câmara para esta leitura». A câmara para quando um código é captado ou quando sai do leitor. O conteúdo descodificado é analisado neste dispositivo; o ORVIKA não abre destinos, não se liga a redes Wi-Fi, não guarda contactos, não envia mensagens nem inicia pagamentos. As permissões do navegador e do sistema operativo permanecem sob o seu controlo.',
     'privacy.reset.title': 'Repor o progresso da revisão?',
+    'privacy.reset.description': 'Esta ação elimina apenas as marcações da lista de verificação guardadas neste dispositivo. Não altera as definições do dispositivo nem das contas.',
     'privacy.reset.action': 'Repor o progresso',
     'privacy.error.save': 'Não foi possível guardar esta revisão no dispositivo.',
+    'privacy.error.clear': 'Não foi possível eliminar o progresso da revisão guardado.',
     'checker.qr.detectedFormat': 'Formato de código detetado: {format}',
     'checker.image.error.noCode.short': 'Não foi detetado qualquer código compatível. Experimente uma imagem mais nítida.',
   };
