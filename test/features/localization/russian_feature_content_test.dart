@@ -11,6 +11,7 @@ import 'package:orvika/features/privacy/domain/privacy_checklist.dart';
 import 'package:orvika/features/response/domain/response_playbooks.dart';
 import 'package:orvika/features/intelligence/domain/intelligence_library.dart';
 import 'package:orvika/features/link_check/domain/url_analyzer.dart';
+import 'package:orvika/features/qr_check/domain/qr_payload_analyzer.dart';
 
 void main() {
   group('Russian feature localization completeness', () {
@@ -117,7 +118,7 @@ void main() {
       expect(links.detail, contains('2'));
       expect(links.detail, contains('Количество обнаруженных веб-адресов'));
 
-      const qr = QrPayloadAnalyzer().analyze('tel:+10000000000');
+      final qr = const QrPayloadAnalyzer().analyze('tel:+10000000000');
       final localizedQr = RussianCheckerContent.localizeQr(qr, code);
       expect(localizedQr.title, 'Телефонный вызов');
       expect(localizedQr.detail, contains('номер'));
