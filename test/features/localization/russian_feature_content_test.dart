@@ -18,7 +18,7 @@ void main() {
     final l10n = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
 
     test('covers all reviewed core interface keys', () {
-      expect(OrvikaLocalizations.requiredTranslationKeys, hasLength(138));
+      expect(OrvikaLocalizations.requiredTranslationKeys, hasLength(146));
       for (final key in OrvikaLocalizations.requiredTranslationKeys) {
         expect(l10n.hasTranslation(key), isTrue, reason: 'Missing Russian key: $key');
         expect(l10n.text(key), isNot(key), reason: 'Unresolved Russian key: $key');
