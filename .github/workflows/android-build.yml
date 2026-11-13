@@ -212,7 +212,12 @@ jobs:
           test -s "$APK"
           test -s "$AAB"
           "$APKSIGNER" verify --verbose --print-certs "$APK"
-          jarsigner -verify "$AAB"
+          AAB_VERIFY="$(jarsigner -verify -verbose -certs "$AAB" 2>&1)"
+          printf '%s\\n' "$AAB_VERIFY"
+          if ! grep -qi 'jar verified' <<< "$AAB_VERIFY"; then
+            echo "The Android App Bundle signature could not be verified." >&2
+            exit 1
+          fi
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
           APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
           test "$APP_ID" = "com.orvika.app"
