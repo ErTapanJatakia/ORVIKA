@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
+import 'package:orvika/core/localization/orvika_feature_translations.dart';
 
 void main() {
   group('ORVIKA language catalogue', () {
@@ -43,6 +44,37 @@ void main() {
       expect(OrvikaLocalizations(portugal).text('hero.title'), 'Verifique antes de confiar.');
       expect(OrvikaLocalizations(portugal).text('settings.textSize'), 'Tamanho do texto');
       expect(portugal.hasReviewedTranslation, isFalse);
+    });
+
+    test('Portugal Portuguese covers accessibility, camera, image and analytics strings', () {
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('pt-PT'));
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(localization.hasTranslation(key), isTrue, reason: 'pt-PT is missing $key');
+      }
+      expect(localization.text('settings.textSize.range'), '50%–200%');
+      expect(localization.text('settings.boldText'), isNot('Bold text'));
+      expect(localization.text('settings.reduceMotion'), isNot('Reduce motion'));
+      final featurePack = OrvikaFeatureTranslations.forCode('pt-PT');
+      for (final key in [
+        'checker.camera.title',
+        'checker.camera.permissionDenied',
+        'checker.image.error.tooLarge',
+        'checker.image.privacyNotice',
+        'privacy.analytics.notice',
+        'privacy.device.notice',
+      ]) {
+        expect(featurePack.containsKey(key), isTrue, reason: 'pt-PT feature pack is missing $key');
+        expect(featurePack[key], isNot(key));
+      }
+      expect(
+        localization.textWithParameters(
+          'privacy.progressUpdate',
+          parameters: const {'reviewed': 3, 'total': 12},
+        ),
+        contains('3'),
+      );
+      expect(localization.textWithParameters('privacy.progressUpdate',
+          parameters: const {'reviewed': 3, 'total': 12}), contains('12'));
     });
 
     test('translation coverage is explicit and is not inferred from picker membership', () {
