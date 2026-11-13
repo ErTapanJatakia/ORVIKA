@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
+import 'package:orvika/core/localization/portuguese_portugal_text.dart';
 import 'package:orvika/core/localization/portuguese_academy_content.dart';
 import 'package:orvika/core/localization/portuguese_privacy_content.dart';
 import 'package:orvika/core/localization/portuguese_response_content.dart';
@@ -53,6 +54,34 @@ void main() {
         expect(translated.id, entry.id);
         expect(translated.title, isNot(entry.title));
       }
+    });
+
+    test('Portugal Portuguese resolves every authored English fallback locally', () {
+      final pt = OrvikaLocalizations(OrvikaLanguage.fromCode('pt-PT'));
+      expect(PortuguesePortugalText.fallbacks, isNotEmpty);
+      for (final entry in PortuguesePortugalText.fallbacks.entries) {
+        expect(pt.hasTranslation(entry.key), isTrue,
+            reason: 'pt-PT is missing fallback key ${entry.key}');
+        final resolved = pt.text(entry.key, 'English fallback');
+        expect(resolved, isNotEmpty);
+        expect(resolved, isNot('English fallback'),
+            reason: 'pt-PT still uses English for ${entry.key}');
+        expect(resolved, isNot(entry.key));
+      }
+      expect(
+        pt.textWithParameters(
+          'checker.link.complete',
+          parameters: const {'count': 4},
+        ),
+        'Análise da ligação concluída. 4 ocorrências.',
+      );
+      expect(
+        pt.textWithParameters(
+          'checker.message.complete',
+          parameters: const {'findings': 2, 'links': 3},
+        ),
+        'Análise da mensagem concluída. 2 ocorrências. Foram detetados 3 endereços Web.',
+      );
     });
 
     test('Portugal Portuguese localizes checker findings and notices without changing severity', () {
