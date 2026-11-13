@@ -1,4 +1,5 @@
 import '../../features/privacy/domain/privacy_checklist.dart';
+import 'portuguese_portugal_text.dart';
 
 /// Brazilian Portuguese privacy self-audit guidance.
 class PortuguesePrivacyContent {
@@ -20,10 +21,10 @@ class PortuguesePrivacyContent {
   };
 
   static PrivacyPractice localize(PrivacyPractice practice, String languageCode) {
-    if (languageCode != 'pt') return practice;
+    if (languageCode != 'pt' && languageCode != 'pt-PT') return practice;
     final values = _practices[practice.id];
     if (values == null) return practice;
-    return PrivacyPractice(id: practice.id, title: values['title']!, category: practice.category,
-      why: values['why']!, action: values['action']!, limit: values['limit']!);
+    return PrivacyPractice(id: practice.id, title: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['title']!) : values['title']!, category: practice.category,
+      why: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['why']!) : values['why']!, action: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['action']!) : values['action']!, limit: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['limit']!) : values['limit']!);
   }
 }
