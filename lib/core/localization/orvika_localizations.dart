@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'orvika_language.dart';
 import 'orvika_feature_translations.dart';
 import 'portuguese_portugal_text.dart';
+import 'mandarin_chinese_draft.dart';
 
 class OrvikaLocalizations {
   const OrvikaLocalizations(this.language);
@@ -1418,7 +1419,7 @@ class OrvikaLocalizations {
         'en' => _englishAccessibility, 'ru' => _russian, 'es' => _spanishDraft, 'hi' => _hindiDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
         'it' => _italianDraft, 'pa' => _punjabiDraft, 'ur' => _urduDraft,
         'ar' => _arabicDraft, 'mr' => _marathiDraft, 'gu' => _gujaratiDraft,
-        'sa' => _sanskritDraft, 'pt' => _portugueseDraft,
+        'sa' => _sanskritDraft, 'zh' => MandarinChineseDraft.ui, 'pt' => _portugueseDraft,
         'pt-PT' => _portuguesePortugalDraft, _ => const <String, String>{},
       };
 
