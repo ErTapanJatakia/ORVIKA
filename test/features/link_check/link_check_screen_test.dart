@@ -158,7 +158,7 @@ void main() {
     await _revealLinkCheckControl(tester, find.text(_linkAction('ar')));
     await tester.tap(find.text(_linkAction('ar')));
     await tester.pumpAndSettle();
-    expect(find.text('Analysis findings'), findsOneWidget);
+    expect(find.text('نتائج الفحص'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -200,7 +200,7 @@ void main() {
     await tester.tap(find.text(_linkAction('ar')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Analysis findings'), findsOneWidget);
+    expect(find.text('نتائج الفحص'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
