@@ -143,7 +143,7 @@ void main() {
 
     final hindiTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-hi')));
     expect(hindiTile.onTap, isNull);
-    expect(find.text('हिन्दी · Coming soon'), findsOneWidget);
+    expect(find.text('हिन्दी · hi-IN · Coming soon'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'English');
     await tester.pumpAndSettle();
@@ -465,7 +465,7 @@ void main() {
     expect(find.byKey(const ValueKey('language-ce')), findsOneWidget);
     final chechenTile = tester.widget<ListTile>(find.byKey(const ValueKey('language-ce')));
     expect(chechenTile.onTap, isNull);
-    expect(find.text('Нохчийн мотт · Coming soon'), findsOneWidget);
+    expect(find.text('Нохчийн мотт · ce · Coming soon'), findsOneWidget);
 
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getString('appearance.language'), isNull);
