@@ -43,9 +43,11 @@ void main() {
         'checker.link.heading', 'checker.qr.heading', 'checker.message.heading',
         'privacy.heading', 'academy.heading', 'response.heading',
       ]) {
-        expect(localization.hasTranslation(key), isTrue,
-            reason: 'Simplified Chinese draft is missing $key');
-        expect(localization.text(key), isNot(key));
+        // Draft strings must resolve for development without counting as reviewed coverage.
+        expect(localization.hasTranslation(key), isFalse,
+            reason: 'Simplified Chinese draft must not claim reviewed coverage for $key');
+        expect(localization.text(key), isNot(key),
+            reason: 'Simplified Chinese draft is missing authored UI text for $key');
       }
     });
 
