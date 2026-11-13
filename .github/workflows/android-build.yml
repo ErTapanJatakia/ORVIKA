@@ -42,6 +42,26 @@ jobs:
       - name: Generate isolated Android platform scaffold
         run: flutter create --platforms=android --org dev.orvika --project-name orvika --no-pub .
 
+      - name: Set the approved Android application ID
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          candidates = [Path("android/app/build.gradle.kts"), Path("android/app/build.gradle")]
+          build_file = next((path for path in candidates if path.is_file()), None)
+          if build_file is None:
+              raise SystemExit("Generated Android app Gradle file was not found.")
+          content = build_file.read_text()
+          updated, count = re.subn(r'(applicationId\s*(?:=\s*)?)"[^"]+"', r'\1"com.orvika.app"', content, count=1)
+          if count != 1:
+              raise SystemExit("Could not safely set the Android application ID.")
+          build_file.write_text(updated)
+          if '"com.orvika.app"' not in updated:
+              raise SystemExit("Android application ID verification failed.")
+          print(f"Configured application ID com.orvika.app in {build_file}")
+          PY
+
       # This job generates an ephemeral Android scaffold; the primary Flutter
       # CI job enforces the committed lockfile before the Android-only build.
       - name: Resolve dependencies
@@ -65,7 +85,7 @@ jobs:
           SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
           echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
           {
-            printf '%s\n'               '### Android release-mode build'               ''               "- APK: $APK"               "- Size: $(du -h "$APK" | cut -f 1)"               "- SHA-256: $SHA256"               '- Application ID: dev.orvika.orvika (provisional CI identity)'               '- Signing: Flutter-generated debug signing; not suitable for distribution.'
+            printf '%s\n'               '### Android release-mode build'               ''               "- APK: $APK"               "- Size: $(du -h "$APK" | cut -f 1)"               "- SHA-256: $SHA256"               '- Application ID: com.orvika.app (approved ORVIKA Android identity)'               '- Signing: Flutter-generated debug signing; not suitable for distribution.'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload validation APK
