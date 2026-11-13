@@ -13,8 +13,8 @@ The unified selector excludes Tatar (`tt`) and Bashkir (`ba`) for now; their cat
 - English: reviewed UI fallback.
 - Russian: reviewed initial UI pack for onboarding, dashboard module labels/descriptions and language settings.
 - Hindi (`hi`): initial draft strings cover onboarding, dashboard headings, core module labels/descriptions and selected settings. This draft is not reviewed or certified; qualified native-speaker validation is required before it can be promoted to reviewed status. Untranslated screens and content continue to use English.
-- German (`de`), French (`fr`), Punjabi (`pa`), Urdu (`ur`), Italian (`it`), Arabic (`ar`), Marathi (`mr`), Gujarati (`gu`) and Sanskrit (`sa`): initial draft packs now cover onboarding, dashboard module labels/descriptions, shared navigation and appearance settings. These are unreviewed drafts and require qualified native-speaker review, especially for security and privacy terminology.
-- Arabic and Urdu apply right-to-left app layout. Flutter framework widgets continue using the supported English/Russian framework locales; ORVIKA's selected language is carried independently.
+- German (`de`), French (`fr`), Punjabi (`pa`), Urdu (`ur`), Italian (`it`), Arabic (`ar`), Marathi (`mr`), Gujarati (`gu`) and Sanskrit (`sa`): draft coverage varies by locale. Arabic now has a complete 146-key shared interface baseline, checker/camera/image UI, and dedicated Academy, Privacy, Response, Intelligence and checker-result content packs. Arabic remains an unreviewed draft pending consolidated automated validation, RTL device/browser review and qualified native-speaker review of security terminology.
+- Arabic and Urdu apply right-to-left app layout. Arabic is included in Flutter's supported framework locales; RTL metadata alone does not establish full layout conformance.
 - Other available catalogue entries: selectable and persisted, but currently display the English fallback. A language being listed does not imply that its complete UI translation is already available.
 
 ## Coverage boundary
@@ -55,7 +55,7 @@ Accordingly, this is a curated 100-language product catalogue, not a claim that 
 
 The phase-two checker interface increment adds offline translations for primary headings, input labels and actions in Link Check, QR Check and Message Check, plus severity labels and QR camera/image entry actions. These keys are authored for Russian, Hindi, German, French, Italian, Punjabi, Urdu, Arabic, Marathi, Gujarati and Sanskrit.
 
-The nine additional packs remain drafts; the existing reviewed/draft classification is unchanged. Detailed descriptions, security findings, privacy/legal notices and incident-response playbooks continue to use English fallback until qualified review. Arabic and Urdu retain RTL language metadata; automated tests do not establish full RTL conformance.
+The additional locale packs remain drafts; the existing reviewed/draft classification is unchanged. Arabic now has dedicated translations for feature descriptions, checker findings and QR payload results, as well as all curated feature-content collections. Arabic and Urdu retain RTL metadata; automated tests must be supplemented by visual RTL review at narrow widths and enlarged text sizes.
 
 
 ## Phase-two extended UI coverage
