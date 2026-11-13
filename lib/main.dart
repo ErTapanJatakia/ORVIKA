@@ -116,7 +116,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
   bool _hasSelectedLanguage = false;
   bool _isLoadingPreferences = true;
   bool _hasCompletedOnboarding = false;
-  double _textScale = 0.5;
+  double _textScale = 0.85;
   bool _boldText = false;
   bool _reduceMotion = false;
 
@@ -136,7 +136,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
           savedLanguage != null && restoredLanguage.hasReviewedTranslation;
       final savedCatalogue = preferences.getString('appearance.languageCatalogue') ?? 'russia';
       final completed = preferences.getBool('onboarding.completed.v1') ?? false;
-      final textScale = preferences.getDouble('accessibility.textScale') ?? 0.5;
+      final textScale = preferences.getDouble('accessibility.textScale') ?? 0.85;
       final boldText = preferences.getBool('accessibility.boldText') ?? false;
       final reduceMotion = preferences.getBool('accessibility.reduceMotion') ?? false;
       if (!mounted) return;
