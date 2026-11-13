@@ -77,7 +77,17 @@ class OrvikaLanguage {
       if (subtag.length == 4 && scriptCode == null) {
         scriptCode = subtag;
       } else if ((subtag.length == 2 ||
-              (subtag.length == 3 && RegExp(r'^\\d{3}
+              (subtag.length == 3 && int.tryParse(subtag) != null)) &&
+          countryCode == null) {
+        countryCode = subtag;
+      }
+    }
+    return Locale.fromSubtags(
+      languageCode: languageCode,
+      scriptCode: scriptCode,
+      countryCode: countryCode,
+    );
+  }
 
   /// True when this locale's standard writing system is Devanagari.
   bool get usesDevanagariScript => const {
