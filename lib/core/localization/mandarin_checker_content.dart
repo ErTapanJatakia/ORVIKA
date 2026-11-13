@@ -35,8 +35,8 @@ class MandarinCheckerContent {
     final v = _findings[item.title];
     if (v == null) return item;
     var detail = v.detail;
-    final p = RegExp(r'port (\\d+)').firstMatch(item.detail);
-    final c = RegExp(r'^(\\d+) web address').firstMatch(item.detail);
+    final p = RegExp(r'port (\d+)').firstMatch(item.detail);
+    final c = RegExp(r'^(\d+) web address').firstMatch(item.detail);
     if (p != null) detail = detail.replaceAll('{port}', p.group(1)!);
     if (c != null) detail = detail.replaceAll('{count}', c.group(1)!);
     return LinkFinding(title: v.title, detail: detail, severity: item.severity);
