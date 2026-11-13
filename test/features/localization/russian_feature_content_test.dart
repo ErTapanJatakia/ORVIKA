@@ -185,6 +185,9 @@ void main() {
         'https://раypal.example',
         'https://example.com',
         '',
+        'not a web address',
+        'ftp://example.com',
+        'https://example.com with whitespace',
       ];
       for (final input in urlInputs) {
         final result = const UrlAnalyzer().analyze(input);
@@ -311,6 +314,8 @@ void main() {
         final localized = RussianCheckerContent.localizeQr(source, code);
         expect(source.kind, testCase.kind, reason: testCase.payload);
         expect(localized.title, testCase.title, reason: testCase.payload);
+        expect(localized.detail, isNot(source.detail),
+            reason: 'Untranslated QR detail for ${testCase.payload}');
         expect(localized.kind, source.kind, reason: testCase.payload);
         expect(localized.severity, source.severity, reason: testCase.payload);
         expect(localized.isValid, source.isValid, reason: testCase.payload);
