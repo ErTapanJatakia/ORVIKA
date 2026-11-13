@@ -5,9 +5,9 @@
 ## Current consolidated status
 
 - The language selector is a single combined searchable list, with 192 unique selectable language codes. Bashkir (`ba`) and Tatar (`tt`) remain excluded.
-- Six priority locales have completed their implementation and native-review batches: German, French, Italian, Spanish, Brazilian Portuguese and Russian.
-- Portugal Portuguese (`pt-PT`) is maintained separately from Brazilian Portuguese (`pt`). Its native reviewer approved the translations; the only recommendation was to replace remaining English fallbacks with contextually accurate European Portuguese. PR #98 contains the fallback map and regression coverage; final locale promotion remains gated on completeness review and CI.
-- Hindi PR #97 remains paused until the six-language audit is complete.
+- The six-priority implementation audit covers German, French, Italian, Spanish, Brazilian Portuguese and Russian; do not conflate implementation batches with reviewed status. Current reviewed flags are English, Russian, Arabic and Portugal Portuguese.
+- Portugal Portuguese (`pt-PT`) is distinct from Brazilian Portuguese (`pt`). Maintainer-confirmed native-speaker approval, fallback completion and passing CI were recorded in PR #98; the locale is now marked reviewed. Brazilian Portuguese (`pt`) remains draft.
+- Hindi PR #97 remains paused until the six-language implementation audit is complete.
 - Android validation is deferred until the entire app-code batch is ready. No production deployment is authorized during localization consolidation.
 
 ## Next consolidated audit
@@ -17,8 +17,12 @@
 3. Six-locale language-switching and fallback behavior.
 4. Long-string, narrow-viewport and accessibility text-scaling checks.
 5. Confirm Russian final sweep remains clean.
-6. Finish `pt-PT` fallback coverage and mark reviewed only after the required CI passes.
+6. Keep `pt-PT` review status aligned with its completed fallback map, reviewer approval and passing PR #98 CI.
 
+
+## Current review-status source of truth
+
+The `OrvikaLanguage.hasReviewedTranslation` flag currently marks English, Russian, Arabic and Portugal Portuguese (`pt-PT`) as reviewed. Other authored language packs remain drafts unless and until their own review evidence and release gates are complete. `translatedLanguageCodes` means an authored pack exists; it does not mean that the pack is reviewed.
 
 ## Current architecture
 
