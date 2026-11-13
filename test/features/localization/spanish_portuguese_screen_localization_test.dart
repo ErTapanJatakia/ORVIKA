@@ -43,7 +43,9 @@ void main() {
       const QrCheckScreen(),
     ]) {
       await tester.pumpWidget(scaledApp(screen));
-      await tester.pumpAndSettle();
+      // These screens may contain intentionally repeating animations; one
+      // deterministic frame is sufficient to surface layout/paint exceptions.
+      await tester.pump(const Duration(milliseconds: 100));
       expect(tester.takeException(), isNull,
           reason: 'pt-PT layout overflowed at 320px / 200% text scale for ${screen.runtimeType}');
     }
