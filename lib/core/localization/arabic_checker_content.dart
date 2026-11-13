@@ -36,8 +36,8 @@ class ArabicCheckerContent {
     final translated = _findings[finding.title];
     if (translated == null) return finding;
     var detail = translated.detail;
-    final port = RegExp(r'port (\\d+)').firstMatch(finding.detail);
-    final count = RegExp(r'^(\\d+) web address').firstMatch(finding.detail);
+    final port = RegExp(r'port (\d+)').firstMatch(finding.detail);
+    final count = RegExp(r'^(\d+) web address').firstMatch(finding.detail);
     if (port != null) detail = detail.replaceAll('{port}', port.group(1)!);
     if (count != null) detail = detail.replaceAll('{count}', count.group(1)!);
     return LinkFinding(title: translated.title, detail: detail, severity: finding.severity);
