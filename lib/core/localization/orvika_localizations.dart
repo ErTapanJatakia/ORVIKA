@@ -1337,6 +1337,7 @@ class OrvikaLocalizations {
   Map<String, String> get _translations => {
         ..._baseTranslations,
         ...OrvikaFeatureTranslations.forCode(language.code),
+        if (language.code == 'pt-PT') ...PortuguesePortugalText.fallbacks,
       };
 
   /// True only when the selected language contains an authored value for [key].
