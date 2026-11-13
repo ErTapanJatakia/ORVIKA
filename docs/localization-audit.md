@@ -1,4 +1,24 @@
-# ORVIKA localization audit — 8 November 2026
+# ORVIKA localization audit — current status: 13 November 2026
+
+> Historical note: the baseline and early phase sections below describe the state at the time they were written. They are not a statement of current product coverage. The current consolidated status is recorded here and in the latest dated sections.
+
+## Current consolidated status
+
+- The language selector is a single combined searchable list, with 192 unique selectable language codes. Bashkir (`ba`) and Tatar (`tt`) remain excluded.
+- Six priority locales have completed their implementation and native-review batches: German, French, Italian, Spanish, Brazilian Portuguese and Russian.
+- Portugal Portuguese (`pt-PT`) is maintained separately from Brazilian Portuguese (`pt`). Its native reviewer approved the translations; the only recommendation was to replace remaining English fallbacks with contextually accurate European Portuguese. PR #98 contains the fallback map and regression coverage; final locale promotion remains gated on completeness review and CI.
+- Hindi PR #97 remains paused until the six-language audit is complete.
+- Android validation is deferred until the entire app-code batch is ready. No production deployment is authorized during localization consolidation.
+
+## Next consolidated audit
+
+1. Shared-key completeness across the six priority locales.
+2. Expanded Spanish and Portuguese checker regressions; French and Italian screen-level tests.
+3. Six-locale language-switching and fallback behavior.
+4. Long-string, narrow-viewport and accessibility text-scaling checks.
+5. Confirm Russian final sweep remains clean.
+6. Finish `pt-PT` fallback coverage and mark reviewed only after the required CI passes.
+
 
 ## Current architecture
 
