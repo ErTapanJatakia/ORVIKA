@@ -90,8 +90,16 @@ void main() {
         expect(item.title, isNot(source.title));
         expect(item.summary, isNot(source.summary));
         expect(item.keyPoints, hasLength(source.keyPoints.length));
+        for (var i = 0; i < source.keyPoints.length; i++) {
+          expect(item.keyPoints[i], isNot(source.keyPoints[i]),
+              reason: 'Untranslated Academy key point in ${source.id} at index $i');
+        }
         expect(item.question, isNot(source.question));
         expect(item.options, hasLength(source.options.length));
+        for (var i = 0; i < source.options.length; i++) {
+          expect(item.options[i], isNot(source.options[i]),
+              reason: 'Untranslated Academy option in ${source.id} at index $i');
+        }
         expect(item.correctIndex, source.correctIndex);
         expect(item.explanation, isNot(source.explanation));
       }
@@ -118,8 +126,20 @@ void main() {
         expect(item.summary, isNot(source.summary));
         expect(item.firstAction, isNot(source.firstAction));
         expect(item.steps, hasLength(source.steps.length));
+        for (var i = 0; i < source.steps.length; i++) {
+          expect(item.steps[i], isNot(source.steps[i]),
+              reason: 'Untranslated Response step in ${source.id} at index $i');
+        }
         expect(item.preserve, hasLength(source.preserve.length));
+        for (var i = 0; i < source.preserve.length; i++) {
+          expect(item.preserve[i], isNot(source.preserve[i]),
+              reason: 'Untranslated evidence item in ${source.id} at index $i');
+        }
         expect(item.avoid, hasLength(source.avoid.length));
+        for (var i = 0; i < source.avoid.length; i++) {
+          expect(item.avoid[i], isNot(source.avoid[i]),
+              reason: 'Untranslated caution item in ${source.id} at index $i');
+        }
         expect(item.limit, isNot(source.limit));
       }
     });
