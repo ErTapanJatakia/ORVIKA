@@ -44,7 +44,14 @@ void main() {
       ),
     ));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Text size'));
+    await tester.scrollUntilVisible(
+      find.text('Text size'),
+      200,
+      scrollable: find.descendant(
+        of: find.byType(ListView),
+        matching: find.byType(Scrollable),
+      ),
+    );
     await tester.pumpAndSettle();
 
     final slider = tester.widget<Slider>(find.byType(Slider));
