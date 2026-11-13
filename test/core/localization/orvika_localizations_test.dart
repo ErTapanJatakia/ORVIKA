@@ -37,11 +37,12 @@ void main() {
       expect(portugal.nativeName, 'Português (Portugal)');
       expect(OrvikaLanguage.allValues.where((language) => language.code == 'pt-PT'),
           hasLength(1));
-      expect(portugal.hasDraftTranslation, isFalse);
+      expect(portugal.hasDraftTranslation, isTrue);
       expect(portugal.hasReviewedTranslation, isFalse);
-      expect(OrvikaLocalizations.translatedLanguageCodes.contains('pt-PT'), isFalse);
-      expect(OrvikaLocalizations(portugal).text('hero.title', 'Check Before You Trust'),
-          'Check Before You Trust');
+      expect(OrvikaLocalizations.translatedLanguageCodes.contains('pt-PT'), isTrue);
+      expect(OrvikaLocalizations(portugal).text('hero.title'), 'Verifique antes de confiar.');
+      expect(OrvikaLocalizations(portugal).text('settings.textSize'), 'Tamanho do texto');
+      expect(portugal.hasReviewedTranslation, isFalse);
     });
 
     test('translation coverage is explicit and is not inferred from picker membership', () {
