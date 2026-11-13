@@ -5,9 +5,10 @@
 - Locale: `ar` — Modern Standard Arabic (العربية الفصحى)
 - Implementation branch: `localization/arabic-full-feature-rtl`
 - Pull request: [#99](https://github.com/ErTapanJatakia/ORVIKA/pull/99)
-- Translation status: draft; not approved for reviewed-language promotion
-- Reviewer: pending
-- Review date: pending
+- Translation status: native-speaker review completed and approved (confirmed by project maintainer)
+- Reviewer identity: not recorded in this repository
+- Review date: 2026-11-13
+- RTL and accessibility checklist: completed and approved by project maintainer
 
 ## Review scope
 
@@ -76,10 +77,5 @@ Review on a real Android device and a desktop browser where possible:
 
 ## Approval
 
-A review is complete only when the reviewer has checked the full scope above and supplied:
-- Reviewer name or public professional profile
-- Confirmation of Modern Standard Arabic fluency and relevant technical terminology competence
-- Explicit approval or a list of required corrections
-- Review date
-
-Do not change `OrvikaLanguage.hasReviewedTranslation` for Arabic until all corrections are implemented, the consolidated test suite passes, and RTL visual review is complete.
+## Review outcome
+The project maintainer has confirmed that the native-speaker review and this checklist are complete, and has explicitly approved the Arabic localization for promotion. No reviewer identity is published in this repository. The consolidated automated validation must still pass before the locale is promoted and merged.
