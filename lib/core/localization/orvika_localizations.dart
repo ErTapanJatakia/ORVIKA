@@ -1298,6 +1298,19 @@ class OrvikaLocalizations {
     'footer.motto':'जोखिमं पश्यतु • सङ्केतं परीक्षताम् • नियन्त्रणं रक्षतु',
   };
 
+  /// English labels for the accessibility controls. Other English UI strings
+  /// continue to use their call-site fallbacks.
+  static const Map<String, String> _englishAccessibility = {
+    'settings.accessibility.title': 'Accessibility',
+    'settings.accessibility.help': 'These preferences are stored on this device. Operating-system accessibility settings remain respected.',
+    'settings.textSize': 'Text size',
+    'settings.textSize.range': '50%–200%',
+    'settings.boldText': 'Bold text',
+    'settings.boldText.help': 'Increase text weight throughout the app.',
+    'settings.reduceMotion': 'Reduce motion',
+    'settings.reduceMotion.help': 'Request reduced or disabled interface animations.',
+  };
+
   /// Language packs currently containing authored ORVIKA strings.
   /// A picker entry alone is never evidence of translation coverage.
   static const Set<String> translatedLanguageCodes = {
@@ -1308,7 +1321,7 @@ class OrvikaLocalizations {
   bool get usesRightToLeftLayout => rightToLeftLanguageCodes.contains(language.code);
 
   Map<String, String> get _baseTranslations => switch (language.code) {
-        'ru' => _russian, 'es' => _spanishDraft, 'hi' => _hindiDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
+        'en' => _englishAccessibility, 'ru' => _russian, 'es' => _spanishDraft, 'hi' => _hindiDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
         'it' => _italianDraft, 'pa' => _punjabiDraft, 'ur' => _urduDraft,
         'ar' => _arabicDraft, 'mr' => _marathiDraft, 'gu' => _gujaratiDraft,
         'sa' => _sanskritDraft, 'pt' => _portugueseDraft, _ => const <String, String>{},
