@@ -1,0 +1,142 @@
+name: Generate permanent Android scaffold
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: Branch to receive the generated Android project
+        required: true
+        default: feat/android-permanent-scaffold
+
+permissions:
+  contents: write
+
+concurrency:
+  group: orvika-android-scaffold-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate and commit Flutter Android platform
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate target branch
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ inputs.target_branch }}
+        run: |
+          if [[ ! "$TARGET_BRANCH" =~ ^feat/android-permanent-scaffold(-[a-zA-Z0-9._-]+)?$ ]]; then
+            echo "Refusing unexpected target branch: $TARGET_BRANCH" >&2
+            exit 1
+          fi
+          if [ "$TARGET_BRANCH" = "main" ]; then
+            echo "The scaffold must never be committed directly to main." >&2
+            exit 1
+          fi
+
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Select JDK 17
+        shell: bash
+        run: |
+          if [ -z "${JAVA_HOME_17_X64:-}" ]; then
+            echo "JDK 17 is not available on this runner." >&2
+            exit 1
+          fi
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+
+      - name: Install pinned Flutter SDK
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          git -C "$RUNNER_TEMP/flutter" checkout --detach 3.47.9
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+
+      - name: Refuse to overwrite an existing scaffold branch
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ inputs.target_branch }}
+        run: |
+          if git ls-remote --exit-code --heads origin "$TARGET_BRANCH" >/dev/null 2>&1; then
+            echo "Branch $TARGET_BRANCH already exists; refusing to overwrite it." >&2
+            exit 1
+          fi
+
+      - name: Generate Android platform files
+        run: flutter create --platforms=android --org com.orvika --project-name app --no-pub .
+
+      - name: Apply ORVIKA Android identity and safe manifest defaults
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import xml.etree.ElementTree as ET
+
+          gradle_candidates = [Path("android/app/build.gradle.kts"), Path("android/app/build.gradle")]
+          gradle = next((p for p in gradle_candidates if p.is_file()), None)
+          if gradle is None:
+              raise SystemExit("Generated Android Gradle file is missing.")
+          source = gradle.read_text()
+          for key in ("namespace", "applicationId"):
+              pattern = rf'({key}\\s*(?:=\\s*)?")[^"]+(")'
+              source, count = re.subn(pattern, rf'\\g<1>com.orvika.app\\g<2>', source, count=1)
+              if count != 1:
+                  raise SystemExit(f"Could not set exactly one {key} in {gradle}.")
+          gradle.write_text(source)
+          for key in ("namespace", "applicationId"):
+              if not re.search(rf'{key}\\s*(?:=\\s*)?"com\\.orvika\\.app"', source):
+                  raise SystemExit(f"Android {key} verification failed.")
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          if not manifest.is_file():
+              raise SystemExit("Android main manifest is missing.")
+          tree = ET.parse(manifest)
+          root = tree.getroot()
+          android = "{http://schemas.android.com/apk/res/android}"
+          app = root.find("application")
+          if app is None:
+              raise SystemExit("Android application element is missing.")
+          app.set(android + "label", "ORVIKA")
+          app.set(android + "usesCleartextTraffic", "false")
+          existing = {node.get(android + "name") for node in root.findall("uses-permission")}
+          for permission in ("android.permission.INTERNET", "android.permission.CAMERA"):
+              if permission not in existing:
+                  node = ET.Element("uses-permission")
+                  node.set(android + "name", permission)
+                  root.insert(0, node)
+          tree.write(manifest, encoding="utf-8", xml_declaration=True)
+          print("Verified package identity, app label, HTTPS-only cleartext policy, and minimum permissions.")
+          PY
+
+      - name: Verify generated platform files
+        shell: bash
+        run: |
+          test -s android/gradlew
+          test -s android/gradle/wrapper/gradle-wrapper.properties
+          test -s android/app/src/main/kotlin/com/orvika/app/MainActivity.kt
+          grep -q 'com.orvika.app' android/app/build.gradle.kts || grep -q 'com.orvika.app' android/app/build.gradle
+          grep -q 'ORVIKA' android/app/src/main/AndroidManifest.xml
+          git status --short
+
+      - name: Commit scaffold to a review branch
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ inputs.target_branch }}
+        run: |
+          git switch -c "$TARGET_BRANCH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android
+          git commit -m "Build permanent Android scaffold for ORVIKA"
+          git push origin "$TARGET_BRANCH"
+          echo "Generated scaffold branch: $TARGET_BRANCH" >> "$GITHUB_STEP_SUMMARY"
+          echo "Application ID: com.orvika.app" >> "$GITHUB_STEP_SUMMARY"
+          echo "Signing: no release keystore or credentials created or committed." >> "$GITHUB_STEP_SUMMARY"
