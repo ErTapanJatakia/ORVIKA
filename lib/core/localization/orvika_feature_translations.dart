@@ -1,3 +1,5 @@
+import 'portuguese_portugal_text.dart';
+
 /// Shared feature-level UI translations for checker and privacy surfaces.
 ///
 /// Detailed analyzer findings and curated feature content are maintained in
@@ -633,6 +635,10 @@ class OrvikaFeatureTranslations {
     },
   };
 
-  static Map<String, String> forCode(String code) =>
-      _packs[code] ?? const <String, String>{};
+  static Map<String, String> forCode(String code) {
+    if (code == 'pt-PT') {
+      return PortuguesePortugalText.adaptMap(_packs['pt'] ?? const <String, String>{});
+    }
+    return _packs[code] ?? const <String, String>{};
+  }
 }
