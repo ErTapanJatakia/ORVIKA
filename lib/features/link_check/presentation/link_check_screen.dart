@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/arabic_checker_content.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
 import '../../../core/localization/orvika_localizations.dart';
