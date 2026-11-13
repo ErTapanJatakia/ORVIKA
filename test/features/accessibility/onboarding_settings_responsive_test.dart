@@ -33,45 +33,46 @@ void main() {
   });
 
 
-  testWidgets('every language option visibly shows and can be searched by its locale tag',
+  testWidgets('every selectable language option shows and can be searched by its locale tag',
       (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(390, 844);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(MaterialApp(
-      home: LanguageSelectionScreen(
-        selectedLanguage: OrvikaLanguage.english,
-        selectedCatalogue: 'russia',
-        onLanguageChanged: (_) {},
-        onCatalogueChanged: (_) {},
-      ),
-    ));
-    await tester.pumpAndSettle();
-
-    for (final language in OrvikaLanguage.allValues) {
-      await tester.enterText(
-        find.bySemanticsLabel('Search languages'),
-        language.localeTag,
-      );
+    // The picker deliberately presents two separate catalogues. Exercise each
+    // catalogue in its own UI state instead of searching the combined registry
+    // while only one catalogue is selected.
+    for (final catalogue in ['russia', 'india']) {
+      await tester.pumpWidget(MaterialApp(
+        home: LanguageSelectionScreen(
+          selectedLanguage: OrvikaLanguage.english,
+          selectedCatalogue: catalogue,
+          onLanguageChanged: (_) {},
+          onCatalogueChanged: (_) {},
+        ),
+      ));
       await tester.pumpAndSettle();
 
-      // Searching by the canonical locale tag narrows the catalogue to
-      // the matching option, so it should be rendered immediately without
-      // scrolling a virtualised list.
-      final option = find.byKey(ValueKey('language-${language.code}'));
+      for (final language in OrvikaLanguage.valuesForCatalogue(catalogue)) {
+        await tester.enterText(
+          find.bySemanticsLabel('Search languages'),
+          language.localeTag,
+        );
+        await tester.pumpAndSettle();
 
-      expect(option, findsOneWidget,
-          reason: 'Locale-tag search must find ${language.name} (${language.localeTag})');
-      expect(
-        find.descendant(
-          of: option,
-          matching: find.textContaining('${language.nativeName} · ${language.localeTag}'),
-        ),
-        findsOneWidget,
-        reason: 'Locale tag ${language.localeTag} must be visible for ${language.name}',
-      );
+        final option = find.byKey(ValueKey('language-${language.code}'));
+        expect(option, findsOneWidget,
+            reason: '${catalogue} locale-tag search must find ${language.name} (${language.localeTag})');
+        expect(
+          find.descendant(
+            of: option,
+            matching: find.textContaining('${language.nativeName} · ${language.localeTag}'),
+          ),
+          findsOneWidget,
+          reason: 'Locale tag ${language.localeTag} must be visible for ${language.name}',
+        );
+      }
     }
   });
 
