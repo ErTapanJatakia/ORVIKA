@@ -1460,11 +1460,13 @@ class _TopBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  'ORVIKA',
+              SizedBox(
+                width: 130,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    'ORVIKA',
                   maxLines: 1,
                   softWrap: false,
                   style: TextStyle(
@@ -1475,6 +1477,7 @@ class _TopBar extends StatelessWidget {
                     height: 1.1,
                   ),
                 ),
+              ),
               ),
               const SizedBox(height: 4),
               Text(
