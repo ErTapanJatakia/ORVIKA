@@ -64,6 +64,49 @@ void main() {
       expect(translated.title, 'Ligação sem criptografia');
       expect(translated.detail, contains('HTTP'));
       expect(translated.severity, source.severity);
+      const findingTitles = [
+        'Unicode hostname',
+        'Unencrypted connection',
+        'Embedded sign-in information',
+        'Internationalised domain encoding',
+        'IP-address destination',
+        'Malformed IPv4-looking hostname',
+        'Unusual numeric hostname',
+        'Long subdomain chain',
+        'Non-standard port',
+        'Fragment present',
+        'No structural warning detected',
+        'Address not analysed',
+        'Urgency or pressure language',
+        'Credential or sign-in request',
+        'OTP or authentication-code reference',
+        'Payment or financial action',
+        'Prize or unexpected reward',
+        'Threat or consequence language',
+        'Obfuscated web address detected',
+        'Link or web address detected',
+        'No listed social-engineering cues detected',
+        'Message not analysed',
+      ];
+      for (final title in findingTitles) {
+        final result = PortugueseCheckerContent.localizeFinding(
+          LinkFinding(title: title, detail: 'A sample finding.', severity: FindingSeverity.caution),
+          'pt-PT',
+        );
+        expect(result.title, isNot(title), reason: 'pt-PT checker finding missing: $title');
+        expect(result.severity, FindingSeverity.caution);
+      }
+      final port = PortugueseCheckerContent.localizeFinding(
+        const LinkFinding(title: 'Non-standard port', detail: 'This address uses port 8080.', severity: FindingSeverity.warning),
+        'pt-PT',
+      );
+      expect(port.detail, contains('8080'));
+      final count = PortugueseCheckerContent.localizeFinding(
+        const LinkFinding(title: 'Link or web address detected', detail: '2 web addresses were found.', severity: FindingSeverity.caution),
+        'pt-PT',
+      );
+      expect(count.detail, contains('2'));
+
       expect(
         PortugueseCheckerContent.localizeLinkNotice('No network request was made.', 'pt-PT'),
         'Nenhuma solicitação de rede foi realizada.',
