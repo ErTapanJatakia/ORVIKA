@@ -208,6 +208,34 @@ void main() {
       expect(localizedAppLink.kind, appLink.kind);
     });
 
+    test('localizes every QR payload class without changing analysis metadata', () {
+      final cases = <({String payload, QrPayloadKind kind, String title})>[
+        (payload: 'WIFI:T:WPA;S:Example;P:secret;;', kind: QrPayloadKind.wifiCredentials, title: 'Настройки Wi-Fi'),
+        (payload: 'BEGIN:VCARD\\nFN:Example\\nEND:VCARD', kind: QrPayloadKind.contactCard, title: 'Контактная карточка'),
+        (payload: 'BEGIN:VEVENT\\nSUMMARY:Example\\nEND:VEVENT', kind: QrPayloadKind.calendarEvent, title: 'Событие календаря'),
+        (payload: 'upi://pay?pa=merchant@example&pn=Merchant&am=10', kind: QrPayloadKind.paymentRequest, title: 'Запрос платежа UPI'),
+        (payload: 'tel:+10000000000', kind: QrPayloadKind.phoneAction, title: 'Телефонный вызов'),
+        (payload: 'mailto:help@example.com', kind: QrPayloadKind.emailAction, title: 'Действие электронной почты'),
+        (payload: 'sms:+10000000000', kind: QrPayloadKind.messageAction, title: 'Действие SMS'),
+        (payload: 'geo:55.75,37.61', kind: QrPayloadKind.location, title: 'Координаты местоположения'),
+        (payload: 'orvika-demo://open', kind: QrPayloadKind.applicationLink, title: 'Ссылка для приложения'),
+        (payload: 'Пример обычного текста', kind: QrPayloadKind.plainText, title: 'Обычный текст'),
+        (payload: 'https://example.com', kind: QrPayloadKind.webLink, title: 'Веб-адрес'),
+        (payload: '', kind: QrPayloadKind.invalid, title: 'Содержимое QR-кода не проанализировано'),
+      ];
+
+      for (final testCase in cases) {
+        final source = const QrPayloadAnalyzer().analyze(testCase.payload);
+        final localized = RussianCheckerContent.localizeQr(source, code);
+        expect(source.kind, testCase.kind, reason: testCase.payload);
+        expect(localized.title, testCase.title, reason: testCase.payload);
+        expect(localized.kind, source.kind, reason: testCase.payload);
+        expect(localized.severity, source.severity, reason: testCase.payload);
+        expect(localized.isValid, source.isValid, reason: testCase.payload);
+        expect(localized.normalizedUrl, source.normalizedUrl, reason: testCase.payload);
+      }
+    });
+
     test('covers scanner controls, errors and privacy disclosures', () {
       const keys = [
         'checker.camera.title', 'checker.camera.close', 'checker.camera.notice.title',
