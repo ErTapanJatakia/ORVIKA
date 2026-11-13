@@ -44,6 +44,8 @@ void main() {
       ),
     ));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Text size'));
+    await tester.pumpAndSettle();
 
     final slider = tester.widget<Slider>(find.byType(Slider));
     expect(slider.min, 0.5);
