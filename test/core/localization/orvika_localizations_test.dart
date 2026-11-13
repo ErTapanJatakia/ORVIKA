@@ -94,12 +94,12 @@ void main() {
       expect(portugal.nativeName, 'Português (Portugal)');
       expect(OrvikaLanguage.allValues.where((language) => language.code == 'pt-PT'),
           hasLength(1));
-      expect(portugal.hasDraftTranslation, isTrue);
-      expect(portugal.hasReviewedTranslation, isFalse);
+      expect(portugal.hasDraftTranslation, isFalse);
+      expect(portugal.hasReviewedTranslation, isTrue);
       expect(OrvikaLocalizations.translatedLanguageCodes.contains('pt-PT'), isTrue);
       expect(OrvikaLocalizations(portugal).text('hero.title'), 'Verifique antes de confiar.');
       expect(OrvikaLocalizations(portugal).text('settings.textSize'), 'Tamanho do texto');
-      expect(portugal.hasReviewedTranslation, isFalse);
+      expect(portugal.hasReviewedTranslation, isTrue);
     });
 
     test('Portugal Portuguese covers accessibility, camera, image and analytics strings', () {
@@ -186,7 +186,7 @@ void main() {
       for (final language in OrvikaLanguage.allValues) {
         expect(
           language.hasReviewedTranslation,
-          ['en', 'ru', 'ar'].contains(language.code),
+          ['en', 'ru', 'ar', 'pt-PT'].contains(language.code),
           reason: '${language.code} must remain unavailable until its full app translation is reviewed',
         );
       }

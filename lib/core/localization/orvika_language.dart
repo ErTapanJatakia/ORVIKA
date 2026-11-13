@@ -83,9 +83,10 @@ class OrvikaLanguage {
     if (usesUrduScript) return 'NotoNastaliqUrdu';
     return 'Inter';
   }
-  bool get hasReviewedTranslation => code == 'en' || code == 'ru' || code == 'ar';
+  bool get hasReviewedTranslation =>
+      code == 'en' || code == 'ru' || code == 'ar' || code == 'pt-PT';
   bool get hasDraftTranslation => const {
-        'hi', 'de', 'fr', 'pa', 'ur', 'it', 'mr', 'gu', 'sa', 'es', 'pt', 'pt-PT', 'zh'
+        'hi', 'de', 'fr', 'pa', 'ur', 'it', 'mr', 'gu', 'sa', 'es', 'pt', 'zh'
       }.contains(code);
 
   /// Languages temporarily withheld from the app's selectable UI catalogue.
