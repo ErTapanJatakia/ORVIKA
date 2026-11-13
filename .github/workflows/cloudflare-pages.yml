@@ -153,16 +153,46 @@ jobs:
           CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
         run: |
           set -euo pipefail
-          status="$(curl --silent --show-error --output "$RUNNER_TEMP/pages-project.json" --write-out '%{http_code}' \
-            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$CLOUDFLARE_PAGES_PROJECT")"
+          api_url="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$CLOUDFLARE_PAGES_PROJECT"
+          response_file="$RUNNER_TEMP/pages-project.json"
+          headers_file="$RUNNER_TEMP/pages-project-headers.txt"
+          status="000"
+          max_attempts=5
+
+          # Cloudflare occasionally returns transient 5xx/no-healthy-upstream responses.
+          # Retry only safe GET lookups; authentication and configuration errors stay fatal.
+          for attempt in $(seq 1 "$max_attempts"); do
+            status="$(curl --silent --show-error --output "$response_file" \
+              --dump-header "$headers_file" --write-out '%{http_code}' \
+              --connect-timeout 15 --max-time 30 \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              "$api_url" || true)"
+
+            if [ "$status" = "200" ] || [ "$status" = "404" ]; then
+              break
+            fi
+
+            if [[ "$status" =~ ^(429|5[0-9][0-9])$ ]] && [ "$attempt" -lt "$max_attempts" ]; then
+              delay=$((5 * (2 ** (attempt - 1))))
+              retry_after="$(awk 'BEGIN{IGNORECASE=1} /^Retry-After:/ {gsub("\\r","",$2); if ($2 ~ /^[0-9]+$/) print $2}' "$headers_file" 2>/dev/null | tail -n 1)"
+              if [[ "$retry_after" =~ ^[0-9]+$ ]] && [ "$retry_after" -gt "$delay" ] && [ "$retry_after" -le 60 ]; then
+                delay="$retry_after"
+              fi
+              echo "Cloudflare API returned HTTP $status; retrying project lookup in ${delay}s (attempt $attempt/$max_attempts)."
+              sleep "$delay"
+              continue
+            fi
+
+            break
+          done
+
           if [ "$status" = "200" ]; then
             echo "Cloudflare Pages project already exists."
           elif [ "$status" = "404" ]; then
             npx wrangler pages project create "$CLOUDFLARE_PAGES_PROJECT" --production-branch main
           else
-            echo "::error::Could not verify Cloudflare Pages project (HTTP $status)."
-            cat "$RUNNER_TEMP/pages-project.json"
+            echo "::error::Could not verify Cloudflare Pages project after $max_attempts attempts (HTTP $status)."
+            cat "$response_file"
             exit 1
           fi
 
