@@ -3,7 +3,5 @@
     <item android:drawable="@color/orvika_icon_background" />
     <item
         android:drawable="@drawable/ic_launcher_foreground"
-        android:gravity="center"
-        android:width="200dp"
-        android:height="200dp" />
+        android:gravity="center" />
 </layer-list>
