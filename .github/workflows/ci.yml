@@ -89,6 +89,7 @@ jobs:
     needs: change-scope
     if: needs.change-scope.outputs.android == 'true'
     uses: ./.github/workflows/android-build.yml
+    secrets: inherit
 
   flutter:
     name: Analyze, test, build and deploy Web
