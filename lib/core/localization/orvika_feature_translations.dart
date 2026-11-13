@@ -1,4 +1,5 @@
 import 'portuguese_portugal_text.dart';
+import 'qr_feature_translation_overrides.dart';
 
 /// Shared feature-level UI translations for checker and privacy surfaces.
 ///
@@ -737,8 +738,15 @@ class OrvikaFeatureTranslations {
 
   static Map<String, String> forCode(String code) {
     if (code == 'pt-PT') {
-      return PortuguesePortugalText.adaptMap(_packs['pt'] ?? const <String, String>{});
+      final portugalPack = {
+        ...?_packs['pt'],
+        ...?QrFeatureTranslationOverrides.values['pt'],
+      };
+      return PortuguesePortugalText.adaptMap(portugalPack);
     }
-    return _packs[code] ?? const <String, String>{};
+    return {
+      ...?_packs[code],
+      ...?QrFeatureTranslationOverrides.values[code],
+    };
   }
 }
