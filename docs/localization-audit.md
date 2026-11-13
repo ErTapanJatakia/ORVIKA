@@ -87,3 +87,10 @@ The Phase 2 implementation can be considered code-complete only when all visible
 ### Audit correction — current Phase 2 head
 
 The initial audit table above records the pre-localization baseline and should be read as a historical snapshot, not the current state. On the current Phase 2 branch, Link Check, QR Check and Message Check already resolve their primary form copy, result headings/notices and severity labels through localization lookup. Their result announcements and QR detected-format label have also now been moved behind localization keys. Scanner controls and Privacy reset/error controls are keyed as detailed above. A key with no authored value intentionally falls back to English; keying and translation coverage are tracked separately.
+
+
+## Portugal Portuguese implementation batch — 13 November 2026
+
+The distinct `pt-PT` locale has moved beyond the initial selector scaffold. The current draft branch wires the locale through the application interface, checker/scanner controls, accessibility settings and all localized feature-content adapters. Regression coverage includes the 146-key base UI baseline, all 22 checker finding IDs, all feature-content records (8 Academy, 12 Privacy, 5 Response and 10 Intelligence), placeholder interpolation, severity preservation, and screen-level rendering for Academy, Privacy, Response, Intelligence, Link Check, Message Check and QR Check.
+
+Regional terminology adaptation is applied to the Portuguese source strings while preserving Brazilian Portuguese (`pt`) unchanged. This is a complete technical-coverage draft, not a native-reviewed translation. Portugal Portuguese remains unreviewed, and the existing `hasReviewedTranslation` gate is intentionally unchanged. Native-speaker review must validate every screen, security term, legal/privacy notice, error, scanner flow, accessibility label, responsive layout and long-string behavior before promotion.
