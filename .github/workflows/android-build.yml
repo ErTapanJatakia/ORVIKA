@@ -64,6 +64,17 @@ jobs:
               raise SystemExit("Android namespace is not com.orvika.app")
           if 'applicationId = "com.orvika.app"' not in gradle:
               raise SystemExit("Android application ID is not com.orvika.app")
+          settings = Path("android/settings.gradle.kts").read_text()
+          properties = Path("android/gradle.properties").read_text()
+          wrapper = Path("android/gradle/wrapper/gradle-wrapper.properties").read_text()
+          if 'version "9.1.0" apply false' not in settings:
+              raise SystemExit("Expected Android Gradle Plugin 9.1.0")
+          if 'version "2.4.0" apply false' not in settings:
+              raise SystemExit("Expected Kotlin Gradle Plugin 2.4.0")
+          if "android.builtInKotlin=true" not in properties:
+              raise SystemExit("AGP 9 built-in Kotlin must remain enabled")
+          if "gradle-9.3.1-all.zip" not in wrapper:
+              raise SystemExit("Expected Gradle wrapper 9.3.1")
           if app is None or app.get(android_ns + "label") != "ORVIKA":
               raise SystemExit("Android app label is not ORVIKA")
           if app.get(android_ns + "usesCleartextTraffic") != "false":
