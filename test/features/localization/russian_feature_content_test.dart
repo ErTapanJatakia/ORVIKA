@@ -256,30 +256,37 @@ void main() {
     });
 
     test('localizes Unicode and Punycode URL findings inside QR results', () {
-      const spoofedDomain = 'https://раypal.example';
-      final url = const UrlAnalyzer().analyze(spoofedDomain);
-      expect(url.findings.map((finding) => finding.title), contains('Unicode hostname'));
-      expect(url.findings.map((finding) => finding.title), contains('Internationalised domain encoding'));
+      const cases = [
+        (url: 'https://раypal.example', finding: 'Unicode hostname'),
+        (url: 'https://xn--ypal-43d9g.example', finding: 'Internationalised domain encoding'),
+      ];
 
-      final localizedFindings = url.findings
-          .map((finding) => RussianCheckerContent.localizeFinding(finding, code))
-          .toList(growable: false);
-      expect(localizedFindings, isNotEmpty);
-      expect(localizedFindings.every((finding) => finding.title != 'Unicode hostname'), isTrue);
-      expect(localizedFindings.every((finding) => finding.title != 'Internationalised domain encoding'), isTrue);
-      for (var i = 0; i < url.findings.length; i++) {
-        expect(localizedFindings[i].severity, url.findings[i].severity);
-      }
+      for (final testCase in cases) {
+        final url = const UrlAnalyzer().analyze(testCase.url);
+        expect(url.findings.map((finding) => finding.title), contains(testCase.finding));
 
-      final qr = const QrPayloadAnalyzer().analyze(spoofedDomain);
-      final localizedQr = RussianCheckerContent.localizeQr(qr, code);
-      expect(localizedQr.kind, qr.kind);
-      expect(localizedQr.severity, qr.severity);
-      expect(localizedQr.normalizedUrl, qr.normalizedUrl);
-      expect(localizedQr.linkFindings, hasLength(qr.linkFindings.length));
-      for (var i = 0; i < qr.linkFindings.length; i++) {
-        expect(localizedQr.linkFindings[i].title, isNot(qr.linkFindings[i].title));
-        expect(localizedQr.linkFindings[i].severity, qr.linkFindings[i].severity);
+        final localizedFindings = url.findings
+            .map((finding) => RussianCheckerContent.localizeFinding(finding, code))
+            .toList(growable: false);
+        expect(localizedFindings, isNotEmpty);
+        expect(
+          localizedFindings.every((finding) => finding.title != testCase.finding),
+          isTrue,
+        );
+        for (var i = 0; i < url.findings.length; i++) {
+          expect(localizedFindings[i].severity, url.findings[i].severity);
+        }
+
+        final qr = const QrPayloadAnalyzer().analyze(testCase.url);
+        final localizedQr = RussianCheckerContent.localizeQr(qr, code);
+        expect(localizedQr.kind, qr.kind);
+        expect(localizedQr.severity, qr.severity);
+        expect(localizedQr.normalizedUrl, qr.normalizedUrl);
+        expect(localizedQr.linkFindings, hasLength(qr.linkFindings.length));
+        for (var i = 0; i < qr.linkFindings.length; i++) {
+          expect(localizedQr.linkFindings[i].title, isNot(qr.linkFindings[i].title));
+          expect(localizedQr.linkFindings[i].severity, qr.linkFindings[i].severity);
+        }
       }
     });
 
