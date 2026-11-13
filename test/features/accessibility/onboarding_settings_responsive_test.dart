@@ -57,8 +57,21 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      final option = find.byKey(ValueKey('language-${language.code}'));
+      await tester.scrollUntilVisible(
+        option,
+        120,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+
+      expect(option, findsOneWidget,
+          reason: 'Locale-tag search must find ${language.name} (${language.localeTag})');
       expect(
-        find.textContaining('${language.nativeName} · ${language.localeTag}'),
+        find.descendant(
+          of: option,
+          matching: find.textContaining('${language.nativeName} · ${language.localeTag}'),
+        ),
         findsOneWidget,
         reason: 'Locale tag ${language.localeTag} must be visible for ${language.name}',
       );
