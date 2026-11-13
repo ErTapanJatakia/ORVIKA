@@ -12,10 +12,16 @@ import 'package:orvika/features/message_check/presentation/message_check_screen.
 import 'package:orvika/features/qr_check/presentation/qr_check_screen.dart';
 
 Widget arabicApp(Widget child) => MaterialApp(
-  home: Directionality(
-    textDirection: TextDirection.rtl,
-    child: OrvikaLanguageScope(language: OrvikaLanguage.fromCode('ar'), child: child),
+  builder: (context, content) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(
+      textScaler: const TextScaler.linear(2.0),
+    ),
+    child: Directionality(
+      textDirection: TextDirection.rtl,
+      child: content ?? const SizedBox.shrink(),
+    ),
   ),
+  home: OrvikaLanguageScope(language: OrvikaLanguage.fromCode('ar'), child: child),
 );
 
 void main() {
@@ -35,10 +41,7 @@ void main() {
     ];
 
     for (final (screen, title, content) in screens) {
-      await tester.pumpWidget(MediaQuery(
-        data: const MediaQueryData(textScaler: TextScaler.linear(2.0)),
-        child: arabicApp(screen),
-      ));
+      await tester.pumpWidget(arabicApp(screen));
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.text(title), findsWidgets,
           reason: 'Arabic app-bar title missing for ${screen.runtimeType}');
