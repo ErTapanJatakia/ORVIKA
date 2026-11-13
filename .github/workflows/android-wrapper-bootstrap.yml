@@ -1,0 +1,66 @@
+name: Commit Android Gradle wrapper
+
+on:
+  push:
+    branches:
+      - feat/android-permanent-scaffold
+    paths:
+      - ".github/workflows/android-wrapper-bootstrap.yml"
+      - "android/gradle/wrapper/gradle-wrapper.properties"
+      - "android/app/build.gradle.kts"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: orvika-android-wrapper-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  commit-wrapper:
+    name: Generate and commit pinned Gradle wrapper
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Android scaffold branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: feat/android-permanent-scaffold
+          fetch-depth: 0
+
+      - name: Install Flutter SDK
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          git -C "$RUNNER_TEMP/flutter" checkout --detach 3.47.9
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+
+      - name: Generate wrapper from pinned Flutter template
+        shell: bash
+        run: |
+          TEMPLATE="$RUNNER_TEMP/orvika-wrapper-template"
+          mkdir -p "$TEMPLATE"
+          flutter create --platforms=android --org com.orvika --project-name app --no-pub "$TEMPLATE"
+          test -s "$TEMPLATE/android/gradlew"
+          test -s "$TEMPLATE/android/gradle/wrapper/gradle-wrapper.jar"
+          cp "$TEMPLATE/android/gradlew" android/gradlew
+          cp "$TEMPLATE/android/gradlew.bat" android/gradlew.bat
+          cp "$TEMPLATE/android/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
+          chmod +x android/gradlew
+          grep -F 'gradle-9.3.1-all.zip' android/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Commit wrapper scripts and JAR
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android/gradlew android/gradlew.bat android/gradle/wrapper/gradle-wrapper.jar
+          if git diff --cached --quiet; then
+            echo "Gradle wrapper is already committed."
+            exit 0
+          fi
+          git commit -m "chore(android): commit Gradle wrapper [skip android wrapper bootstrap]"
+          git push origin HEAD:feat/android-permanent-scaffold
