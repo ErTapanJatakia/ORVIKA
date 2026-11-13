@@ -1,10 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
+import 'package:orvika/core/localization/portuguese_portugal_text.dart';
 import 'package:orvika/core/localization/portuguese_academy_content.dart';
 import 'package:orvika/core/localization/portuguese_privacy_content.dart';
 import 'package:orvika/core/localization/portuguese_response_content.dart';
 import 'package:orvika/core/localization/portuguese_intelligence_content.dart';
+import 'package:orvika/core/localization/portuguese_checker_content.dart';
+import 'package:orvika/features/link_check/domain/url_analyzer.dart';
+import 'package:orvika/features/qr_check/domain/qr_payload_analyzer.dart';
 import 'package:orvika/features/academy/domain/academy_curriculum.dart';
 import 'package:orvika/features/privacy/domain/privacy_checklist.dart';
 import 'package:orvika/features/response/domain/response_playbooks.dart';
@@ -20,6 +24,166 @@ void main() {
         expect(l10n.hasTranslation(key), isTrue, reason: 'Portuguese is missing $key');
         expect(l10n.text(key), isNot(key), reason: 'Portuguese resolves $key to its key');
       }
+    });
+
+    test('Portugal Portuguese localizes all feature content while preserving stable IDs and scoring', () {
+      final pt = OrvikaLanguage.fromCode('pt-PT');
+      final l10n = OrvikaLocalizations(pt);
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(l10n.hasTranslation(key), isTrue, reason: 'pt-PT is missing $key');
+        expect(l10n.text(key), isNot(key), reason: 'pt-PT falls back for $key');
+      }
+      for (final lesson in AcademyCurriculum.lessons) {
+        final translated = PortugueseAcademyContent.localize(lesson, 'pt-PT');
+        expect(translated.id, lesson.id);
+        expect(translated.correctIndex, lesson.correctIndex);
+        expect(translated.title, isNot(lesson.title));
+      }
+      for (final practice in PrivacyChecklist.practices) {
+        final translated = PortuguesePrivacyContent.localize(practice, 'pt-PT');
+        expect(translated.id, practice.id);
+        expect(translated.title, isNot(practice.title));
+      }
+      for (final playbook in ResponsePlaybooks.playbooks) {
+        final translated = PortugueseResponseContent.localize(playbook, 'pt-PT');
+        expect(translated.id, playbook.id);
+        expect(translated.steps, hasLength(playbook.steps.length));
+      }
+      for (final entry in IntelligenceLibrary.entries) {
+        final translated = PortugueseIntelligenceContent.localize(entry, 'pt-PT');
+        expect(translated.id, entry.id);
+        expect(translated.title, isNot(entry.title));
+      }
+    });
+
+    test('Portugal Portuguese resolves screen-level fallback keys and regional grammar', () {
+      final pt = OrvikaLocalizations(OrvikaLanguage.fromCode('pt-PT'));
+      const callSiteFallbackKeys = [
+        'common.cancel',
+        'privacy.reset.description',
+        'privacy.error.clear',
+        'academy.progress',
+        'academy.progressSemantics',
+        'academy.progressUpdate',
+        'intelligence.count',
+        'checker.link.complete',
+        'checker.message.complete',
+        'checker.qr.complete',
+        'checker.qr.detectedFormat',
+      ];
+      for (final key in callSiteFallbackKeys) {
+        expect(pt.hasTranslation(key), isTrue,
+            reason: 'pt-PT must not use an English call-site fallback for $key');
+      }
+      expect(PortuguesePortugalText.adapt('Aprenda a se proteger no seu dispositivo'),
+          'Aprenda a proteger-se no seu dispositivo');
+      expect(PortuguesePortugalText.adapt('práticas revisadas'),
+          'práticas revistas');
+    });
+
+    test('Portugal Portuguese resolves every authored English fallback locally', () {
+      final pt = OrvikaLocalizations(OrvikaLanguage.fromCode('pt-PT'));
+      expect(PortuguesePortugalText.fallbacks, isNotEmpty);
+      for (final entry in PortuguesePortugalText.fallbacks.entries) {
+        expect(pt.hasTranslation(entry.key), isTrue,
+            reason: 'pt-PT is missing fallback key ${entry.key}');
+        final resolved = pt.text(entry.key, 'English fallback');
+        expect(resolved, isNotEmpty);
+        expect(resolved, isNot('English fallback'),
+            reason: 'pt-PT still uses English for ${entry.key}');
+        expect(resolved, isNot(entry.key));
+      }
+      expect(
+        pt.textWithParameters(
+          'checker.link.complete',
+          parameters: const {'count': 4},
+        ),
+        'Análise da ligação concluída. 4 ocorrências.',
+      );
+      expect(
+        pt.textWithParameters(
+          'checker.message.complete',
+          parameters: const {'findings': 2, 'links': 3},
+        ),
+        'Análise da mensagem concluída. 2 ocorrências. Foram detetados 3 endereços Web.',
+      );
+    });
+
+    test('Portugal Portuguese localizes checker findings and notices without changing severity', () {
+      const source = LinkFinding(
+        title: 'Unencrypted connection',
+        detail: 'This address uses HTTP.',
+        severity: FindingSeverity.warning,
+      );
+      final translated = PortugueseCheckerContent.localizeFinding(source, 'pt-PT');
+      expect(translated.title, 'Ligação sem criptografia');
+      expect(translated.detail, contains('HTTP'));
+      expect(translated.severity, source.severity);
+      const qr = QrPayloadAnalysis(
+        kind: QrPayloadKind.wifiCredentials,
+        title: 'Wi-Fi configuration',
+        detail: 'A Wi-Fi network configuration was detected.',
+        severity: FindingSeverity.caution,
+        normalizedUrl: null,
+        isValid: true,
+      );
+      final localizedQr = PortugueseCheckerContent.localizeQr(qr, 'pt-PT');
+      expect(localizedQr.title, 'Definição de Wi-Fi');
+      expect(localizedQr.severity, qr.severity);
+      expect(localizedQr.kind, qr.kind);
+      expect(localizedQr.isValid, qr.isValid);
+
+      const findingTitles = [
+        'Unicode hostname',
+        'Unencrypted connection',
+        'Embedded sign-in information',
+        'Internationalised domain encoding',
+        'IP-address destination',
+        'Malformed IPv4-looking hostname',
+        'Unusual numeric hostname',
+        'Long subdomain chain',
+        'Non-standard port',
+        'Fragment present',
+        'No structural warning detected',
+        'Address not analysed',
+        'Urgency or pressure language',
+        'Credential or sign-in request',
+        'OTP or authentication-code reference',
+        'Payment or financial action',
+        'Prize or unexpected reward',
+        'Threat or consequence language',
+        'Obfuscated web address detected',
+        'Link or web address detected',
+        'No listed social-engineering cues detected',
+        'Message not analysed',
+      ];
+      for (final title in findingTitles) {
+        final result = PortugueseCheckerContent.localizeFinding(
+          LinkFinding(title: title, detail: 'A sample finding.', severity: FindingSeverity.caution),
+          'pt-PT',
+        );
+        expect(result.title, isNot(title), reason: 'pt-PT checker finding missing: $title');
+        expect(result.severity, FindingSeverity.caution);
+      }
+      final port = PortugueseCheckerContent.localizeFinding(
+        const LinkFinding(title: 'Non-standard port', detail: 'This address uses port 8080.', severity: FindingSeverity.warning),
+        'pt-PT',
+      );
+      expect(port.detail, contains('8080'));
+      final count = PortugueseCheckerContent.localizeFinding(
+        const LinkFinding(title: 'Link or web address detected', detail: '2 web addresses were found.', severity: FindingSeverity.caution),
+        'pt-PT',
+      );
+      expect(count.detail, contains('2'));
+
+      expect(
+        PortugueseCheckerContent.localizeLinkNotice('No network request was made.', 'pt-PT'),
+        'Nenhuma solicitação de rede foi realizada.',
+      );
+      expect(
+        PortugueseCheckerContent.localizeMessageNotice('pt-PT'),
+        contains('verificações heurísticas'),
+      );
     });
 
     test('preserves named placeholders in progress strings', () {

@@ -1,3 +1,5 @@
+import 'portuguese_portugal_text.dart';
+
 /// Shared feature-level UI translations for checker and privacy surfaces.
 ///
 /// Detailed analyzer findings and curated feature content are maintained in
@@ -230,6 +232,28 @@ class OrvikaFeatureTranslations {
       'checker.camera.previewError': 'Não foi possível iniciar a prévia da câmera. {error}',
       'checker.camera.formats': 'Os formatos compatíveis dependem da câmera, do sistema operacional e do componente de leitura. Dispositivos não compatíveis ainda podem usar a opção existente para colar e verificar conteúdo.',
       'checker.image.privacyNotice': 'Para esta leitura, o ORVIKA acessa somente a imagem selecionada por você. Os dados da imagem são analisados neste dispositivo e apagados quando você sai desta tela. O sistema operacional ou navegador pode armazenar temporariamente o arquivo selecionado em cache.',
+      'checker.qr.detectedFormat': 'Formato de código detetado: {format}',
+      'checker.camera.title': 'Leitura de código',
+      'checker.camera.close': 'Fechar leitor',
+      'checker.camera.requesting': 'A solicitar acesso à câmara…',
+      'checker.camera.allow': 'Permitir acesso à câmara e iniciar a leitura',
+      'checker.camera.stop': 'Parar leitura',
+      'checker.image.title': 'Ler código QR a partir de uma imagem',
+      'checker.image.close': 'Fechar leitor de imagens',
+      'checker.image.instruction': 'Selecione uma imagem com um código QR ou código de barras. O processamento é efetuado neste dispositivo.',
+      'checker.image.error.selection': 'Não foi possível selecionar a imagem. Verifique o ficheiro e tente novamente.',
+      'checker.image.error.empty': 'A imagem selecionada está vazia ou não foi possível lê-la.',
+      'checker.image.error.tooLarge': 'Selecione uma imagem com menos de 20 MB.',
+      'checker.image.error.noCode': 'Não foi detetado qualquer código QR ou código de barras. Experimente uma imagem mais nítida que mostre o código completo.',
+      'checker.image.error.decode': 'Não foi possível descodificar a imagem. Experimente outra imagem.',
+      'checker.image.choose': 'Selecionar imagem',
+      'checker.image.chooseAnother': 'Selecionar outra imagem',
+      'checker.image.previewUnavailable': 'A pré-visualização da imagem não está disponível.',
+      'checker.image.selected': 'Imagem selecionada',
+      'checker.image.scanning': 'A analisar a imagem…',
+      'checker.image.detect': 'Detetar códigos na imagem',
+      'checker.image.clear': 'Limpar imagem',
+      'checker.image.selectResult': 'Selecionar este resultado',
       'privacy.analytics.notice': 'Análise do site: o ORVIKA usa o Vercel Web Analytics para contabilizar visualizações de página de forma agregada e coletar métricas básicas sobre dispositivo, navegador, origem e região aproximada. O plano Vercel Hobby não oferece eventos personalizados de uso de recursos. O ORVIKA não envia URLs coladas, texto de mensagens, conteúdo QR decodificado, credenciais ou resultados de análises de segurança como dados analíticos. A análise do site é separada da análise de segurança realizada no dispositivo. A Vercel informa que o Web Analytics não usa cookies e que os hashes de visitantes expiram após 24 horas.',
       'privacy.device.notice': 'O ORVIKA não verifica seu dispositivo, não inspeciona aplicativos instalados, não lê dados de contas e não altera permissões. As configurações e seus nomes variam conforme a plataforma. Use as configurações e a documentação oficiais de cada sistema operacional ou serviço.',
     },
@@ -633,6 +657,10 @@ class OrvikaFeatureTranslations {
     },
   };
 
-  static Map<String, String> forCode(String code) =>
-      _packs[code] ?? const <String, String>{};
+  static Map<String, String> forCode(String code) {
+    if (code == 'pt-PT') {
+      return PortuguesePortugalText.adaptMap(_packs['pt'] ?? const <String, String>{});
+    }
+    return _packs[code] ?? const <String, String>{};
+  }
 }

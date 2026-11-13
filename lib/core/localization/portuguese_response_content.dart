@@ -1,4 +1,5 @@
 import '../../features/response/domain/response_playbooks.dart';
+import 'portuguese_portugal_text.dart';
 
 /// Brazilian Portuguese incident-response guidance.
 class PortugueseResponseContent {
@@ -43,13 +44,13 @@ class PortugueseResponseContent {
   };
 
   static ResponsePlaybook localize(ResponsePlaybook playbook, String languageCode) {
-    if (languageCode != 'pt') return playbook;
+    if (languageCode != 'pt' && languageCode != 'pt-PT') return playbook;
     final values = _playbooks[playbook.id];
     if (values == null) return playbook;
-    return ResponsePlaybook(id: playbook.id, title: values['title']! as String, scenario: playbook.scenario,
-      summary: values['summary']! as String, firstAction: values['firstAction']! as String,
-      steps: List<String>.unmodifiable(values['steps']! as List<String>),
-      preserve: List<String>.unmodifiable(values['preserve']! as List<String>),
-      avoid: List<String>.unmodifiable(values['avoid']! as List<String>), limit: values['limit']! as String);
+    return ResponsePlaybook(id: playbook.id, title: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['title']! as String) : values['title']! as String, scenario: playbook.scenario,
+      summary: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['summary']! as String) : values['summary']! as String, firstAction: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['firstAction']! as String) : values['firstAction']! as String,
+      steps: List<String>.unmodifiable((values['steps']! as List<String>).map((v) => languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(v) : v)),
+      preserve: List<String>.unmodifiable((values['preserve']! as List<String>).map((v) => languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(v) : v)),
+      avoid: List<String>.unmodifiable((values['avoid']! as List<String>).map((v) => languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(v) : v)), limit: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['limit']! as String) : values['limit']! as String);
   }
 }

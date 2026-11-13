@@ -1,5 +1,6 @@
 import '../../features/link_check/domain/url_analyzer.dart';
 import '../../features/qr_check/domain/qr_payload_analyzer.dart';
+import 'portuguese_portugal_text.dart';
 
 /// Brazilian Portuguese wording for deterministic checker findings.
 class PortugueseCheckerContent {
@@ -31,7 +32,7 @@ class PortugueseCheckerContent {
   };
 
   static LinkFinding localizeFinding(LinkFinding finding, String languageCode) {
-    if (languageCode != 'pt') return finding;
+    if (languageCode != 'pt' && languageCode != 'pt-PT') return finding;
     final translated = _findings[finding.title];
     if (translated == null) return finding;
     var detail = translated.detail;
@@ -39,21 +40,25 @@ class PortugueseCheckerContent {
     final countMatch = RegExp(r'^(\d+) web address').firstMatch(finding.detail);
     if (portMatch != null) detail = detail.replaceAll('{port}', portMatch.group(1)!);
     if (countMatch != null) detail = detail.replaceAll('{count}', countMatch.group(1)!);
-    return LinkFinding(title: translated.title, detail: detail, severity: finding.severity);
+    return LinkFinding(title: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(translated.title) : translated.title, detail: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(detail) : detail, severity: finding.severity);
   }
 
   static String localizeLinkNotice(String notice, String languageCode) {
-    if (languageCode != 'pt') return notice;
+    if (languageCode != 'pt' && languageCode != 'pt-PT') return notice;
     if (notice == 'No network request was made.') return 'Nenhuma solicitação de rede foi realizada.';
-    return 'Somente verificações estruturais locais foram realizadas. Não houve solicitação de rede nem verificação de reputação.';
+    final translated = notice == 'No network request was made.' ? 'Nenhuma solicitação de rede foi realizada.' : 'Somente verificações estruturais locais foram realizadas. Não houve solicitação de rede nem verificação de reputação.';
+    return languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(translated) : translated;
   }
 
-  static String localizeMessageNotice(String languageCode) => languageCode == 'pt'
-      ? 'Somente verificações heurísticas de texto. Nenhuma mensagem foi enviada, nenhum link foi aberto e a identidade ou intenção do remetente não foi verificada.'
-      : 'Heuristic text checks only. No message was uploaded, no link was opened, and no sender identity or intent was verified.';
+  static String localizeMessageNotice(String languageCode) {
+    const translated = 'Somente verificações heurísticas de texto. Nenhuma mensagem foi enviada, nenhum link foi aberto e a identidade ou intenção do remetente não foi verificada.';
+    if (languageCode == 'pt') return translated;
+    if (languageCode == 'pt-PT') return PortuguesePortugalText.adapt(translated);
+    return 'Heuristic text checks only. No message was uploaded, no link was opened, and no sender identity or intent was verified.';
+  }
 
   static QrPayloadAnalysis localizeQr(QrPayloadAnalysis result, String languageCode) {
-    if (languageCode != 'pt') return result;
+    if (languageCode != 'pt' && languageCode != 'pt-PT') return result;
     const titles = <String, String>{
       'Wi-Fi configuration':'Configuração de Wi-Fi','Contact card':'Cartão de contato','Calendar event':'Evento de calendário',
       'UPI payment request':'Solicitação de pagamento UPI','Phone call action':'Ação de chamada telefônica','Email action':'Ação de e-mail',
@@ -79,7 +84,7 @@ class PortugueseCheckerContent {
     var detail = details[result.title] ?? result.detail;
     final scheme = RegExp(r'([a-zA-Z][a-zA-Z0-9+.-]*):').firstMatch(result.detail);
     if (scheme != null) detail = detail.replaceAll('{scheme}', scheme.group(1)!);
-    return QrPayloadAnalysis(title:title, detail:detail, severity:result.severity, kind:result.kind,
+    return QrPayloadAnalysis(title: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(title) : title, detail: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(detail) : detail, severity:result.severity, kind:result.kind,
       normalizedUrl:result.normalizedUrl, linkFindings:result.linkFindings, isValid:result.isValid);
   }
 }

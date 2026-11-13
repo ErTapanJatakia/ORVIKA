@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'orvika_language.dart';
 import 'orvika_feature_translations.dart';
+import 'portuguese_portugal_text.dart';
 
 class OrvikaLocalizations {
   const OrvikaLocalizations(this.language);
@@ -1298,6 +1299,10 @@ class OrvikaLocalizations {
     'footer.motto':'जोखिमं पश्यतु • सङ्केतं परीक्षताम् • नियन्त्रणं रक्षतु',
   };
 
+  /// European Portuguese adaptation of the complete Portuguese UI source pack.
+  static final Map<String, String> _portuguesePortugalDraft =
+      PortuguesePortugalText.adaptMap(_portugueseDraft);
+
   /// English labels for the accessibility controls. Other English UI strings
   /// continue to use their call-site fallbacks.
   static const Map<String, String> _englishAccessibility = {
@@ -1314,7 +1319,7 @@ class OrvikaLocalizations {
   /// Language packs currently containing authored ORVIKA strings.
   /// A picker entry alone is never evidence of translation coverage.
   static const Set<String> translatedLanguageCodes = {
-    'ru', 'es', 'hi', 'de', 'fr', 'it', 'pt', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
+    'ru', 'es', 'hi', 'de', 'fr', 'it', 'pt', 'pt-PT', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
   };
 
   static const Set<String> rightToLeftLanguageCodes = {'ar', 'ur', 'he', 'fa', 'ps'};
@@ -1324,13 +1329,15 @@ class OrvikaLocalizations {
         'en' => _englishAccessibility, 'ru' => _russian, 'es' => _spanishDraft, 'hi' => _hindiDraft, 'de' => _germanDraft, 'fr' => _frenchDraft,
         'it' => _italianDraft, 'pa' => _punjabiDraft, 'ur' => _urduDraft,
         'ar' => _arabicDraft, 'mr' => _marathiDraft, 'gu' => _gujaratiDraft,
-        'sa' => _sanskritDraft, 'pt' => _portugueseDraft, _ => const <String, String>{},
+        'sa' => _sanskritDraft, 'pt' => _portugueseDraft,
+        'pt-PT' => _portuguesePortugalDraft, _ => const <String, String>{},
       };
 
   /// Phase-two checker strings override or extend the initial language packs.
   Map<String, String> get _translations => {
         ..._baseTranslations,
         ...OrvikaFeatureTranslations.forCode(language.code),
+        if (language.code == 'pt-PT') ...PortuguesePortugalText.fallbacks,
       };
 
   /// True only when the selected language contains an authored value for [key].

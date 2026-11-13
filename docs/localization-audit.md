@@ -1,4 +1,24 @@
-# ORVIKA localization audit — 8 November 2026
+# ORVIKA localization audit — current status: 13 November 2026
+
+> Historical note: the baseline and early phase sections below describe the state at the time they were written. They are not a statement of current product coverage. The current consolidated status is recorded here and in the latest dated sections.
+
+## Current consolidated status
+
+- The language selector is a single combined searchable list, with 192 unique selectable language codes. Bashkir (`ba`) and Tatar (`tt`) remain excluded.
+- Six priority locales have completed their implementation and native-review batches: German, French, Italian, Spanish, Brazilian Portuguese and Russian.
+- Portugal Portuguese (`pt-PT`) is maintained separately from Brazilian Portuguese (`pt`). Its native reviewer approved the translations; the only recommendation was to replace remaining English fallbacks with contextually accurate European Portuguese. PR #98 contains the fallback map and regression coverage; final locale promotion remains gated on completeness review and CI.
+- Hindi PR #97 remains paused until the six-language audit is complete.
+- Android validation is deferred until the entire app-code batch is ready. No production deployment is authorized during localization consolidation.
+
+## Next consolidated audit
+
+1. Shared-key completeness across the six priority locales.
+2. Expanded Spanish and Portuguese checker regressions; French and Italian screen-level tests.
+3. Six-locale language-switching and fallback behavior.
+4. Long-string, narrow-viewport and accessibility text-scaling checks.
+5. Confirm Russian final sweep remains clean.
+6. Finish `pt-PT` fallback coverage and mark reviewed only after the required CI passes.
+
 
 ## Current architecture
 
@@ -87,3 +107,10 @@ The Phase 2 implementation can be considered code-complete only when all visible
 ### Audit correction — current Phase 2 head
 
 The initial audit table above records the pre-localization baseline and should be read as a historical snapshot, not the current state. On the current Phase 2 branch, Link Check, QR Check and Message Check already resolve their primary form copy, result headings/notices and severity labels through localization lookup. Their result announcements and QR detected-format label have also now been moved behind localization keys. Scanner controls and Privacy reset/error controls are keyed as detailed above. A key with no authored value intentionally falls back to English; keying and translation coverage are tracked separately.
+
+
+## Portugal Portuguese implementation batch — 13 November 2026
+
+The distinct `pt-PT` locale has moved beyond the initial selector scaffold. The current draft branch wires the locale through the application interface, checker/scanner controls, accessibility settings and all localized feature-content adapters. Regression coverage includes the 146-key base UI baseline, all 22 checker finding IDs, all feature-content records (8 Academy, 12 Privacy, 5 Response and 10 Intelligence), placeholder interpolation, severity preservation, and screen-level rendering for Academy, Privacy, Response, Intelligence, Link Check, Message Check and QR Check, plus a 320px narrow-viewport / 200% text-scale widget regression across all seven screens.
+
+Regional terminology adaptation is applied to the Portuguese source strings while preserving Brazilian Portuguese (`pt`) unchanged. The native European Portuguese reviewer has approved all translated content. The reviewer’s sole recommendation was to complete the remaining English fallbacks with contextually appropriate Portuguese equivalents. A dedicated `pt-PT` fallback map now covers scanner controls, checker descriptions/notices/results, privacy reset/error states and parameterized completion messages. Regression coverage asserts every fallback key resolves to Portuguese and verifies placeholder interpolation. The `hasReviewedTranslation` gate remains unchanged until this completion pass and final CI succeed.

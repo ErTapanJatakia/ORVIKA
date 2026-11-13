@@ -1,12 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
+import 'package:orvika/core/localization/orvika_feature_translations.dart';
 
 void main() {
   group('ORVIKA language catalogue', () {
     test('unified picker contains unique stable language codes', () {
       final codes = OrvikaLanguage.allValues.map((language) => language.code).toList();
-      expect(codes.length, 191);
+      expect(codes.length, 192);
       expect(codes.toSet().length, codes.length);
       expect(codes, isNot(contains('tt')));
       expect(codes, isNot(contains('ba')));
@@ -24,6 +25,56 @@ void main() {
       expect(OrvikaLanguage.valuesForCatalogue('india'), hasLength(100));
       expect(OrvikaLanguage.fromCode('tt').code, 'en');
       expect(OrvikaLanguage.fromCode('ba').code, 'en');
+    });
+
+    test('Portugal Portuguese is a distinct selectable locale, not Brazilian Portuguese', () {
+      final brazil = OrvikaLanguage.fromCode('pt');
+      final portugal = OrvikaLanguage.fromCode('pt-PT');
+      expect(brazil.code, 'pt');
+      expect(brazil.name, 'Portuguese (Brazil)');
+      expect(brazil.nativeName, 'Português (Brasil)');
+      expect(portugal.code, 'pt-PT');
+      expect(portugal.name, 'Portuguese (Portugal)');
+      expect(portugal.nativeName, 'Português (Portugal)');
+      expect(OrvikaLanguage.allValues.where((language) => language.code == 'pt-PT'),
+          hasLength(1));
+      expect(portugal.hasDraftTranslation, isTrue);
+      expect(portugal.hasReviewedTranslation, isFalse);
+      expect(OrvikaLocalizations.translatedLanguageCodes.contains('pt-PT'), isTrue);
+      expect(OrvikaLocalizations(portugal).text('hero.title'), 'Verifique antes de confiar.');
+      expect(OrvikaLocalizations(portugal).text('settings.textSize'), 'Tamanho do texto');
+      expect(portugal.hasReviewedTranslation, isFalse);
+    });
+
+    test('Portugal Portuguese covers accessibility, camera, image and analytics strings', () {
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('pt-PT'));
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(localization.hasTranslation(key), isTrue, reason: 'pt-PT is missing $key');
+      }
+      expect(localization.text('settings.textSize.range'), '50%–200%');
+      expect(localization.text('settings.boldText'), isNot('Bold text'));
+      expect(localization.text('settings.reduceMotion'), isNot('Reduce motion'));
+      final featurePack = OrvikaFeatureTranslations.forCode('pt-PT');
+      for (final key in [
+        'checker.camera.title',
+        'checker.camera.permissionDenied',
+        'checker.image.error.tooLarge',
+        'checker.image.privacyNotice',
+        'privacy.analytics.notice',
+        'privacy.device.notice',
+      ]) {
+        expect(featurePack.containsKey(key), isTrue, reason: 'pt-PT feature pack is missing $key');
+        expect(featurePack[key], isNot(key));
+      }
+      expect(
+        localization.textWithParameters(
+          'privacy.progressUpdate',
+          parameters: const {'reviewed': 3, 'total': 12},
+        ),
+        contains('3'),
+      );
+      expect(localization.textWithParameters('privacy.progressUpdate',
+          parameters: const {'reviewed': 3, 'total': 12}), contains('12'));
     });
 
     test('translation coverage is explicit and is not inferred from picker membership', () {

@@ -1,4 +1,5 @@
 import '../../features/academy/domain/academy_curriculum.dart';
+import 'portuguese_portugal_text.dart';
 
 /// Brazilian Portuguese lesson copy keyed by stable curriculum IDs.
 class PortugueseAcademyContent {
@@ -16,12 +17,12 @@ class PortugueseAcademyContent {
   };
 
   static AcademyLesson localize(AcademyLesson lesson, String languageCode) {
-    if (languageCode != 'pt') return lesson;
+    if (languageCode != 'pt' && languageCode != 'pt-PT') return lesson;
     final values = _lessons[lesson.id];
     if (values == null) return lesson;
-    return AcademyLesson(id: lesson.id, title: values['title']! as String, category: lesson.category,
-      summary: values['summary']! as String, keyPoints: List<String>.unmodifiable(values['keyPoints']! as List<String>),
-      question: values['question']! as String, options: List<String>.unmodifiable(values['options']! as List<String>),
-      correctIndex: lesson.correctIndex, explanation: values['explanation']! as String);
+    return AcademyLesson(id: lesson.id, title: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['title']! as String) : values['title']! as String, category: lesson.category,
+      summary: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['summary']! as String) : values['summary']! as String, keyPoints: List<String>.unmodifiable((values['keyPoints']! as List<String>).map((v) => languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(v) : v)),
+      question: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['question']! as String) : values['question']! as String, options: List<String>.unmodifiable((values['options']! as List<String>).map((v) => languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(v) : v)),
+      correctIndex: lesson.correctIndex, explanation: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['explanation']! as String) : values['explanation']! as String);
   }
 }

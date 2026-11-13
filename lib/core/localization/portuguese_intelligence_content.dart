@@ -1,4 +1,5 @@
 import '../../features/intelligence/domain/intelligence_library.dart';
+import 'portuguese_portugal_text.dart';
 
 /// Brazilian Portuguese wording for the curated offline intelligence reference.
 class PortugueseIntelligenceContent {
@@ -18,10 +19,10 @@ class PortugueseIntelligenceContent {
   };
 
   static IntelligenceEntry localize(IntelligenceEntry entry, String languageCode) {
-    if (languageCode != 'pt') return entry;
+    if (languageCode != 'pt' && languageCode != 'pt-PT') return entry;
     final values = _entries[entry.id];
     if (values == null) return entry;
-    return IntelligenceEntry(id: entry.id, title: values['title']!, category: entry.category,
-      signal: values['signal']!, meaning: values['meaning']!, action: values['action']!, limit: values['limit']!);
+    return IntelligenceEntry(id: entry.id, title: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['title']!) : values['title']!, category: entry.category,
+      signal: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['signal']!) : values['signal']!, meaning: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['meaning']!) : values['meaning']!, action: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['action']!) : values['action']!, limit: languageCode == 'pt-PT' ? PortuguesePortugalText.adapt(values['limit']!) : values['limit']!);
   }
 }
