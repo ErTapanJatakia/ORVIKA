@@ -11,6 +11,7 @@ import 'package:orvika/features/privacy/domain/privacy_checklist.dart';
 import 'package:orvika/features/response/domain/response_playbooks.dart';
 import 'package:orvika/features/intelligence/domain/intelligence_library.dart';
 import 'package:orvika/features/link_check/domain/url_analyzer.dart';
+import 'package:orvika/features/message_check/domain/message_analyzer.dart';
 import 'package:orvika/features/qr_check/domain/qr_payload_analyzer.dart';
 
 void main() {
@@ -170,6 +171,51 @@ void main() {
       expect(RussianCheckerContent.localizeMessageNotice(code), contains('эвристические'));
       expect(RussianCheckerContent.localizeLinkNotice('No network request was made.', code),
           'Сетевые запросы не выполнялись.');
+    });
+
+    test('localizes every URL and message analyzer finding title', () {
+      const urlInputs = [
+        'http://example.com',
+        'https://user:secret@example.com',
+        'https://192.0.2.1',
+        'https://999.1.1.1',
+        'https://123.456',
+        'https://a.b.c.example.com',
+        'https://example.com:8443/path#section',
+        'https://example.com',
+        '',
+      ];
+      for (final input in urlInputs) {
+        final result = const UrlAnalyzer().analyze(input);
+        for (final finding in result.findings) {
+          final localized = RussianCheckerContent.localizeFinding(finding, code);
+          expect(localized.title, isNot(finding.title),
+              reason: 'Untranslated URL finding: ${finding.title} for $input');
+          expect(localized.severity, finding.severity);
+        }
+      }
+
+      const messageInputs = [
+        'Urgent: act now or your account will be suspended.',
+        'Verify your password and sign in.',
+        'Your OTP verification code is 123456.',
+        'Please pay now using this bank transfer.',
+        'You have won a prize; claim your prize.',
+        'Police case: legal action and penalty.',
+        'Visit hxxps://example.invalid now.',
+        'Visit https://example.com now.',
+        'A routine note with no matching indicators.',
+        '',
+      ];
+      for (final input in messageInputs) {
+        final result = const MessageAnalyzer().analyze(input);
+        for (final finding in result.findings) {
+          final localized = RussianCheckerContent.localizeFinding(finding, code);
+          expect(localized.title, isNot(finding.title),
+              reason: 'Untranslated message finding: ${finding.title} for $input');
+          expect(localized.severity, finding.severity);
+        }
+      }
     });
 
     test('preserves dynamic values and uses natural Russian QR labels', () {
