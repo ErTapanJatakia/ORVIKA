@@ -44,7 +44,7 @@ class OrvikaLanguage {
 
   /// Curated catalogue of 100 languages spoken by communities in Russia.
   /// This is not a census ranking; entries include regional, Indigenous and
-  /// diaspora languages. English and Russian are the currently translated UI packs.
+  /// diaspora languages. Locale translation status is tracked independently.
   static const values = <OrvikaLanguage>[
     OrvikaLanguage('ru', 'Russian', 'Русский'),
     OrvikaLanguage('en', 'English', 'English'),
