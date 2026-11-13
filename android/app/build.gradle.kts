@@ -1,7 +1,45 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val signingProperties = Properties()
+val signingPropertiesFile = rootProject.file("key.properties")
+if (signingPropertiesFile.exists()) {
+    signingPropertiesFile.inputStream().use(signingProperties::load)
+}
+
+fun signingValue(propertyName: String, environmentName: String): String? =
+    (signingProperties.getProperty(propertyName)
+        ?: System.getenv(environmentName))
+        ?.takeIf { it.isNotBlank() }
+
+val releaseStoreFile = signingValue("storeFile", "ORVIKA_UPLOAD_STORE_FILE")
+val releaseStorePassword = signingValue("storePassword", "ORVIKA_UPLOAD_STORE_PASSWORD")
+val releaseKeyAlias = signingValue("keyAlias", "ORVIKA_UPLOAD_KEY_ALIAS")
+val releaseKeyPassword = signingValue("keyPassword", "ORVIKA_UPLOAD_KEY_PASSWORD")
+
+val hasReleaseSigning = listOf(
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+).all { it != null }
+
+if (gradle.startParameter.taskNames.any { task ->
+        task.contains("assembleRelease", ignoreCase = true) ||
+            task.contains("bundleRelease", ignoreCase = true)
+    } && !hasReleaseSigning
+) {
+    throw GradleException(
+        "ORVIKA release signing is not configured. Add android/key.properties " +
+            "or provide ORVIKA_UPLOAD_STORE_FILE, ORVIKA_UPLOAD_STORE_PASSWORD, " +
+            "ORVIKA_UPLOAD_KEY_ALIAS and ORVIKA_UPLOAD_KEY_PASSWORD. " +
+            "Never commit signing credentials or keystores."
+    )
 }
 
 android {
@@ -15,25 +53,29 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.orvika.app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
-        // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
-        // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`
-        // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(requireNotNull(releaseStoreFile))
+                storePassword = requireNotNull(releaseStorePassword)
+                keyAlias = requireNotNull(releaseKeyAlias)
+                keyPassword = requireNotNull(releaseKeyPassword)
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 }
