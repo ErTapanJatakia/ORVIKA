@@ -26,6 +26,62 @@ void main() {
       }
     });
 
+    test('interpolates all Russian progress and count placeholders', () {
+      expect(
+        l10n.textWithParameters(
+          'intelligence.count',
+          parameters: const {'count': 10},
+        ),
+        'Справочных материалов: 10',
+      );
+      expect(
+        l10n.textWithParameters(
+          'privacy.progress',
+          parameters: const {'reviewed': 7, 'total': 12},
+        ),
+        'Проверено практик: 7 из 12',
+      );
+      expect(
+        l10n.textWithParameters(
+          'privacy.progressSemantics',
+          parameters: const {'reviewed': 7, 'total': 12},
+        ),
+        contains('7 из 12'),
+      );
+      expect(
+        l10n.textWithParameters(
+          'privacy.progressUpdate',
+          parameters: const {'reviewed': 7, 'total': 12},
+        ),
+        contains('7 из 12'),
+      );
+      expect(
+        l10n.textWithParameters(
+          'academy.progress',
+          parameters: const {'completed': 3, 'total': 8},
+        ),
+        'Завершено уроков: 3 из 8',
+      );
+      expect(
+        l10n.textWithParameters(
+          'academy.progressSemantics',
+          parameters: const {'completed': 3, 'total': 8},
+        ),
+        contains('3 из 8'),
+      );
+      expect(
+        l10n.textWithParameters(
+          'academy.progressUpdate',
+          parameters: const {'completed': 3, 'total': 8},
+        ),
+        contains('3 из 8'),
+      );
+      expect(
+        l10n.textWithParameters('privacy.progress'),
+        contains('{reviewed}'),
+      );
+    });
+
     test('localizes every Academy lesson and preserves assessment logic', () {
       expect(AcademyCurriculum.lessons, hasLength(8));
       for (final source in AcademyCurriculum.lessons) {
@@ -124,6 +180,12 @@ void main() {
       expect(localizedQr.detail, contains('номер'));
       expect(localizedQr.severity, qr.severity);
       expect(localizedQr.kind, qr.kind);
+
+      final appLink = const QrPayloadAnalyzer().analyze('orvika-demo://open');
+      final localizedAppLink = RussianCheckerContent.localizeQr(appLink, code);
+      expect(localizedAppLink.detail, contains('orvika-demo'));
+      expect(localizedAppLink.severity, appLink.severity);
+      expect(localizedAppLink.kind, appLink.kind);
     });
 
     test('covers scanner controls, errors and privacy disclosures', () {
