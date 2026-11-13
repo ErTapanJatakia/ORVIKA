@@ -81,3 +81,12 @@ The added strings are draft content, not reviewed translations. Both languages r
 - The app selects the primary font from the language's script metadata and retains explicit script fallbacks. Font assets and their SIL Open Font License 1.1 texts are bundled for offline rendering.
 - RTL layout is driven by the language's writing-direction metadata rather than a hard-coded two-language check. Current metadata includes Arabic, Urdu, Hebrew, Persian and Pashto; this does not mean those languages have complete translations or are selectable.
 - Automated tests verify font-family selection and direction metadata. They do not prove visual shaping, line-height suitability, bidirectional punctuation behavior or screen-reader quality on every platform. Urdu Nastaliq in particular requires real-device and browser review before any language pack can be promoted.
+
+
+## Portugal Portuguese (pt-PT) implementation status
+
+Portugal Portuguese is maintained as a distinct regional locale from Brazilian Portuguese (pt). The pt-PT draft now has an interface-key map covering the 146-key application baseline, the checker/scanner UI key set, and regional terminology adaptation for Portugal (including telemóvel, palavra-passe, ecrã, ficheiro, aplicação, utilizador, definições, câmara and digitalizar). The existing Brazilian Portuguese pack remains unchanged.
+
+The five feature content areas are wired to pt-PT: 8 Academy lessons, 12 Privacy practices, 5 Response playbooks and 10 Intelligence references, plus all 22 deterministic checker finding identifiers and QR/message/link result notices. Accessibility controls (50%–200% text sizing, bold text and reduced motion), camera/image scanner controls, privacy/analytics notices, placeholders and error states are included in the automated coverage.
+
+This is an implementation draft regionalized from the existing Portuguese source pack, not a claim of independent native translation or approval. `hasReviewedTranslation` remains false for pt-PT; it must not be represented as native-speaker reviewed or promoted as a reviewed language until a Portugal Portuguese native speaker validates security terminology, grammar, tone, all screens and edge cases. CI proves code/test coverage only, not linguistic quality.
