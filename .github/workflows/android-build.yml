@@ -3,6 +3,15 @@ name: ORVIKA Android Build Validation
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      ORVIKA_UPLOAD_KEYSTORE_BASE64:
+        required: false
+      ORVIKA_UPLOAD_STORE_PASSWORD:
+        required: false
+      ORVIKA_UPLOAD_KEY_ALIAS:
+        required: false
+      ORVIKA_UPLOAD_KEY_PASSWORD:
+        required: false
 
 permissions:
   contents: read
@@ -12,8 +21,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  android-release-mode:
-    name: Generate Android scaffold and validate release-mode APK
+  android-validation:
+    name: Validate committed ORVIKA Android project
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -39,59 +48,179 @@ jobs:
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
 
-      - name: Generate isolated Android platform scaffold
-        run: flutter create --platforms=android --org dev.orvika --project-name orvika --no-pub .
-
-      - name: Set the approved Android application ID
+      - name: Verify committed Android identity and security defaults
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
-          candidates = [Path("android/app/build.gradle.kts"), Path("android/app/build.gradle")]
-          build_file = next((path for path in candidates if path.is_file()), None)
-          if build_file is None:
-              raise SystemExit("Generated Android app Gradle file was not found.")
-          content = build_file.read_text()
-          updated, count = re.subn(r'(applicationId\s*(?:=\s*)?)"[^"]+"', r'\1"com.orvika.app"', content, count=1)
-          if count != 1:
-              raise SystemExit("Could not safely set the Android application ID.")
-          build_file.write_text(updated)
-          if '"com.orvika.app"' not in updated:
-              raise SystemExit("Android application ID verification failed.")
-          print(f"Configured application ID com.orvika.app in {build_file}")
+          import xml.etree.ElementTree as ET
+
+          gradle = Path("android/app/build.gradle.kts").read_text()
+          manifest = ET.parse("android/app/src/main/AndroidManifest.xml").getroot()
+          android_ns = "{http://schemas.android.com/apk/res/android}"
+          app = manifest.find("application")
+          if 'namespace = "com.orvika.app"' not in gradle:
+              raise SystemExit("Android namespace is not com.orvika.app")
+          if 'applicationId = "com.orvika.app"' not in gradle:
+              raise SystemExit("Android application ID is not com.orvika.app")
+          if app is None or app.get(android_ns + "label") != "ORVIKA":
+              raise SystemExit("Android app label is not ORVIKA")
+          if app.get(android_ns + "usesCleartextTraffic") != "false":
+              raise SystemExit("Cleartext traffic must remain disabled")
+          permissions = {
+              node.get(android_ns + "name")
+              for node in manifest.findall("uses-permission")
+          }
+          expected = {
+              "android.permission.CAMERA",
+              "android.permission.INTERNET",
+          }
+          if permissions != expected:
+              raise SystemExit(f"Unexpected Android permissions: {sorted(permissions)}")
+          camera = manifest.find("uses-feature")
+          if camera is None or camera.get(android_ns + "required") != "false":
+              raise SystemExit("Camera hardware must remain optional")
+          for resource in (
+              "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+              "android/app/src/main/res/drawable/ic_launcher_foreground.xml",
+              "android/app/src/main/res/drawable/launch_background.xml",
+              "android/app/src/main/res/values/colors.xml",
+          ):
+              if not Path(resource).is_file():
+                  raise SystemExit(f"Missing ORVIKA Android resource: {resource}")
+          print("Android identity, permission set, network defaults and branding resources verified.")
           PY
 
-      # This job generates an ephemeral Android scaffold; the primary Flutter
-      # CI job enforces the committed lockfile before the Android-only build.
-      - name: Resolve dependencies
-        run: flutter pub get
-
-      - name: Build release-mode APK
-        run: flutter build apk --release --no-pub
-
-      - name: Verify APK and record integrity
-        id: apk
+      - name: Materialize Gradle wrapper from pinned Flutter template
         shell: bash
         run: |
-          APK="build/app/outputs/flutter-apk/app-release.apk"
+          TEMPLATE="$RUNNER_TEMP/orvika-wrapper-template"
+          mkdir -p "$TEMPLATE"
+          flutter create --platforms=android --org com.orvika --project-name app --no-pub "$TEMPLATE"
+          mkdir -p android/gradle/wrapper
+          cp "$TEMPLATE/android/gradlew" android/gradlew
+          cp "$TEMPLATE/android/gradlew.bat" android/gradlew.bat
+          cp "$TEMPLATE/android/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
+          chmod +x android/gradlew
+          test -s android/gradlew
+          test -s android/gradle/wrapper/gradle-wrapper.jar
+          grep -F 'gradle-9.3.1-all.zip' android/gradle/wrapper/gradle-wrapper.properties
+          android/gradlew --version
+
+      - name: Resolve locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build Android debug APK
+        run: flutter build apk --debug --no-pub
+
+      - name: Verify debug APK identity and signature
+        id: debug-apk
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-debug.apk"
           test -s "$APK"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
-          if [ -z "$APKSIGNER" ]; then
-            echo "Android apksigner was not found." >&2
-            exit 1
-          fi
+          test -n "$AAPT"
+          test -n "$APKSIGNER"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          test "$APP_ID" = "com.orvika.app"
           "$APKSIGNER" verify --verbose "$APK"
           SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
           echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
           {
-            printf '%s\n'               '### Android release-mode build'               ''               "- APK: $APK"               "- Size: $(du -h "$APK" | cut -f 1)"               "- SHA-256: $SHA256"               '- Application ID: com.orvika.app (approved ORVIKA Android identity)'               '- Signing: Flutter-generated debug signing; not suitable for distribution.'
+            echo "### ORVIKA Android debug validation"
+            echo
+            echo "- APK: $APK"
+            echo "- Size: $(du -h "$APK" | cut -f 1)"
+            echo "- SHA-256: $SHA256"
+            echo "- Application ID: $APP_ID"
+            echo "- Signing: development/debug certificate; not for store submission."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload validation APK
+      - name: Upload debug validation APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: orvika-android-release-mode-validation
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: orvika-android-debug-validation
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Detect production signing secrets
+        id: signing
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$STORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "Production signing secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Production signing secrets are not configured; signed store artifacts will be skipped."
+          fi
+
+      - name: Configure production signing without committing secrets
+        if: steps.signing.outputs.configured == 'true'
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+        run: |
+          KEYSTORE="$RUNNER_TEMP/orvika-upload-key.jks"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
+          test -s "$KEYSTORE"
+          chmod 600 "$KEYSTORE"
+          {
+            printf 'storeFile=%s\n' "$KEYSTORE"
+            printf 'storePassword=%s\n' "$STORE_PASSWORD"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+            printf 'keyPassword=%s\n' "$KEY_PASSWORD"
+          } > android/key.properties
+          chmod 600 android/key.properties
+
+      - name: Build signed release APK and AAB
+        if: steps.signing.outputs.configured == 'true'
+        run: |
+          flutter build apk --release --no-pub
+          flutter build appbundle --release --no-pub
+
+      - name: Verify signed store artifacts
+        if: steps.signing.outputs.configured == 'true'
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          AAB="build/app/outputs/bundle/release/app-release.aab"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
+          test -s "$APK"
+          test -s "$AAB"
+          "$APKSIGNER" verify --verbose --print-certs "$APK"
+          jarsigner -verify "$AAB"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          test "$APP_ID" = "com.orvika.app"
+          {
+            echo "### ORVIKA signed Android release artifacts"
+            echo
+            echo "- APK: $APK"
+            echo "- AAB: $AAB"
+            echo "- Application ID: $APP_ID"
+            echo "- Signing: configured upload key; verify store-specific requirements before submission."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload signed store artifacts
+        if: steps.signing.outputs.configured == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: orvika-android-signed-release
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
