@@ -82,7 +82,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(app('pt', const AcademyScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Aprenda a proteger-se'), findsOneWidget);
+    expect(find.text('Aprenda a se proteger'), findsOneWidget);
     expect(find.text('Verifique o remetente, não o nome exibido'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
@@ -109,7 +109,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(app('pt-PT', const AcademyScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('Aprenda a se proteger'), findsOneWidget);
+    expect(find.text('Aprenda a proteger-se'), findsOneWidget);
     expect(find.text('Verifique o remetente, não o nome exibido'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
