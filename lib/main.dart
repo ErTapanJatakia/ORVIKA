@@ -467,7 +467,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       if (query.isEmpty) return true;
       return language.name.toLowerCase().contains(query) ||
           language.nativeName.toLowerCase().contains(query) ||
-          language.code.toLowerCase().contains(query);
+          language.code.toLowerCase().contains(query) ||
+          language.localeTag.toLowerCase().contains(query);
     }).toList(growable: false);
     final selectableCount =
         filtered.where((language) => language.hasReviewedTranslation).length;
@@ -563,10 +564,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                 title: Text(language.name, style: const TextStyle(fontWeight: FontWeight.w700)),
                                 subtitle: Text(
                                   language.hasReviewedTranslation
-                                      ? language.nativeName
+                                      ? '${language.nativeName} · ${language.localeTag}'
                                       : isRussian
-                                          ? '${language.nativeName} · Скоро появится'
-                                          : '${language.nativeName} · Coming soon',
+                                          ? '${language.nativeName} · ${language.localeTag} · Скоро появится'
+                                          : '${language.nativeName} · ${language.localeTag} · Coming soon',
                                 ),
                                 trailing: language.hasReviewedTranslation
                                   ? Tooltip(
