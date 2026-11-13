@@ -95,6 +95,36 @@ void main() {
           'Сетевые запросы не выполнялись.');
     });
 
+    test('preserves dynamic values and uses natural Russian QR labels', () {
+      final port = RussianCheckerContent.localizeFinding(
+        const LinkFinding(
+          title: 'Non-standard port',
+          detail: 'The address uses port 8443, rather than the usual HTTP or HTTPS port.',
+          severity: FindingSeverity.caution,
+        ),
+        code,
+      );
+      expect(port.detail, contains('8443'));
+
+      final links = RussianCheckerContent.localizeFinding(
+        const LinkFinding(
+          title: 'Link or web address detected',
+          detail: '2 web address(es) found. A visible link can conceal a different destination.',
+          severity: FindingSeverity.caution,
+        ),
+        code,
+      );
+      expect(links.detail, contains('2'));
+      expect(links.detail, contains('Количество обнаруженных веб-адресов'));
+
+      const qr = QrPayloadAnalyzer().analyze('tel:+10000000000');
+      final localizedQr = RussianCheckerContent.localizeQr(qr, code);
+      expect(localizedQr.title, 'Телефонный вызов');
+      expect(localizedQr.detail, contains('номер'));
+      expect(localizedQr.severity, qr.severity);
+      expect(localizedQr.kind, qr.kind);
+    });
+
     test('covers scanner controls, errors and privacy disclosures', () {
       const keys = [
         'checker.camera.title', 'checker.camera.close', 'checker.camera.notice.title',
