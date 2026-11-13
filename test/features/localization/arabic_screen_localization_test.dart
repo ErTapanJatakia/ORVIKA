@@ -31,7 +31,7 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     final screens = <(Widget, String, String)>[
-      (const AcademyScreen(), 'الأكاديمية', 'تحقّق من المرسل، لا من الاسم الظاهر'),
+      (const AcademyScreen(), 'الأكاديمية', 'اكتسب عادات رقمية أكثر أماناً.'),
       (const PrivacyScreen(), 'الخصوصية', 'استخدم كلمات مرور فريدة للحسابات المهمة'),
       (const ResponseScreen(), 'الاستجابة', 'اشتباه في اختراق الحساب'),
       (const IntelligenceScreen(), 'المعلومات الاستخباراتية', 'اتصال HTTP غير مشفّر'),
