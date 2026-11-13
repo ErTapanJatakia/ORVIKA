@@ -482,6 +482,36 @@ void main() {
       );
     });
 
+    test('Arabic shared and feature interfaces cover the Russian baseline', () {
+      final arabic = OrvikaLocalizations(OrvikaLanguage.fromCode('ar'));
+      final russian = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\\{([a-zA-Z][a-zA-Z0-9_]*)\\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(arabic.hasTranslation(key), isTrue,
+            reason: 'Arabic is missing shared key $key');
+        expect(arabic.text(key), isNot(key),
+            reason: 'Arabic falls back to the key for $key');
+        expect(placeholders(arabic.text(key)), placeholders(russian.text(key)),
+            reason: 'Arabic must preserve placeholders for $key');
+      }
+
+      final arabicFeatures = OrvikaFeatureTranslations.forCode('ar');
+      final russianFeatures = OrvikaFeatureTranslations.forCode('ru');
+      for (final key in russianFeatures.keys) {
+        expect(arabicFeatures.containsKey(key), isTrue,
+            reason: 'Arabic feature interface is missing $key');
+        expect(arabicFeatures[key], isNot(key));
+        expect(placeholders(arabicFeatures[key]!), placeholders(russianFeatures[key]!),
+            reason: 'Arabic feature string must preserve placeholders for $key');
+      }
+      expect(OrvikaLanguage.fromCode('ar').isRightToLeft, isTrue);
+      expect(OrvikaLanguage.fromCode('ar').hasDraftTranslation, isTrue);
+      expect(OrvikaLanguage.fromCode('ar').hasReviewedTranslation, isFalse);
+    });
+
     test('RTL direction is independent from translation coverage', () {
       for (final code in ['ar', 'ur', 'he', 'fa', 'ps']) {
         expect(OrvikaLanguage.fromCode(code).isRightToLeft, isTrue);
