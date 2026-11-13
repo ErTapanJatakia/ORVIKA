@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
+import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/features/academy/presentation/academy_screen.dart';
 import 'package:orvika/features/intelligence/presentation/intelligence_screen.dart';
 import 'package:orvika/features/link_check/presentation/link_check_screen.dart';
