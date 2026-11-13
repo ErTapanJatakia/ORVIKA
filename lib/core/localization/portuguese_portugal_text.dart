@@ -38,14 +38,13 @@ class PortuguesePortugalText {
     'Contato': 'Contacto', 'Contatos': 'Contactos',
     'usuária': 'utilizadora', 'usuárias': 'utilizadoras',
     'aplicação móvel': 'aplicação móvel',
+    'se proteger': 'proteger-se', 'Se proteger': 'Proteger-se',
+    'revisadas': 'revistas', 'revisados': 'revistos',
+    'revisada': 'revista', 'revisado': 'revisto',
     'loja de aplicativos': 'loja de aplicações',
     'loja oficial de aplicativos': 'loja oficial de aplicações',
     'no aplicativo': 'na aplicação', 'pelo aplicativo': 'pela aplicação',
     'do aplicativo': 'da aplicação', 'um aplicativo': 'uma aplicação',
-    'seu dispositivo': 'o seu dispositivo',
-    'seus dados': 'os seus dados',
-    'seu banco': 'o seu banco',
-    'seu navegador': 'o seu navegador',
     'conectar': 'ligar', 'Conectar': 'Ligar', 'conecte': 'ligue', 'Conecte': 'Ligue',
     'escanear': 'digitalizar', 'Escanear': 'Digitalizar', 'escaneamento': 'digitalização',
     'câmera': 'câmara', 'Câmera': 'Câmara', 'câmeras': 'câmaras', 'Câmeras': 'Câmaras',
@@ -59,6 +58,7 @@ class PortuguesePortugalText {
   /// English call-site fallbacks. Keep these keyed by stable localization ID.
   /// Wording follows feature context rather than literal word-for-word mapping.
   static const Map<String, String> fallbacks = {
+    'common.cancel': 'Cancelar',
     'checker.camera.title': 'Digitalizar código',
     'checker.camera.close': 'Fechar o leitor',
     'checker.camera.requesting': 'A solicitar acesso à câmara…',
