@@ -57,13 +57,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // Searching by the canonical locale tag narrows the catalogue to
+      // the matching option, so it should be rendered immediately without
+      // scrolling a virtualised list.
       final option = find.byKey(ValueKey('language-${language.code}'));
-      await tester.scrollUntilVisible(
-        option,
-        120,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
 
       expect(option, findsOneWidget,
           reason: 'Locale-tag search must find ${language.name} (${language.localeTag})');
