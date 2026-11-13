@@ -486,7 +486,7 @@ void main() {
       final arabic = OrvikaLocalizations(OrvikaLanguage.fromCode('ar'));
       final russian = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
       Set<String> placeholders(String value) => RegExp(
-            r'\\{([a-zA-Z][a-zA-Z0-9_]*)\\}',
+            r'\{([a-zA-Z][a-zA-Z0-9_]*)\}',
           ).allMatches(value).map((match) => match.group(1)!).toSet();
 
       for (final key in OrvikaLocalizations.requiredTranslationKeys) {
