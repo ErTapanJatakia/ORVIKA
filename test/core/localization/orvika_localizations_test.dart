@@ -6,7 +6,7 @@ void main() {
   group('ORVIKA language catalogue', () {
     test('unified picker contains unique stable language codes', () {
       final codes = OrvikaLanguage.allValues.map((language) => language.code).toList();
-      expect(codes.length, 191);
+      expect(codes.length, 192);
       expect(codes.toSet().length, codes.length);
       expect(codes, isNot(contains('tt')));
       expect(codes, isNot(contains('ba')));
@@ -24,6 +24,23 @@ void main() {
       expect(OrvikaLanguage.valuesForCatalogue('india'), hasLength(100));
       expect(OrvikaLanguage.fromCode('tt').code, 'en');
       expect(OrvikaLanguage.fromCode('ba').code, 'en');
+    });
+
+    test('Portugal Portuguese is a distinct selectable locale, not Brazilian Portuguese', () {
+      final brazil = OrvikaLanguage.fromCode('pt');
+      final portugal = OrvikaLanguage.fromCode('pt-PT');
+      expect(brazil.code, 'pt');
+      expect(brazil.name, 'Portuguese');
+      expect(portugal.code, 'pt-PT');
+      expect(portugal.name, 'Portuguese (Portugal)');
+      expect(portugal.nativeName, 'Português (Portugal)');
+      expect(OrvikaLanguage.allValues.where((language) => language.code == 'pt-PT'),
+          hasLength(1));
+      expect(portugal.hasDraftTranslation, isFalse);
+      expect(portugal.hasReviewedTranslation, isFalse);
+      expect(OrvikaLocalizations.translatedLanguageCodes.contains('pt-PT'), isFalse);
+      expect(OrvikaLocalizations(portugal).text('hero.title', 'Check Before You Trust'),
+          'Check Before You Trust');
     });
 
     test('translation coverage is explicit and is not inferred from picker membership', () {
