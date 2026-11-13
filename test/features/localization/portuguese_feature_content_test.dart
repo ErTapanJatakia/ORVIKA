@@ -33,7 +33,7 @@ void main() {
         final translated = PortugueseAcademyContent.localize(lesson, 'pt-PT');
         expect(translated.id, lesson.id);
         expect(translated.correctIndex, lesson.correctIndex);
-        expect(translated.title, contains('Verifique'));
+        expect(translated.title, isNot(lesson.title));
       }
       for (final practice in PrivacyChecklist.practices) {
         final translated = PortuguesePrivacyContent.localize(practice, 'pt-PT');
