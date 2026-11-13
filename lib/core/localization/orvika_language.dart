@@ -5,6 +5,64 @@ class OrvikaLanguage {
   final String name;
   final String nativeName;
 
+  /// Canonical BCP 47 language tag for this catalogue entry.
+  ///
+  /// The catalogue's [code] remains the stable internal translation/storage
+  /// key. This tag is the standards-oriented locale identity used for
+  /// interoperability and locale-aware platform integrations.
+  String get localeTag {
+    switch (code) {
+      case 'pt-PT':
+        return 'pt-PT';
+      case 'pt':
+        return 'pt-BR';
+      case 'zh':
+        return 'zh-Hans-CN';
+      case 'sr':
+        return 'sr-Cyrl-RS';
+      case 'pa':
+        return 'pa-Guru-IN';
+      case 'ks':
+        return 'ks-Arab-IN';
+      case 'sd':
+        return 'sd-Arab-IN';
+      case 'ur':
+        return 'ur-PK';
+      case 'en':
+        return 'en';
+      case 'ru':
+        return 'ru-RU';
+      case 'ar':
+        return 'ar';
+      case 'hi':
+        return 'hi-IN';
+      case 'gu':
+        return 'gu-IN';
+      case 'mr':
+        return 'mr-IN';
+      case 'bn':
+        return 'bn-IN';
+      case 'ta':
+        return 'ta-IN';
+      case 'te':
+        return 'te-IN';
+      case 'kn':
+        return 'kn-IN';
+      case 'ml':
+        return 'ml-IN';
+      case 'or':
+        return 'or-IN';
+      case 'as':
+        return 'as-IN';
+      case 'ne':
+        return 'ne-NP';
+      default:
+        // ISO 639-1 and registered ISO 639-3 identifiers are valid BCP 47
+        // primary language subtags. Keep catalogue identifiers unchanged.
+        return code;
+    }
+  }
+
   String get label => '$name — $nativeName';
 
   /// True when this locale's standard writing system is Devanagari.
