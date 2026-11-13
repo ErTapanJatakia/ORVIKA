@@ -45,9 +45,11 @@ class PortuguesePortugalText {
     'do aplicativo': 'da aplicação', 'um aplicativo': 'uma aplicação',
     'seu dispositivo': 'o seu dispositivo',
     'seus dados': 'os seus dados',
-    'você': 'si', 'Você': 'Si',
     'seu banco': 'o seu banco', 'seu dispositivo': 'o seu dispositivo',
     'seu navegador': 'o seu navegador',
+    'conectar': 'ligar', 'Conectar': 'Ligar', 'conecte': 'ligue', 'Conecte': 'Ligue',
+    'conexão': 'ligação', 'Conexão': 'Ligação', 'Confira': 'Verifique', 'confira': 'verifique',
+    'Pular': 'Ignorar', 'pular': 'ignorar',
     'atualizações': 'atualizações', 'celular perdido': 'telemóvel perdido',
   };
 
