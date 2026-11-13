@@ -4,20 +4,35 @@
 
 ## Current consolidated status
 
-- The language selector is a single combined searchable list, with 192 unique selectable language codes. Bashkir (`ba`) and Tatar (`tt`) remain excluded.
-- The six-priority implementation audit covers German, French, Italian, Spanish, Brazilian Portuguese and Russian; do not conflate implementation batches with reviewed status. Current reviewed flags are English, Russian, Arabic and Portugal Portuguese.
-- Portugal Portuguese (`pt-PT`) is distinct from Brazilian Portuguese (`pt`). Maintainer-confirmed native-speaker approval, fallback completion and passing CI were recorded in PR #98; the locale is now marked reviewed. Brazilian Portuguese (`pt`) remains draft.
-- Hindi PR #97 remains paused until the six-language implementation audit is complete.
-- Android validation is deferred until the entire app-code batch is ready. No production deployment is authorized during localization consolidation.
+- The language selector is a single combined searchable list, with 192 unique catalogue entries. Bashkir (`ba`) and Tatar (`tt`) remain excluded from selectable results.
+- Reviewed locale flags: English, Russian, Arabic and Portugal Portuguese (`pt-PT`). Brazilian Portuguese (`pt`), German, French, Italian, Spanish, Hindi, Punjabi, Urdu, Marathi, Gujarati, Sanskrit and Simplified Chinese remain draft unless separately promoted with review evidence and release gates.
+- Portugal Portuguese (`pt-PT`) is distinct from Brazilian Portuguese (`pt`). Maintainer-confirmed native-speaker approval, fallback completion and passing CI were recorded in PR #98; PR #103 aligned the review metadata and documentation.
+- The six-priority implementation audit covers German, French, Italian, Spanish, Brazilian Portuguese and Russian. All six have feature content packs wired into Academy, Checker, Intelligence, Privacy and Response.
+- Canonical content coverage per locale: Academy 8 lessons, Checker 22 finding titles, Intelligence 10 references, Privacy 12 practices and Response 5 playbooks — 57 entries per locale, 342 locale-entry mappings across the six packs.
+- A dedicated regression suite checks every one of those content entries, stable identifiers, Academy answer indices and option counts, module categories/scenarios, response-step counts, and checker severity preservation.
+- Hindi PR #97 remains paused pending a separate coverage and review decision.
+- Android validation is deferred until the complete app-code batch is ready. Production deployment remains gated on outstanding device/browser checks, including Simplified Chinese glyph rendering.
 
-## Next consolidated audit
+## Completed six-locale content audit
 
-1. Shared-key completeness across the six priority locales.
-2. Expanded Spanish and Portuguese checker regressions; French and Italian screen-level tests.
-3. Six-locale language-switching and fallback behavior.
-4. Long-string, narrow-viewport and accessibility text-scaling checks.
-5. Confirm Russian final sweep remains clean.
-6. Keep `pt-PT` review status aligned with its completed fallback map, reviewer approval and passing PR #98 CI.
+| Feature | Canonical entries per locale | Audit coverage |
+|---|---:|---|
+| Academy | 8 | Stable lesson IDs, translated titles, answer index and option/key-point counts |
+| Checker | 22 | All stable finding titles and unchanged severity |
+| Intelligence | 10 | Stable reference IDs and categories |
+| Privacy | 12 | Stable practice IDs and categories |
+| Response | 5 | Stable playbook IDs, scenario and action/evidence-step counts |
+| **Total** | **57** | **342 mappings across six locales** |
+
+The audit confirms matching top-level content identifiers in all six locale packs. This is structural and automated coverage evidence; it is not a substitute for qualified linguistic review, legal review of jurisdiction-specific advice, or visual rendering checks on physical devices.
+
+## Remaining validation work
+
+1. Verify long strings, narrow viewports and accessibility text scaling for the six locales.
+2. Review checker QR-specific result labels and notices, including placeholder and formatting behaviour.
+3. Reconcile Hindi PR #97 against the now-established six-locale regression approach.
+4. Complete the Simplified Chinese physical-device/browser glyph-rendering gate.
+5. Run Android validation after the next complete app-code batch; deploy only after the release gates are satisfied.
 
 
 ## Current review-status source of truth
