@@ -103,7 +103,7 @@ void main() {
       expect(find.text('Choose your language'), findsOneWidget);
       expect(find.text('Your safety toolkit'), findsNothing);
       expect(find.bySemanticsLabel(
-        'Languages listed: 192. Available to select: 2',
+        'Languages listed: 192. Available to select: 3',
       ), findsOneWidget);
 
       // Search results are lazily built; filter before inspecting the Hindi tile.
@@ -489,9 +489,28 @@ void main() {
         isNot('Check before you trust.'), reason: 'Onboarding must be translated for ${entry.key}');
       expect(localizations.text('module.link', 'Link Check'),
         isNot('Link Check'), reason: 'Module label must be translated for ${entry.key}');
-      expect(language.hasDraftTranslation, isTrue);
-      expect(language.hasReviewedTranslation, isFalse);
+      expect(language.hasDraftTranslation, entry.key != 'ar');
+      expect(language.hasReviewedTranslation, entry.key == 'ar');
     }
+  });
+
+  testWidgets('reviewed Arabic locale is selectable and opens the Arabic dashboard', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'Arabic');
+    await tester.pumpAndSettle();
+    final arabicTile = tester.widget<ListTile>(
+      find.byKey(const ValueKey('language-ar')),
+    );
+    expect(arabicTile.onTap, isNotNull);
+    await tester.tap(find.byKey(const ValueKey('language-ar')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('أدواتك للسلامة الرقمية'), findsOneWidget);
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getString('appearance.language'), 'ar');
   });
 
   testWidgets('Arabic locale scope resolves its dashboard title with RTL direction', (tester) async {

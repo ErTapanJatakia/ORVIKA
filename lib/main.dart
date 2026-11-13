@@ -303,8 +303,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
       // Flutter framework widgets need locales supported by its Material and
       // Cupertino delegates. ORVIKA's own language packs are carried separately
       // by OrvikaLanguageScope, so regional selections never break framework UI.
-      locale: Locale(_selectedLanguage.code == 'ru' ? 'ru' : 'en'),
-      supportedLocales: const [Locale('en'), Locale('ru')],
+      locale: Locale(_selectedLanguage.code == 'ru' || _selectedLanguage.code == 'ar' ? _selectedLanguage.code : 'en'),
+      supportedLocales: const [Locale('en'), Locale('ru'), Locale('ar')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       builder: (context, child) {
         final platformMediaQuery = MediaQuery.of(context);

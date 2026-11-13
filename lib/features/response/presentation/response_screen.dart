@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/arabic_response_content.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
 import '../../../core/localization/orvika_localizations.dart';
@@ -81,7 +82,7 @@ class ResponseScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                for (final playbook in ResponsePlaybooks.playbooks.map((item) => (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianResponseContent.localize(item, l10n.language.code) : GermanResponseContent.localize(item, l10n.language.code)))
+                for (final playbook in ResponsePlaybooks.playbooks.map((item) => (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'ar' ? ArabicResponseContent.localize(item, l10n.language.code) : GermanResponseContent.localize(item, l10n.language.code)))
                   Card(
                     margin: const EdgeInsets.only(bottom: 10),
                     child: ExpansionTile(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/arabic_checker_content.dart';
 
 import '../../../core/widgets/orvika_feature_app_bar.dart';
 import '../../../core/localization/orvika_localizations.dart';
@@ -142,7 +143,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                             ),
                           ],
                           const SizedBox(height: 14),
-                          for (final finding in result.findings.map((item) => (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
+                          for (final finding in result.findings.map((item) => (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'ar' ? ArabicCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
                             Padding(
                               padding: const EdgeInsets.only(bottom: 14),
                               child: Row(
@@ -198,7 +199,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                             ),
                           const Divider(),
                           Text(
-                            (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : GermanCheckerContent.localizeLinkNotice(result.notice, l10n.language.code),
+                            (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'ar' ? ArabicCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : GermanCheckerContent.localizeLinkNotice(result.notice, l10n.language.code),
                             style: TextStyle(
                               color: scheme.onSurfaceVariant,
                               fontSize: 12,

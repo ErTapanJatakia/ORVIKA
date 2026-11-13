@@ -130,7 +130,7 @@ void main() {
       for (final language in OrvikaLanguage.allValues) {
         expect(
           language.hasReviewedTranslation,
-          ['en', 'ru'].contains(language.code),
+          ['en', 'ru', 'ar'].contains(language.code),
           reason: '${language.code} must remain unavailable until its full app translation is reviewed',
         );
       }
@@ -480,6 +480,36 @@ void main() {
         localization.textWithParameters('custom.message', fallback: 'Found {count} indicators'),
         'Found {count} indicators',
       );
+    });
+
+    test('Arabic shared and feature interfaces cover the Russian baseline', () {
+      final arabic = OrvikaLocalizations(OrvikaLanguage.fromCode('ar'));
+      final russian = OrvikaLocalizations(OrvikaLanguage.fromCode('ru'));
+      Set<String> placeholders(String value) => RegExp(
+            r'\{([a-zA-Z][a-zA-Z0-9_]*)\}',
+          ).allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(arabic.hasTranslation(key), isTrue,
+            reason: 'Arabic is missing shared key $key');
+        expect(arabic.text(key), isNot(key),
+            reason: 'Arabic falls back to the key for $key');
+        expect(placeholders(arabic.text(key)), placeholders(russian.text(key)),
+            reason: 'Arabic must preserve placeholders for $key');
+      }
+
+      final arabicFeatures = OrvikaFeatureTranslations.forCode('ar');
+      final russianFeatures = OrvikaFeatureTranslations.forCode('ru');
+      for (final key in russianFeatures.keys) {
+        expect(arabicFeatures.containsKey(key), isTrue,
+            reason: 'Arabic feature interface is missing $key');
+        expect(arabicFeatures[key], isNot(key));
+        expect(placeholders(arabicFeatures[key]!), placeholders(russianFeatures[key]!),
+            reason: 'Arabic feature string must preserve placeholders for $key');
+      }
+      expect(OrvikaLanguage.fromCode('ar').isRightToLeft, isTrue);
+      expect(OrvikaLanguage.fromCode('ar').hasDraftTranslation, isFalse);
+      expect(OrvikaLanguage.fromCode('ar').hasReviewedTranslation, isTrue);
     });
 
     test('RTL direction is independent from translation coverage', () {
