@@ -30,7 +30,8 @@ void main() {
       final brazil = OrvikaLanguage.fromCode('pt');
       final portugal = OrvikaLanguage.fromCode('pt-PT');
       expect(brazil.code, 'pt');
-      expect(brazil.name, 'Portuguese');
+      expect(brazil.name, 'Portuguese (Brazil)');
+      expect(brazil.nativeName, 'Português (Brasil)');
       expect(portugal.code, 'pt-PT');
       expect(portugal.name, 'Portuguese (Portugal)');
       expect(portugal.nativeName, 'Português (Portugal)');
