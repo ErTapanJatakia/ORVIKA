@@ -462,13 +462,24 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isRussian = _selected.code == 'ru';
     final catalogueLanguages = OrvikaLanguage.allValues;
-    final filtered = catalogueLanguages.where((language) {
-      final query = _query.trim().toLowerCase();
-      if (query.isEmpty) return true;
-      return language.name.toLowerCase().contains(query) ||
-          language.nativeName.toLowerCase().contains(query) ||
-          language.code.toLowerCase().contains(query);
-    }).toList(growable: false);
+    final query = _query.trim().toLowerCase();
+    // Prefer exact locale/code matches so short tags (for example, "ko")
+    // resolve to the intended language instead of a long partial-match list.
+    final exactMatches = query.isEmpty
+        ? <OrvikaLanguage>[]
+        : catalogueLanguages.where((language) =>
+            language.code.toLowerCase() == query ||
+            language.localeTag.toLowerCase() == query).toList(growable: false);
+    final filtered = query.isEmpty
+        ? catalogueLanguages
+        : exactMatches.isNotEmpty
+            ? exactMatches
+            : catalogueLanguages.where((language) =>
+                language.name.toLowerCase().contains(query) ||
+                language.nativeName.toLowerCase().contains(query) ||
+                language.code.toLowerCase().contains(query) ||
+                language.localeTag.toLowerCase().contains(query))
+                .toList(growable: false);
     final selectableCount =
         filtered.where((language) => language.hasReviewedTranslation).length;
 
@@ -563,10 +574,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                 title: Text(language.name, style: const TextStyle(fontWeight: FontWeight.w700)),
                                 subtitle: Text(
                                   language.hasReviewedTranslation
-                                      ? language.nativeName
+                                      ? '${language.nativeName} · ${language.localeTag}'
                                       : isRussian
-                                          ? '${language.nativeName} · Скоро появится'
-                                          : '${language.nativeName} · Coming soon',
+                                          ? '${language.nativeName} · ${language.localeTag} · Скоро появится'
+                                          : '${language.nativeName} · ${language.localeTag} · Coming soon',
                                 ),
                                 trailing: language.hasReviewedTranslation
                                   ? Tooltip(
