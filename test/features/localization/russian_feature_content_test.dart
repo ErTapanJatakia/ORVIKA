@@ -182,6 +182,7 @@ void main() {
         'https://123.456',
         'https://a.b.c.example.com',
         'https://example.com:8443/path#section',
+        'https://раypal.example',
         'https://example.com',
         '',
       ];
@@ -252,6 +253,34 @@ void main() {
       expect(localizedAppLink.detail, contains('orvika-demo'));
       expect(localizedAppLink.severity, appLink.severity);
       expect(localizedAppLink.kind, appLink.kind);
+    });
+
+    test('localizes Unicode and Punycode URL findings inside QR results', () {
+      const spoofedDomain = 'https://раypal.example';
+      final url = const UrlAnalyzer().analyze(spoofedDomain);
+      expect(url.findings.map((finding) => finding.title), contains('Unicode hostname'));
+      expect(url.findings.map((finding) => finding.title), contains('Internationalised domain encoding'));
+
+      final localizedFindings = url.findings
+          .map((finding) => RussianCheckerContent.localizeFinding(finding, code))
+          .toList(growable: false);
+      expect(localizedFindings, isNotEmpty);
+      expect(localizedFindings.every((finding) => finding.title != 'Unicode hostname'), isTrue);
+      expect(localizedFindings.every((finding) => finding.title != 'Internationalised domain encoding'), isTrue);
+      for (var i = 0; i < url.findings.length; i++) {
+        expect(localizedFindings[i].severity, url.findings[i].severity);
+      }
+
+      final qr = const QrPayloadAnalyzer().analyze(spoofedDomain);
+      final localizedQr = RussianCheckerContent.localizeQr(qr, code);
+      expect(localizedQr.kind, qr.kind);
+      expect(localizedQr.severity, qr.severity);
+      expect(localizedQr.normalizedUrl, qr.normalizedUrl);
+      expect(localizedQr.linkFindings, hasLength(qr.linkFindings.length));
+      for (var i = 0; i < qr.linkFindings.length; i++) {
+        expect(localizedQr.linkFindings[i].title, isNot(qr.linkFindings[i].title));
+        expect(localizedQr.linkFindings[i].severity, qr.linkFindings[i].severity);
+      }
     });
 
     test('localizes every QR payload class without changing analysis metadata', () {
