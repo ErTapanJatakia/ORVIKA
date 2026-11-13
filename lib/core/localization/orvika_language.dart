@@ -334,6 +334,22 @@ class OrvikaLanguage {
   static OrvikaLanguage defaultForCatalogue(String catalogue) =>
       catalogue == 'india' ? indiaValues.first : english;
 
+  /// Resolve a BCP 47 tag back to the stable catalogue identifier.
+  /// Region and script subtags are intentionally ignored after the primary
+  /// language subtag, except for Portuguese variants with distinct entries.
+  static OrvikaLanguage fromLocaleTag(String? tag) {
+    if (tag == null || tag.trim().isEmpty) return english;
+    final normalized = tag.trim().replaceAll('_', '-').toLowerCase();
+    if (normalized == 'pt-pt' || normalized.startsWith('pt-pt-')) {
+      return portugalPortuguese;
+    }
+    if (normalized == 'pt-br' || normalized.startsWith('pt-br-')) {
+      return fromCode('pt');
+    }
+    final languageSubtag = normalized.split('-').first;
+    return fromCode(languageSubtag);
+  }
+
   static OrvikaLanguage fromCode(String? code) {
     if (code == 'pt-PT') return portugalPortuguese;
     if (code == null || temporarilyUnavailableCodes.contains(code)) return english;
