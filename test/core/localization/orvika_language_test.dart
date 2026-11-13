@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../lib/core/localization/orvika_language.dart';
+import '../../../lib/core/localization/orvika_language.dart';
 
 void main() {
   group('OrvikaLanguage locale registry', () {
