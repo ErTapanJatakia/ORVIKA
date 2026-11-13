@@ -186,7 +186,7 @@ void main() {
       for (final language in OrvikaLanguage.allValues) {
         expect(
           language.hasReviewedTranslation,
-          ['en', 'ru', 'ar'].contains(language.code),
+          ['en', 'ru', 'ar', 'pt-PT'].contains(language.code),
           reason: '${language.code} must remain unavailable until its full app translation is reviewed',
         );
       }
