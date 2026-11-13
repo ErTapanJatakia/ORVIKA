@@ -32,6 +32,39 @@ void main() {
     }
   });
 
+
+  testWidgets('every language option visibly shows and can be searched by its locale tag',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(MaterialApp(
+      home: LanguageSelectionScreen(
+        selectedLanguage: OrvikaLanguage.english,
+        selectedCatalogue: 'russia',
+        onLanguageChanged: (_) {},
+        onCatalogueChanged: (_) {},
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    for (final language in OrvikaLanguage.allValues) {
+      await tester.enterText(
+        find.bySemanticsLabel('Search languages'),
+        language.localeTag,
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.textContaining('${language.nativeName} · ${language.localeTag}'),
+        findsOneWidget,
+        reason: 'Locale tag ${language.localeTag} must be visible for ${language.name}',
+      );
+    }
+  });
+
   testWidgets('onboarding remains navigable across phone, tablet and desktop widths',
       (tester) async {
     tester.view.devicePixelRatio = 1;
