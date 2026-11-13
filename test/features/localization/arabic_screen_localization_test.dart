@@ -42,7 +42,7 @@ void main() {
 
     for (final (screen, title, content) in screens) {
       await tester.pumpWidget(arabicApp(screen));
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
       expect(find.text(title), findsWidgets,
           reason: 'Arabic app-bar title missing for ${screen.runtimeType}');
       expect(find.text(content), findsWidgets,
@@ -55,8 +55,8 @@ void main() {
   testWidgets('Arabic checker labels and camera/image controls are translated', (tester) async {
     await tester.pumpWidget(arabicApp(const QrCheckScreen()));
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.text('مسح رمز QR بالكاميرا'), findsOneWidget);
-    expect(find.text('فحص رمز QR من صورة'), findsOneWidget);
+    expect(find.text('امسح رمز QR أو الرمز الشريطي بالكاميرا'), findsOneWidget);
+    expect(find.text('امسح رمز QR أو الرمز الشريطي من صورة'), findsOneWidget);
     expect(find.text('تحقّق قبل المسح.'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
