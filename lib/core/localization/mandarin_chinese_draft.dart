@@ -26,6 +26,7 @@ class MandarinChineseDraft {
     'settings.language.help': '选择应用界面语言。此设置仅保存在本设备上。',
     'settings.appearance': '选择外观',
     'settings.saved': '您的选择保存在本设备上。ORVIKA 不会将外观设置发送到服务器。',
+    'settings.accessibility': '无障碍说明：高对比度模式使用更醒目的提示颜色和清晰的视觉区分。警告始终同时提供文字说明；颜色不会作为唯一提示。',
     'settings.accessibility.title': '无障碍',
     'settings.accessibility.help': '这些设置保存在本设备上。系统级无障碍设置仍然有效。',
     'settings.textSize': '文字大小',
