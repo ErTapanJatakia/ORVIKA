@@ -86,13 +86,13 @@ jobs:
               raise SystemExit("Generated Android Gradle file is missing.")
           source = gradle.read_text()
           for key in ("namespace", "applicationId"):
-              pattern = rf'({key}\\s*(?:=\\s*)?")[^"]+(")'
-              source, count = re.subn(pattern, rf'\\g<1>com.orvika.app\\g<2>', source, count=1)
+              pattern = rf'({key}\s*(?:=\s*)?")[^"]+(")'
+              source, count = re.subn(pattern, rf'\g<1>com.orvika.app\g<2>', source, count=1)
               if count != 1:
                   raise SystemExit(f"Could not set exactly one {key} in {gradle}.")
           gradle.write_text(source)
           for key in ("namespace", "applicationId"):
-              if not re.search(rf'{key}\\s*(?:=\\s*)?"com\\.orvika\\.app"', source):
+              if not re.search(rf'{key}\s*(?:=\s*)?"com\.orvika\.app"', source):
                   raise SystemExit(f"Android {key} verification failed.")
 
           manifest = Path("android/app/src/main/AndroidManifest.xml")
