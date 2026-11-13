@@ -32,6 +32,45 @@ void main() {
     }
   });
 
+  testWidgets('every selectable language shows and resolves its locale tag', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(MaterialApp(
+      home: LanguageSelectionScreen(
+        selectedLanguage: OrvikaLanguage.english,
+        selectedCatalogue: 'russia',
+        onLanguageChanged: (_) {},
+        onCatalogueChanged: (_) {},
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    // The selector merges both source catalogues into one unified list.
+    // Exact-tag search keeps short tags (such as "ko") unambiguous.
+    for (final language in OrvikaLanguage.allValues) {
+      await tester.enterText(
+        find.bySemanticsLabel('Search languages'),
+        language.localeTag,
+      );
+      await tester.pumpAndSettle();
+
+      final option = find.byKey(ValueKey('language-${language.code}'));
+      expect(option, findsOneWidget,
+          reason: 'Locale search must find ${language.name} (${language.localeTag})');
+      expect(
+        find.descendant(
+          of: option,
+          matching: find.textContaining('${language.nativeName} · ${language.localeTag}'),
+        ),
+        findsOneWidget,
+        reason: 'Locale tag ${language.localeTag} must be visible for ${language.name}',
+      );
+    }
+  });
+
   testWidgets('onboarding remains navigable across phone, tablet and desktop widths',
       (tester) async {
     tester.view.devicePixelRatio = 1;
