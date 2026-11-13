@@ -70,6 +70,49 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Portugal Portuguese renders localized feature screens and checker surfaces', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(app('pt-PT', const AcademyScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Aprenda a se proteger'), findsOneWidget);
+    expect(find.text('Verifique o remetente, não o nome exibido'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(app('pt-PT', const PrivacyScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Revisão de privacidade'), findsOneWidget);
+    expect(find.text('Use palavras-passe exclusivas nas contas importantes'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(app('pt-PT', const ResponseScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Guias de resposta a incidentes'), findsOneWidget);
+    expect(find.text('Uma conta pode ter sido comprometida'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(app('pt-PT', const IntelligenceScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Guia de sinais de risco digital'), findsOneWidget);
+    expect(find.text('HTTP sem criptografia'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(app('pt-PT', const LinkCheckScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Verifique antes de se ligar.'), findsOneWidget);
+    expect(find.text('Endereço do site'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(app('pt-PT', const MessageCheckScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Pare. Verifique. Depois responda.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(app('pt-PT', const QrCheckScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Verifique antes de digitalizar.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Spanish and Portuguese checker headings and input labels are localized', (tester) async {
     await tester.pumpWidget(app('es', const LinkCheckScreen()));
     expect(find.text('Comprueba antes de conectarte.'), findsOneWidget);
