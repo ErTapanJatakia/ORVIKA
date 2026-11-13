@@ -39,6 +39,8 @@ class OrvikaLanguage {
 
   static const english = OrvikaLanguage('en', 'English', 'English');
   static const russian = OrvikaLanguage('ru', 'Russian', 'Русский');
+  static const portugalPortuguese =
+      OrvikaLanguage('pt-PT', 'Portuguese (Portugal)', 'Português (Portugal)');
 
   /// Curated catalogue of 100 languages spoken by communities in Russia.
   /// This is not a census ranking; entries include regional, Indigenous and
@@ -261,7 +263,8 @@ class OrvikaLanguage {
       if (temporarilyUnavailableCodes.contains(language.code)) continue;
       byCode.putIfAbsent(language.code, () => language);
     }
-    final result = byCode.values.toList(growable: true);
+    final result = byCode.values.toList(growable: true)
+      ..add(portugalPortuguese);
     return result..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   }
 
@@ -274,6 +277,7 @@ class OrvikaLanguage {
       catalogue == 'india' ? indiaValues.first : english;
 
   static OrvikaLanguage fromCode(String? code) {
+    if (code == 'pt-PT') return portugalPortuguese;
     if (code == null || temporarilyUnavailableCodes.contains(code)) return english;
     for (final language in values) {
       if (language.code == code) return language;
