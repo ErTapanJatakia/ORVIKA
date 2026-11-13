@@ -56,6 +56,31 @@ void main() {
       }
     });
 
+    test('Portugal Portuguese resolves screen-level fallback keys and regional grammar', () {
+      final pt = OrvikaLocalizations(OrvikaLanguage.fromCode('pt-PT'));
+      const callSiteFallbackKeys = [
+        'common.cancel',
+        'privacy.reset.description',
+        'privacy.error.clear',
+        'academy.progress',
+        'academy.progressSemantics',
+        'academy.progressUpdate',
+        'intelligence.count',
+        'checker.link.complete',
+        'checker.message.complete',
+        'checker.qr.complete',
+        'checker.qr.detectedFormat',
+      ];
+      for (final key in callSiteFallbackKeys) {
+        expect(pt.hasTranslation(key), isTrue,
+            reason: 'pt-PT must not use an English call-site fallback for $key');
+      }
+      expect(PortuguesePortugalText.adapt('Aprenda a se proteger no seu dispositivo'),
+          'Aprenda a proteger-se no seu dispositivo');
+      expect(PortuguesePortugalText.adapt('práticas revisadas'),
+          'práticas revistas');
+    });
+
     test('Portugal Portuguese resolves every authored English fallback locally', () {
       final pt = OrvikaLocalizations(OrvikaLanguage.fromCode('pt-PT'));
       expect(PortuguesePortugalText.fallbacks, isNotEmpty);
