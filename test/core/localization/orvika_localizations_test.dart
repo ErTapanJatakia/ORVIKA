@@ -27,6 +27,28 @@ void main() {
       expect(OrvikaLanguage.fromCode('ba').code, 'en');
     });
 
+    test('Simplified Chinese is registered as a draft and exposes initial UI translations', () {
+      final chinese = OrvikaLanguage.fromCode('zh');
+      expect(chinese.nativeName, '中文（简体）');
+      expect(chinese.localeTag, 'zh-Hans-CN');
+      expect(chinese.hasDraftTranslation, isTrue);
+      expect(chinese.hasReviewedTranslation, isFalse);
+      expect(OrvikaLocalizations.translatedLanguageCodes.contains('zh'), isFalse);
+
+      final localization = OrvikaLocalizations(chinese);
+      for (final key in [
+        'skip', 'continue', 'dashboard.title', 'settings.language',
+        'module.link', 'module.qr', 'module.message', 'module.intelligence',
+        'module.privacy', 'module.academy', 'module.response',
+        'checker.link.heading', 'checker.qr.heading', 'checker.message.heading',
+        'privacy.heading', 'academy.heading', 'response.heading',
+      ]) {
+        expect(localization.hasTranslation(key), isTrue,
+            reason: 'Simplified Chinese draft is missing $key');
+        expect(localization.text(key), isNot(key));
+      }
+    });
+
     test('Portugal Portuguese is a distinct selectable locale, not Brazilian Portuguese', () {
       final brazil = OrvikaLanguage.fromCode('pt');
       final portugal = OrvikaLanguage.fromCode('pt-PT');
