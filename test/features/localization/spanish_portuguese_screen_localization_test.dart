@@ -16,6 +16,39 @@ Widget app(String code, Widget child) => MaterialApp(
 );
 
 void main() {
+  testWidgets('Portugal Portuguese long labels render at narrow width and 200% text scale', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(320, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    Widget scaledApp(Widget child) => MaterialApp(
+      builder: (context, content) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: const TextScaler.linear(2.0),
+        ),
+        child: content!,
+      ),
+      home: OrvikaLanguageScope(
+        language: OrvikaLanguage.fromCode('pt-PT'),
+        child: child,
+      ),
+    );
+
+    for (final screen in <Widget>[
+      const AcademyScreen(),
+      const PrivacyScreen(),
+      const ResponseScreen(),
+      const IntelligenceScreen(),
+      const LinkCheckScreen(),
+      const MessageCheckScreen(),
+      const QrCheckScreen(),
+    ]) {
+      await tester.pumpWidget(scaledApp(screen));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull,
+          reason: 'pt-PT layout overflowed at 320px / 200% text scale for ${screen.runtimeType}');
+    }
+  });
+
   testWidgets('Spanish feature screens render translated headings and content', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(app('es', const AcademyScreen()));
