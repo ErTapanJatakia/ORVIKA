@@ -6,7 +6,7 @@ import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/main.dart';
 
 void main() {
-  testWidgets('fresh installs start at 50 percent text size', (tester) async {
+  testWidgets('fresh installs start at 85 percent text size', (tester) async {
     SharedPreferences.setMockInitialValues({
       'onboarding.completed.v1': true,
       'appearance.language': 'en',
@@ -19,8 +19,8 @@ void main() {
     await tester.pumpAndSettle();
 
     final slider = tester.widget<Slider>(find.byType(Slider));
-    expect(slider.value, 0.5);
-    expect(find.text('50% · 50%–200%'), findsOneWidget);
+    expect(slider.value, 0.85);
+    expect(find.text('85% · 50%–200%'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

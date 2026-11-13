@@ -50,6 +50,9 @@ void main() {
 
     expect(find.text('Your safety toolkit'), findsOneWidget);
     expect(find.text('Choose your language'), findsNothing);
+    final dashboardContext = tester.element(find.text('Your safety toolkit'));
+    expect(MediaQuery.textScalerOf(dashboardContext).scale(10), 8.5,
+        reason: 'A first launch should use the 85% default text size');
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getString('appearance.language'), 'en');
     expect(preferences.getBool('onboarding.completed.v1'), isTrue);
