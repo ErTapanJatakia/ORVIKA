@@ -10,6 +10,7 @@ import '../../../core/localization/italian_privacy_content.dart';
 import '../../../core/localization/french_privacy_content.dart';
 import '../../../core/localization/spanish_privacy_content.dart';
 import '../../../core/localization/portuguese_privacy_content.dart';
+import '../../../core/localization/russian_privacy_content.dart';
 
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});
@@ -120,7 +121,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     final reviewed = _reviewedIds.length;
     return Scaffold(
       appBar: OrvikaFeatureAppBar(
-        title: 'Privacy',
+        title: l10n.text('module.privacy', 'Privacy'),
         actions: [
           if (!_isLoading && reviewed > 0)
             IconButton(
@@ -216,7 +217,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       ],
                     ),
                   ),
-                  for (final practice in _checklist.byCategory(category).map((item) => l10n.language.code == 'pt' ? PortuguesePrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianPrivacyContent.localize(item, l10n.language.code) : GermanPrivacyContent.localize(item, l10n.language.code)))
+                  for (final practice in _checklist.byCategory(category).map((item) => l10n.language.code == 'pt' ? PortuguesePrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianPrivacyContent.localize(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianPrivacyContent.localize(item, l10n.language.code) : GermanPrivacyContent.localize(item, l10n.language.code)))
                     Card(
                       margin: const EdgeInsets.only(bottom: 9),
                       child: ExpansionTile(

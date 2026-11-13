@@ -10,6 +10,7 @@ import '../../../core/localization/italian_academy_content.dart';
 import '../../../core/localization/french_academy_content.dart';
 import '../../../core/localization/spanish_academy_content.dart';
 import '../../../core/localization/portuguese_academy_content.dart';
+import '../../../core/localization/russian_academy_content.dart';
 
 class AcademyScreen extends StatefulWidget {
   const AcademyScreen({super.key});
@@ -90,11 +91,11 @@ class _AcademyScreenState extends State<AcademyScreen> {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     final lessons = AcademyCurriculum.lessons
-        .map((lesson) => l10n.language.code == 'pt' ? PortugueseAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'es' ? SpanishAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'fr' ? FrenchAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'it' ? ItalianAcademyContent.localize(lesson, l10n.language.code) : GermanAcademyContent.localize(lesson, l10n.language.code))
+        .map((lesson) => l10n.language.code == 'pt' ? PortugueseAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'es' ? SpanishAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'fr' ? FrenchAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'it' ? ItalianAcademyContent.localize(lesson, l10n.language.code) : l10n.language.code == 'ru' ? RussianAcademyContent.localize(lesson, l10n.language.code) : GermanAcademyContent.localize(lesson, l10n.language.code))
         .toList(growable: false);
     final progress = _completed.length;
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(title: 'Academy'),
+      appBar: OrvikaFeatureAppBar(title: l10n.text('module.academy', 'Academy')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Center(

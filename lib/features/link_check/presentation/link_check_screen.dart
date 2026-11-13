@@ -9,6 +9,7 @@ import '../../../core/localization/italian_checker_content.dart';
 import '../../../core/localization/french_checker_content.dart';
 import '../../../core/localization/spanish_checker_content.dart';
 import '../../../core/localization/portuguese_checker_content.dart';
+import '../../../core/localization/russian_checker_content.dart';
 
 class LinkCheckScreen extends StatefulWidget {
   const LinkCheckScreen({super.key});
@@ -54,8 +55,8 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(
-        title: 'Link Check',
+      appBar: OrvikaFeatureAppBar(
+        title: l10n.text('module.link', 'Link Check'),
         backgroundColor: Colors.transparent,
       ),
       body: SafeArea(
@@ -141,7 +142,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                             ),
                           ],
                           const SizedBox(height: 14),
-                          for (final finding in result.findings.map((item) => l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
+                          for (final finding in result.findings.map((item) => l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
                             Padding(
                               padding: const EdgeInsets.only(bottom: 14),
                               child: Row(
@@ -197,7 +198,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                             ),
                           const Divider(),
                           Text(
-                            l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : GermanCheckerContent.localizeLinkNotice(result.notice, l10n.language.code),
+                            l10n.language.code == 'pt' ? PortugueseCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeLinkNotice(result.notice, l10n.language.code) : GermanCheckerContent.localizeLinkNotice(result.notice, l10n.language.code),
                             style: TextStyle(
                               color: scheme.onSurfaceVariant,
                               fontSize: 12,

@@ -556,11 +556,25 @@ void main() {
     slider.onChanged!(1.25);
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.widgetWithText(SwitchListTile, 'Bold text'));
+    await tester.scrollUntilVisible(
+      find.text('Bold text'),
+      200,
+      scrollable: find.descendant(
+        of: find.byType(ListView).last,
+        matching: find.byType(Scrollable),
+      ).last,
+    );
     await tester.tap(find.text('Bold text'));
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.widgetWithText(SwitchListTile, 'Reduce motion'));
+    await tester.scrollUntilVisible(
+      find.text('Reduce motion'),
+      200,
+      scrollable: find.descendant(
+        of: find.byType(ListView).last,
+        matching: find.byType(Scrollable),
+      ).last,
+    );
     await tester.tap(find.text('Reduce motion'));
     await tester.pumpAndSettle();
 

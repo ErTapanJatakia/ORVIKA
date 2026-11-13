@@ -9,6 +9,7 @@ import '../../../core/localization/italian_response_content.dart';
 import '../../../core/localization/french_response_content.dart';
 import '../../../core/localization/spanish_response_content.dart';
 import '../../../core/localization/portuguese_response_content.dart';
+import '../../../core/localization/russian_response_content.dart';
 
 class ResponseScreen extends StatelessWidget {
   const ResponseScreen({super.key});
@@ -34,7 +35,7 @@ class ResponseScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
-      appBar: const OrvikaFeatureAppBar(title: 'Response'),
+      appBar: OrvikaFeatureAppBar(title: l10n.text('module.response', 'Response')),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -80,7 +81,7 @@ class ResponseScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                for (final playbook in ResponsePlaybooks.playbooks.map((item) => l10n.language.code == 'pt' ? PortugueseResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianResponseContent.localize(item, l10n.language.code) : GermanResponseContent.localize(item, l10n.language.code)))
+                for (final playbook in ResponsePlaybooks.playbooks.map((item) => l10n.language.code == 'pt' ? PortugueseResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianResponseContent.localize(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianResponseContent.localize(item, l10n.language.code) : GermanResponseContent.localize(item, l10n.language.code)))
                   Card(
                     margin: const EdgeInsets.only(bottom: 10),
                     child: ExpansionTile(

@@ -14,8 +14,8 @@ void main() {
   group('Brazilian Portuguese localization coverage', () {
     final l10n = OrvikaLocalizations(OrvikaLanguage.fromCode('pt'));
 
-    test('covers every key in the 138-key reviewed baseline', () {
-      expect(OrvikaLocalizations.requiredTranslationKeys, hasLength(138));
+    test('covers every key in the 146-key expanded reviewed baseline', () {
+      expect(OrvikaLocalizations.requiredTranslationKeys, hasLength(146));
       for (final key in OrvikaLocalizations.requiredTranslationKeys) {
         expect(l10n.hasTranslation(key), isTrue, reason: 'Portuguese is missing $key');
         expect(l10n.text(key), isNot(key), reason: 'Portuguese resolves $key to its key');
