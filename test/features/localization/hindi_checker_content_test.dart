@@ -1,10 +1,45 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:orvika/core/localization/orvika_language.dart';
+import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/core/localization/hindi_checker_content.dart';
 import 'package:orvika/features/link_check/domain/url_analyzer.dart';
 import 'package:orvika/features/qr_check/domain/qr_payload_analyzer.dart';
 
 void main() {
   group('Hindi checker result localization', () {
+    test('localizes live-result announcements and interpolates every count', () {
+      const l10n = OrvikaLocalizations(OrvikaLanguage('hi', 'Hindi', 'हिन्दी'));
+
+      expect(
+        l10n.textWithParameters(
+          'checker.link.complete',
+          fallback: 'Link analysis complete. {count} findings.',
+          parameters: {'count': 4},
+        ),
+        'लिंक विश्लेषण पूरा हुआ। 4 निष्कर्ष मिले।',
+      );
+      expect(
+        l10n.textWithParameters(
+          'checker.message.complete',
+          fallback: 'Message inspection complete. {findings} findings. {links} web addresses detected.',
+          parameters: {'findings': 3, 'links': 2},
+        ),
+        'संदेश की जाँच पूरी हुई। 3 निष्कर्ष मिले। 2 वेब पते मिले।',
+      );
+      expect(
+        l10n.textWithParameters(
+          'checker.qr.complete',
+          fallback: 'QR inspection complete. {title}. Severity {severity}. {count} link findings.',
+          parameters: {
+            'title': 'वेब पता',
+            'severity': 'चेतावनी',
+            'count': 1,
+          },
+        ),
+        'QR जाँच पूरी हुई। वेब पता। गंभीरता: चेतावनी। 1 लिंक संबंधी निष्कर्ष।',
+      );
+    });
+
     test('localizes every URL and message finding while preserving severity', () {
       const titles = [
         'Unicode hostname',
