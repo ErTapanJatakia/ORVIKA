@@ -130,7 +130,7 @@ void main() {
       for (final language in OrvikaLanguage.allValues) {
         expect(
           language.hasReviewedTranslation,
-          ['en', 'ru'].contains(language.code),
+          ['en', 'ru', 'ar'].contains(language.code),
           reason: '${language.code} must remain unavailable until its full app translation is reviewed',
         );
       }
@@ -508,8 +508,8 @@ void main() {
             reason: 'Arabic feature string must preserve placeholders for $key');
       }
       expect(OrvikaLanguage.fromCode('ar').isRightToLeft, isTrue);
-      expect(OrvikaLanguage.fromCode('ar').hasDraftTranslation, isTrue);
-      expect(OrvikaLanguage.fromCode('ar').hasReviewedTranslation, isFalse);
+      expect(OrvikaLanguage.fromCode('ar').hasDraftTranslation, isFalse);
+      expect(OrvikaLanguage.fromCode('ar').hasReviewedTranslation, isTrue);
     });
 
     test('RTL direction is independent from translation coverage', () {
