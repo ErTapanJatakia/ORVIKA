@@ -138,7 +138,7 @@ class OrvikaLanguage {
     OrvikaLanguage('fr', 'French', 'Français'),
     OrvikaLanguage('es', 'Spanish', 'Español'),
     OrvikaLanguage('it', 'Italian', 'Italiano'),
-    OrvikaLanguage('pt', 'Portuguese', 'Português'),
+    OrvikaLanguage('pt', 'Portuguese (Brazil)', 'Português (Brasil)'),
     OrvikaLanguage('ja', 'Japanese', '日本語'),
     OrvikaLanguage('th', 'Thai', 'ไทย'),
     OrvikaLanguage('id', 'Indonesian', 'Bahasa Indonesia'),
