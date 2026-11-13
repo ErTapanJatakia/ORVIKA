@@ -36,14 +36,9 @@ void main() {
       expect(OrvikaLocalizations.translatedLanguageCodes.contains('zh'), isFalse);
 
       final localization = OrvikaLocalizations(chinese);
-      for (final key in [
-        'skip', 'continue', 'dashboard.title', 'settings.language',
-        'module.link', 'module.qr', 'module.message', 'module.intelligence',
-        'module.privacy', 'module.academy', 'module.response',
-        'checker.link.heading', 'checker.qr.heading', 'checker.message.heading',
-        'privacy.heading', 'academy.heading', 'response.heading',
-      ]) {
-        // Draft strings must resolve for development without counting as reviewed coverage.
+      // Audit every reviewed Russian baseline key, not just representative samples.
+      // Draft text must resolve for development without counting as reviewed coverage.
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
         expect(localization.hasTranslation(key), isFalse,
             reason: 'Simplified Chinese draft must not claim reviewed coverage for $key');
         expect(localization.text(key), isNot(key),
