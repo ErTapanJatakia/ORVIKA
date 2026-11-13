@@ -1,22 +1,45 @@
-<?xml version='1.0' encoding='utf-8'?>
-<manifest xmlns:ns0="http://schemas.android.com/apk/res/android">
-    <uses-permission ns0:name="android.permission.CAMERA" /><uses-permission ns0:name="android.permission.INTERNET" /><application ns0:label="ORVIKA" ns0:name="${applicationName}" ns0:icon="@mipmap/ic_launcher" ns0:usesCleartextTraffic="false">
-        <activity ns0:name=".MainActivity" ns0:exported="true" ns0:launchMode="singleTop" ns0:taskAffinity="" ns0:theme="@style/LaunchTheme" ns0:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" ns0:hardwareAccelerated="true" ns0:windowSoftInputMode="adjustResize">
-            
-            <meta-data ns0:name="io.flutter.embedding.android.NormalTheme" ns0:resource="@style/NormalTheme" />
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Camera scanning is an optional capability; non-camera devices may still use other checks. -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <application
+        android:name="${applicationName}"
+        android:label="ORVIKA"
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="false">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
             <intent-filter>
-                <action ns0:name="android.intent.action.MAIN" />
-                <category ns0:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <meta-data ns0:name="flutterEmbedding" ns0:value="2" />
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
     </application>
-    
+
     <queries>
         <intent>
-            <action ns0:name="android.intent.action.PROCESS_TEXT" />
-            <data ns0:mimeType="text/plain" />
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
         </intent>
     </queries>
 </manifest>
