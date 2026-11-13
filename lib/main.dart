@@ -331,6 +331,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
           child: Semantics(
             container: true,
             explicitChildNodes: true,
+            localeForSubtree: _selectedLanguage.semanticsLocale,
             child: Directionality(
               textDirection: _selectedLanguage.isRightToLeft
                   ? TextDirection.rtl

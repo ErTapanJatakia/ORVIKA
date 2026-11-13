@@ -1,3 +1,5 @@
+import 'dart:ui' show Locale;
+
 class OrvikaLanguage {
   const OrvikaLanguage(this.code, this.name, this.nativeName);
 
@@ -61,6 +63,30 @@ class OrvikaLanguage {
         // primary language subtags. Keep catalogue identifiers unchanged.
         return code;
     }
+  }
+
+  /// Flutter semantics locale for screen readers and other assistive technologies.
+  /// The app's translation key remains [code]; this maps the canonical BCP 47
+  /// tag to Flutter's structured Locale without changing MaterialApp.locale.
+  Locale get semanticsLocale {
+    final subtags = localeTag.split('-');
+    final languageCode = subtags.first;
+    String? scriptCode;
+    String? countryCode;
+    for (final subtag in subtags.skip(1)) {
+      if (subtag.length == 4 && scriptCode == null) {
+        scriptCode = subtag;
+      } else if ((subtag.length == 2 ||
+              (subtag.length == 3 && int.tryParse(subtag) != null)) &&
+          countryCode == null) {
+        countryCode = subtag;
+      }
+    }
+    return Locale.fromSubtags(
+      languageCode: languageCode,
+      scriptCode: scriptCode,
+      countryCode: countryCode,
+    );
   }
 
   String get label => '$name — $nativeName';
