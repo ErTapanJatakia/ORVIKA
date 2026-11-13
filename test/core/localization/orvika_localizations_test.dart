@@ -69,6 +69,20 @@ void main() {
       }
     });
 
+    test('Simplified Chinese draft covers every required shared UI key', () {
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('zh'));
+      expect(OrvikaLocalizations.translatedLanguageCodes.contains('zh'), isFalse);
+      expect(OrvikaLanguage.fromCode('zh').hasReviewedTranslation, isFalse);
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(localization.text(key), isNot(key),
+            reason: 'Simplified Chinese draft is missing shared UI key $key');
+        expect(localization.text(key), isNotEmpty,
+            reason: 'Simplified Chinese shared UI key $key is empty');
+        expect(localization.hasTranslation(key), isFalse,
+            reason: 'Draft Chinese key $key must not count as reviewed coverage');
+      }
+    });
+
     test('Portugal Portuguese is a distinct selectable locale, not Brazilian Portuguese', () {
       final brazil = OrvikaLanguage.fromCode('pt');
       final portugal = OrvikaLanguage.fromCode('pt-PT');
