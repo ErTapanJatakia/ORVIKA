@@ -49,6 +49,29 @@ void main() {
       }
     });
 
+    test('Simplified Chinese checker, camera, image and privacy notices preserve placeholders', () {
+      final chinese = OrvikaFeatureTranslations.forCode('zh');
+      final russian = OrvikaFeatureTranslations.forCode('ru');
+      final requiredKeys = [
+        'checker.qr.detectedFormat',
+        'checker.camera.previewError',
+        'checker.image.error.tooLarge',
+        'checker.image.privacyNotice',
+        'privacy.analytics.notice',
+        'privacy.device.notice',
+      ];
+      Set<String> placeholders(String value) => RegExp(r'\\{([a-zA-Z][a-zA-Z0-9_]*)\\}')
+          .allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final key in requiredKeys) {
+        expect(chinese.containsKey(key), isTrue,
+            reason: 'Simplified Chinese feature pack is missing $key');
+        expect(chinese[key], isNot(key));
+        expect(placeholders(chinese[key]!), placeholders(russian[key]!),
+            reason: 'Simplified Chinese must preserve placeholders for $key');
+      }
+    });
+
     test('Portugal Portuguese is a distinct selectable locale, not Brazilian Portuguese', () {
       final brazil = OrvikaLanguage.fromCode('pt');
       final portugal = OrvikaLanguage.fromCode('pt-PT');
