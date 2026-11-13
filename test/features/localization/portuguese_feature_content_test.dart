@@ -7,6 +7,7 @@ import 'package:orvika/core/localization/portuguese_response_content.dart';
 import 'package:orvika/core/localization/portuguese_intelligence_content.dart';
 import 'package:orvika/core/localization/portuguese_checker_content.dart';
 import 'package:orvika/features/link_check/domain/url_analyzer.dart';
+import 'package:orvika/features/qr_check/domain/qr_payload_analyzer.dart';
 import 'package:orvika/features/academy/domain/academy_curriculum.dart';
 import 'package:orvika/features/privacy/domain/privacy_checklist.dart';
 import 'package:orvika/features/response/domain/response_playbooks.dart';
@@ -64,6 +65,20 @@ void main() {
       expect(translated.title, 'Ligação sem criptografia');
       expect(translated.detail, contains('HTTP'));
       expect(translated.severity, source.severity);
+      const qr = QrPayloadAnalysis(
+        kind: QrPayloadKind.wifiCredentials,
+        title: 'Wi-Fi configuration',
+        detail: 'A Wi-Fi network configuration was detected.',
+        severity: FindingSeverity.caution,
+        normalizedUrl: null,
+        isValid: true,
+      );
+      final localizedQr = PortugueseCheckerContent.localizeQr(qr, 'pt-PT');
+      expect(localizedQr.title, 'Definição de Wi-Fi');
+      expect(localizedQr.severity, qr.severity);
+      expect(localizedQr.kind, qr.kind);
+      expect(localizedQr.isValid, qr.isValid);
+
       const findingTitles = [
         'Unicode hostname',
         'Unencrypted connection',
