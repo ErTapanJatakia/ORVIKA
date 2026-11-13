@@ -103,7 +103,7 @@ void main() {
       expect(find.text('Choose your language'), findsOneWidget);
       expect(find.text('Your safety toolkit'), findsNothing);
       expect(find.bySemanticsLabel(
-        'Languages listed: 192. Available to select: 2',
+        'Languages listed: 192. Available to select: 3',
       ), findsOneWidget);
 
       // Search results are lazily built; filter before inspecting the Hindi tile.
