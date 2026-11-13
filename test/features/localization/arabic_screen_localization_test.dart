@@ -32,9 +32,9 @@ void main() {
 
     final screens = <(Widget, String, String)>[
       (const AcademyScreen(), 'الأكاديمية', 'اكتسب عادات رقمية أكثر أماناً.'),
-      (const PrivacyScreen(), 'الخصوصية', 'استخدم كلمات مرور فريدة للحسابات المهمة'),
-      (const ResponseScreen(), 'الاستجابة', 'اشتباه في اختراق الحساب'),
-      (const IntelligenceScreen(), 'المعلومات الاستخباراتية', 'اتصال HTTP غير مشفّر'),
+      (const PrivacyScreen(), 'الخصوصية', 'تحكّم في خصوصيتك.'),
+      (const ResponseScreen(), 'الاستجابة', 'اعرف ما ينبغي فعله تالياً.'),
+      (const IntelligenceScreen(), 'المعلومات الاستخباراتية', 'افهم مؤشرات المخاطر.'),
       (const LinkCheckScreen(), 'فحص الروابط', 'تحقّق قبل فتح الرابط.'),
       (const MessageCheckScreen(), 'فحص الرسائل', 'توقّف. تحقّق. ثم أجب.'),
       (const QrCheckScreen(), 'فحص QR', 'تحقّق قبل المسح.'),
