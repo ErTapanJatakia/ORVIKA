@@ -11,6 +11,7 @@ import '../../../core/localization/french_intelligence_content.dart';
 import '../../../core/localization/spanish_intelligence_content.dart';
 import '../../../core/localization/portuguese_intelligence_content.dart';
 import '../../../core/localization/russian_intelligence_content.dart';
+import '../../../core/localization/mandarin_intelligence_content.dart';
 
 class IntelligenceScreen extends StatefulWidget {
   const IntelligenceScreen({super.key});
@@ -49,9 +50,9 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     final normalizedQuery = _controller.text.trim().toLowerCase();
-    final entries = l10n.language.code == 'ru'
+    final entries = (l10n.language.code == 'ru' || l10n.language.code == 'zh')
         ? _library.search(query: '', category: _category).where((sourceEntry) {
-            final translated = RussianIntelligenceContent.localize(sourceEntry, 'ru');
+            final translated = l10n.language.code == 'zh' ? MandarinIntelligenceContent.localize(sourceEntry, 'zh') : RussianIntelligenceContent.localize(sourceEntry, 'ru');
             return normalizedQuery.isEmpty ||
                 <String>[
                   sourceEntry.title, sourceEntry.signal, sourceEntry.meaning,
@@ -164,7 +165,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
             for (final sourceEntry in entries)
               Builder(
                 builder: (context) {
-                  final entry = (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'es' ? SpanishIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'fr' ? FrenchIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'it' ? ItalianIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'ru' ? RussianIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'ar' ? ArabicIntelligenceContent.localize(sourceEntry, l10n.language.code) : GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
+                  final entry = (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'es' ? SpanishIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'fr' ? FrenchIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'it' ? ItalianIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'zh' ? MandarinIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'ru' ? RussianIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'ar' ? ArabicIntelligenceContent.localize(sourceEntry, l10n.language.code) : GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
                   return Card(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: ExpansionTile(

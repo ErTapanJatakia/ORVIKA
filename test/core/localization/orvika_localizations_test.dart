@@ -27,6 +27,62 @@ void main() {
       expect(OrvikaLanguage.fromCode('ba').code, 'en');
     });
 
+    test('Simplified Chinese is registered as a draft and exposes initial UI translations', () {
+      final chinese = OrvikaLanguage.fromCode('zh');
+      expect(chinese.nativeName, '中文（简体）');
+      expect(chinese.localeTag, 'zh-Hans-CN');
+      expect(chinese.hasDraftTranslation, isTrue);
+      expect(chinese.hasReviewedTranslation, isFalse);
+      expect(OrvikaLocalizations.translatedLanguageCodes.contains('zh'), isFalse);
+
+      final localization = OrvikaLocalizations(chinese);
+      // Audit every reviewed Russian baseline key, not just representative samples.
+      // Draft text must resolve for development without counting as reviewed coverage.
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(localization.hasTranslation(key), isFalse,
+            reason: 'Simplified Chinese draft must not claim reviewed coverage for $key');
+        expect(localization.text(key), isNot(key),
+            reason: 'Simplified Chinese draft is missing authored UI text for $key');
+      }
+    });
+
+    test('Simplified Chinese checker, camera, image and privacy notices preserve placeholders', () {
+      final chinese = OrvikaFeatureTranslations.forCode('zh');
+      final russian = OrvikaFeatureTranslations.forCode('ru');
+      final requiredKeys = [
+        'checker.qr.detectedFormat',
+        'checker.camera.previewError',
+        'checker.image.error.tooLarge',
+        'checker.image.privacyNotice',
+        'privacy.analytics.notice',
+        'privacy.device.notice',
+      ];
+      Set<String> placeholders(String value) => RegExp(r'\\{([a-zA-Z][a-zA-Z0-9_]*)\\}')
+          .allMatches(value).map((match) => match.group(1)!).toSet();
+
+      for (final key in requiredKeys) {
+        expect(chinese.containsKey(key), isTrue,
+            reason: 'Simplified Chinese feature pack is missing $key');
+        expect(chinese[key], isNot(key));
+        expect(placeholders(chinese[key]!), placeholders(russian[key]!),
+            reason: 'Simplified Chinese must preserve placeholders for $key');
+      }
+    });
+
+    test('Simplified Chinese draft covers every required shared UI key', () {
+      final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('zh'));
+      expect(OrvikaLocalizations.translatedLanguageCodes.contains('zh'), isFalse);
+      expect(OrvikaLanguage.fromCode('zh').hasReviewedTranslation, isFalse);
+      for (final key in OrvikaLocalizations.requiredTranslationKeys) {
+        expect(localization.text(key), isNot(key),
+            reason: 'Simplified Chinese draft is missing shared UI key $key');
+        expect(localization.text(key), isNotEmpty,
+            reason: 'Simplified Chinese shared UI key $key is empty');
+        expect(localization.hasTranslation(key), isFalse,
+            reason: 'Draft Chinese key $key must not count as reviewed coverage');
+      }
+    });
+
     test('Portugal Portuguese is a distinct selectable locale, not Brazilian Portuguese', () {
       final brazil = OrvikaLanguage.fromCode('pt');
       final portugal = OrvikaLanguage.fromCode('pt-PT');

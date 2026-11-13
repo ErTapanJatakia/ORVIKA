@@ -85,7 +85,7 @@ class OrvikaLanguage {
   }
   bool get hasReviewedTranslation => code == 'en' || code == 'ru' || code == 'ar';
   bool get hasDraftTranslation => const {
-        'hi', 'de', 'fr', 'pa', 'ur', 'it', 'mr', 'gu', 'sa', 'es', 'pt', 'pt-PT'
+        'hi', 'de', 'fr', 'pa', 'ur', 'it', 'mr', 'gu', 'sa', 'es', 'pt', 'pt-PT', 'zh'
       }.contains(code);
 
   /// Languages temporarily withheld from the app's selectable UI catalogue.
@@ -178,7 +178,7 @@ class OrvikaLanguage {
     OrvikaLanguage('el', 'Greek', 'Ελληνικά'),
     OrvikaLanguage('he', 'Hebrew', 'עברית'),
     OrvikaLanguage('ko', 'Korean', '한국어'),
-    OrvikaLanguage('zh', 'Chinese', '中文'),
+    OrvikaLanguage('zh', 'Chinese (Simplified)', '中文（简体）'),
     OrvikaLanguage('vi', 'Vietnamese', 'Tiếng Việt'),
     OrvikaLanguage('tr', 'Turkish', 'Türkçe'),
     OrvikaLanguage('ar', 'Arabic', 'العربية'),
