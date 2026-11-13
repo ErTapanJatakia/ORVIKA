@@ -3,9 +3,10 @@
 ## Review status
 
 - Technical implementation and automated web CI: passed on the preceding implementation commit.
-- Native-speaker review: pending.
-- Release/merge status: not approved until this review is completed.
-- This locale is a regional adaptation of the existing Portuguese source pack, not an independently authored translation.
+- Native-speaker review: approved; the user confirmed that the native European Portuguese reviewer approved all translations.
+- Reviewer recommendation: replace remaining English call-site fallbacks with context-appropriate European Portuguese wording, consulting a reputable Portuguese dictionary where terminology is uncertain.
+- Follow-up: fallback completion and regression CI are being completed before the locale is promoted as reviewed.
+- This locale is a regional adaptation of the existing Portuguese source pack, reviewed and approved by a native speaker.
 
 ## Reviewer profile
 
