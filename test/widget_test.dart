@@ -556,7 +556,7 @@ void main() {
     slider.onChanged!(1.25);
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.widgetWithText(SwitchListTile, 'Bold text'));
+    await tester.ensureVisible(find.text('Bold text'));
     await tester.tap(find.text('Bold text'));
     await tester.pumpAndSettle();
 
