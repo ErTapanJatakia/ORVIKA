@@ -32,7 +32,6 @@ void main() {
     }
   });
 
-
   testWidgets('every selectable language option shows and can be searched by its locale tag',
       (tester) async {
     tester.view.devicePixelRatio = 1;
@@ -63,7 +62,7 @@ void main() {
 
         final option = find.byKey(ValueKey('language-${language.code}'));
         expect(option, findsOneWidget,
-            reason: '${catalogue} locale-tag search must find ${language.name} (${language.localeTag})');
+            reason: '$catalogue locale-tag search must find ${language.name} (${language.localeTag})');
         expect(
           find.descendant(
             of: option,
