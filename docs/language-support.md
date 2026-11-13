@@ -4,7 +4,7 @@
 
 ORVIKA presents a searchable language selector before onboarding on a first launch. The selected language is saved locally with the `appearance.language` preference. The launch splash and dashboard header also provide a direct language-selection action; Appearance & Accessibility settings expose the same picker.
 
-The app maintains two curated source catalogues: 100 languages and language varieties associated with communities in Russia, and 100 entries for India. Tatar and Bashkir remain in the internal Russia catalogue reference data but are temporarily excluded from the selectable app language list. Users choose the catalogue (Russia or India) and then the language on first launch; both choices are saved locally. The picker also remains available from the dashboard and settings. The Russia catalogue prioritises Russian and English; the India catalogue includes the 22 Eighth Schedule languages plus 78 selected regional, Indigenous and community languages/varieties, with English fallback included.
+The app combines two curated source catalogues into one searchable language list. Users do not choose a Russia or India section. The selected language is saved locally. The picker is also available from the dashboard and settings. Tatar (`tt`) and Bashkir (`ba`) remain excluded from the selectable list as previously directed. The combined catalogue currently contains 192 unique selectable language codes; this is a product catalogue, not a statistical ranking.
 
 ## Translation coverage
 
@@ -19,7 +19,7 @@ The unified selector excludes Tatar (`tt`) and Bashkir (`ba`) for now; their cat
 
 ## Coverage boundary
 
-These draft packs translate the shared onboarding/dashboard/navigation/appearance surface. The eight feature screens (Sentinel, Link Check, QR Check, Message Check, Intelligence, Privacy, Academy and Response), including their detailed instructional copy, validation messages and analysis findings, still require dedicated localization work. Untranslated feature content must not be represented as fully localized.
+Translation coverage differs by locale. The six priority locales (German, French, Italian, Spanish, Brazilian Portuguese and Russian) have completed their original implementation/review batches. Portugal Portuguese is being finalized separately. Feature-content and checker coverage are tracked by stable IDs and tests; a passing test suite demonstrates implementation coverage, not native-speaker quality. Do not infer full localization from a language being selectable or from a non-empty translation pack.
 
 No machine-translation API, remote service, telemetry, or backend is used. New translation packs should be reviewed by fluent speakers and added as offline resources. Avoid auto-translating security, incident-response, legal, or privacy guidance without human review.
 
@@ -90,3 +90,15 @@ Portugal Portuguese is maintained as a distinct regional locale from Brazilian P
 A narrow-viewport regression also exercises all seven feature screens at 320px and 200% text scale. The five feature content areas are wired to pt-PT: 8 Academy lessons, 12 Privacy practices, 5 Response playbooks and 10 Intelligence references, plus all 22 deterministic checker finding identifiers and QR/message/link result notices. Accessibility controls (50%–200% text sizing, bold text and reduced motion), camera/image scanner controls, privacy/analytics notices, placeholders and error states are included in the automated coverage.
 
 The Portugal Portuguese reviewer has approved all translated content. The sole recommendation was to replace remaining English fallbacks with the closest contextually accurate European Portuguese wording. A dedicated pt-PT fallback map now covers the previously English scanner, checker-result, privacy-reset and error-state copy; placeholder interpolation and key coverage are regression-tested. `hasReviewedTranslation` remains false until this completion pass and its final regression CI pass. CI proves code/test coverage, not linguistic quality.
+
+
+## Portugal Portuguese review and fallback completion
+
+The native European Portuguese reviewer approved the translation content. The only recommendation was to replace remaining English call-site fallbacks with contextually accurate Portugal Portuguese wording. PR #98 adds a dedicated fallback map and placeholder/key regression coverage. The locale remains in the review gate until the final fallback audit and CI pass; native approval is recorded separately from technical verification. The Priberam dictionary is used as a lexical reference, with feature context and security meaning taking precedence over literal substitution.
+
+## Localization consolidation queue
+
+1. Close the `pt-PT` fallback completeness and CI gate.
+2. Audit the six priority locales for shared-key completeness, checker strings, screen-level rendering, language switching, fallback behavior, long strings, narrow layouts and accessibility scaling.
+3. Resume the paused Hindi draft only after the six-language audit.
+4. Run consolidated Android validation after the complete app-code batch; keep production deployment deferred until consolidation is complete.
