@@ -261,6 +261,10 @@ class _OrvikaAppState extends State<OrvikaApp> {
       'Noto Sans Devanagari',
       'Noto Sans Gujarati',
       'Noto Nastaliq Urdu',
+      // Prefer platform CJK fonts without bundling a large pan-CJK asset.
+      'Noto Sans CJK SC',
+      'Noto Sans SC',
+      'Source Han Sans SC',
       'Noto Naskh Arabic',
       'Noto Sans Arabic',
     ];
@@ -303,8 +307,17 @@ class _OrvikaAppState extends State<OrvikaApp> {
       // Flutter framework widgets need locales supported by its Material and
       // Cupertino delegates. ORVIKA's own language packs are carried separately
       // by OrvikaLanguageScope, so regional selections never break framework UI.
-      locale: Locale(_selectedLanguage.code == 'ru' || _selectedLanguage.code == 'ar' ? _selectedLanguage.code : 'en'),
-      supportedLocales: const [Locale('en'), Locale('ru'), Locale('ar')],
+      locale: _selectedLanguage.code == 'zh'
+          ? const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN')
+          : Locale(_selectedLanguage.code == 'ru' || _selectedLanguage.code == 'ar'
+              ? _selectedLanguage.code
+              : 'en'),
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ru'),
+        Locale('ar'),
+        Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN'),
+      ],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       builder: (context, child) {
         final platformMediaQuery = MediaQuery.of(context);
