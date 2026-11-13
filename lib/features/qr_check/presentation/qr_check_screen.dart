@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/arabic_checker_content.dart';
 
 import 'qr_camera_scanner_screen.dart';
 import 'qr_image_scanner_screen.dart';
