@@ -35,7 +35,7 @@ void main() {
       (const PrivacyScreen(), 'الخصوصية', 'تحكّم في خصوصيتك.'),
       (const ResponseScreen(), 'الاستجابة', 'اعرف ما ينبغي فعله تالياً.'),
       (const IntelligenceScreen(), 'المعلومات الاستخباراتية', 'افهم مؤشرات المخاطر.'),
-      (const LinkCheckScreen(), 'فحص الروابط', 'تحقّق قبل فتح الرابط.'),
+      (const LinkCheckScreen(), 'فحص الروابط', 'تحقّق قبل الاتصال.'),
       (const MessageCheckScreen(), 'فحص الرسائل', 'توقّف. تحقّق. ثم أجب.'),
       (const QrCheckScreen(), 'فحص QR', 'تحقّق قبل المسح.'),
     ];
