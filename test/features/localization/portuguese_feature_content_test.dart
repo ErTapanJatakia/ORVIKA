@@ -5,6 +5,8 @@ import 'package:orvika/core/localization/portuguese_academy_content.dart';
 import 'package:orvika/core/localization/portuguese_privacy_content.dart';
 import 'package:orvika/core/localization/portuguese_response_content.dart';
 import 'package:orvika/core/localization/portuguese_intelligence_content.dart';
+import 'package:orvika/core/localization/portuguese_checker_content.dart';
+import 'package:orvika/features/link_check/domain/url_analyzer.dart';
 import 'package:orvika/features/academy/domain/academy_curriculum.dart';
 import 'package:orvika/features/privacy/domain/privacy_checklist.dart';
 import 'package:orvika/features/response/domain/response_playbooks.dart';
@@ -50,6 +52,26 @@ void main() {
         expect(translated.id, entry.id);
         expect(translated.title, isNot(entry.title));
       }
+    });
+
+    test('Portugal Portuguese localizes checker findings and notices without changing severity', () {
+      const source = LinkFinding(
+        title: 'Unencrypted connection',
+        detail: 'This address uses HTTP.',
+        severity: FindingSeverity.warning,
+      );
+      final translated = PortugueseCheckerContent.localizeFinding(source, 'pt-PT');
+      expect(translated.title, 'Ligação sem criptografia');
+      expect(translated.detail, contains('HTTP'));
+      expect(translated.severity, source.severity);
+      expect(
+        PortugueseCheckerContent.localizeLinkNotice('No network request was made.', 'pt-PT'),
+        'Nenhuma solicitação de rede foi realizada.',
+      );
+      expect(
+        PortugueseCheckerContent.localizeMessageNotice('pt-PT'),
+        contains('verificações heurísticas'),
+      );
     });
 
     test('preserves named placeholders in progress strings', () {
