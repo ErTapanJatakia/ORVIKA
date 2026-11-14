@@ -3,6 +3,7 @@ name: Commit Android Gradle wrapper
 on:
   push:
     branches:
+      - main
       - feat/android-permanent-scaffold
     paths:
       - ".github/workflows/android-wrapper-bootstrap.yml"
@@ -22,10 +23,10 @@ jobs:
     name: Generate and commit pinned Gradle wrapper
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout Android scaffold branch
+      - name: Checkout target branch
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: feat/android-permanent-scaffold
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Install Flutter SDK
@@ -63,4 +64,4 @@ jobs:
             exit 0
           fi
           git commit -m "chore(android): commit Gradle wrapper [skip android wrapper bootstrap]"
-          git push origin HEAD:feat/android-permanent-scaffold
+          git push origin "HEAD:${GITHUB_REF_NAME}"
