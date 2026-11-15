@@ -1326,17 +1326,15 @@ class SentinelDashboard extends StatelessWidget {
                               ),
                               itemBuilder: (context, index) {
                                 final module = modules[index];
-                                final destination =
-                                    OrvikaNavigation.screenForModule(module.title);
-                                final VoidCallback? onTap = destination == null
-                                    ? null
-                                    : () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute<void>(
-                                            builder: (_) => destination,
-                                          ),
-                                        );
-                                      };
+                                final VoidCallback? onTap =
+                                    OrvikaNavigation.hasDestination(module.title)
+                                        ? () {
+                                            OrvikaNavigation.openModule(
+                                              context,
+                                              module.title,
+                                            );
+                                          }
+                                        : null;
                                 return _ModuleCard(module: _localizedModule(module, selectedLanguage), palette: palette, onTap: onTap);
                               },
                             );
