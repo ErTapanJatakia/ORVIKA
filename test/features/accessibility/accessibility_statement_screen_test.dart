@@ -4,8 +4,8 @@ import 'package:orvika/features/accessibility/presentation/accessibility_stateme
 
 void main() {
   testWidgets('accessibility statement discloses evaluation limits', (tester) async {
-    await tester.view.setPhysicalSize(const Size(800, 1200));
-    await tester.view.setDevicePixelRatio(1);
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
