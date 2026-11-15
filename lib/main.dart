@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'features/accessibility/presentation/accessibility_statement_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/localization/orvika_language.dart';
@@ -1105,7 +1106,20 @@ class SentinelDashboard extends StatelessWidget {
                           boldText: boldText, onBoldTextChanged: onBoldTextChanged,
                           reduceMotion: reduceMotion, onReduceMotionChanged: onReduceMotionChanged,
                         ),
-                        const SizedBox(height: 28),
+                        Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: TextButton.icon(
+                            key: const ValueKey('accessibility-statement-top'),
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const OrvikaAccessibilityStatementScreen(),
+                              ),
+                            ),
+                            icon: const Icon(Icons.accessibility_new_rounded, size: 18),
+                            label: const Text('Accessibility statement'),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         _HeroPanel(palette: palette, language: selectedLanguage),
                         const SizedBox(height: 30),
                         LayoutBuilder(
