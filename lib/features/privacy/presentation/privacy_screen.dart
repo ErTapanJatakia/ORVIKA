@@ -97,7 +97,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(OrvikaLocalizations.of(context).text('privacy.reset.title', 'Reset review progress?')),
-        content: Text(OrvikaLocalizations.of(context).text('privacy.reset.description', 'This clears only the checklist marks stored on this device. It does not change any device or account settings.')),
+        content: Text(OrvikaLocalizations.of(context).text('privacy.reset.description', 'This clears checklist marks stored on this device and assessment answers in this screen session. It does not change any device or account settings.')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
