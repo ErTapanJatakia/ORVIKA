@@ -1,29 +1,22 @@
-# Turnstile-protected accessibility contact endpoint
+# Accessibility contact — no CAPTCHA
 
-This Pages Function returns accessibility contact addresses only after Cloudflare Turnstile Siteverify succeeds.
+The accessibility contact route is intentionally static and friction-free. It does not use Cloudflare Turnstile, a server-side contact endpoint, an account, or a verification challenge.
 
-## Cloudflare Pages environment configuration
+## Contact route
 
-In the ORVIKA Pages project, configure **Settings → Variables and Secrets**:
+- The hosted Accessibility Statement page contains direct mailto links.
+- The Flutter Accessibility Statement exposes the same contact addresses as selectable text.
+- The browser or device email application handles message composition and delivery.
+- ORVIKA does not receive or store accessibility reports through an application API.
 
-| Name | Type | Value |
-| --- | --- | --- |
-| `ORVIKA_TURNSTILE_SECRET` | Secret | Secret belonging to the existing Turnstile widget. Never commit or expose it to the browser. |
-| `ORVIKA_TURNSTILE_HOSTNAMES` | Variable | `orvika.pages.dev,orvika-web.vercel.app` |
-| `ORVIKA_ACCESSIBILITY_CONTACT_EMAILS` | Secret | JSON array containing the two owner-approved email addresses. |
+## Privacy and abuse trade-off
 
-The site key is public and may be used by the browser widget. The widget action must be exactly `contact_reveal`. Production hostnames must not include localhost or 127.0.0.1.
+Because the contact addresses are visible in public application assets, they may be collected by automated email harvesters and receive spam. This is the deliberate trade-off for removing CAPTCHA and server-side disclosure. Use mailbox-provider spam filtering; do not add a CAPTCHA gate back to accessibility feedback.
 
-## Endpoint contract
+## Security and accessibility status
 
-- `POST /api/accessibility-contact`
-- Request JSON: `{"turnstileToken":"<single-use token>"}`
-- Success JSON: `{"emails":["..."]}`
-- Server-side Siteverify must return success=true, action=contact_reveal, and an exact allowlisted hostname.
-- Origin is independently checked against the hostname allowlist; CORS is never wildcarded.
-- Responses are non-cacheable. Invalid configuration or Siteverify failure fails closed.
-- Middleware permits POST/OPTIONS only on this exact path; static routes remain GET/HEAD only.
-
-## Deployment and validation
-
-This change does not deploy the Pages project. After review/merge, configure the three values above and deploy only through the separately authorized release process. Validate using a fresh real widget token and confirm that replay is rejected. Until then, live end-to-end validation remains pending.
+- No Cloudflare Turnstile site key or secret is required.
+- No Cloudflare Pages Function or contact API is required.
+- Static routes remain GET/HEAD only.
+- The visible Accessibility badge identifies the statement and feedback route; it is not a WCAG conformance or certification badge.
+- ORVIKA makes no claim of full WCAG 2.2 AA conformance.
