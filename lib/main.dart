@@ -379,7 +379,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
         visualDensity: VisualDensity.standard,
         iconButtonTheme: const IconButtonThemeData(
           style: ButtonStyle(
-            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            minimumSize: WidgetStatePropertyAll<Size>(Size(48, 48)),
             tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
