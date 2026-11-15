@@ -26,7 +26,7 @@ void main() {
     expect(reviewControl, findsOneWidget);
 
     var node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, isFalse);
+    expect(node.flagsCollection.isChecked, Tristate.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
@@ -36,7 +36,7 @@ void main() {
     await tester.pumpAndSettle();
 
     node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, isTrue);
+    expect(node.flagsCollection.isChecked, Tristate.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
@@ -55,7 +55,7 @@ void main() {
     expect(linksChip, findsOneWidget);
 
     var node = tester.getSemantics(linksChip);
-    expect(node.flagsCollection.isSelected, isFalse);
+    expect(node.flagsCollection.isSelected, Tristate.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
@@ -65,7 +65,7 @@ void main() {
     await tester.pumpAndSettle();
 
     node = tester.getSemantics(linksChip);
-    expect(node.flagsCollection.isSelected, isTrue);
+    expect(node.flagsCollection.isSelected, Tristate.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
