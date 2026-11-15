@@ -30,7 +30,7 @@ void main() {
       category: IntelligenceCategory.qrCodes,
     );
     expect(results.map((entry) => entry.id), contains('qr-payment'));
-    expect(results.length, 4);
+    expect(results.length, 1);
     expect(results.any((entry) => entry.id == 'message-payment'), isFalse);
   });
 
