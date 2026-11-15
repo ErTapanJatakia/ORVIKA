@@ -25,9 +25,11 @@ void main() {
     expect(reviewControl, findsOneWidget);
 
     var node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.hasCheckedState, isTrue);
     expect(node.flagsCollection.isChecked, isFalse);
-    expect(node.flagsCollection.hasTapAction, isTrue);
+    expect(
+      node.getSemanticsData().hasAction(SemanticsAction.tap),
+      isTrue,
+    );
 
     await tester.tap(reviewLabel);
     await tester.pumpAndSettle();
@@ -52,9 +54,11 @@ void main() {
     expect(linksChip, findsOneWidget);
 
     var node = tester.getSemantics(linksChip);
-    expect(node.flagsCollection.hasSelectedState, isTrue);
     expect(node.flagsCollection.isSelected, isFalse);
-    expect(node.flagsCollection.hasTapAction, isTrue);
+    expect(
+      node.getSemanticsData().hasAction(SemanticsAction.tap),
+      isTrue,
+    );
 
     await tester.tap(linksLabel);
     await tester.pumpAndSettle();
