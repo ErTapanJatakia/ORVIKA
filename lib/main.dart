@@ -1625,9 +1625,13 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final brand = Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
+    final brand = Semantics(
+      header: true,
+      label: 'ORVIKA — Personal Cyber Safety Intelligence',
+      child: ExcludeSemantics(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
         OrvikaOwlMark(size: 48, palette: palette),
         const SizedBox(width: 12),
         Flexible(
@@ -1673,7 +1677,9 @@ class _TopBar extends StatelessWidget {
             ],
           ),
         ),
-      ],
+          ],
+        ),
+      ),
     );
 
     final actions = Wrap(
