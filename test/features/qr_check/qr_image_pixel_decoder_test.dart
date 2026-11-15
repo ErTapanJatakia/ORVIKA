@@ -49,6 +49,34 @@ void main() {
     });
 
 
+
+    test('recovers a low-contrast QR image with contrast stretching', () {
+      const payload = 'ORVIKA-LOW-CONTRAST';
+      final matrix = MultiFormatWriter().encode(
+        payload,
+        BarcodeFormat.qrCode,
+        256,
+        256,
+      );
+      final rgba = _toRgba(matrix);
+      for (var index = 0; index < rgba.length; index += 4) {
+        final value = rgba[index] < 128 ? 110 : 145;
+        rgba[index] = value;
+        rgba[index + 1] = value;
+        rgba[index + 2] = value;
+      }
+
+      final results = decodeQrImagePixels(
+        width: matrix.width,
+        height: matrix.height,
+        rgba: rgba,
+      );
+
+      expect(results, hasLength(1));
+      expect(results.single.value, payload);
+      expect(results.single.format, 'qrCode');
+    });
+
     test('decodes an inverted QR image', () {
       const payload = 'ORVIKA-INVERTED-QR';
       final matrix = MultiFormatWriter().encode(
