@@ -20,6 +20,14 @@ The Academy screen stores completed lesson identifiers under `academy.completed.
 
 These values represent app preferences or progress markers. The inspected write paths do not store submitted URLs, decoded QR payloads, message text, credentials or security-analysis findings.
 
+## Active checker input and result controls
+
+- Link Check and QR Check expose an explicit clear action while input or a result is present. The action clears the text controller and the associated result; QR Check also clears detected-format context.
+- Editing a submitted Link or QR payload immediately invalidates the previous result so that findings for an earlier value are not displayed beside a changed value.
+- Message Check already invalidates its result when the message text changes and provides an explicit clear action.
+- These controls clear active widget state only. They do not promise secure memory erasure from the runtime, operating system, browser process, screenshots or crash dumps.
+- The clear-control regression tests verify visible UI state and controller contents; they do not constitute a forensic memory-erasure test.
+
 ## QR image picker lifecycle
 
 - Image selection begins only after the user explicitly opens QR Check image scanning and chooses an image.

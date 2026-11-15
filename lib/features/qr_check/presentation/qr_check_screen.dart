@@ -141,14 +141,10 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               maxLines: 7,
               keyboardType: TextInputType.multiline,
               maxLength: 8192,
-              onChanged: (_) {
-                if (_result != null || _detectedCodeFormat != null) {
-                  setState(() {
-                    _result = null;
-                    _detectedCodeFormat = null;
-                  });
-                }
-              },
+              onChanged: (_) => setState(() {
+                _result = null;
+                _detectedCodeFormat = null;
+              }),
               autocorrect: false,
               enableSuggestions: false,
               decoration: InputDecoration(
@@ -165,6 +161,19 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               icon: const Icon(Icons.policy_outlined),
               label: Text(l10n.text('checker.qr.action', 'Inspect QR content')),
             ),
+            if (_controller.text.isNotEmpty || result != null)
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  onPressed: () => setState(() {
+                    _controller.clear();
+                    _result = null;
+                    _detectedCodeFormat = null;
+                  }),
+                  icon: const Icon(Icons.clear_all_rounded),
+                  label: Text(l10n.text('checker.message.clear', 'Clear input and findings')),
+                ),
+              ),
             if (result != null) ...[
               Semantics(
                 container: true,
