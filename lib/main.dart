@@ -373,6 +373,18 @@ class _OrvikaAppState extends State<OrvikaApp> {
         canvasColor: palette.surface,
         cardColor: palette.surface,
         focusColor: scheme.primary.withValues(alpha: 0.22),
+        // Keep Material controls at the platform-friendly 48 logical-pixel
+        // baseline. Individual custom gesture surfaces still need review.
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        visualDensity: VisualDensity.standard,
+        iconButtonTheme: IconButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: palette.background,
           foregroundColor: scheme.onSurface,
