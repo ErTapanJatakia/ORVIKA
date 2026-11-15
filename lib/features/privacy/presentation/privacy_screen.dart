@@ -25,6 +25,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   static const _progressKey = 'privacy.reviewed.v1';
   final _checklist = const PrivacyChecklist();
   Set<String> _reviewedIds = <String>{};
+  final Map<String, PrivacyAssessmentStatus> _assessment = {};
   bool _isLoading = true;
 
   @override
@@ -69,6 +70,28 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     }
   }
 
+  void _setAssessment(String id, PrivacyAssessmentStatus? status) {
+    setState(() {
+      if (status == null) {
+        _assessment.remove(id);
+      } else {
+        _assessment[id] = status;
+      }
+    });
+  }
+
+  String _priorityLabel(PrivacyPriority priority) => switch (priority) {
+        PrivacyPriority.high => OrvikaLocalizations.of(context).text('privacy.priority.high', 'High priority'),
+        PrivacyPriority.recommended => OrvikaLocalizations.of(context).text('privacy.priority.recommended', 'Recommended'),
+        PrivacyPriority.routine => OrvikaLocalizations.of(context).text('privacy.priority.routine', 'Routine review'),
+      };
+
+  String _statusLabel(PrivacyAssessmentStatus status) => switch (status) {
+        PrivacyAssessmentStatus.inPlace => OrvikaLocalizations.of(context).text('privacy.status.inPlace', 'Already in place'),
+        PrivacyAssessmentStatus.needsAttention => OrvikaLocalizations.of(context).text('privacy.status.needsAttention', 'Needs attention'),
+        PrivacyAssessmentStatus.unsure => OrvikaLocalizations.of(context).text('privacy.status.unsure', 'Not sure'),
+      };
+
   Future<void> _resetProgress() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -88,7 +111,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       ),
     );
     if (confirmed != true) return;
-    setState(() => _reviewedIds = <String>{});
+    setState(() {
+      _reviewedIds = <String>{};
+      _assessment.clear();
+    });
     try {
       final preferences = await SharedPreferences.getInstance();
       await preferences.remove(_progressKey);
@@ -205,6 +231,54 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.text('privacy.assessment.title', 'Your privacy assessment'),
+                          style: const TextStyle(fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          l10n.text('privacy.assessment.description', 'For each practice, choose the answer that best describes your current setup. ORVIKA does not inspect or verify your settings.'),
+                          style: TextStyle(color: scheme.onSurfaceVariant, height: 1.4),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _AssessmentCount(
+                              label: l10n.text('privacy.status.needsAttention', 'Needs attention'),
+                              count: _assessment.values.where((value) => value == PrivacyAssessmentStatus.needsAttention).length,
+                            ),
+                            _AssessmentCount(
+                              label: l10n.text('privacy.status.unsure', 'Not sure'),
+                              count: _assessment.values.where((value) => value == PrivacyAssessmentStatus.unsure).length,
+                            ),
+                            _AssessmentCount(
+                              label: l10n.text('privacy.status.inPlace', 'Already in place'),
+                              count: _assessment.values.where((value) => value == PrivacyAssessmentStatus.inPlace).length,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.text('privacy.assessment.priorityNote', 'Start with items marked High priority, then work through recommended and routine practices. Priority is editorial guidance, not a personalised risk score.'),
+                          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.4),
+                        ),
+                        Text(
+                          l10n.text('privacy.assessment.sessionNote', 'Your answers are kept only in this screen session. Only checklist review marks are saved locally on this device.'),
+                          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.4),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 for (final category in PrivacyCategory.values) ...[
                   Padding(
                     padding: const EdgeInsets.only(top: 18, bottom: 8),
@@ -239,9 +313,54 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                         expandedCrossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.flag_outlined,
+                                  size: 18,
+                                  color: _checklist.priorityFor(practice) == PrivacyPriority.high
+                                      ? scheme.error
+                                      : scheme.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _priorityLabel(_checklist.priorityFor(practice)),
+                                  style: TextStyle(
+                                    color: _checklist.priorityFor(practice) == PrivacyPriority.high
+                                        ? scheme.error
+                                        : scheme.primary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           _GuidanceSection(label: l10n.text('privacy.detail.why', 'WHY IT MATTERS'), value: practice.why),
                           _GuidanceSection(label: l10n.text('privacy.detail.action', 'WHAT YOU CAN DO'), value: practice.action),
                           _GuidanceSection(label: l10n.text('privacy.detail.limit', 'IMPORTANT LIMIT'), value: practice.limit),
+                          const SizedBox(height: 12),
+                          Text(
+                            l10n.text('privacy.assessment.prompt', 'How does this practice apply to you?'),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: PrivacyAssessmentStatus.values.map((status) {
+                              final selected = _assessment[practice.id] == status;
+                              return ChoiceChip(
+                                label: Text(_statusLabel(status)),
+                                selected: selected,
+                                onSelected: (_) => _setAssessment(
+                                  practice.id,
+                                  selected ? null : status,
+                                ),
+                              );
+                            }).toList(),
+                          ),
                           const SizedBox(height: 8),
                           CheckboxListTile(
                             contentPadding: EdgeInsets.zero,
@@ -283,6 +402,19 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
             ),
     );
   }
+}
+
+class _AssessmentCount extends StatelessWidget {
+  const _AssessmentCount({required this.label, required this.count});
+
+  final String label;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) => Chip(
+        label: Text('$label: $count'),
+        visualDensity: VisualDensity.compact,
+      );
 }
 
 class _GuidanceSection extends StatelessWidget {
