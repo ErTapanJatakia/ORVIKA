@@ -2,7 +2,7 @@
 
 ## Implemented shared defaults
 
-The application theme now provides a stronger shared focus colour token and a 48 × 48 logical-pixel minimum size with padded tap-target behaviour for Material icon, elevated, outlined and text buttons.
+The application theme now uses the palette primary colour at 32% alpha for its shared focus colour token (previously 22%) and provides a 48 × 48 logical-pixel minimum size with padded tap-target behaviour for Material icon, elevated, outlined and text buttons.
 
 These defaults are a baseline, not proof that every control conforms. Custom-painted controls, gesture-only surfaces, compact chips, navigation elements and widgets that override their theme must be audited individually.
 
