@@ -141,14 +141,10 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               maxLines: 7,
               keyboardType: TextInputType.multiline,
               maxLength: 8192,
-              onChanged: (_) {
-                if (_result != null || _detectedCodeFormat != null) {
-                  setState(() {
-                    _result = null;
-                    _detectedCodeFormat = null;
-                  });
-                }
-              },
+              onChanged: (_) => setState(() {
+                _result = null;
+                _detectedCodeFormat = null;
+              }),
               autocorrect: false,
               enableSuggestions: false,
               decoration: InputDecoration(
