@@ -42,7 +42,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('0 of 8 lessons completed'), findsOneWidget);
-    expect(find.text('Not quite. Review the key points and try again.'), findsOneWidget);
+    expect(find.textContaining('Not quite. Correct answer: Use the bank app or a known official contact route independently.'), findsOneWidget);
+    expect(find.textContaining('Use a contact route you obtain independently.'), findsOneWidget);
   });
 
   testWidgets('Academy restores locally saved completion progress', (tester) async {
@@ -59,4 +60,29 @@ void main() {
 
     expect(find.text('2 of 8 lessons completed'), findsOneWidget);
   });
+  testWidgets('Academy reset requires confirmation and clears saved progress', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'academy.completed.v1': <String>['verify_sender'],
+    });
+    tester.view.physicalSize = const Size(900, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const MaterialApp(home: AcademyScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('1 of 8 lessons completed'), findsOneWidget);
+
+    await tester.tap(find.text('Reset progress'));
+    await tester.pumpAndSettle();
+    expect(find.text('Reset learning progress?'), findsOneWidget);
+    expect(find.text('1 of 8 lessons completed'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Reset progress'));
+    await tester.pumpAndSettle();
+    expect(find.text('0 of 8 lessons completed'), findsOneWidget);
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getStringList('academy.completed.v1'), isNull);
+  });
+
 }

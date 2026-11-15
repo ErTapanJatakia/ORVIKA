@@ -62,6 +62,30 @@ class _AcademyScreenState extends State<AcademyScreen> {
   }
 
   Future<void> _resetProgress() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(OrvikaLocalizations.of(dialogContext).text(
+          'academy.reset.title',
+          'Reset learning progress?',
+        )),
+        content: Text(OrvikaLocalizations.of(dialogContext).text(
+          'academy.reset.description',
+          'This clears completed lesson markers saved on this device and answers in this session.',
+        )),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(OrvikaLocalizations.of(dialogContext).text('common.cancel', 'Cancel')),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(OrvikaLocalizations.of(dialogContext).text('academy.reset.confirm', 'Reset progress')),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
     setState(() {
       _completed.clear();
       _answers.clear();
@@ -281,7 +305,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
                                   child: Text(
                                     _answers[lesson.id] == lesson.correctIndex
                                         ? '${l10n.text('academy.correct', 'Correct.')} ${lesson.explanation}'
-                                        : l10n.text('academy.tryAgain', 'Not quite. Review the key points and try again.'), 
+                                        : '${l10n.text('academy.tryAgain', 'Not quite.')} ${l10n.text('academy.correctAnswer', 'Correct answer:')} ${lesson.options[lesson.correctIndex]}. ${lesson.explanation}', 
                                     style: TextStyle(
                                       color: _answers[lesson.id] == lesson.correctIndex
                                           ? scheme.primary
