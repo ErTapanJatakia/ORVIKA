@@ -182,7 +182,7 @@ class MessageAnalyzer {
 
   String _trimTrailingPunctuation(String value) {
     var end = value.length;
-    const trailingCharacters = '.,!?;:)\]}>\u2019\u201d';
+    const trailingCharacters = '.,!?;:)\\]}>’”';
     while (end > 0 && trailingCharacters.contains(value[end - 1])) {
       end--;
     }
