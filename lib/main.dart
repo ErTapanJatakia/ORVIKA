@@ -114,9 +114,6 @@ class _OrvikaAppState extends State<OrvikaApp> {
   OrvikaTheme _selectedTheme = OrvikaTheme.obsidian;
   OrvikaLanguage _selectedLanguage = OrvikaLanguage.english;
   String _selectedCatalogue = 'russia';
-  bool _hasSelectedLanguage = false;
-  bool _isLoadingPreferences = true;
-  bool _hasCompletedOnboarding = false;
   double _textScale = 1.0;
   bool _boldText = false;
   bool _reduceMotion = false;
@@ -136,7 +133,6 @@ class _OrvikaAppState extends State<OrvikaApp> {
       final hasReviewedSavedLanguage =
           savedLanguage != null && restoredLanguage.hasReviewedTranslation;
       final savedCatalogue = preferences.getString('appearance.languageCatalogue') ?? 'russia';
-      final completed = preferences.getBool('onboarding.completed.v1') ?? false;
       final textScale = preferences.getDouble('accessibility.textScale') ?? 1.0;
       final boldText = preferences.getBool('accessibility.boldText') ?? false;
       final reduceMotion = preferences.getBool('accessibility.reduceMotion') ?? false;
@@ -149,7 +145,6 @@ class _OrvikaAppState extends State<OrvikaApp> {
         _selectedLanguage = hasReviewedSavedLanguage
             ? restoredLanguage
             : OrvikaLanguage.english;
-        _hasSelectedLanguage = true;
         if (savedName != null) {
           for (final theme in OrvikaTheme.values) {
             if (theme.name == savedName) {
@@ -158,41 +153,13 @@ class _OrvikaAppState extends State<OrvikaApp> {
             }
           }
         }
-        _hasCompletedOnboarding = true;
         _textScale = ((textScale.clamp(0.5, 2.0) * 20).round() / 20).toDouble();
         _boldText = boldText;
         _reduceMotion = reduceMotion;
-        _isLoadingPreferences = false;
       });
     } catch (_) {
-      if (mounted) setState(() => _isLoadingPreferences = false);
+      // The dashboard remains available with English and default preferences.
     }
-  }
-
-  Future<void> _completeLanguageSelection() async {
-    await _selectLanguage(_selectedLanguage);
-    try {
-      final preferences = await SharedPreferences.getInstance();
-      await preferences.setBool('onboarding.completed.v1', true);
-    } catch (_) {
-      // Language selection must not be blocked by local storage.
-    }
-    if (mounted) {
-      setState(() {
-        _hasSelectedLanguage = true;
-        _hasCompletedOnboarding = true;
-      });
-    }
-  }
-
-  Future<void> _completeOnboarding() async {
-    try {
-      final preferences = await SharedPreferences.getInstance();
-      await preferences.setBool('onboarding.completed.v1', true);
-    } catch (_) {
-      // Keep the app usable if local preference storage is unavailable.
-    }
-    if (mounted) setState(() => _hasCompletedOnboarding = true);
   }
 
   Future<void> _selectLanguage(OrvikaLanguage language) async {
