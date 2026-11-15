@@ -48,8 +48,7 @@ void main() {
       for (final language in OrvikaLanguage.allValues) {
         expect(
           language.hasReviewedTranslation,
-          OrvikaLocalizations.translatedLanguageCodes.contains(language.code) &&
-              const {'en', 'ru', 'ar', 'pt-PT'}.contains(language.code),
+          const {'en', 'ru', 'ar', 'pt-PT'}.contains(language.code),
           reason: '${language.code} review status must not be inferred from authored draft strings',
         );
       }
