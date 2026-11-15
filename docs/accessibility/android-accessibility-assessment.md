@@ -21,14 +21,29 @@ The following tests were identified by repository inspection. They are useful re
 
 | Existing test file | Existing coverage visible in source | Android evidence status |
 |---|---|---|
-| `test/features/accessibility/feature_semantics_test.dart` | Feature headings; Link Check, QR Check, Message Check and Intelligence live updates; Privacy and Academy progress labels/values; Academy answer feedback | Widget-level only; TalkBack pending |
-| `test/features/accessibility/onboarding_settings_semantics_test.dart` | Language heading/search label; language result-count announcement; onboarding headings/progress; settings section headings | Widget-level only; TalkBack pending |
-| `test/features/accessibility/semantics_locale_test.dart` | Locale-specific semantics coverage (review exact assertions during implementation) | Widget-level only; native pronunciation/reading order pending |
-| `test/features/accessibility/interaction_validation_test.dart` | Interaction validation (review exact assertions during implementation) | Automated only; Switch Access pending |
-| `test/features/accessibility/text_scale_range_test.dart` | In-app text-scale preference range/default regression | Platform font/display scaling pending |
-| `test/widget_test.dart` | Dashboard labels/actions and keyboard traversal/activation among other app regressions | Flutter test environment only |
+| `test/features/accessibility/feature_semantics_test.dart` | Seven feature headings; live-region updates for Link Check, QR Check, Message Check and Intelligence; Privacy/Academy progress labels and numeric values; Academy answer feedback | Flutter semantics assertions only; TalkBack announcement timing, verbosity and reading order pending |
+| `test/features/accessibility/onboarding_settings_semantics_test.dart` | Language heading and search label; zero-result search announcement; onboarding page headings and progress; Language, visual-environment and Accessibility settings headings | Flutter semantics assertions only; selection state, option traversal and native focus behaviour pending |
+| `test/features/accessibility/semantics_locale_test.dart` | BCP 47 locale mapping for English, Russian, Hindi, Portuguese variants, Simplified Chinese, Punjabi, Urdu and Serbian; selected Russian locale published on a Text semantics node | Locale metadata assertion only; native pronunciation, script handling and RTL reading order pending |
+| `test/features/accessibility/interaction_validation_test.dart` | Palette accent contrast calculation against background/surface; two dashboard IconButton hit-box dimensions; Flutter keyboard Tab/Shift+Tab/Enter traversal to Link Check | The 48px assertion currently covers only two dashboard icon actions; does not prove every target meets WCAG 2.2 target-size/spacing requirements. Keyboard test is not Android Switch Access evidence |
+| `test/features/accessibility/text_scale_range_test.dart` | Current `main` test asserts 85% initial in-app scale and a 50–200% slider range in 5-point steps; verifies accessibility labels in 14 language packs | In-app preference only; Android system font/display scaling and combined scaling behaviour pending. A11Y-02 draft proposes a 100% fresh-install default, so re-check this test after that PR is integrated |
+| `test/features/accessibility/browser_navigation_focus_test.dart` | Space activation of dashboard destination; focus restoration after returning from Link Check | Browser/keyboard-oriented Flutter test; not native Android hardware-keyboard or Switch Access evidence |
+| `test/features/accessibility/onboarding_settings_responsive_test.dart` | Language picker and onboarding at widths 280–1920; visible locale tags; settings readable width; RTL plus 200% Flutter text scaling scenario | Simulated Flutter viewport coverage only; not Android display-size/font-scale testing |
+| `test/widget_test.dart` | General dashboard labels/actions and other application widget regressions | Flutter test environment only; no native accessibility service observation |
 
-## 3. Journey and assistive-technology matrix
+## 3. Evidence interpretation and identified automation gaps
+
+The current source-level tests establish a useful baseline for headings, selected live-region nodes, progress values, locale metadata, a limited set of dashboard hit boxes, and simulated responsive layouts. They do **not** currently establish:
+
+- Android `AccessibilityNodeInfo` output, TalkBack speech/announcement timing, traversal order, or focus restoration on-device.
+- Switch Access scan order, activation, or completion of workflows without touch gestures.
+- Platform Android font-size/display-size behaviour, including interaction with the app's own text-scale preference.
+- Accessible names, roles, values and state for every form control, camera permission path, dialog, menu, snackbar, result severity and error state.
+- Equivalent non-drag/non-swipe alternatives for every gesture-driven interaction.
+- RTL reading order and pronunciation through TalkBack.
+
+These are coverage gaps to validate, not confirmed product defects. Do not add synthetic assertions that merely restate framework defaults; new automated tests should target app-owned semantics and remain deterministic.
+
+## 4. Journey and assistive-technology matrix
 
 Use the same representative journeys across supported Android device sizes. Record the exact app commit, build variant, Android version, device model, display size, font size, TalkBack version/settings, and test date.
 
@@ -46,7 +61,7 @@ Use the same representative journeys across supported Android device sizes. Reco
 | Appearance/accessibility settings | Control names, current values, selected state, slider adjustment | Every setting adjustable without precision gestures | Font scaling, bold text, reduced motion, contrast theme | Pending device |
 | Dialogs, menus and snackbars | Focus entry/return, dismissal, announcement and no trapped focus | Dismiss/confirm actions reachable | Large font and orientation | Pending device |
 
-## 4. Manual test protocol
+## 5. Manual test protocol
 
 ### TalkBack
 1. Install the debug build generated from the exact candidate commit.
@@ -70,7 +85,7 @@ Use the same representative journeys across supported Android device sizes. Reco
 3. Confirm text, controls, dialogs and bottom actions remain visible and usable; scrolling must expose content rather than clipping it.
 4. Test RTL with a reviewed RTL locale.
 
-## 5. Evidence and defect recording
+## 6. Evidence and defect recording
 
 For every finding record:
 - Unique finding ID and affected journey/control.
@@ -84,7 +99,7 @@ For every finding record:
 
 Do not include real messages, phone numbers, URLs, QR payloads, contacts, account identifiers, or other personal data in evidence. Use synthetic examples only. Avoid retaining screen recordings unless separately justified and explicitly approved; concise written observations are preferred.
 
-## 6. Initial risks to investigate (not confirmed defects)
+## 7. Initial risks to investigate (not confirmed defects)
 
 | ID | Risk | Required evidence |
 |---|---|---|
@@ -95,7 +110,7 @@ Do not include real messages, phone numbers, URLs, QR payloads, contacts, accoun
 | AND-05 | RTL reading order and pronunciation may differ from visual layout | TalkBack testing in Arabic and Urdu |
 | AND-06 | Focus may not be restored appropriately after dialogs, menus or route changes | TalkBack and Switch Access navigation observations |
 
-## 7. Exit criteria
+## 8. Exit criteria
 
 - The journey matrix has device-specific results and evidence references.
 - Existing automated tests are mapped to the behaviour they actually assert.
@@ -104,7 +119,7 @@ Do not include real messages, phone numbers, URLs, QR payloads, contacts, accoun
 - Android findings remain separate from web results in the master WCAG 2.2 register.
 - No WCAG2ICT/WCAG conformance claim is made from this workstream alone.
 
-## 8. References
+## 9. References
 
 - W3C, [WCAG2ICT: Guidance on Applying WCAG 2 to Non-Web Information and Communications Technologies](https://www.w3.org/TR/wcag2ict/)
 - Android Developers, [Build accessible apps](https://developer.android.com/guide/topics/ui/accessibility)
