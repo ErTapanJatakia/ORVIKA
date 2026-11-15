@@ -151,7 +151,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       appBar: OrvikaFeatureAppBar(
         title: l10n.text('module.privacy', 'Privacy'),
         actions: [
-          if (!_isLoading && reviewed > 0)
+          if (!_isLoading && (reviewed > 0 || _assessment.isNotEmpty))
             IconButton(
               tooltip: l10n.text('privacy.reset.tooltip', 'Reset review progress'),
               onPressed: _resetProgress,
