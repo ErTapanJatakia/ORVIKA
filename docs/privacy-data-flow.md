@@ -16,7 +16,7 @@ The current `SharedPreferences` writes reviewed in `lib/main.dart` are limited t
 - onboarding completion;
 - accessibility text scale, bold text and reduced-motion preferences.
 
-The Academy screen stores completed lesson identifiers under `academy.completed.v1`. The Privacy screen stores reviewed checklist identifiers under `privacy.reviewed.v1`.
+The Academy screen stores completed lesson identifiers under `academy.completed.v1`. The Privacy screen stores reviewed checklist identifiers under `privacy.reviewed.v1`. Privacy self-assessment answers (`Already in place`, `Needs attention`, or `Not sure`) remain in the active screen's memory only and are discarded when the screen is disposed or the user resets the assessment.
 
 These values represent app preferences or progress markers. The inspected write paths do not store submitted URLs, decoded QR payloads, message text, credentials or security-analysis findings.
 
@@ -41,11 +41,19 @@ These values represent app preferences or progress markers. The inspected write 
 
 The Vercel integration remains a static page-view-only integration as documented in [analytics.md](analytics.md). It measures aggregate page-view and basic technical visitor metrics; ORVIKA does not add custom feature events, route instrumentation, user identifiers or security-analysis telemetry. Hosting/CDN infrastructure may independently process request metadata such as IP address, browser headers and security logs. This application-source audit does not establish the provider's exact retention or prove that no technical personal data is processed. The existing production Network-tab and dashboard verification remains the evidence for deployment-level analytics operation.
 
+## Privacy self-assessment boundary
+
+The Privacy module is a user-guided self-assessment, not a device scanner or compliance audit. It presents 12 practices across accounts, device, apps and browsing. Each practice explains why it matters, an action the user can take, and an important limitation. The user may select one of three session-only responses: already in place, needs attention, or not sure.
+
+Editorial priority labels (high, recommended, routine) are fixed guidance to help sequence the review. They are not personalised risk ratings, vulnerability findings, or evidence that a device or account is exposed. The summary counts only the user's current in-session responses. These answers are not written to SharedPreferences, analytics, or a remote service.
+
+The separate reviewed checkbox records only that guidance was reviewed; its stable practice identifier is stored locally so progress can be resumed. Reset clears those local review marks and the current in-session answers. It does not modify operating-system, application, browser, or account settings. A completed checklist is not a security certification or professional privacy assessment.
+
 ## Automated regression coverage
 
 `test/privacy_data_isolation_test.dart` exercises the actual Link, QR and Message screens with distinctive sensitive test inputs, submits each analysis, and asserts that the mocked `SharedPreferences` store remains empty.
 
-This test proves only that these screen flows do not write to the SharedPreferences interface under test. It does not prove the absence of all possible filesystem, browser, operating-system, crash-reporting, extension, or network side channels. The repository-level source review and production/manual checks remain separate evidence.
+This test proves only that these screen flows do not write to the SharedPreferences interface under test. It does not prove the absence of all possible filesystem, browser, operating-system, crash-reporting, extension, or network side channels. The Privacy widget tests additionally verify that selecting an assessment response updates the in-session summary without writing any key to SharedPreferences. The repository-level source review and production/manual checks remain separate evidence.
 
 ## Offline boundary
 

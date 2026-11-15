@@ -21,6 +21,26 @@ void main() {
     }
   });
 
+  test('editorial priorities are stable and distinguish critical hygiene items', () {
+    const checklist = PrivacyChecklist();
+    final byId = {
+      for (final practice in PrivacyChecklist.practices) practice.id: practice,
+    };
+
+    expect(checklist.priorityFor(byId['account-mfa']!), PrivacyPriority.high);
+    expect(checklist.priorityFor(byId['device-updates']!), PrivacyPriority.high);
+    expect(checklist.priorityFor(byId['browsing-network']!), PrivacyPriority.recommended);
+    expect(checklist.priorityFor(byId['browsing-sharing']!), PrivacyPriority.routine);
+  });
+
+  test('assessment answers are explicit states and not persisted by the domain model', () {
+    expect(PrivacyAssessmentStatus.values, containsAll([
+      PrivacyAssessmentStatus.inPlace,
+      PrivacyAssessmentStatus.needsAttention,
+      PrivacyAssessmentStatus.unsure,
+    ]));
+  });
+
   test('category results contain only matching practices and are immutable', () {
     final results = const PrivacyChecklist().byCategory(PrivacyCategory.apps);
 
