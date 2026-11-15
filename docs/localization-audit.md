@@ -1,4 +1,4 @@
-# ORVIKA localization audit — current status: 13 November 2026
+# ORVIKA localization audit — current status: 16 November 2026
 
 > Historical note: the baseline and early phase sections below describe the state at the time they were written. They are not a statement of current product coverage. The current consolidated status is recorded here and in the latest dated sections.
 
@@ -42,7 +42,7 @@ The `OrvikaLanguage.hasReviewedTranslation` flag currently marks English, Russia
 ## Current architecture
 
 - Localization is implemented in `lib/core/localization/orvika_language.dart` and `orvika_localizations.dart`.
-- The language picker is a unified, de-duplicated catalogue built from Russia- and India-focused source catalogues. The current automated test expects 191 selectable language codes.
+- The language picker is a unified, de-duplicated catalogue built from Russia- and India-focused source catalogues. The current automated test expects 192 selectable language codes.
 - ORVIKA uses a custom `OrvikaLanguageScope` and `OrvikaLocalizations` lookup. It does not currently use generated ARB files.
 - Flutter Material/Cupertino framework delegates are configured for English and Russian only. The custom ORVIKA language scope is independent of those framework delegates.
 - Authored non-English packs are Russian plus Hindi, German, French, Italian, Punjabi, Urdu, Arabic, Marathi, Gujarati and Sanskrit. The latter ten are explicitly classified as draft packs; only English and Russian are marked reviewed.
@@ -146,3 +146,16 @@ A seven-screen widget regression now checks the Simplified Chinese app-bar title
 No Simplified Chinese font is currently bundled. Flutter's text renderer is expected to use platform fallback glyphs where the configured Latin font lacks CJK characters, but the actual fallback face and metrics vary by Android device, browser and operating system. This is an explicit platform-fallback decision, not a claim of deterministic typography. Validate representative Android and browser rendering before enabling the locale. Do not add a font binary without checking its upstream licence, redistribution terms and app-size impact.
 
 The Chinese pack remains a draft pending qualified native-speaker review of UI, security guidance, privacy/analytics disclosures and accessibility wording. CI verifies code and regression behavior only; it cannot approve translation quality. Keep zh out of reviewed translation coverage and do not expose it as a completed translation until that human review and the platform typography checks are complete.
+
+
+## ORVIKA-08 — release guard reconciliation (16 November 2026)
+
+The current source of truth is the implementation in `lib/core/localization/orvika_language.dart`:
+
+- `OrvikaLanguage.allValues` produces 192 unique selectable language entries after de-duplication, excluding the two temporarily unavailable codes `ba` and `tt`, and adding the distinct `pt-PT` entry.
+- Reviewed translation status remains limited to English (`en`), Russian (`ru`), Arabic (`ar`) and Portugal Portuguese (`pt-PT`). No other locale is promoted by this change.
+- Draft translation metadata remains separate from picker availability. In particular, the presence of authored Simplified Chinese strings does not enable the locale for release.
+- Arabic and Urdu retain right-to-left metadata independently of their translation-review status.
+- The new localization release-guard test pins the 192-entry count, uniqueness, deferred-code exclusions, reviewed-language allowlist, and RTL metadata. This is a regression guard for catalogue governance, not linguistic or platform-rendering evidence.
+
+Historical statements elsewhere in this audit describe earlier implementation snapshots. Where they conflict with this dated section or the current source, use this section and current source as the operational record.
