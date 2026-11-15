@@ -373,6 +373,14 @@ class _OrvikaAppState extends State<OrvikaApp> {
         canvasColor: palette.surface,
         cardColor: palette.surface,
         focusColor: scheme.primary.withValues(alpha: 0.22),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        visualDensity: VisualDensity.standard,
+        iconButtonTheme: const IconButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: MaterialTapTargetSize.padded,
+          ),
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: palette.background,
           foregroundColor: scheme.onSurface,
@@ -1899,6 +1907,7 @@ class _ModuleCardState extends State<_ModuleCard> {
             },
             borderRadius: BorderRadius.circular(19),
             child: Container(
+              key: ValueKey('dashboard-module-card-${widget.module.title}'),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(19),
