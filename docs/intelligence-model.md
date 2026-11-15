@@ -23,7 +23,9 @@ No network requests are made by these domain types.
 
 The user-facing reference library contains 22 curated entries across Links, Messages, QR Codes and Account Safety. Each entry provides an observable signal, plain-language meaning, a safer next step and an explicit limitation. Search matches these explanatory fields; category filters can be combined with search. Entries are educational guidance and are linked in the interface to the corresponding Link Check, Message Check, QR Check or Privacy module.
 
-The catalogue is bundled with the application and works offline. It is not dynamically refreshed. Editorial maintenance should review technical accuracy, regional relevance, language quality, source/licence constraints and the action/limitation text before adding or changing an entry. A release should update the catalogue documentation and its regression tests together. The count is a content inventory, not a measure of threat coverage.
+The catalogue is bundled with the application and works offline. It is not dynamically refreshed. The original 10 entries have existing locale-specific content mappings; the 12 entries added in this completion batch currently fall back to English until reviewed translations are supplied. Search checks both the source wording and available localized wording. Do not describe the expanded catalogue as fully translated.
+
+Editorial maintenance should review technical accuracy, regional relevance, language quality, source/licence constraints and the action/limitation text before adding or changing an entry. A release should update the catalogue documentation and its regression tests together. The count is a content inventory, not a measure of threat coverage.
 
 ## Evidence support score
 
