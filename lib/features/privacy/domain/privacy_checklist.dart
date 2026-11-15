@@ -1,5 +1,12 @@
 enum PrivacyCategory { accounts, device, apps, browsing }
 
+/// User-selected response to a privacy practice. These answers stay in memory
+/// for the active screen and are never persisted by ORVIKA.
+enum PrivacyAssessmentStatus { inPlace, needsAttention, unsure }
+
+/// Editorial guidance priority, not a measured vulnerability or risk score.
+enum PrivacyPriority { high, recommended, routine }
+
 class PrivacyPractice {
   const PrivacyPractice({
     required this.id,
@@ -120,6 +127,28 @@ class PrivacyChecklist {
       limit: 'HTTPS protects data in transit to a site but does not prove the site is legitimate or make an untrusted network safe.',
     ),
   ];
+
+  /// Priority is a fixed editorial prompt to help sequence a self-review.
+  /// It is not personalised risk scoring and does not inspect device state.
+  PrivacyPriority priorityFor(PrivacyPractice practice) {
+    const highPriorityIds = {
+      'account-mfa',
+      'account-recovery',
+      'device-updates',
+      'device-lock',
+      'apps-permissions',
+      'apps-sources',
+    };
+    const recommendedIds = {
+      'account-unique-passwords',
+      'device-backups',
+      'apps-unused',
+      'browsing-network',
+    };
+    if (highPriorityIds.contains(practice.id)) return PrivacyPriority.high;
+    if (recommendedIds.contains(practice.id)) return PrivacyPriority.recommended;
+    return PrivacyPriority.routine;
+  }
 
   List<PrivacyPractice> byCategory(PrivacyCategory category) =>
       List.unmodifiable(practices.where((practice) => practice.category == category));
