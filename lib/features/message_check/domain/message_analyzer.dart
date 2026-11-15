@@ -135,7 +135,7 @@ class MessageAnalyzer {
 
     final contacts = _contactPattern
         .allMatches(rawInput)
-        .map((match) => match.group(0)!.trim())
+        .map((match) => match.group(1)!.trim())
         .toSet()
         .toList(growable: false);
     if (contacts.isNotEmpty) {
