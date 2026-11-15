@@ -177,9 +177,16 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
               child: Container(
                 width: double.infinity,
                 color: Colors.black,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
+                child: Semantics(
+                  container: true,
+                  label: l10n.text(
+                    'checker.camera.previewDescription',
+                    'Camera preview. Position a QR code within the visible frame. If camera scanning is unavailable, close the scanner and use the paste-and-check option.',
+                  ),
+                  child: ExcludeSemantics(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
                     MobileScanner(
                       controller: _controller,
                       onDetect: _handleCapture,
@@ -210,7 +217,9 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                         ),
                       ),
                     ),
-                  ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -220,8 +229,17 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (_statusMessage != null) ...[
-                    Text(_statusMessage!,
-                        style: TextStyle(color: scheme.error, height: 1.4)),
+                    Semantics(
+                      liveRegion: true,
+                      container: true,
+                      label: _statusMessage!,
+                      child: ExcludeSemantics(
+                        child: Text(
+                          _statusMessage!,
+                          style: TextStyle(color: scheme.error, height: 1.4),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 10),
                   ],
                   if (!_cameraActive)

@@ -191,4 +191,45 @@ void main() {
     );
     semantics.dispose();
   });
+
+  testWidgets('analysis result sections are exposed as semantic headings',
+      (tester) async {
+    final semantics = tester.ensureSemantics();
+
+    await tester.pumpWidget(const MaterialApp(home: LinkCheckScreen()));
+    await tester.enterText(find.byType(TextField), 'http://example.com');
+    await tester.tap(find.text('Analyse address'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(find.text('Analysis findings'))
+          .flagsCollection.isHeader,
+      isTrue,
+    );
+
+    await tester.pumpWidget(const MaterialApp(home: QrCheckScreen()));
+    await tester.enterText(find.byType(TextField), 'https://example.com');
+    await tester.tap(find.text('Inspect QR content'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(find.text('Inspection result'))
+          .flagsCollection.isHeader,
+      isTrue,
+    );
+
+    await tester.pumpWidget(const MaterialApp(home: MessageCheckScreen()));
+    await tester.enterText(
+      find.byType(TextField),
+      'URGENT: Your account is blocked. Share your OTP at https://example.test',
+    );
+    await tester.tap(find.text('Inspect message'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(find.text('Review findings'))
+          .flagsCollection.isHeader,
+      isTrue,
+    );
+
+    semantics.dispose();
+  });
+
 }

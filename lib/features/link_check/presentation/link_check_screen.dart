@@ -126,11 +126,14 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                               ),
                               const SizedBox(width: 9),
                               Expanded(
-                                child: Text(
-                                  l10n.text('checker.link.result', 'Analysis findings'),
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w700,
+                                child: Semantics(
+                                  header: true,
+                                  child: Text(
+                                    l10n.text('checker.link.result', 'Analysis findings'),
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
                               ),
