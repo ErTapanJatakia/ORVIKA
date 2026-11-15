@@ -110,11 +110,6 @@ Evidence and results must be added only after the relevant evaluation has been p
 | 2.4.11 | Focus Not Obscured (Minimum) | AA | Not assessed | Not assessed | |
 | 2.5.7 | Dragging Movements | AA | Not assessed | Not assessed | |
 | 2.5.8 | Target Size (Minimum) | AA | Not assessed | Not assessed | |
-| 3.2.6 | Consistent Help | A | Not assessed | Not assessed | |
-| 3.3.7 | Redundant Entry | A | Not assessed | Not assessed | |
-| 3.3.8 | Accessible Authentication (Minimum) | AA | Not assessed | Not assessed | |
-
-> **Register correction note:** The criterion inventory must contain each unique criterion exactly once. The three WCAG 2.2 additions at Level A (3.2.6 and 3.3.7) and Level AA (2.4.11, 2.5.7, 2.5.8, 3.3.8) are included. During A11Y-01 review, validate this table against the W3C Recommendation and remove any accidental duplicate rows before baseline sign-off.
 
 ## 4. Evaluation scope and representative journeys
 
