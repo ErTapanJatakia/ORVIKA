@@ -80,7 +80,9 @@ List<QrImageCode> decodeQrImagePixels({
         );
         results.putIfAbsent('${code.format}: ${code.value}', () => code);
       }
-      if (results.isNotEmpty) break;
+      // Continue through the remaining channel interpretations. A coloured
+      // image can contain different codes that are visible in different
+      // channels; stopping after the first hit silently drops those results.
     } on NotFoundException {
       // Try the next channel/contrast interpretation before giving up.
     }
