@@ -38,6 +38,27 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
         IntelligenceCategory.accountSafety => OrvikaLocalizations.of(context).text('intelligence.category.accounts', 'Account safety'),
       };
 
+
+  IntelligenceEntry _localizeEntry(IntelligenceEntry entry, String code) {
+    if (code == 'pt' || code == 'pt-PT') {
+      return PortugueseIntelligenceContent.localize(entry, code);
+    }
+    if (code == 'es') return SpanishIntelligenceContent.localize(entry, code);
+    if (code == 'fr') return FrenchIntelligenceContent.localize(entry, code);
+    if (code == 'it') return ItalianIntelligenceContent.localize(entry, code);
+    if (code == 'zh') return MandarinIntelligenceContent.localize(entry, code);
+    if (code == 'ru') return RussianIntelligenceContent.localize(entry, code);
+    if (code == 'ar') return ArabicIntelligenceContent.localize(entry, code);
+    return GermanIntelligenceContent.localize(entry, code);
+  }
+
+  String _relatedModule(IntelligenceCategory category) => switch (category) {
+        IntelligenceCategory.links => OrvikaLocalizations.of(context).text('module.linkCheck', 'Link Check'),
+        IntelligenceCategory.messages => OrvikaLocalizations.of(context).text('module.messageCheck', 'Message Check'),
+        IntelligenceCategory.qrCodes => OrvikaLocalizations.of(context).text('module.qrCheck', 'QR Check'),
+        IntelligenceCategory.accountSafety => OrvikaLocalizations.of(context).text('module.privacy', 'Privacy'),
+      };
+
   IconData _categoryIcon(IntelligenceCategory category) => switch (category) {
         IntelligenceCategory.links => Icons.link_rounded,
         IntelligenceCategory.messages => Icons.mark_email_unread_outlined,
@@ -50,18 +71,29 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
     final scheme = Theme.of(context).colorScheme;
     final l10n = OrvikaLocalizations.of(context);
     final normalizedQuery = _controller.text.trim().toLowerCase();
-    final entries = (l10n.language.code == 'ru' || l10n.language.code == 'zh')
-        ? _library.search(query: '', category: _category).where((sourceEntry) {
-            final translated = l10n.language.code == 'zh' ? MandarinIntelligenceContent.localize(sourceEntry, 'zh') : RussianIntelligenceContent.localize(sourceEntry, 'ru');
-            return normalizedQuery.isEmpty ||
-                <String>[
-                  sourceEntry.title, sourceEntry.signal, sourceEntry.meaning,
-                  sourceEntry.action, sourceEntry.limit, translated.title,
-                  translated.signal, translated.meaning, translated.action,
-                  translated.limit,
-                ].any((value) => value.toLowerCase().contains(normalizedQuery));
-          }).toList(growable: false)
-        : _library.search(query: _controller.text, category: _category);
+    final entries = _library
+        .search(category: _category)
+        .map((sourceEntry) => (
+              source: sourceEntry,
+              translated: _localizeEntry(sourceEntry, l10n.language.code),
+            ))
+        .where((item) {
+          if (normalizedQuery.isEmpty) return true;
+          return <String>[
+            item.source.title,
+            item.source.signal,
+            item.source.meaning,
+            item.source.action,
+            item.source.limit,
+            item.translated.title,
+            item.translated.signal,
+            item.translated.meaning,
+            item.translated.action,
+            item.translated.limit,
+          ].any((value) => value.toLowerCase().contains(normalizedQuery));
+        })
+        .map((item) => item.translated)
+        .toList(growable: false);
     return Scaffold(
       appBar: OrvikaFeatureAppBar(title: l10n.text('module.intelligence', 'Intelligence')),
       body: SafeArea(
@@ -162,11 +194,8 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                 ),
               ),
             ),
-            for (final sourceEntry in entries)
-              Builder(
-                builder: (context) {
-                  final entry = (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'es' ? SpanishIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'fr' ? FrenchIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'it' ? ItalianIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'zh' ? MandarinIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'ru' ? RussianIntelligenceContent.localize(sourceEntry, l10n.language.code) : l10n.language.code == 'ar' ? ArabicIntelligenceContent.localize(sourceEntry, l10n.language.code) : GermanIntelligenceContent.localize(sourceEntry, l10n.language.code);
-                  return Card(
+            for (final entry in entries)
+              Card(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: ExpansionTile(
                   leading: Icon(_categoryIcon(entry.category), color: scheme.primary),
@@ -182,10 +211,9 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                     _DetailSection(label: l10n.text('intelligence.detail.meaning', 'WHAT IT MEANS'), value: entry.meaning),
                     _DetailSection(label: l10n.text('intelligence.detail.next', 'SAFER NEXT STEP'), value: entry.action),
                     _DetailSection(label: l10n.text('intelligence.detail.limit', 'IMPORTANT LIMIT'), value: entry.limit),
+                    _DetailSection(label: l10n.text('intelligence.detail.related', 'RELATED ORVIKA MODULE'), value: _relatedModule(entry.category)),
                   ],
                 ),
-              );
-                },
               ),
             const SizedBox(height: 8),
             Text(

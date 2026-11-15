@@ -47,7 +47,7 @@ void main() {
       expect(find.text('Understand the signal.'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
       expect(find.text('OFFLINE REFERENCE'), findsOneWidget);
-      expect(find.text('10 reference entries'), findsOneWidget);
+      expect(find.text('22 reference entries'), findsOneWidget);
       expect(
         tester.getSize(find.byType(ListView)).width,
         lessThanOrEqualTo(760),
@@ -60,6 +60,7 @@ void main() {
       await tester.tap(find.text('Internationalised domain / Punycode'));
       await tester.pumpAndSettle();
       expect(find.text('WHAT TO NOTICE'), findsOneWidget);
+      expect(find.text('RELATED ORVIKA MODULE'), findsOneWidget);
       expect(find.textContaining('xn--'), findsOneWidget);
       expect(tester.takeException(), isNull,
           reason: 'Expanded Intelligence entry overflow at width $width');
@@ -85,11 +86,11 @@ void main() {
 
     await tester.tap(find.byTooltip('Clear search'));
     await tester.pumpAndSettle();
-    expect(find.text('10 reference entries'), findsOneWidget);
+    expect(find.text('22 reference entries'), findsOneWidget);
 
     await tester.tap(find.text('QR codes'));
     await tester.pumpAndSettle();
-    expect(find.text('2 reference entries'), findsOneWidget);
+    expect(find.text('4 reference entries'), findsOneWidget);
     expect(find.text('QR payment request'), findsOneWidget);
     expect(find.text('Unencrypted HTTP'), findsNothing);
 
