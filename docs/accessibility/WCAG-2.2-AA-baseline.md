@@ -104,14 +104,9 @@ Evidence and results must be added only after the relevant evaluation has been p
 | 1.4.11 | Non-text Contrast | AA | Not assessed | Not assessed | |
 | 1.4.12 | Text Spacing | AA | Not assessed | Not assessed | |
 | 1.4.13 | Content on Hover or Focus | AA | Not assessed | Not assessed | |
-| 1.4.10 | Reflow | AA | Not assessed | Not assessed | |
-| 1.4.11 | Non-text Contrast | AA | Not assessed | Not assessed | |
-| 1.4.12 | Text Spacing | AA | Not assessed | Not assessed | |
-| 1.4.13 | Content on Hover or Focus | AA | Not assessed | Not assessed | |
 | 2.4.5 | Multiple Ways | AA | Not assessed | Not assessed | |
 | 2.4.6 | Headings and Labels | AA | Not assessed | Not assessed | |
 | 2.4.7 | Focus Visible | AA | Not assessed | Not assessed | |
-| 2.4.11 | Focus Not Obscured (Minimum) | AA | Not assessed | Not assessed | |
 | 2.4.11 | Focus Not Obscured (Minimum) | AA | Not assessed | Not assessed | |
 | 2.5.7 | Dragging Movements | AA | Not assessed | Not assessed | |
 | 2.5.8 | Target Size (Minimum) | AA | Not assessed | Not assessed | |
