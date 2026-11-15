@@ -25,7 +25,7 @@ The existing dashboard suites cover module-description readability, header/hero 
 - 320, 360 and 390 logical-pixel portrait widths.
 - 560 and 768 logical-pixel tablet breakpoints.
 - 1280 logical-pixel desktop width.
-- 100%, 150%, 200% and 400% application text scales.
+- 100%, 150% and 200% application text scales (the app preference is capped at 200%).
 - Single-line ORVIKA wordmark behaviour and bounded brand width.
 - Hero heading remaining within the viewport.
 - Flutter layout exceptions during each scenario.
