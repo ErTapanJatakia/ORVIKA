@@ -89,6 +89,9 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   enableSuggestions: false,
                   textInputAction: TextInputAction.done,
                   maxLength: 2048,
+                  onChanged: (_) {
+                    if (_result != null) setState(() => _result = null);
+                  },
                   onSubmitted: (_) => _analyse(),
                   decoration: InputDecoration(
                     labelText: l10n.text('checker.link.input', 'Website address'),
