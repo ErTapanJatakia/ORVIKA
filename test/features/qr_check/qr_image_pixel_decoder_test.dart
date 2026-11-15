@@ -48,6 +48,34 @@ void main() {
       expect(results.single.format, 'qrCode');
     });
 
+
+    test('decodes an inverted QR image', () {
+      const payload = 'ORVIKA-INVERTED-QR';
+      final matrix = MultiFormatWriter().encode(
+        payload,
+        BarcodeFormat.qrCode,
+        256,
+        256,
+      );
+      final rgba = _toRgba(matrix);
+      for (var index = 0; index < rgba.length; index += 4) {
+        final inverted = 255 - rgba[index];
+        rgba[index] = inverted;
+        rgba[index + 1] = inverted;
+        rgba[index + 2] = inverted;
+      }
+
+      final results = decodeQrImagePixels(
+        width: matrix.width,
+        height: matrix.height,
+        rgba: rgba,
+      );
+
+      expect(results, hasLength(1));
+      expect(results.single.value, payload);
+      expect(results.single.format, 'qrCode');
+    });
+
     test('decodes a linear Code 128 barcode', () {
       const payload = 'ORVIKA-123456';
       final matrix = MultiFormatWriter().encode(
