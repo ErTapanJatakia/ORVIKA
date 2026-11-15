@@ -377,7 +377,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
         // baseline. Individual custom gesture surfaces still need review.
         materialTapTargetSize: MaterialTapTargetSize.padded,
         visualDensity: VisualDensity.standard,
-        iconButtonTheme: IconButtonThemeData(
+        iconButtonTheme: const IconButtonThemeData(
           style: ButtonStyle(
             minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
             tapTargetSize: MaterialTapTargetSize.padded,
