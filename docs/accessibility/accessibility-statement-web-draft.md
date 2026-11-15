@@ -14,7 +14,7 @@ Implemented work includes keyboard navigation and visible focus, semantic labels
 
 The project owner reports manually validating the A11Y-01 to A11Y-10 implementation set. Automated Flutter tests cover selected semantics, headings, form labels, keyboard navigation, responsive layouts, and text scaling.
 
-This project validation is not an independent third-party audit. It does not establish that every applicable WCAG 2.2 success criterion is met across every page, state, browser, and assistive technology. ORVIKA therefore makes no claim of full WCAG 2.2 Level AA conformance and does not display a WCAG conformance logo or certification badge.
+This project validation is not an independent third-party audit. It does not establish that every applicable WCAG 2.2 success criterion is met across every page, state, browser, and assistive technology. ORVIKA therefore makes no claim of full WCAG 2.2 Level AA conformance and does not display a WCAG conformance logo or certification badge. The visible accessibility badge identifies the statement and feedback route only.
 
 ## Known limitations
 
@@ -25,7 +25,12 @@ This project validation is not an independent third-party audit. It does not est
 
 ## Feedback and contact
 
-Use the Accessibility Statement link in the ORVIKA web application to open the protected accessibility contact flow. Contact addresses are disclosed only after successful server-side Cloudflare Turnstile verification. Do not include passwords, one-time codes, or unrelated sensitive personal information in accessibility reports.
+No CAPTCHA, account, or verification challenge is required. Contact ORVIKA directly at:
+
+- ertapanjatakia@yandex.com
+- tapan_ditu_17.20@outlook.com
+
+The web statement provides direct email links. ORVIKA does not collect accessibility reports through a server-side form. Do not include passwords, one-time codes, or unrelated sensitive personal information in accessibility reports.
 
 When reporting a barrier, include the affected page or feature, the action you attempted, the result you expected, and concise reproduction steps. Browser and assistive-technology details are optional.
 
