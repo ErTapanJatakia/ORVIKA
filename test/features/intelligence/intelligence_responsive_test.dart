@@ -60,6 +60,7 @@ void main() {
       await tester.tap(find.text('Internationalised domain / Punycode'));
       await tester.pumpAndSettle();
       expect(find.text('WHAT TO NOTICE'), findsOneWidget);
+      expect(find.text('RELATED ORVIKA MODULE'), findsOneWidget);
       expect(find.textContaining('xn--'), findsOneWidget);
       expect(tester.takeException(), isNull,
           reason: 'Expanded Intelligence entry overflow at width $width');
