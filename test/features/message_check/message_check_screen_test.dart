@@ -26,7 +26,7 @@ void main() {
     expect(find.text('Pause. Inspect. Then respond.'), findsOneWidget);
     await tester.enterText(
       find.byType(TextField),
-      'URGENT: Your account sign-in is blocked. Share your OTP immediately at https://example.test',
+      'URGENT: Your bank account sign-in is blocked. Share your OTP immediately at https://example.test or contact help@example.test.',
     );
     await tester.tap(find.text('Inspect message'));
     await tester.pumpAndSettle();
@@ -35,5 +35,14 @@ void main() {
     expect(find.text('Urgency or pressure language'), findsOneWidget);
     expect(find.text('Link or web address detected'), findsOneWidget);
     expect(find.textContaining('No message was uploaded'), findsOneWidget);
+    expect(find.text('Safer next steps'), findsOneWidget);
+    expect(find.text('Detected contact details'), findsOneWidget);
+    expect(find.text('help@example.test'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('Clear message and results'));
+    await tester.tap(find.text('Clear message and results'));
+    await tester.pumpAndSettle();
+    expect(find.text('Review findings'), findsNothing);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);
   });
 }
