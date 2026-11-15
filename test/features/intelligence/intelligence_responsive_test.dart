@@ -47,7 +47,7 @@ void main() {
       expect(find.text('Understand the signal.'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
       expect(find.text('OFFLINE REFERENCE'), findsOneWidget);
-      expect(find.text('24 reference entries'), findsOneWidget);
+      expect(find.text('22 reference entries'), findsOneWidget);
       expect(
         tester.getSize(find.byType(ListView)).width,
         lessThanOrEqualTo(760),
@@ -86,7 +86,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Clear search'));
     await tester.pumpAndSettle();
-    expect(find.text('24 reference entries'), findsOneWidget);
+    expect(find.text('22 reference entries'), findsOneWidget);
 
     await tester.tap(find.text('QR codes'));
     await tester.pumpAndSettle();
