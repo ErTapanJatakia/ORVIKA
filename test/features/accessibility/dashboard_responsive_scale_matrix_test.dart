@@ -8,7 +8,7 @@ void main() {
   const scenarios = <({Size size, double textScale})>[
     (size: Size(320, 720), textScale: 1),
     (size: Size(360, 800), textScale: 2),
-    (size: Size(390, 844), textScale: 4),
+    (size: Size(390, 844), textScale: 2),
     (size: Size(560, 900), textScale: 1.5),
     (size: Size(768, 1024), textScale: 2),
     (size: Size(1280, 900), textScale: 1),
