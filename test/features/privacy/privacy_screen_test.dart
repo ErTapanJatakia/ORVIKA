@@ -44,6 +44,29 @@ void main() {
     expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
   });
 
+  testWidgets('assessment answers update session summary without persistence', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
+    await tester.pumpAndSettle();
+
+    final firstPractice = find.text('Use unique passwords for important accounts');
+    await tester.ensureVisible(firstPractice);
+    await tester.tap(firstPractice);
+    await tester.pumpAndSettle();
+
+    final needsAttention = find.widgetWithText(ChoiceChip, 'Needs attention');
+    await tester.ensureVisible(needsAttention);
+    await tester.tap(needsAttention);
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(ListView), const Offset(0, 900));
+    await tester.pumpAndSettle();
+    expect(find.text('Needs attention: 1'), findsOneWidget);
+
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getKeys(), isEmpty,
+        reason: 'Assessment answers must remain in active screen memory');
+  });
+
   testWidgets('Privacy screen clearly explains its self-audit boundary', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
