@@ -18,7 +18,7 @@ void main() {
     expect(find.textContaining('not an independent third-party audit'), findsOneWidget);
 
     final platformCoverage = find.textContaining('Android application requires separate native evaluation');
-    await tester.scrollUntilVisible(platformCoverage, 250, scrollable: find.byType(Scrollable));
+    await tester.scrollUntilVisible(platformCoverage, 250, scrollable: find.byType(ListView));
     expect(platformCoverage, findsOneWidget);
   });
 }
