@@ -76,32 +76,32 @@ class MessageAnalyzer {
     (
       title: 'Impersonation or authority claim',
       detail: 'The message appears to speak on behalf of a bank, government body, delivery company, employer or support team. Verify through contact details you obtain independently.',
-      pattern: RegExp(r'\\b(bank|government|tax department|income tax|customs|police|court|courier|delivery|customer support|technical support|helpdesk|security team|hr department)\\b|बैंक|सरकार|आयकर|पुलिस|कूरियर|служба поддержки|банк|налогов\\w*', caseSensitive: false),
+      pattern: RegExp(r'\b(bank|government|tax department|income tax|customs|police|court|courier|delivery|customer support|technical support|helpdesk|security team|hr department)\b|बैंक|सरकार|आयकर|पुलिस|कूरियर|служба поддержки|банк|налогов\w*', caseSensitive: false),
     ),
     (
       title: 'Secrecy or isolation request',
       detail: 'The message may be pressuring you not to consult anyone or to keep the request secret. Pause and verify with a trusted person or the organisation through a separate channel.',
-      pattern: RegExp(r'\\b(keep (this|it) secret|do not tell anyone|don.t tell anyone|confidential (and )?urgent|act alone|do not discuss|don.t discuss)\\b|किसी को मत बताना|गुप्त रखें|никому не говорите|держите в секрете', caseSensitive: false),
+      pattern: RegExp(r'\b(keep (this|it) secret|do not tell anyone|don.t tell anyone|confidential (and )?urgent|act alone|do not discuss|don.t discuss)\b|किसी को मत बताना|गुप्त रखें|никому не говорите|держите в секрете', caseSensitive: false),
     ),
     (
       title: 'Remote-access or app-installation request',
       detail: 'The message appears to request remote access, screen sharing, or installation of an application. Do not install tools or grant device access at the request of an unsolicited message.',
-      pattern: RegExp(r'\\b(anydesk|teamviewer|remote access|screen sharing|share your screen|install (this|the) app|download (this|the) app|apk file|quick support|remote control)\\b|ऐप इंस्टॉल|स्क्रीन साझा|удаленный доступ|установите приложение', caseSensitive: false),
+      pattern: RegExp(r'\b(anydesk|teamviewer|remote access|screen sharing|share your screen|install (this|the) app|download (this|the) app|apk file|quick support|remote control)\b|ऐप इंस्टॉल|स्क्रीन साझा|удаленный доступ|установите приложение', caseSensitive: false),
     ),
     (
       title: 'Sensitive personal information request',
       detail: 'The message may request identity, banking or personal details. Share sensitive information only through a verified official process that you initiated.',
-      pattern: RegExp(r'\\b(aadhaar|pan card|social security|date of birth|mother.s maiden|card number|cvv|bank details|identity document|passport number|account number)\\b|आधार|पैन कार्ड|जन्म तिथि|паспорт|номер карты|личные данные', caseSensitive: false),
+      pattern: RegExp(r'\b(aadhaar|pan card|social security|date of birth|mother.s maiden|card number|cvv|bank details|identity document|passport number|account number)\b|आधार|पैन कार्ड|जन्म तिथि|паспорт|номер карты|личные данные', caseSensitive: false),
     ),
     (
       title: 'Unusual or hard-to-reverse payment method',
       detail: 'The message refers to gift cards, cryptocurrency, vouchers or an unusual payment route. These methods can be difficult to reverse; independently verify the request.',
-      pattern: RegExp(r'\\b(gift card|crypto(currency)?|bitcoin|ethereum|usdt|voucher code|prepaid card|buy (an? )?gift card)\\b', caseSensitive: false),
+      pattern: RegExp(r'\b(gift card|crypto(currency)?|bitcoin|ethereum|usdt|voucher code|prepaid card|buy (an? )?gift card)\b', caseSensitive: false),
     ),
   ];
 
   static final RegExp _contactPattern = RegExp(
-    r'(?<![\\w.+-])[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}|(?<!\\w)(?:\\+?\\d[\\d .()\\-]{7,}\\d)(?!\\w)',
+    r'(?<![\w.+-])[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<!\w)(?:\+?\d[\d .()\-]{7,}\d)(?!\w)',
   );
 
   MessageAnalysisResult analyze(String rawInput) {
@@ -182,7 +182,7 @@ class MessageAnalyzer {
 
   String _trimTrailingPunctuation(String value) {
     var end = value.length;
-    const trailingCharacters = '.,!?;:)\\]}>\u2019\u201d';
+    const trailingCharacters = '.,!?;:)\]}>\u2019\u201d';
     while (end > 0 && trailingCharacters.contains(value[end - 1])) {
       end--;
     }
