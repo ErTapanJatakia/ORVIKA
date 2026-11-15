@@ -43,4 +43,60 @@ for (const directive of [
 }
 assert.ok(!/connect-src[^;]*\*/.test(csp), 'CSP must not allow wildcard connections');
 
-console.log('ORVIKA security response-header configuration: PASS');
+console.log('ORVIKA Web response-header configuration: PASS');
+
+const androidRoot = path.join(__dirname, '..', 'android');
+const manifestPath = path.join(androidRoot, 'app', 'src', 'main', 'AndroidManifest.xml');
+const gradlePath = path.join(androidRoot, 'app', 'build.gradle.kts');
+const wrapperPath = path.join(androidRoot, 'gradle', 'wrapper', 'gradle-wrapper.properties');
+const androidIgnorePath = path.join(androidRoot, '.gitignore');
+
+for (const requiredPath of [manifestPath, gradlePath, wrapperPath, androidIgnorePath]) {
+  assert.ok(fs.existsSync(requiredPath), `Missing Android security/release file: ${path.relative(androidRoot, requiredPath)}`);
+}
+
+const manifest = fs.readFileSync(manifestPath, 'utf8');
+const permissions = [...manifest.matchAll(/<uses-permission\s+android:name="([^"]+)"/g)]
+  .map((match) => match[1])
+  .sort();
+assert.deepEqual(
+  permissions,
+  ['android.permission.CAMERA', 'android.permission.INTERNET'],
+  'Android manifest permission set changed; review privacy and platform requirements explicitly',
+);
+
+assert.match(
+  manifest,
+  /<uses-feature[\s\S]*?android:name="android\.hardware\.camera"[\s\S]*?android:required="false"/,
+  'Camera must remain an optional device feature',
+);
+assert.match(manifest, /android:usesCleartextTraffic="false"/, 'Android cleartext traffic must remain disabled');
+assert.ok(!/android:debuggable="true"/.test(manifest), 'Production manifest must not enable debugging');
+assert.match(manifest, /android:exported="true"/, 'Launcher activity must declare its exported state');
+assert.match(manifest, /<action android:name="android\.intent\.action\.MAIN"\s*\/>[\s\S]*?<category android:name="android\.intent\.category\.LAUNCHER"\s*\/>/, 'Expected launcher intent filter is missing');
+
+const gradle = fs.readFileSync(gradlePath, 'utf8');
+assert.match(gradle, /applicationId = "com\.orvika\.app"/, 'Android application ID changed unexpectedly');
+assert.match(gradle, /if \(gradle\.startParameter\.taskNames\.any/, 'Release signing guard is missing');
+assert.match(gradle, /throw GradleException\([\s\S]*?release signing is not configured/, 'Unsigned release builds must fail closed');
+for (const name of [
+  'ORVIKA_UPLOAD_STORE_FILE',
+  'ORVIKA_UPLOAD_STORE_PASSWORD',
+  'ORVIKA_UPLOAD_KEY_ALIAS',
+  'ORVIKA_UPLOAD_KEY_PASSWORD',
+]) {
+  assert.ok(gradle.includes(name), `Gradle signing configuration is missing ${name}`);
+}
+
+const androidIgnore = fs.readFileSync(androidIgnorePath, 'utf8');
+assert.match(androidIgnore, /key\.properties/, 'Android signing properties must be ignored by Git');
+assert.match(androidIgnore, /\*\*\/\*\.jks/, 'JKS keystores must be ignored by Git');
+assert.match(androidIgnore, /\*\*\/\*\.keystore/, 'Keystore files must be ignored by Git');
+
+const wrapper = fs.readFileSync(wrapperPath, 'utf8');
+assert.match(wrapper, /distributionUrl=.*gradle-[0-9.]+-all\.zip/, 'Gradle wrapper distribution must be explicitly pinned');
+assert.ok(fs.existsSync(path.join(androidRoot, 'gradlew')), 'Gradle wrapper launcher is missing');
+assert.ok(fs.existsSync(path.join(androidRoot, 'gradlew.bat')), 'Windows Gradle wrapper launcher is missing');
+
+console.log('ORVIKA Android manifest, permission and release-signing configuration: PASS');
+
