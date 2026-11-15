@@ -126,6 +126,11 @@ class ResponseScreen extends StatelessWidget {
                           label: l10n.text('response.avoid', 'AVOID'),
                           child: _BulletList(items: playbook.avoid),
                         ),
+                        if (playbook.escalateWhen.isNotEmpty)
+                          _ResponseSection(
+                            label: l10n.text('response.escalate', 'WHEN TO ESCALATE'),
+                            child: _BulletList(items: playbook.escalateWhen),
+                          ),
                         _ResponseSection(
                           label: l10n.text('response.limit', 'IMPORTANT LIMIT'),
                           child: Text(
