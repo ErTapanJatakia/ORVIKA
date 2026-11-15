@@ -60,7 +60,10 @@ This checklist separates implemented application capabilities from evidence requ
 
 ## 6. Web/PWA
 
+- [ ] Run `node scripts/verify-pwa-readiness.cjs` against the approved Web source/build.
 - [ ] Build the production Web artifact from the approved source commit.
+- [ ] Verify install metadata and icon rendering in Chromium and Safari; add a PNG Apple touch icon if required by target iOS versions.
+- [ ] Verify first-load, offline reload/navigation, reconnect, service-worker cache update and rollback behaviour on the exact production artifact.
 - [ ] Verify PWA installability, service-worker update behaviour and offline/online transitions.
 - [ ] Test Chrome, Firefox and other explicitly supported browsers.
 - [ ] Verify CSP compatibility, camera access, image decoding and critical asset loading.
