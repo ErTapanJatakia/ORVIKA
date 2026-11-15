@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'features/accessibility/presentation/accessibility_statement_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -405,6 +407,8 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
 
   bool _visible = true;
   bool _removed = false;
+  Timer? _holdTimer;
+  Timer? _fadeTimer;
 
   @override
   void initState() {
@@ -412,13 +416,22 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
     _dismissAfterHold();
   }
 
-  Future<void> _dismissAfterHold() async {
-    await Future<void>.delayed(_holdDuration);
-    if (!mounted) return;
-    setState(() => _visible = false);
-    await Future<void>.delayed(_fadeDuration);
-    if (!mounted) return;
-    setState(() => _removed = true);
+  void _dismissAfterHold() {
+    _holdTimer = Timer(_holdDuration, () {
+      if (!mounted) return;
+      setState(() => _visible = false);
+      _fadeTimer = Timer(_fadeDuration, () {
+        if (!mounted) return;
+        setState(() => _removed = true);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _holdTimer?.cancel();
+    _fadeTimer?.cancel();
+    super.dispose();
   }
 
   @override
