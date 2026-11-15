@@ -41,7 +41,7 @@ The first implementation provides four accessible presets:
 3. **Daylight** — bright, neutral surface palette.
 4. **High contrast** — near-black canvas, brighter signal colours and stronger outlines.
 
-The theme selector currently applies for the active app session. Persistent preference storage is intentionally deferred until a privacy-reviewed local settings layer is introduced.
+The theme selector applies immediately and persists the selected preset in local application/browser preference storage under `appearance.theme`. The preference contains only the theme identifier; it does not contain submitted URLs, QR payloads, messages or analysis findings. If preference storage is unavailable, the selected theme remains active for the current session.
 
 ## Typography
 
