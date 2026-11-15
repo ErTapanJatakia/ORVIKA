@@ -1108,14 +1108,14 @@ class SentinelDashboard extends StatelessWidget {
                         ),
                         Align(
                           alignment: AlignmentDirectional.centerEnd,
-                          child: TextButton.icon(
+                          child: ActionChip(
                             key: const ValueKey('accessibility-statement-top'),
                             onPressed: () => Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => const OrvikaAccessibilityStatementScreen(),
                               ),
                             ),
-                            icon: const Icon(Icons.accessibility_new_rounded, size: 18),
+                            avatar: const Icon(Icons.accessibility_new_rounded, size: 18),
                             label: const Text('Accessibility statement'),
                           ),
                         ),
@@ -1279,14 +1279,14 @@ class SentinelDashboard extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 8),
-                                    TextButton.icon(
+                                    ActionChip(
                                       key: const ValueKey('accessibility-statement-footer'),
                                       onPressed: () => Navigator.of(context).push(
                                         MaterialPageRoute<void>(
                                           builder: (_) => const OrvikaAccessibilityStatementScreen(),
                                         ),
                                       ),
-                                      icon: const Icon(Icons.accessibility_new_rounded, size: 17),
+                                      avatar: const Icon(Icons.accessibility_new_rounded, size: 17),
                                       label: const Text('Accessibility statement'),
                                     ),
                                   ],

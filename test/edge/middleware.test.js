@@ -34,22 +34,14 @@ for (const method of ["POST", "PUT", "PATCH", "DELETE", "TRACE", "CONNECT"]) {
     assert.equal(response.headers.get("cache-control"), "no-store");
   });
 }
-test("allows POST and OPTIONS only on the exact contact endpoint", async () => {
-  for (const method of ["POST", "OPTIONS"]) {
-    const { response, nextCalled } = await invoke(method, "https://orvika.pages.dev/api/accessibility-contact");
+test("all static routes, including the accessibility contact page, remain GET/HEAD only", async () => {
+  for (const method of ["GET", "HEAD"]) {
+    const { response, nextCalled } = await invoke(method, "https://orvika.pages.dev/accessibility-contact.html");
     assert.equal(nextCalled, true, method); assert.equal(response.status, 200, method);
   }
-});
-test("rejects other methods and lookalike paths", async () => {
-  for (const method of ["GET", "PUT", "PATCH", "DELETE"]) {
-    const { response, nextCalled } = await invoke(method, "https://orvika.pages.dev/api/accessibility-contact");
+  for (const method of ["POST", "OPTIONS"]) {
+    const { response, nextCalled } = await invoke(method, "https://orvika.pages.dev/accessibility-contact.html");
     assert.equal(nextCalled, false); assert.equal(response.status, 405);
-    assert.equal(response.headers.get("allow"), "POST, OPTIONS");
-  }
-  for (const path of ["/api/accessibility-contact/", "/api/accessibility-contact/extra", "/api/other"]) {
-    const { response, nextCalled } = await invoke("POST", `https://orvika.pages.dev${path}`);
-    assert.equal(nextCalled, false, path); assert.equal(response.status, 405, path);
-    assert.equal(response.headers.get("allow"), "GET, HEAD");
   }
 });
 test("rejects malformed percent escapes", async () => {
@@ -70,12 +62,12 @@ test("allows the .well-known namespace", async () => {
   const { response, nextCalled } = await invoke("GET", "https://orvika.pages.dev/.well-known/assetlinks.json");
   assert.equal(nextCalled, true); assert.equal(response.status, 200);
 });
-test("adds security headers and Turnstile CSP directives", async () => {
+test("adds security headers and no third-party CAPTCHA directives", async () => {
   const { response } = await invoke("GET");
   for (const [name, value] of Object.entries(expectedHeaders)) assert.equal(response.headers.get(name), value);
   const csp = response.headers.get("content-security-policy");
   assert.match(csp, /default-src 'none'/); assert.match(csp, /'wasm-unsafe-eval'/);
-  assert.match(csp, /https:\/\/challenges\.cloudflare\.com/);
+  assert.doesNotMatch(csp, /challenges\.cloudflare\.com|turnstile/);
   assert.doesNotMatch(csp, /'unsafe-eval'/);
 });
 test("adds security headers to middleware-generated errors", async () => {
