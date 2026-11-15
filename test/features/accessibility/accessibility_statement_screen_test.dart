@@ -17,12 +17,14 @@ void main() {
     expect(find.text('Accessibility information'), findsOneWidget);
     expect(find.textContaining('does not claim full WCAG 2.2 Level AA conformance'), findsOneWidget);
     expect(find.textContaining('not an independent third-party audit'), findsOneWidget);
-    expect(find.text('ertapanjatakia@yandex.com'), findsOneWidget);
-    expect(find.text('tapan_ditu_17.20@outlook.com'), findsOneWidget);
-    expect(find.textContaining('No CAPTCHA or verification is required'), findsOneWidget);
-
     final platformCoverage = find.textContaining('Android application requires separate native evaluation');
     await tester.scrollUntilVisible(platformCoverage, 250, scrollable: find.byType(ListView));
     expect(platformCoverage, findsOneWidget);
+
+    final contactAddress = find.text('ertapanjatakia@yandex.com');
+    await tester.scrollUntilVisible(contactAddress, 250, scrollable: find.byType(ListView));
+    expect(contactAddress, findsOneWidget);
+    expect(find.text('tapan_ditu_17.20@outlook.com'), findsOneWidget);
+    expect(find.textContaining('No CAPTCHA or verification is required'), findsOneWidget);
   });
 }
