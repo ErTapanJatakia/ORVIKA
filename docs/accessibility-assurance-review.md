@@ -29,8 +29,8 @@ The Dashboard UX work in PR #58 is paused and is not treated as merged baseline 
 | Dynamic counts and progress | Intelligence, Privacy and Academy tests | Selected result counts and progress values/updates have labels and live-region semantics | Does not establish consistent announcements across assistive technologies |
 | Onboarding and settings | Onboarding/settings semantics tests | Language search, onboarding progress and selected settings headings expose intended semantics | Does not cover every control, route or language/script combination |
 | Colour contrast | Interaction validation test | Selected primary, secondary, success, warning and danger accents meet 4.5:1 against each palette's app background and surface | Not a complete inventory of text, links, disabled states, focus indicators, borders or every rendered state |
-| Touch targets | Interaction validation test | Two dashboard icon actions meet 48×48 logical-pixel dimensions in the tested widget configuration | Not a complete target-size audit or physical-device touch assessment |
-| Keyboard traversal | Interaction and browser-navigation widget tests | Selected dashboard destination supports Tab, Shift+Tab, Enter and Space in Flutter widget tests | Not browser/OS keyboard validation; overlay, dialog, menu and all-screen traversal remain unverified |
+| Touch targets | Shared Material theme regression test and dashboard interaction tests | Icon, elevated, outlined and text button themes specify 48×48 logical-pixel minimums with padded tap targets; selected dashboard actions are also measured | Does not establish actual hit regions for every rendered control, spacing exceptions, or physical-device touch behaviour |
+| Keyboard traversal | Interaction and browser-navigation widget tests | Selected dashboard destination supports Tab, Shift+Tab, Enter and Space in Flutter widget tests; a stronger shared focus token is configured | Not browser/OS keyboard validation; overlay, dialog, menu and all-screen traversal remain unverified |
 | Route focus | Browser-navigation widget test | Returning from one feature route restores focus to its invoking dashboard card in the tested widget environment | Browser history, browser back, route edge cases and real assistive-technology focus announcements remain unverified |
 
 ## Gap register and exit criteria
@@ -59,13 +59,13 @@ The automated contrast test checks five semantic palette accents against two sur
 
 ### C. Touch and pointer alternatives — partial
 
-The current 48×48 test covers the dashboard language and appearance icon actions only.
+Shared Material icon, elevated, outlined and text button themes now specify 48×48 logical-pixel minimums with padded tap-target behaviour. A widget regression test verifies the theme configuration, while existing tests inspect selected dashboard actions. This still does not measure every rendered hit region or custom gesture surface.
 
 **Exit evidence:** inventory actionable controls across onboarding, dashboard, Link Check, QR Check, Message Check, Intelligence, Privacy, Academy, Response and settings. Verify target dimensions and spacing, and confirm that drag/swipe or precision gestures have accessible alternatives.
 
 ### D. Keyboard and focus — partial
 
-Widget tests cover selected dashboard traversal and one route return path. They do not establish end-to-end browser behaviour or all overlay/focus scenarios.
+Widget tests cover selected dashboard traversal and one route return path. The shared focus token is configured at a stronger active-theme alpha, but the appearance and contrast of focus indicators still require rendered inspection. They do not establish end-to-end browser behaviour or all overlay/focus scenarios.
 
 **Exit evidence:** complete the browser keyboard protocol in `docs/accessibility.md` for every primary route and interactive overlay. Verify no traps, logical forward/reverse order, visible focus, keyboard activation, Escape/dismissal behaviour where expected, and focus restoration to the invoking control.
 
