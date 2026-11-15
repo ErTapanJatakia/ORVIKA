@@ -12,6 +12,22 @@ import 'helpers/dashboard_test_helpers.dart';
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'}));
 
+  testWidgets('shared theme keeps icon-button targets at least 48 logical pixels', (tester) async {
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+
+    final context = tester.element(find.text('Choose your language'));
+    final theme = Theme.of(context);
+    final iconButtonStyle = theme.iconButtonTheme.style!;
+    final minimumSize = iconButtonStyle.minimumSize!.resolve(const <WidgetState>{})!;
+    final tapTargetSize = iconButtonStyle.tapTargetSize!.resolve(const <WidgetState>{});
+
+    expect(minimumSize.width, greaterThanOrEqualTo(48));
+    expect(minimumSize.height, greaterThanOrEqualTo(48));
+    expect(tapTargetSize, MaterialTapTargetSize.padded);
+    expect(theme.materialTapTargetSize, MaterialTapTargetSize.padded);
+  });
+
   testWidgets('bundled Devanagari font asset is available offline', (tester) async {
     final fontData = await rootBundle.load(
       'assets/fonts/NotoSansDevanagari[wdth,wght].ttf',
