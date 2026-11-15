@@ -101,7 +101,7 @@ class MessageAnalyzer {
   ];
 
   static final RegExp _contactPattern = RegExp(
-    r'(?<![\w.+-])[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<!\w)(?:\+?\d[\d .()\-]{7,}\d)(?!\w)',
+    r'(?:^|[^\w.+-])([\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?:\+?\d[\d .()\-]{7,}\d))(?!\w)',
   );
 
   MessageAnalysisResult analyze(String rawInput) {
