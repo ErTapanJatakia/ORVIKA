@@ -6,7 +6,11 @@
 **Check Before You Trust.**  
 *See the Risk. Verify the Signal. Stay in Control.*
 
-ORVIKA is a privacy-first personal cyber-safety application built around deterministic, explainable checks. The product is designed to help people inspect digital signals and make informed decisions without presenting suspicion as proof.
+ORVIKA is a privacy-first personal cyber-safety application built around deterministic, explainable checks. It helps people inspect digital signals and make informed decisions without presenting suspicion as proof.
+
+- Web/PWA: https://orvika.pages.dev
+- Vercel preview: https://orvika-web.vercel.app
+- Android package ID: `com.orvika.app`
 
 ## Visual identity
 
@@ -23,27 +27,49 @@ Brand assets and implementation notes are maintained in [the visual identity gui
 
 ## Product modules
 
-| Module | Current status |
+The following capabilities are implemented in the current prototype. This status describes code availability, not a completed production release or independent security certification.
+
+| Module | Implemented capability |
 |---|---|
-| Sentinel | Dashboard / overview |
-| Link | Available — on-device URL structure inspection |
-| QR | Available — inspection of pasted decoded QR content |
-| Message | In development |
-| Intelligence | In development |
-| Privacy | In development |
-| Academy | In development |
-| Response | In development |
+| Sentinel | Dashboard, module navigation, theme and accessibility preferences |
+| Link Check | Local URL structure and risk-indicator inspection |
+| QR Check | Decoded QR/barcode content inspection, with opt-in camera and image scanning |
+| Message Check | Local heuristic review for common social-engineering signals |
+| Intelligence | Curated offline risk-reference catalogue and explainable indicators |
+| Privacy | 12-practice guided privacy self-assessment; answers remain session-only |
+| Academy | Eight short cyber-safety lessons with knowledge checks and local progress |
+| Response | Five incident-response playbooks with evidence-preservation and escalation guidance |
 
-## Product principles
+## Product principles and limitations
 
-- Privacy-first and offline-first by default.
+- Privacy-first and offline-friendly analysis by default.
 - Explainable, deterministic findings where possible.
-- AI or algorithmic suspicion is not a confirmed malicious verdict.
+- An algorithmic suspicion is a signal to investigate, not proof of malicious intent.
 - No automatic opening of inspected destinations or execution of QR actions.
-- Responsive Web/PWA experience with Android and Aurora OS as target platforms.
+- No live reputation, DNS, redirect-following or threat-feed lookup is implied by the local analysis modules.
+- The Privacy module is a self-assessment, not a device scanner, compliance audit or certification.
+- Academy progress is a local learning marker, not a professional qualification.
+- Response playbooks provide general guidance; they do not replace emergency services, legal advice or qualified incident response.
+- The hosted Web version uses limited page-view analytics; security-analysis content is not intentionally sent to analytics.
+
+## Localization
+
+The unified language catalogue currently contains 192 selectable entries. Reviewed translation status is limited to English, Russian, Arabic and Portugal Portuguese. Other authored language packs remain drafts pending their applicable linguistic and platform release gates. Bashkir and Tatar remain temporarily excluded. See the [localization audit](docs/localization-audit.md).
 
 ## Development
 
-Flutter SDK, dependency, static analysis, unit/widget test and Web release build checks run through GitHub Actions. Production Web deployment is performed through the configured Vercel workflow.
+ORVIKA is a Flutter/Dart application. Repository workflows and manual verification scripts are maintained under `.github/` and `scripts/`. GitHub Actions is currently disabled at repository level by maintainer choice; do not assume CI, Android validation or deployment runs automatically. Test execution and release validation are performed only when explicitly authorised.
 
-The current application is an early prototype. See the source and tests before relying on any assessment for a real-world security decision.
+Useful references:
+
+- [Privacy notice](docs/privacy-notice.md)
+- [Privacy data-flow audit](docs/privacy-data-flow.md)
+- [Security and privacy assurance ledger](docs/security-privacy-assurance-ledger.md)
+- [Accessibility assurance review](docs/accessibility-assurance-review.md)
+- [Dashboard responsive assurance](docs/dashboard-responsive-assurance.md)
+- [Android release signing](android/RELEASE_SIGNING.md)
+- [Release readiness checklist](docs/release-readiness.md)
+- [Third-party notices](THIRD_PARTY_NOTICES.md)
+- [Security reporting policy](SECURITY.md)
+
+The current application remains a prototype until the release gates in [docs/release-readiness.md](docs/release-readiness.md) are completed. Do not rely on any single assessment as a guarantee that a destination, message, QR code, device or account is safe.
