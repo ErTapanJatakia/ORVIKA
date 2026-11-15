@@ -29,9 +29,10 @@ QR Check retains its existing manual paste-and-inspect workflow. Live camera sca
 ## Decoder/platform boundaries
 
 - Android and Apple native implementations use `mobile_scanner.analyzeImage` and the same native scanning engines as the camera feature where supported.
-- The current `mobile_scanner` release does not support `analyzeImage` on Web. ORVIKA Web therefore uses the browser's native Shape Detection `BarcodeDetector` API for selected images.
-- Browser image decoding requires `BarcodeDetector`. Browsers without this API (notably Firefox) receive an explicit unsupported message for image scanning; live camera scanning remains available through the package's Web ZXing fallback.
-- Web image format support is limited to formats reported by the active browser implementation. Native browser format coverage varies by browser and operating system; it is not identical to every format supported by the live ZXing-WASM camera fallback.
+- The current `mobile_scanner` release does not support `analyzeImage` on Web. ORVIKA Web therefore tries the browser's native Shape Detection `BarcodeDetector` API first and then uses the bundled pure-Dart ZXing pixel decoder when the API is missing, returns no result, or cannot decode the image.
+- Firefox and other browsers without `BarcodeDetector` can use the bundled fallback; image scanning does not depend on a remote decoder, CDN script or WASM download.
+- The fallback reads the selected image into an in-memory canvas, downsizes images above 8 megapixels, and tries red, green, blue and weighted-luminance interpretations with contrast stretching and inverted-image/try-harder hints. It can decode supported 1D and 2D formats, but decorative, distorted, occluded or heavily logo-covered codes may still fail.
+- Image decoding still depends on the browser being able to decode the selected image format and expose canvas pixel data. Unsupported image formats, tainted canvas contexts and browser-specific decoder behaviour can prevent scanning; users receive a recoverable error and can choose another image.
 - Linux and Windows native app projects are not currently shipped. Browser-based ORVIKA Web may be used on those systems subject to browser support.
 
 ## Camera permission limitation
@@ -44,7 +45,7 @@ Automated Flutter tests can validate UI contracts and existing analyzer behavior
 
 ## Camera scanning formats and Web dependency
 
-The camera integration supports QR codes and a broad set of 1D/2D formats, including Aztec, Codabar, Code 39/93/128, Data Matrix, EAN-8/13, ITF, PDF417, UPC-A/E and DataBar variants. Actual availability varies by platform, OS version and Web backend.
+The image fallback uses the bundled ZXing multi-format reader for QR, Aztec, Codabar, Code 39/93/128, Data Matrix, EAN-8/13, ITF, PDF417, UPC-A/E, MaxiCode and other formats implemented by the bundled library. Exact support depends on the selected image's quality and the library's reader/writer coverage. Live camera scanning uses its own platform-specific format support.
 
 The Web camera implementation uses the native `BarcodeDetector` API where available and falls back to ZXing WebAssembly in browsers such as Firefox. The fallback WASM decoder is downloaded from jsDelivr by the package. This is a decoder-library download, not an upload of camera frames, selected images or decoded payloads. It remains an external runtime dependency.
 
