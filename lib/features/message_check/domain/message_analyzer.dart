@@ -5,6 +5,7 @@ class MessageAnalysisResult {
     required this.input,
     required this.findings,
     required this.detectedLinks,
+    required this.detectedContacts,
     required this.isValid,
     required this.notice,
   });
@@ -12,6 +13,7 @@ class MessageAnalysisResult {
   final String input;
   final List<LinkFinding> findings;
   final List<String> detectedLinks;
+  final List<String> detectedContacts;
   final bool isValid;
   final String notice;
 }
@@ -71,7 +73,36 @@ class MessageAnalyzer {
       detail: 'The message threatens a penalty, legal action, arrest, or loss of access. Verify claims with the named organisation using independently sourced contact details.',
       pattern: RegExp(r'\b(arrest|legal action|police case|penalty|fine|prosecution|service will be disconnected|account will be blocked)\b', caseSensitive: false),
     ),
+    (
+      title: 'Impersonation or authority claim',
+      detail: 'The message appears to speak on behalf of a bank, government body, delivery company, employer or support team. Verify through contact details you obtain independently.',
+      pattern: RegExp(r'\\b(bank|government|tax department|income tax|customs|police|court|courier|delivery|customer support|technical support|helpdesk|security team|hr department)\\b|बैंक|सरकार|आयकर|पुलिस|कूरियर|служба поддержки|банк|налогов\\w*', caseSensitive: false),
+    ),
+    (
+      title: 'Secrecy or isolation request',
+      detail: 'The message may be pressuring you not to consult anyone or to keep the request secret. Pause and verify with a trusted person or the organisation through a separate channel.',
+      pattern: RegExp(r'\\b(keep (this|it) secret|do not tell anyone|don.t tell anyone|confidential (and )?urgent|act alone|do not discuss|don.t discuss)\\b|किसी को मत बताना|गुप्त रखें|никому не говорите|держите в секрете', caseSensitive: false),
+    ),
+    (
+      title: 'Remote-access or app-installation request',
+      detail: 'The message appears to request remote access, screen sharing, or installation of an application. Do not install tools or grant device access at the request of an unsolicited message.',
+      pattern: RegExp(r'\\b(anydesk|teamviewer|remote access|screen sharing|share your screen|install (this|the) app|download (this|the) app|apk file|quick support|remote control)\\b|ऐप इंस्टॉल|स्क्रीन साझा|удаленный доступ|установите приложение', caseSensitive: false),
+    ),
+    (
+      title: 'Sensitive personal information request',
+      detail: 'The message may request identity, banking or personal details. Share sensitive information only through a verified official process that you initiated.',
+      pattern: RegExp(r'\\b(aadhaar|pan card|social security|date of birth|mother.s maiden|card number|cvv|bank details|identity document|passport number|account number)\\b|आधार|पैन कार्ड|जन्म तिथि|паспорт|номер карты|личные данные', caseSensitive: false),
+    ),
+    (
+      title: 'Unusual or hard-to-reverse payment method',
+      detail: 'The message refers to gift cards, cryptocurrency, vouchers or an unusual payment route. These methods can be difficult to reverse; independently verify the request.',
+      pattern: RegExp(r'\\b(gift card|crypto(currency)?|bitcoin|ethereum|usdt|voucher code|prepaid card|buy (an? )?gift card)\\b', caseSensitive: false),
+    ),
   ];
+
+  static final RegExp _contactPattern = RegExp(
+    r'(?<![\\w.+-])[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}|(?<!\\w)(?:\\+?\\d[\\d .()\\-]{7,}\\d)(?!\\w)',
+  );
 
   MessageAnalysisResult analyze(String rawInput) {
     if (rawInput.trim().isEmpty) {
@@ -102,6 +133,19 @@ class MessageAnalyzer {
         .toSet()
         .toList(growable: false);
 
+    final contacts = _contactPattern
+        .allMatches(rawInput)
+        .map((match) => match.group(0)!.trim())
+        .toSet()
+        .toList(growable: false);
+    if (contacts.isNotEmpty) {
+      findings.add(LinkFinding(
+        title: 'Contact details detected',
+        detail: '${contacts.length} email address(es) or phone number(s) found. These are displayed for inspection only and have not been contacted or verified.',
+        severity: FindingSeverity.caution,
+      ));
+    }
+
     if (_obfuscatedUrlPattern.hasMatch(rawInput)) {
       findings.add(const LinkFinding(
         title: 'Obfuscated web address detected',
@@ -130,6 +174,7 @@ class MessageAnalyzer {
       input: rawInput,
       findings: List.unmodifiable(findings),
       detectedLinks: links,
+      detectedContacts: List.unmodifiable(contacts),
       isValid: true,
       notice: 'Heuristic text checks only. No message was uploaded, no link was opened, and no sender identity or intent was verified.',
     );
@@ -155,6 +200,7 @@ class MessageAnalyzer {
           ),
         ],
         detectedLinks: const [],
+        detectedContacts: const [],
         isValid: false,
         notice: 'No network request was made.',
       );
