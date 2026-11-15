@@ -6,10 +6,30 @@ import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/main.dart';
 
 void main() {
-  testWidgets('fresh installs start at 85 percent text size', (tester) async {
+  testWidgets('fresh installs start at 100 percent text size', (tester) async {
     SharedPreferences.setMockInitialValues({
       'onboarding.completed.v1': true,
       'appearance.language': 'en',
+    });
+    await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Appearance and accessibility settings'));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView), const Offset(0, -1200));
+    await tester.pumpAndSettle();
+
+    final slider = tester.widget<Slider>(find.byType(Slider));
+    expect(slider.value, 1.0);
+    expect(find.text('100% · 50%–200%'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+
+  testWidgets('an explicitly saved text-size preference is preserved', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboarding.completed.v1': true,
+      'appearance.language': 'en',
+      'accessibility.textScale': 0.85,
     });
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
