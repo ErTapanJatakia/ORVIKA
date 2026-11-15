@@ -104,6 +104,18 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                   icon: const Icon(Icons.manage_search_rounded),
                   label: Text(l10n.text('checker.message.action', 'Inspect message')),
                 ),
+                if (_controller.text.isNotEmpty || result != null)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () => setState(() {
+                        _controller.clear();
+                        _result = null;
+                      }),
+                      icon: const Icon(Icons.clear_all_rounded),
+                      label: Text(l10n.text('checker.message.clear', 'Clear message and results')),
+                    ),
+                  ),
                 if (result != null) ...[
                   Semantics(
                     container: true,
@@ -174,6 +186,21 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                                 ],
                               ),
                             ),
+                          if (result.detectedContacts.isNotEmpty) ...[
+                            const Divider(),
+                            Semantics(
+                              header: true,
+                              child: Text(l10n.text('checker.message.contacts', 'Detected contact details'),
+                                  style: const TextStyle(fontWeight: FontWeight.w700)),
+                            ),
+                            const SizedBox(height: 8),
+                            for (final contact in result.detectedContacts)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 7),
+                                child: SelectableText(contact,
+                                    style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13)),
+                              ),
+                          ],
                           if (result.detectedLinks.isNotEmpty) ...[
                             const Divider(),
                             Semantics(
@@ -202,6 +229,36 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                   ),
                 ],
                 const SizedBox(height: 16),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l10n.text('checker.message.nextSteps', 'Safer next steps'),
+                            style: const TextStyle(fontWeight: FontWeight.w700)),
+                        const SizedBox(height: 8),
+                        for (final step in [
+                          l10n.text('checker.message.step1', 'Do not reply, pay, share an OTP, or install software because a message tells you to.'),
+                          l10n.text('checker.message.step2', 'Contact the organisation using its official app, website typed manually, or a number from a trusted source.'),
+                          l10n.text('checker.message.step3', 'Preserve the original message and sender details if you may need to report it.'),
+                        ])
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.check_circle_outline, size: 17),
+                                const SizedBox(width: 8),
+                                Expanded(child: Text(step, style: TextStyle(color: scheme.onSurfaceVariant, height: 1.35))),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 Text(
                   l10n.text('checker.message.notice', 'Important: this version uses a limited set of transparent text patterns. It does not determine whether a sender is genuine, prove fraud, inspect attachments, or verify a message against external threat intelligence. Do not share OTPs, passwords or recovery codes.'),
                   style: TextStyle(
