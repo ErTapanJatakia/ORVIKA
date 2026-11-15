@@ -5,7 +5,7 @@ Scope: Flutter Web/Android application code on the current `main` baseline
 
 ## Security-analysis input lifecycle
 
-The Link, QR and Message screens each own a `TextEditingController` and retain their analysis result in widget state. Their submit handlers call the corresponding deterministic domain analyzer directly. The controllers are disposed with their screens.
+The Link, QR and Message screens each own a `TextEditingController` and retain their analysis result in widget state. Their submit handlers call the corresponding deterministic domain analyzer directly. Message Check identifies configured social-engineering language, extracts visible web addresses and contact details for review, and renders generic safe-next-step guidance. It does not open links, contact extracted addresses, verify sender identity, or make a fraud verdict. The controllers are disposed with their screens.
 
 The Link, QR and Message presentation/domain paths reviewed for this batch do not call `SharedPreferences`, perform HTTP requests, or invoke analytics APIs. The analysis result and entered content remain in the active screen state; this is not a claim about operating-system memory, browser extensions, crash dumps, screenshots, or third-party platform behaviour.
 
