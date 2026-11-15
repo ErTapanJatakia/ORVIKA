@@ -37,7 +37,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('keyboard focus gives dashboard cards a visible high-contrast outline', (tester) async {
+  testWidgets('keyboard focus gives dashboard cards a visible active-theme outline', (tester) async {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
