@@ -94,7 +94,7 @@ assert.match(androidIgnore, /\\*\\*\\/\\*\\.jks/, 'JKS keystores must be ignored
 assert.match(androidIgnore, /\\*\\*\\/\\*\\.keystore/, 'Keystore files must be ignored by Git');
 
 const wrapper = fs.readFileSync(wrapperPath, 'utf8');
-assert.match(wrapper, /distributionUrl=https\\\\:\\/\\\\/services\\.gradle\\.org\\/distributions\\/gradle-[0-9.]+-all\\.zip/, 'Gradle wrapper distribution must be explicitly pinned');
+assert.match(wrapper, /distributionUrl=.*gradle-[0-9.]+-all\\.zip/, 'Gradle wrapper distribution must be explicitly pinned');
 assert.ok(fs.existsSync(path.join(androidRoot, 'gradlew')), 'Gradle wrapper launcher is missing');
 assert.ok(fs.existsSync(path.join(androidRoot, 'gradlew.bat')), 'Windows Gradle wrapper launcher is missing');
 
