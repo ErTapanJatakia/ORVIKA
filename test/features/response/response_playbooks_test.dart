@@ -15,6 +15,7 @@ void main() {
       expect(playbook.preserve, isNotEmpty);
       expect(playbook.avoid, isNotEmpty);
       expect(playbook.limit, isNotEmpty);
+      expect(playbook.escalateWhen, isNotEmpty, reason: playbook.id);
     }
   });
 
