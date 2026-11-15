@@ -84,6 +84,7 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                 const SizedBox(height: 18),
                 TextField(
                   controller: _controller,
+                  onChanged: (_) => setState(() => _result = null),
                   minLines: 5,
                   maxLines: 10,
                   maxLength: 10000,
