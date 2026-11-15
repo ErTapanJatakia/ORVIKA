@@ -1260,23 +1260,36 @@ class SentinelDashboard extends StatelessWidget {
                                     color: scheme.outline.withValues(alpha: 0.22),
                                   ),
                                 ),
-                                child: Text(
-                                  OrvikaLocalizations(selectedLanguage).text(
-                                    'footer.motto',
-                                    'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL',
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    color: scheme.onSurfaceVariant.withValues(alpha: 0.9),
-                                    fontSize: 10,
-                                    height: 1.5,
-                                    letterSpacing:
-                                        MediaQuery.textScalerOf(context).scale(10) > 12
-                                            ? 0.55
-                                            : 1.2,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      OrvikaLocalizations(selectedLanguage).text(
+                                        'footer.motto',
+                                        'SEE THE RISK  •  VERIFY THE SIGNAL  •  STAY IN CONTROL',
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      softWrap: true,
+                                      style: TextStyle(
+                                        color: scheme.onSurfaceVariant.withValues(alpha: 0.9),
+                                        fontSize: 10,
+                                        height: 1.5,
+                                        letterSpacing: MediaQuery.textScalerOf(context).scale(10) > 12 ? 0.55 : 1.2,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    TextButton.icon(
+                                      key: const ValueKey('accessibility-statement-footer'),
+                                      onPressed: () => Navigator.of(context).push(
+                                        MaterialPageRoute<void>(
+                                          builder: (_) => const OrvikaAccessibilityStatementScreen(),
+                                        ),
+                                      ),
+                                      icon: const Icon(Icons.accessibility_new_rounded, size: 17),
+                                      label: const Text('Accessibility statement'),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
