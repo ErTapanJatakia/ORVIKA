@@ -48,7 +48,6 @@ Future<List<QrImageCode>> decodeQrImage({
 
     // Use the native API when available, but never make it a requirement.
     final nativeResults = await _tryNativeBarcodeDetector(image);
-    if (nativeResults.isNotEmpty) return nativeResults;
 
     final sourceWidth = image.naturalWidth;
     final sourceHeight = image.naturalHeight;
@@ -84,11 +83,16 @@ Future<List<QrImageCode>> decodeQrImage({
         .data
         .toDart;
 
-    return decodeQrImagePixels(
+    final fallbackResults = decodeQrImagePixels(
       width: decodeWidth,
       height: decodeHeight,
       rgba: rgba,
     );
+    final merged = <String, QrImageCode>{};
+    for (final code in [...nativeResults, ...fallbackResults]) {
+      merged.putIfAbsent('${code.format}: ${code.value}', () => code);
+    }
+    return merged.values.toList(growable: false);
   } on FormatException {
     rethrow;
   } catch (_) {
