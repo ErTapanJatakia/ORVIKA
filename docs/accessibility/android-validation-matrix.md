@@ -1,6 +1,6 @@
 # ORVIKA Android Assistive-Technology Validation Matrix
 
-Status: validation plan prepared; execution evidence pending  
+Status: automated-evidence mapping reviewed; physical-device execution pending  
 Scope: native Android build on `com.orvika.app`  
 Target assistive technologies: TalkBack and Switch Access  
 Rule: no criterion is marked Pass until its specific evidence is recorded.
@@ -11,23 +11,24 @@ Flutter widget tests and semantics-tree assertions are useful automated evidence
 
 This matrix keeps automated evidence, source review and real-device execution separate. Do not record personal information, user content, screen recordings or diagnostic captures containing user data.
 
-## Journey coverage
+## Verified automated-evidence map
 
-| ID | User journey | Required Android checks | Existing automated evidence to map |
-|---|---|---|---|
-| AND-A11Y-01 | First-launch language selection | TalkBack announces screen title, selected language, search field, result count and selection state; Switch Access reaches search, results and continue action | `onboarding_settings_semantics_test.dart`; language-picker tests in `widget_test.dart` |
-| AND-A11Y-02 | Onboarding | Page heading, progress, next/back controls and completion state are announced in logical order | `onboarding_settings_semantics_test.dart`; onboarding tests in `widget_test.dart` |
-| AND-A11Y-03 | Dashboard | App identity and actionable cards have meaningful names and roles; informational cards are not announced as actions; traversal is predictable | `widget_test.dart`; `browser_navigation_focus_test.dart` (Flutter widget evidence only) |
-| AND-A11Y-04 | Link Check | Label and hint are announced; input errors are associated with the field; analysis result announces summary, severity, evidence and next step without colour dependency | `form_control_semantics_test.dart`; feature semantics tests |
-| AND-A11Y-05 | QR Check | Manual input, camera and image actions are reachable; camera permission denial is understandable; scan result and uncertainty are announced | QR Check screen and semantics tests; `qr_check_screen_test.dart` |
-| AND-A11Y-06 | Message Check | Input label, validation and result summary are announced; detailed findings remain reachable | `form_control_semantics_test.dart`; feature semantics tests |
-| AND-A11Y-07 | Intelligence | Search, filters, result count, empty state and evidence details are reachable and announced | Intelligence semantics and responsive tests |
-| AND-A11Y-08 | Privacy | Checklist items expose state; progress changes are announced; review actions are operable without precise gestures | Privacy semantics tests |
-| AND-A11Y-09 | Academy | Lesson headings, progress, answers and feedback are announced; correct/incorrect state is not colour-only | Academy semantics tests |
-| AND-A11Y-10 | Response | Playbook headings, ordered steps and action controls have meaningful names and order | Response feature semantics tests |
-| AND-A11Y-11 | Appearance and accessibility settings | Current values and toggles are announced; text scale, bold text and reduced motion can be changed and retained | `onboarding_settings_semantics_test.dart`; `widget_test.dart` |
+The following references were checked against files present on the current A11Y-04 branch. They identify what the tests actually assert; they are not a claim that the full Android assistive-technology journey has passed.
 
-> Replace any provisional test-file references above with exact current test names during implementation review. Do not infer coverage from a filename alone; inspect the assertion and the widget journey it exercises.
+| Journey | Verified automated evidence | Coverage boundary / remaining check |
+|---|---|---|
+| First-launch language selection | `test/features/accessibility/onboarding_settings_semantics_test.dart`: heading, labelled search field and live result-count announcement. `test/features/accessibility/onboarding_settings_responsive_test.dart`: responsive widths and locale-tag search for every selectable language. | Does not prove TalkBack selection-state speech or Switch Access scanning/activation on Android. |
+| Onboarding | `test/features/accessibility/onboarding_settings_semantics_test.dart`: page heading, page progress live region and progression to page 2. `test/features/accessibility/onboarding_settings_responsive_test.dart`: responsive navigation. | Back/complete announcement order and physical assistive-tech operation remain to be checked. |
+| Dashboard | `test/features/accessibility/interaction_validation_test.dart`: 48-pixel icon targets and Tab/Shift+Tab/Enter navigation. `test/features/accessibility/browser_navigation_focus_test.dart`: Space activation and focus restoration after returning from a feature. `test/features/accessibility/focus_target_sizing_test.dart`: icon target sizing and visible keyboard focus outline. | Keyboard/browser evidence is not equivalent to TalkBack traversal or Switch Access scanning. |
+| Link Check | `test/features/accessibility/form_control_semantics_test.dart`: input label. `test/features/accessibility/feature_semantics_test.dart`: screen heading, live result announcement and result heading. | Error-to-field association, severity/evidence reading order and Switch Access operation need direct verification. |
+| QR Check | `test/features/accessibility/form_control_semantics_test.dart`: manual-input label. `test/features/accessibility/feature_semantics_test.dart`: heading, live result announcement and result heading. `test/features/qr_check/qr_check_screen_test.dart`: camera/image/manual alternatives, camera permission preflight, responsive layout and 200% text scaling in RTL. | Actual permission denial, scanner dialogs, TalkBack reading order and Switch Access operation remain physical-device checks. |
+| Message Check | `test/features/accessibility/form_control_semantics_test.dart`: input label. `test/features/accessibility/feature_semantics_test.dart`: screen heading, live result announcement and result heading. | Error-to-field association, detailed finding order and Switch Access operation need direct verification. |
+| Intelligence | `test/features/accessibility/form_control_semantics_test.dart`: search label. `test/features/accessibility/feature_semantics_test.dart`: screen heading and live reference-count update. | Filter traversal, empty-state and evidence-detail announcements need further audit and device validation. |
+| Privacy | `test/features/accessibility/feature_semantics_test.dart`: screen heading, progress accessible value and live progress update. | Checklist item checked state and all action controls need direct semantic/device validation. |
+| Academy | `test/features/accessibility/feature_semantics_test.dart`: screen heading, progress value, progress announcement and live answer feedback. | Full lesson traversal and correct/incorrect state beyond the tested feedback need direct validation. |
+| Response | `test/features/accessibility/feature_semantics_test.dart`: screen heading. | Ordered-step semantics and action-control names/order need further audit and device validation. |
+| Appearance and accessibility settings | `test/features/accessibility/onboarding_settings_semantics_test.dart`: section headings. `test/features/accessibility/text_scale_range_test.dart`: default, saved value, slider range/steps and localization keys. `test/features/accessibility/interaction_validation_test.dart`: dashboard icon target sizes. | Current toggle values, persisted changes, Switch Access operation and Android system font/display scaling need direct validation. |
+| Cross-feature accessibility preferences | `test/features/accessibility/interaction_validation_test.dart`: theme accent contrast. `test/features/accessibility/text_scale_range_test.dart`: 50%–200% app text-scale range. | Automated contrast calculations and app-controlled scaling do not replace Android system display/font scaling checks. |
 
 ## Physical-device protocol
 
