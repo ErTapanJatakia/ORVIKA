@@ -372,7 +372,42 @@ class _OrvikaAppState extends State<OrvikaApp> {
         scaffoldBackgroundColor: palette.background,
         canvasColor: palette.surface,
         cardColor: palette.surface,
-        focusColor: scheme.primary.withValues(alpha: 0.22),
+        // A stronger shared focus token gives Material controls a clearer
+        // keyboard-focus treatment across all four palettes. Individual custom
+        // controls still require rendered and assistive-technology validation.
+        focusColor: scheme.primary.withValues(alpha: 0.32),
+        iconButtonTheme: IconButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: palette.background,
           foregroundColor: scheme.onSurface,
