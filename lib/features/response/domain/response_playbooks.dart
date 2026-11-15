@@ -17,6 +17,7 @@ class ResponsePlaybook {
     required this.preserve,
     required this.avoid,
     required this.limit,
+    this.escalateWhen = const <String>[],
   });
 
   final String id;
@@ -28,6 +29,8 @@ class ResponsePlaybook {
   final List<String> preserve;
   final List<String> avoid;
   final String limit;
+  /// Conditions that warrant qualified, provider or authority assistance.
+  final List<String> escalateWhen;
 }
 
 /// General, offline-first incident guidance. This is not incident detection
@@ -60,6 +63,11 @@ class ResponsePlaybooks {
         'Do not delete potentially relevant alerts before recording their details.',
       ],
       limit: 'ORVIKA cannot verify account access, revoke sessions or recover an account. Follow the service’s official recovery process; steps and labels vary.',
+      escalateWhen: [
+        'Contact the service provider immediately if you are locked out, recovery details changed, or unauthorised activity continues.',
+        'Notify your organisation’s security team immediately if a work, school or privileged account is involved.',
+        'Seek urgent help from your bank or payment provider if the account controls financial services or unauthorised transactions appear.',
+      ],
     ),
     ResponsePlaybook(
       id: 'payment-fraud',
@@ -84,6 +92,11 @@ class ResponsePlaybooks {
         'Do not rely on contact details sent by the suspected fraudster.',
       ],
       limit: 'A payment may not be reversible. ORVIKA cannot freeze accounts, trace funds or submit reports. Contact the provider without delay; reporting routes and deadlines vary.',
+      escalateWhen: [
+        'Contact the bank, card issuer or payment provider immediately for any unauthorised or scam-induced transaction.',
+        'Use the relevant official law-enforcement or cybercrime reporting channel when money or payment credentials were lost or exposed.',
+        'Seek emergency assistance if threats, coercion or immediate physical danger are involved.',
+      ],
     ),
     ResponsePlaybook(
       id: 'lost-device',
@@ -108,6 +121,11 @@ class ResponsePlaybooks {
         'Do not assume a location estimate is exact or safe to act on yourself.',
       ],
       limit: 'Remote location, lock and erase depend on prior configuration, connectivity and platform support. Erasing may affect later evidence or recovery; consider the situation before proceeding.',
+      escalateWhen: [
+        'Report suspected theft to the appropriate local authority; do not attempt to recover the device by confronting anyone.',
+        'Contact your mobile carrier promptly if a SIM or eSIM is missing or may be misused.',
+        'Notify your employer or school immediately if the device contains managed, confidential or regulated information.',
+      ],
     ),
     ResponsePlaybook(
       id: 'suspected-malware',
@@ -133,6 +151,11 @@ class ResponsePlaybooks {
         'Do not connect backup drives or other devices unnecessarily while compromise is suspected.',
       ],
       limit: 'These signs do not prove malware is present. ORVIKA does not scan files, inspect processes or clean devices. Serious or business-impacting incidents need qualified analysis.',
+      escalateWhen: [
+        'Contact a qualified incident-response professional if sensitive data, privileged access, multiple devices or business services may be affected.',
+        'Notify your organisation’s security team immediately for a managed device or suspected lateral movement.',
+        'Contact relevant providers promptly if financial credentials or identity information may have been exposed.',
+      ],
     ),
     ResponsePlaybook(
       id: 'identity-exposure',
@@ -157,6 +180,11 @@ class ResponsePlaybooks {
         'Do not assume deleting a post or message removes copies already obtained by others.',
       ],
       limit: 'Available identity-protection and reporting options depend on the data type and jurisdiction. ORVIKA cannot determine whether information was copied or misused.',
+      escalateWhen: [
+        'Contact the issuing authority promptly if identity documents, official credentials or government identifiers were exposed.',
+        'Contact banks or financial institutions if account, card or payment information was disclosed.',
+        'Use the relevant official privacy regulator or law-enforcement channel when the exposure involves unlawful disclosure, threats or significant harm.',
+      ],
     ),
   ];
 

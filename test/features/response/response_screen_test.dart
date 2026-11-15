@@ -39,6 +39,8 @@ void main() {
     expect(find.text('STEP-BY-STEP'), findsOneWidget);
     expect(find.text('PRESERVE USEFUL INFORMATION'), findsOneWidget);
     expect(find.text('AVOID'), findsOneWidget);
+    expect(find.text('WHEN TO ESCALATE'), findsOneWidget);
+    expect(find.textContaining('Contact the service provider immediately'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
 
     final semantics = tester.ensureSemantics();
