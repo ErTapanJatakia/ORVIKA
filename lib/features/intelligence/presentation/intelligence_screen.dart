@@ -38,6 +38,14 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
         IntelligenceCategory.accountSafety => OrvikaLocalizations.of(context).text('intelligence.category.accounts', 'Account safety'),
       };
 
+
+  String _relatedModule(IntelligenceCategory category) => switch (category) {
+        IntelligenceCategory.links => OrvikaLocalizations.of(context).text('module.linkCheck', 'Link Check'),
+        IntelligenceCategory.messages => OrvikaLocalizations.of(context).text('module.messageCheck', 'Message Check'),
+        IntelligenceCategory.qrCodes => OrvikaLocalizations.of(context).text('module.qrCheck', 'QR Check'),
+        IntelligenceCategory.accountSafety => OrvikaLocalizations.of(context).text('module.privacy', 'Privacy'),
+      };
+
   IconData _categoryIcon(IntelligenceCategory category) => switch (category) {
         IntelligenceCategory.links => Icons.link_rounded,
         IntelligenceCategory.messages => Icons.mark_email_unread_outlined,
@@ -182,6 +190,7 @@ class _IntelligenceScreenState extends State<IntelligenceScreen> {
                     _DetailSection(label: l10n.text('intelligence.detail.meaning', 'WHAT IT MEANS'), value: entry.meaning),
                     _DetailSection(label: l10n.text('intelligence.detail.next', 'SAFER NEXT STEP'), value: entry.action),
                     _DetailSection(label: l10n.text('intelligence.detail.limit', 'IMPORTANT LIMIT'), value: entry.limit),
+                    _DetailSection(label: l10n.text('intelligence.detail.related', 'RELATED ORVIKA MODULE'), value: _relatedModule(entry.category)),
                   ],
                 ),
               );
