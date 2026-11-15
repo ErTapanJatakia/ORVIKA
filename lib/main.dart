@@ -149,7 +149,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
         _selectedLanguage = hasReviewedSavedLanguage
             ? restoredLanguage
             : OrvikaLanguage.english;
-        _hasSelectedLanguage = hasReviewedSavedLanguage;
+        _hasSelectedLanguage = true;
         if (savedName != null) {
           for (final theme in OrvikaTheme.values) {
             if (theme.name == savedName) {
@@ -158,7 +158,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
             }
           }
         }
-        _hasCompletedOnboarding = completed;
+        _hasCompletedOnboarding = true;
         _textScale = ((textScale.clamp(0.5, 2.0) * 20).round() / 20).toDouble();
         _boldText = boldText;
         _reduceMotion = reduceMotion;
@@ -339,7 +339,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
                   : TextDirection.ltr,
               child: OrvikaLanguageScope(
                 language: _selectedLanguage,
-                child: child ?? const SizedBox.shrink(),
+                child: OrvikaLaunchOverlay(child: child ?? const SizedBox.shrink()),
               ),
             ),
           ),
@@ -401,29 +401,131 @@ class _OrvikaAppState extends State<OrvikaApp> {
           ),
         ),
       ),
-      home: _isLoadingPreferences
-          ? OrvikaSplashScreen(selectedLanguage: _selectedLanguage, selectedCatalogue: _selectedCatalogue, onLanguageChanged: _selectLanguage, onCatalogueChanged: _selectCatalogue)
-          : !_hasSelectedLanguage
-              ? LanguageSelectionScreen(
-                  selectedLanguage: _selectedLanguage,
-                  selectedCatalogue: _selectedCatalogue,
-                  onLanguageChanged: _selectLanguage,
-                  onCatalogueChanged: _selectCatalogue,
-                  onContinue: _completeLanguageSelection,
-                )
-              : _hasCompletedOnboarding
-              ? SentinelDashboard(
-                  selectedTheme: _selectedTheme,
-                  onThemeChanged: _selectTheme,
-                  selectedLanguage: _selectedLanguage,
-                  selectedCatalogue: _selectedCatalogue,
-                  onLanguageChanged: _selectLanguage,
-                  onCatalogueChanged: _selectCatalogue,
-                  textScale: _textScale, onTextScaleChanged: _setTextScale,
-                  boldText: _boldText, onBoldTextChanged: _setBoldText,
-                  reduceMotion: _reduceMotion, onReduceMotionChanged: _setReduceMotion,
-                )
-              : OrvikaOnboardingScreen(onCompleted: _completeOnboarding, language: _selectedLanguage, selectedCatalogue: _selectedCatalogue, onCatalogueChanged: _selectCatalogue),
+      // ORVIKA opens directly on the dashboard. English is the default;
+      // a previously saved, reviewed language is restored by preferences.
+      // First-run language selection and onboarding remain available separately.
+      home: SentinelDashboard(
+        selectedTheme: _selectedTheme,
+        onThemeChanged: _selectTheme,
+        selectedLanguage: _selectedLanguage,
+        selectedCatalogue: _selectedCatalogue,
+        onLanguageChanged: _selectLanguage,
+        onCatalogueChanged: _selectCatalogue,
+        textScale: _textScale,
+        onTextScaleChanged: _setTextScale,
+        boldText: _boldText,
+        onBoldTextChanged: _setBoldText,
+        reduceMotion: _reduceMotion,
+        onReduceMotionChanged: _setReduceMotion,
+      ),
+    );
+  }
+}
+
+/// Displays the ORVIKA brand on every cold app launch, then fades away.
+class OrvikaLaunchOverlay extends StatefulWidget {
+  const OrvikaLaunchOverlay({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  State<OrvikaLaunchOverlay> createState() => _OrvikaLaunchOverlayState();
+}
+
+class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
+  static const _holdDuration = Duration(seconds: 3);
+  static const _fadeDuration = Duration(milliseconds: 650);
+
+  bool _visible = true;
+  bool _removed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _dismissAfterHold();
+  }
+
+  Future<void> _dismissAfterHold() async {
+    await Future<void>.delayed(_holdDuration);
+    if (!mounted) return;
+    setState(() => _visible = false);
+    await Future<void>.delayed(_fadeDuration);
+    if (!mounted) return;
+    setState(() => _removed = true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        widget.child,
+        if (!_removed)
+          Positioned.fill(
+            child: IgnorePointer(
+              ignoring: true,
+              child: ExcludeSemantics(
+                child: AnimatedOpacity(
+                  opacity: _visible ? 1 : 0,
+                  duration: _fadeDuration,
+                  curve: Curves.easeInOut,
+                  child: const ColoredBox(
+                    color: Color(0xE6081426),
+                    child: SafeArea(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              OrvikaOwlMark(
+                                size: 116,
+                                palette: OrvikaPalette.obsidian,
+                              ),
+                              SizedBox(height: 22),
+                              Text(
+                                'ORVIKA',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFFF3F7FC),
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 5,
+                                ),
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                'CHECK BEFORE YOU TRUST.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF00D5FF),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'See the Risk. Verify the Signal. Stay in Control.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFFD5E2F0),
+                                  fontSize: 12,
+                                  height: 1.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
