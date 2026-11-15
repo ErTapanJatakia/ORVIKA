@@ -60,6 +60,48 @@ void main() {
     expect(result.detectedLinks, contains('https://раypal.example'));
   });
 
+  test('detects impersonation, secrecy and remote-access lures', () {
+    final result = analyzer.analyze(
+      'URGENT: Bank security team says keep this secret. Install AnyDesk for remote access.',
+    );
+
+    expect(result.findings.map((f) => f.title), containsAll([
+      'Urgency or pressure language',
+      'Impersonation or authority claim',
+      'Secrecy or isolation request',
+      'Remote-access or app-installation request',
+    ]));
+  });
+
+  test('detects sensitive information and hard-to-reverse payment methods', () {
+    final result = analyzer.analyze(
+      'Send your Aadhaar and CVV, then pay with a gift card or Bitcoin.',
+    );
+
+    expect(result.findings.map((f) => f.title), containsAll([
+      'Sensitive personal information request',
+      'Unusual or hard-to-reverse payment method',
+    ]));
+  });
+
+  test('extracts email addresses and phone numbers without contacting them', () {
+    final result = analyzer.analyze(
+      'Contact support@example.test or call +91 98765 43210.',
+    );
+
+    expect(result.detectedContacts, contains('support@example.test'));
+    expect(result.detectedContacts, contains('+91 98765 43210'));
+    expect(result.findings.map((f) => f.title), contains('Contact details detected'));
+    expect(result.notice, contains('No message was uploaded'));
+  });
+
+  test('keeps obfuscated links un-opened and reports them separately', () {
+    final result = analyzer.analyze('Use hxxps://example.test/login');
+
+    expect(result.findings.map((f) => f.title), contains('Obfuscated web address detected'));
+    expect(result.detectedLinks, isEmpty);
+    expect(result.notice, contains('no link was opened'));
+  });
   test('deduplicates repeated links', () {
     final result = analyzer.analyze(
       'Review https://example.test and https://example.test before continuing.',
