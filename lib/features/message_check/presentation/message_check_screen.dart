@@ -117,10 +117,13 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            l10n.text('checker.message.result', 'Review findings'),
-                            style: const TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w700),
+                          Semantics(
+                            header: true,
+                            child: Text(
+                              l10n.text('checker.message.result', 'Review findings'),
+                              style: const TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w700),
+                            ),
                           ),
                           const SizedBox(height: 14),
                           for (final finding in result.findings.map((item) => (l10n.language.code == 'pt' || l10n.language.code == 'pt-PT') ? PortugueseCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'es' ? SpanishCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'fr' ? FrenchCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'it' ? ItalianCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'zh' ? MandarinCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'ru' ? RussianCheckerContent.localizeFinding(item, l10n.language.code) : l10n.language.code == 'ar' ? ArabicCheckerContent.localizeFinding(item, l10n.language.code) : GermanCheckerContent.localizeFinding(item, l10n.language.code)))
@@ -172,8 +175,11 @@ class _MessageCheckScreenState extends State<MessageCheckScreen> {
                             ),
                           if (result.detectedLinks.isNotEmpty) ...[
                             const Divider(),
-                            Text(l10n.text('checker.message.links', 'Detected web addresses'),
-                                style: const TextStyle(fontWeight: FontWeight.w700)),
+                            Semantics(
+                              header: true,
+                              child: Text(l10n.text('checker.message.links', 'Detected web addresses'),
+                                  style: const TextStyle(fontWeight: FontWeight.w700)),
+                            ),
                             const SizedBox(height: 8),
                             for (final link in result.detectedLinks)
                               Padding(
