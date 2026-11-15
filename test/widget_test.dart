@@ -20,7 +20,7 @@ void main() {
     final theme = Theme.of(context);
     final iconButtonStyle = theme.iconButtonTheme.style!;
     final minimumSize = iconButtonStyle.minimumSize!.resolve(const <WidgetState>{})!;
-    final tapTargetSize = iconButtonStyle.tapTargetSize!.resolve(const <WidgetState>{});
+    final tapTargetSize = iconButtonStyle.tapTargetSize;
 
     expect(minimumSize.width, greaterThanOrEqualTo(48));
     expect(minimumSize.height, greaterThanOrEqualTo(48));
