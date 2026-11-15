@@ -34,8 +34,8 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
                 child: Semantics(
                   label: 'Accessibility information badge',
                   child: const Chip(
-                    avatar: const Icon(Icons.accessibility_new_rounded, size: 18),
-                    label: const Text('Accessibility information'),
+                    avatar: Icon(Icons.accessibility_new_rounded, size: 18),
+                    label: Text('Accessibility information'),
                     visualDensity: VisualDensity.compact,
                   ),
                 ),
