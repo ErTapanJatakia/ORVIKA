@@ -342,7 +342,41 @@ class _OrvikaAppState extends State<OrvikaApp> {
         scaffoldBackgroundColor: palette.background,
         canvasColor: palette.surface,
         cardColor: palette.surface,
-        focusColor: scheme.primary.withValues(alpha: 0.22),
+        // Shared focus and target defaults improve the Material baseline.
+        // Custom gesture surfaces still require separate control-level review.
+        focusColor: scheme.primary.withValues(alpha: 0.32),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        visualDensity: VisualDensity.standard,
+        iconButtonTheme: const IconButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: MaterialTapTargetSize.padded,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
+            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
+              MaterialTapTargetSize.padded,
+            ),
+          ),
+        ),
         materialTapTargetSize: MaterialTapTargetSize.padded,
         visualDensity: VisualDensity.standard,
         iconButtonTheme: const IconButtonThemeData(
