@@ -1,30 +1,34 @@
-# ORVIKA Web Accessibility Statement — Draft
+# ORVIKA Web Accessibility Statement
 
-**Publication status:** Draft only — not a conformance claim  
-**Evaluation status:** In progress; full WCAG 2.2 AA evaluation has not been completed  
-**Last updated:** 15 November 2026
+**Publication status:** Published as an informational statement; not a conformance claim  
+**Evaluation record:** Project owner reports manual validation of A11Y-01 to A11Y-10  
+**Last reviewed:** 15 November 2026
 
-ORVIKA aims to make its web experience accessible to as many people as possible. The current engineering target is Web Content Accessibility Guidelines (WCAG) 2.2 Level AA.
+## Commitment
 
-## Current status
+ORVIKA aims to make its web experience accessible to as many people as possible. The engineering and testing target is Web Content Accessibility Guidelines (WCAG) 2.2 Level AA.
 
-The project has automated Flutter widget tests for selected semantics, headings, form labels, keyboard navigation, responsive layouts, and text scaling. These checks do not establish full WCAG conformance. Manual keyboard, browser screen-reader, zoom/reflow, contrast, and assistive-technology evaluation is still required.
+Implemented work includes keyboard navigation and visible focus, semantic labels and headings, form-control semantics, text scaling, responsive layouts, reduced-motion support, and contrast-aware themes.
 
-No WCAG conformance logo or statement of full conformance is authorized at this stage.
+## Current evaluation status
 
-## Known evaluation limitations
+The project owner reports manually validating the A11Y-01 to A11Y-10 implementation set. Automated Flutter tests cover selected semantics, headings, form labels, keyboard navigation, responsive layouts, and text scaling.
 
-- Full criterion-by-criterion WCAG 2.2 A/AA assessment remains in progress.
-- Manual browser and assistive-technology testing has not been completed for the release candidate.
-- Some third-party/browser/platform behaviours require separate testing.
-- Any future map or chart must have a text/list/table alternative before it is considered accessible.
+This project validation is not an independent third-party audit. It does not establish that every applicable WCAG 2.2 success criterion is met across every page, state, browser, and assistive technology. ORVIKA therefore makes no claim of full WCAG 2.2 Level AA conformance and does not display a WCAG conformance logo or certification badge.
+
+## Known limitations
+
+- Full criterion-by-criterion independent WCAG 2.2 A/AA evaluation has not been completed.
+- Browser and assistive-technology behaviour can vary by platform and requires ongoing validation.
+- Third-party services and embedded controls require separate testing.
+- Any future map or chart must have an equivalent text, list, or table alternative.
 
 ## Feedback and contact
 
-**Before publication, the project owner must add and verify a public accessibility feedback channel and a response process.** Do not publish this draft with placeholder contact details.
+Use the Accessibility Statement link in the ORVIKA web application to open the protected accessibility contact flow. Contact addresses are disclosed only after successful server-side Cloudflare Turnstile verification. Do not include passwords, one-time codes, or unrelated sensitive personal information in accessibility reports.
 
-When a feedback channel is approved, include how users can report barriers, the information needed to reproduce an issue without sharing sensitive data, and an expected response timeframe.
+When reporting a barrier, include the affected page or feature, the action you attempted, the result you expected, and concise reproduction steps. Browser and assistive-technology details are optional.
 
-## Conformance claim
+## Scope
 
-This draft intentionally makes no claim that the website conforms to WCAG 2.2 Level AA. Update this statement only after a documented evaluation of all applicable success criteria, representative pages/states, browsers, and assistive technologies. Keep the evaluation date, scope, methods, known limitations, and remediation plan current.
+This statement covers the hosted web experience. The Android application requires a separate native evaluation, including TalkBack, Switch Access, and Android display scaling. Web validation must not be treated as evidence of Android conformance.
