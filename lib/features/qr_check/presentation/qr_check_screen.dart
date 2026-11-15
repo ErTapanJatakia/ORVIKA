@@ -180,9 +180,12 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                           ),
                           const SizedBox(width: 9),
                           Expanded(
-                            child: Text(
-                              l10n.text('checker.qr.result', 'Inspection result'),
-                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                            child: Semantics(
+                              header: true,
+                              child: Text(
+                                l10n.text('checker.qr.result', 'Inspection result'),
+                                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                              ),
                             ),
                           ),
                           Text(
@@ -210,7 +213,10 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
                       ),
                       if (result.normalizedUrl != null) ...[
                         const SizedBox(height: 14),
-                        Text(l10n.text('checker.qr.destination', 'Detected destination'), style: const TextStyle(fontWeight: FontWeight.w700)),
+                        Semantics(
+                          header: true,
+                          child: Text(l10n.text('checker.qr.destination', 'Detected destination'), style: const TextStyle(fontWeight: FontWeight.w700)),
+                        ),
                         const SizedBox(height: 5),
                         SelectableText(
                           result.normalizedUrl!,
