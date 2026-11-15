@@ -380,9 +380,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
         iconButtonTheme: IconButtonThemeData(
           style: ButtonStyle(
             minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
-            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
-              MaterialTapTargetSize.padded,
-            ),
+            tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
         appBarTheme: AppBarTheme(
