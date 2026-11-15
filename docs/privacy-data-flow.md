@@ -53,7 +53,7 @@ The separate reviewed checkbox records only that guidance was reviewed; its stab
 
 `test/privacy_data_isolation_test.dart` exercises the actual Link, QR and Message screens with distinctive sensitive test inputs, submits each analysis, and asserts that the mocked `SharedPreferences` store remains empty.
 
-This test proves only that these screen flows do not write to the SharedPreferences interface under test. It does not prove the absence of all possible filesystem, browser, operating-system, crash-reporting, extension, or network side channels. The repository-level source review and production/manual checks remain separate evidence.
+This test proves only that these screen flows do not write to the SharedPreferences interface under test. It does not prove the absence of all possible filesystem, browser, operating-system, crash-reporting, extension, or network side channels. The Privacy widget tests additionally verify that selecting an assessment response updates the in-session summary without writing any key to SharedPreferences. The repository-level source review and production/manual checks remain separate evidence.
 
 ## Offline boundary
 
