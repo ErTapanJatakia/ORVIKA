@@ -106,6 +106,18 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   icon: const Icon(Icons.manage_search_rounded),
                   label: Text(l10n.text('checker.link.action', 'Analyse address')),
                 ),
+                if (_controller.text.isNotEmpty || _result != null)
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: TextButton.icon(
+                      onPressed: () => setState(() {
+                        _controller.clear();
+                        _result = null;
+                      }),
+                      icon: const Icon(Icons.clear_all_rounded),
+                      label: Text(l10n.text('checker.message.clear', 'Clear input and findings')),
+                    ),
+                  ),
                 if (_result case final result?) ...[
                   Semantics(
                     container: true,
