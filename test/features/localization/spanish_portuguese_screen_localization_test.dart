@@ -62,7 +62,9 @@ void main() {
     await tester.pumpWidget(app('es', const PrivacyScreen()));
     await tester.pumpAndSettle();
     expect(find.text('Revisión de privacidad'), findsOneWidget);
-    expect(find.text('Utiliza contraseñas únicas para tus cuentas importantes'), findsOneWidget);
+    final spanishPractice = find.text('Utiliza contraseñas únicas para tus cuentas importantes');
+    await tester.scrollUntilVisible(spanishPractice, 300, scrollable: find.byType(ListView));
+    expect(spanishPractice, findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(app('es', const ResponseScreen()));
