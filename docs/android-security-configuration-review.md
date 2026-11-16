@@ -43,6 +43,17 @@ The default bundled model is available without relying on Google Play Services t
 
 The guard intentionally fails if the manifest permission set changes. If a future feature requires a new permission, the change must include a documented purpose, user-visible permission flow, privacy review and an explicit update to the allowlist.
 
+## Android artifact verification guard
+
+The Android validation workflow now contains artifact-level checks for both APK and AAB outputs:
+
+- The APK verifier checks the built application ID and the merged permission set against the reviewed CAMERA + INTERNET allowlist.
+- The AAB verifier uses Google's official Bundletool 1.18.3 release, downloaded from its versioned GitHub release URL and checked against the published SHA-256 digest `a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29`.
+- The AAB verifier enumerates module manifests, checks each module's package identity, and aggregates permission declarations across modules against the same allowlist.
+- The workflow continues to compare APK and AAB signer certificate sets.
+
+These are implemented checks, not completed release evidence. GitHub Actions has not been run, and no APK/AAB has been built or inspected in this review.
+
 ## Not established by this source review
 
 - Runtime permission prompt timing and denial behaviour.
