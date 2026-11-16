@@ -51,6 +51,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
     final l10n = OrvikaLocalizations.of(context);
     if (_starting || _cameraActive || !_cameraRequested) return;
     _reportedScannerError = null;
+    var restartAfterLifecycleStop = false;
     setState(() {
       _starting = true;
       _statusMessage = null;
@@ -58,6 +59,24 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
     try {
       await _controller.start();
       if (!mounted) return;
+      // The app may have been backgrounded while start() was waiting for the
+      // permission prompt or platform camera initialization. Do not leave the
+      // camera active in that state; the resumed lifecycle path restarts it.
+      if (_pausedByLifecycle ||
+          WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+        _pausedByLifecycle = true;
+        try {
+          await _controller.stop();
+        } catch (_) {
+          // Best-effort release after a lifecycle transition.
+        }
+        if (mounted) setState(() => _cameraActive = false);
+        restartAfterLifecycleStop =
+            _cameraRequested &&
+            !_pausedByLifecycle &&
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+        return;
+      }
       if (!_controller.value.hasCameraPermission) {
         setState(() {
           _statusMessage =
@@ -73,7 +92,19 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
             l10n.text('checker.camera.unavailable', 'Camera access is unavailable or was denied. Check that this page uses HTTPS, that a camera is connected, and that your browser or device permits camera access. You can still paste decoded content.');
       });
     } finally {
-      if (mounted) setState(() => _starting = false);
+      if (mounted) {
+        setState(() => _starting = false);
+        // A resume event can arrive while start() is still awaiting the
+        // platform permission/result. Its callback cannot start a second
+        // session while _starting is true, so retry once startup has settled.
+        if (restartAfterLifecycleStop &&
+            _cameraRequested &&
+            !_pausedByLifecycle &&
+            !_cameraActive &&
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
+          unawaited(_startCamera());
+        }
+      }
     }
   }
 
@@ -114,10 +145,13 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
       case AppLifecycleState.detached:
         // Do not stop while the initial permission prompt is unresolved. Once
         // capture is active, release the camera whenever the app is backgrounded.
-        if (_cameraRequested && _cameraActive && !_pausedByLifecycle &&
-            !_handledCapture) {
+        if (_cameraRequested && !_pausedByLifecycle && !_handledCapture) {
           _pausedByLifecycle = true;
-          unawaited(_pauseCameraForLifecycle());
+          if (_cameraActive) {
+            unawaited(_pauseCameraForLifecycle());
+          }
+          // If start() is still pending, _startCamera() will stop the camera
+          // immediately after the platform call completes.
         }
         break;
       case AppLifecycleState.resumed:
