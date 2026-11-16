@@ -135,6 +135,11 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     try {
       final selected = await _picker.pickImage(
         source: ImageSource.gallery,
+        // Keep native analyzeImage() and the in-memory preview within the same
+        // approximate 8 MP ceiling used by the Web decoder. Without these
+        // bounds, a small compressed image could expand to a very large bitmap.
+        maxWidth: 2896,
+        maxHeight: 2896,
         requestFullMetadata: false,
       );
       if (!mounted) {
@@ -274,6 +279,9 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
                       constraints: const BoxConstraints(maxHeight: 300),
                       child: Image.memory(
                         bytes,
+                        // The preview is display-sized; do not decode the full
+                        // source bitmap into the image cache unnecessarily.
+                        cacheWidth: 1200,
                         fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) => Padding(
                           padding: const EdgeInsets.all(24),
