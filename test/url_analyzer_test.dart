@@ -51,9 +51,23 @@ void main() {
       expect(result.findings.any((f) => f.title == 'Internationalised domain encoding'), isTrue);
     });
 
-    test('rejects unsupported schemes', () {
-      final result = analyzer.analyze('javascript:alert(1)');
-      expect(result.isValid, isFalse);
+    test('rejects unsupported schemes without reinterpreting them as HTTPS URLs', () {
+      for (final input in [
+        'javascript:alert(1)',
+        'mailto:security@example.com',
+        'tel:+911234567890',
+        'data:text/plain,hello',
+      ]) {
+        final result = analyzer.analyze(input);
+        expect(result.isValid, isFalse, reason: input);
+        expect(result.normalizedUrl, isNull, reason: input);
+      }
+    });
+
+    test('accepts a bare host and numeric port as an HTTPS shorthand', () {
+      final result = analyzer.analyze('localhost:8080/path');
+      expect(result.isValid, isTrue);
+      expect(result.normalizedUrl, 'https://localhost:8080/path');
     });
 
     test('rejects whitespace and control characters', () {
