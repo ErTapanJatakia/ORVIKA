@@ -497,6 +497,23 @@ class OrvikaLocalizations {
     'response.avoid': 'Evita',
     'response.limit': 'Limitaciones',
     'response.notice': 'Las medidas adecuadas dependen del servicio, el dispositivo y la jurisdicción. ORVIKA no sustituye el asesoramiento profesional ni los canales oficiales de respuesta.',
+    'a11y.statement.title': 'Declaración de accesibilidad de ORVIKA',
+    'a11y.statement.badge': 'Información de accesibilidad',
+    'a11y.statement.reviewed': 'Última revisión: 15 de noviembre de 2026',
+    'a11y.statement.commitment.title': 'Compromiso de accesibilidad',
+    'a11y.statement.commitment.body': 'ORVIKA utiliza WCAG 2.2 nivel AA como objetivo de diseño y pruebas de accesibilidad web. El trabajo implementado incluye navegación por teclado y foco visible, etiquetas y encabezados semánticos, semántica de controles de formulario, ampliación de texto, diseños adaptables, compatibilidad con la reducción de movimiento y temas sensibles al contraste.',
+    'a11y.statement.evaluation.title': 'Estado actual de la evaluación',
+    'a11y.statement.evaluation.body': 'El responsable del proyecto informa de una validación manual de las implementaciones A11Y-01 a A11Y-10. Las pruebas automatizadas de Flutter cubren aspectos seleccionados de semántica, encabezados, etiquetas de formularios, navegación por teclado, diseños adaptables y ampliación de texto. Esta validación del proyecto no es una auditoría independiente de terceros.',
+    'a11y.statement.conformance.title': 'Estado de conformidad y limitaciones',
+    'a11y.statement.conformance.body': 'ORVIKA no afirma cumplir plenamente WCAG 2.2 nivel AA. Las pruebas automatizadas y la validación del responsable del proyecto no demuestran que se cumplan todos los criterios aplicables en cada página, estado, navegador, tecnología de asistencia y configuración de usuario. El distintivo de accesibilidad identifica únicamente esta declaración y el canal de comentarios; no es un sello de conformidad ni de certificación.',
+    'a11y.statement.platform.title': 'Cobertura de plataformas',
+    'a11y.statement.platform.body': 'Esta declaración cubre la experiencia web alojada. La aplicación Android requiere una evaluación nativa independiente, incluida la compatibilidad con TalkBack, Switch Access y el escalado de pantalla de Android. La validación web no debe considerarse prueba de conformidad de Android.',
+    'a11y.statement.report.title': 'Cómo informar de una barrera de accesibilidad',
+    'a11y.statement.report.body': 'Al informar de una barrera, incluye la página o función afectada, la acción que intentaste realizar, el resultado esperado y pasos breves para reproducir el problema. Los detalles del navegador y de la tecnología de asistencia son opcionales. No incluyas contraseñas, códigos de un solo uso ni información personal sensible no relacionada. No se requiere CAPTCHA, cuenta ni verificación.',
+    'a11y.statement.contact.title': 'Comentarios y contacto sobre accesibilidad',
+    'a11y.statement.contact.body': 'No se requiere CAPTCHA ni verificación. Puedes contactar directamente:',
+    'a11y.statement.contact.action': 'Abrir la declaración de accesibilidad web y el contacto',
+    'a11y.statement.contact.disclosure': 'Las direcciones de correo son públicas para que los comentarios sobre accesibilidad estén disponibles sin CAPTCHA. Pueden recibir correo no deseado.',
   };
 
   static const Map<String, String> _hindiDraft = {
