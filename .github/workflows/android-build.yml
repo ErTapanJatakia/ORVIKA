@@ -140,8 +140,8 @@ jobs:
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
           test -n "$AAPT"
           test -n "$APKSIGNER"
+          node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
           APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
-          test "$APP_ID" = "com.orvika.app"
           "$APKSIGNER" verify --verbose "$APK"
           SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
           echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
@@ -239,8 +239,8 @@ jobs:
           fi
 
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
+          node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
           APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
-          test "$APP_ID" = "com.orvika.app"
           {
             echo "### ORVIKA signed Android release artifacts"
             echo
