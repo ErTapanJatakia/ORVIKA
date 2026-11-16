@@ -37,7 +37,7 @@ class UrlAnalyzer {
     final hasExplicitScheme =
         RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(input);
     final looksLikeHostPort =
-        RegExp(r'^[^/?#]+:\\d+(?:[/?#]|$)').hasMatch(input) &&
+        RegExp(r'^[^/?#]+:\d+(?:[/?#]|$)').hasMatch(input) &&
         !input.contains('://');
     final preserveInputScheme =
         input.contains('://') || (hasExplicitScheme && !looksLikeHostPort);
