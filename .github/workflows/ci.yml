@@ -137,7 +137,7 @@ jobs:
 
       - name: Install Vercel CLI
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        run: npm install --global vercel@latest
+        run: npm install --global vercel@65.16.0
 
       - name: Link Vercel project without Git integration
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
