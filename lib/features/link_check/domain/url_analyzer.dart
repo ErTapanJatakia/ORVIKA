@@ -30,7 +30,18 @@ class UrlAnalyzer {
       return _invalid(rawInput, 'The address contains whitespace or control characters. Check it before continuing.');
     }
 
-    final candidate = input.contains('://') ? input : 'https://$input';
+    // Preserve explicit URI schemes so non-web actions (for example,
+    // mailto:, tel: and javascript:) are rejected instead of being
+    // reinterpreted as HTTPS host/user-info combinations. A bare host:port
+    // remains a supported shorthand for an HTTPS destination.
+    final hasExplicitScheme =
+        RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(input);
+    final looksLikeHostPort =
+        RegExp(r'^[^/?#]+:\\d+(?:[/?#]|$)').hasMatch(input) &&
+        !input.contains('://');
+    final preserveInputScheme =
+        input.contains('://') || (hasExplicitScheme && !looksLikeHostPort);
+    final candidate = preserveInputScheme ? input : 'https://$input';
     final uri = Uri.tryParse(candidate);
     if (uri == null || !uri.hasAuthority || uri.host.isEmpty) return _invalid(rawInput, 'The address could not be parsed as a web URL.');
     if (uri.scheme != 'http' && uri.scheme != 'https') return _invalid(rawInput, 'Only HTTP and HTTPS web addresses are supported.');
