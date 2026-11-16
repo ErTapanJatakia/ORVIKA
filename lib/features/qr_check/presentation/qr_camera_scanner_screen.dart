@@ -70,7 +70,21 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
         } catch (_) {
           // Best-effort release after a lifecycle transition.
         }
-        if (mounted) setState(() => _cameraActive = false);
+        if (!mounted) return;
+        if (!_controller.value.hasCameraPermission) {
+          // Permission can be denied while the app is backgrounded by the
+          // system prompt. Do not treat the subsequent resume as consent to
+          // request camera access again.
+          _cameraRequested = false;
+          _pausedByLifecycle = false;
+          setState(() {
+            _cameraActive = false;
+            _statusMessage =
+                l10n.text('checker.camera.permissionDenied', 'Camera permission was not granted. Check your browser or device settings, or continue by pasting decoded content.');
+          });
+          return;
+        }
+        setState(() => _cameraActive = false);
         // If the app resumed while stop() was pending, the lifecycle callback
         // has already cleared _pausedByLifecycle but could not start because
         // this startup operation still owns the _starting guard.
