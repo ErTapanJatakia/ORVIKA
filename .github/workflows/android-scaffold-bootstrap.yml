@@ -38,6 +38,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Select JDK 17
         shell: bash
@@ -63,8 +64,12 @@ jobs:
         shell: bash
         env:
           TARGET_BRANCH: ${{ inputs.target_branch }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if git ls-remote --exit-code --heads origin "$TARGET_BRANCH" >/dev/null 2>&1; then
+          if GIT_CONFIG_COUNT=1 \
+            GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' \
+            GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" \
+            git ls-remote --exit-code --heads origin "$TARGET_BRANCH" >/dev/null 2>&1; then
             echo "Branch $TARGET_BRANCH already exists; refusing to overwrite it." >&2
             exit 1
           fi
@@ -130,13 +135,14 @@ jobs:
         shell: bash
         env:
           TARGET_BRANCH: ${{ inputs.target_branch }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           git switch -c "$TARGET_BRANCH"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add android
           git commit -m "Build permanent Android scaffold for ORVIKA"
-          git push origin "$TARGET_BRANCH"
+          GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" git push origin "$TARGET_BRANCH"
           echo "Generated scaffold branch: $TARGET_BRANCH" >> "$GITHUB_STEP_SUMMARY"
           echo "Application ID: com.orvika.app" >> "$GITHUB_STEP_SUMMARY"
           echo "Signing: no release keystore or credentials created or committed." >> "$GITHUB_STEP_SUMMARY"
