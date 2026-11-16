@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { onRequest } from "../../functions/_middleware.js";
+
+const vercelConfig = JSON.parse(
+  readFileSync(new URL("../../vercel.json", import.meta.url), "utf8"),
+);
+const vercelCsp = vercelConfig.headers
+  .flatMap((route) => route.headers ?? [])
+  .find((header) => header.key.toLowerCase() === "content-security-policy")?.value;
 const expectedHeaders = {
   "strict-transport-security": "max-age=31536000; includeSubDomains",
   "x-content-type-options": "nosniff", "x-frame-options": "DENY",
@@ -66,6 +74,8 @@ test("adds security headers and no third-party CAPTCHA directives", async () => 
   const { response } = await invoke("GET");
   for (const [name, value] of Object.entries(expectedHeaders)) assert.equal(response.headers.get(name), value);
   const csp = response.headers.get("content-security-policy");
+  assert.ok(vercelCsp, "Vercel security policy must define a Content-Security-Policy header");
+  assert.equal(csp, vercelCsp, "Cloudflare middleware CSP must remain aligned with Vercel CSP");
   assert.match(csp, /default-src 'none'/); assert.match(csp, /'wasm-unsafe-eval'/);
   assert.match(csp, /script-src[^;]*https:\/\/cdn\.jsdelivr\.net/, "Web QR decoder script origin must be allowed");
   assert.match(csp, /connect-src[^;]*https:\/\/cdn\.jsdelivr\.net/, "Web QR decoder fetch origin must be allowed");
