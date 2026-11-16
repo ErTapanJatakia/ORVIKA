@@ -24,6 +24,7 @@ for (const name of required) {
 }
 
 assert.match(values.get('strict-transport-security'), /max-age=31536000/);
+assert.match(values.get('strict-transport-security'), /includeSubDomains/i, 'HSTS must cover subdomains');
 assert.equal(values.get('x-content-type-options'), 'nosniff');
 assert.equal(values.get('x-frame-options'), 'DENY');
 assert.match(values.get('permissions-policy'), /camera=\(self\)/);
@@ -44,6 +45,7 @@ for (const directive of [
 }
 assert.ok(!/connect-src[^;]*\*/.test(csp), 'CSP must not allow wildcard connections');
 assert.ok(!/script-src[^;]*\*/.test(csp), 'CSP must not allow wildcard script sources');
+assert.ok(!/script-src[^;]*'unsafe-eval'/i.test(csp), 'CSP must not permit unsafe-eval');
 
 console.log('ORVIKA Web response-header configuration: PASS');
 
