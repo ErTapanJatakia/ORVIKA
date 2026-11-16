@@ -438,6 +438,8 @@ class OrvikaFeatureTranslations {
       'checker.severity.warning': 'تحذير',
       'checker.qr.detectedFormat': 'تنسيق المحتوى المكتشف: {format}',
       'checker.camera.title': 'مسح رمز QR بالكاميرا',
+      'checker.camera.webDecoder.short': 'قد تقوم ميزة المسح بالكاميرا على الويب بتنزيل وحدة فك الترميز من شبكة jsDelivr خارجية. لا تُرفع إطارات الكاميرا أو المحتويات المفكوكة إلى هذه الخدمة.',
+      'checker.camera.webDecoder.detail': 'يتطلب المسح عبر الويب وحدة فك ترميز مستضافة على jsDelivr. قد لا يعمل المسح إذا كانت شبكة CDN محجوبة أو غير متصلة.',
       'checker.camera.close': 'إغلاق الكاميرا',
       'checker.camera.notice.title': 'ملاحظة الخصوصية للكاميرا',
       'checker.camera.notice.body': 'تُستخدم الكاميرا لقراءة رمز QR على هذا الجهاز. لا يلتقط ORVIKA الصور ولا يرفعها إلى خادم. راجع المحتوى المفكوك قبل اتخاذ أي إجراء.',
