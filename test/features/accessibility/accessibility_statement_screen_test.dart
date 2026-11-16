@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:orvika/core/localization/orvika_language.dart';
+import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/features/accessibility/presentation/accessibility_statement_screen.dart';
 
 void main() {
@@ -27,4 +29,30 @@ void main() {
     expect(find.text('tapan_ditu_17.20@outlook.com'), findsOneWidget);
     expect(find.textContaining('No CAPTCHA or verification is required'), findsOneWidget);
   });
+  testWidgets('accessibility statement follows supported selected languages', (tester) async {
+    for (final language in [
+      OrvikaLanguage.russian,
+      const OrvikaLanguage('ar', 'Arabic', 'العربية'),
+      const OrvikaLanguage('pt', 'Portuguese (Brazil)', 'Português (Brasil)'),
+    ]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: OrvikaLanguageScope(
+            language: language,
+            child: const OrvikaAccessibilityStatementScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final title = language.code == 'ru'
+          ? 'Заявление ORVIKA о доступности'
+          : language.code == 'ar'
+              ? 'بيان إمكانية الوصول في ORVIKA'
+              : 'Declaração de Acessibilidade da ORVIKA';
+      expect(find.text(title), findsOneWidget);
+      expect(find.text('Accessibility commitment'), findsNothing);
+    }
+  });
+
 }
