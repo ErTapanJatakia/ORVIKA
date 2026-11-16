@@ -28,6 +28,7 @@ class MandarinChineseDraft {
     'settings.saved': '您的选择保存在本设备上。ORVIKA 不会将外观设置发送到服务器。',
     'settings.accessibility': '无障碍说明：高对比度模式使用更醒目的提示颜色和清晰的视觉区分。警告始终同时提供文字说明；颜色不会作为唯一提示。',
     'a11y.statement.title': 'ORVIKA 无障碍声明',
+    'a11y.statement.badge': '无障碍信息',
     'settings.accessibility.title': '无障碍',
     'settings.accessibility.help': '这些设置保存在本设备上。系统级无障碍设置仍然有效。',
     'settings.textSize': '文字大小',
