@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -170,6 +171,16 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                     l10n.text('checker.camera.notice.body', 'ORVIKA processes the decoded value on this device. It does not save camera frames or automatically open links, join networks, save contacts or make payments. Camera permission prompts and persistence are controlled by your browser or operating system.'),
                     style: TextStyle(color: scheme.onSurfaceVariant, height: 1.4),
                   ),
+                  if (kIsWeb) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      l10n.text(
+                        'checker.camera.webDecoder.detail',
+                        'Web scanning requires a decoder hosted by jsDelivr. Scanning may be unavailable if the CDN is blocked or offline.',
+                      ),
+                      style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.4),
+                    ),
+                  ],
                 ],
               ),
             ),

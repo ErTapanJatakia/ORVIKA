@@ -8,6 +8,8 @@ import 'qr_feature_translation_overrides.dart';
 class OrvikaFeatureTranslations {
   static const Map<String, Map<String, String>> _packs = {
     'zh': {
+      'checker.camera.webDecoder.short': '网页摄像头扫描可能会从第三方 CDN jsDelivr 下载解码器。摄像头画面和解码内容不会上传到该服务。',
+      'checker.camera.webDecoder.detail': '网页扫描需要使用由 jsDelivr 托管的解码器。如果该 CDN 被屏蔽或处于离线状态，扫描可能无法使用。',
       'checker.link.heading': '连接之前，先检查。',
       'checker.link.input': '网站地址',
       'checker.link.action': '检查网址',
@@ -55,6 +57,8 @@ class OrvikaFeatureTranslations {
       'privacy.device.notice': 'ORVIKA 不会扫描您的设备、检查已安装的应用、读取账户数据或更改权限。设置及其名称因平台而异。请使用相应操作系统或服务的官方设置和文档。',
     },
     'ru': {
+      'checker.camera.webDecoder.short': 'Для сканирования камерой в веб-версии может загружаться декодер из сторонней CDN jsDelivr. Кадры камеры и декодированные данные в этот сервис не передаются.',
+      'checker.camera.webDecoder.detail': 'Для веб-сканирования требуется декодер, размещённый на jsDelivr. Сканирование может быть недоступно, если CDN заблокирована или не подключена к сети.',
       'checker.link.heading': 'Проверьте, прежде чем подключаться.',
       'checker.link.input': 'Адрес сайта',
       'checker.link.action': 'Проверить адрес',
@@ -102,6 +106,8 @@ class OrvikaFeatureTranslations {
       'privacy.device.notice': 'ORVIKA не сканирует устройство, не проверяет установленные приложения, не читает данные аккаунтов и не меняет разрешения. Настройки и их названия различаются в зависимости от платформы. Используйте официальные настройки и документацию соответствующей ОС или сервиса.',
     },
     'hi': {
+      'checker.camera.webDecoder.short': 'वेब कैमरा स्कैनिंग के दौरान तृतीय-पक्ष CDN jsDelivr से डिकोडर डाउनलोड हो सकता है। कैमरा फ़्रेम और डिकोड की गई सामग्री इस सेवा पर अपलोड नहीं की जाती।',
+      'checker.camera.webDecoder.detail': 'वेब स्कैनिंग के लिए jsDelivr पर होस्ट किया गया डिकोडर आवश्यक है। CDN अवरुद्ध या ऑफ़लाइन होने पर स्कैनिंग उपलब्ध नहीं हो सकती।',
       'checker.link.heading': 'जुड़ने से पहले जाँचें।',
       'checker.link.input': 'वेबसाइट का पता',
       'checker.link.action': 'पते की जाँच करें',
@@ -119,6 +125,8 @@ class OrvikaFeatureTranslations {
 
     },
     'de': {
+      'checker.camera.webDecoder.short': 'Beim Scannen mit der Webkamera kann ein Decoder von der Drittanbieter-CDN jsDelivr geladen werden. Kamerabilder und dekodierte Inhalte werden nicht an diesen Dienst hochgeladen.',
+      'checker.camera.webDecoder.detail': 'Für das Scannen im Web wird ein auf jsDelivr gehosteter Decoder benötigt. Wenn die CDN blockiert oder offline ist, ist das Scannen möglicherweise nicht verfügbar.',
       'checker.link.heading': 'Prüfen, bevor Sie sich verbinden.',
       'checker.link.input': 'Webadresse',
       'checker.link.action': 'Adresse prüfen',
