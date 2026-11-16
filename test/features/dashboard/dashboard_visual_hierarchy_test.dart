@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../helpers/dashboard_test_helpers.dart';
 
 void main() {
   testWidgets('brand identity remains readable and bounded on narrow screens',
@@ -19,6 +20,7 @@ void main() {
 
       await tester.pumpWidget(OrvikaApp(key: ValueKey('brand-$width')));
       await tester.pumpAndSettle();
+      await revealDashboardContent(tester);
 
       final wordmark = find.text('ORVIKA').first;
       expect(find.text('ORVIKA'), findsWidgets);
@@ -41,11 +43,14 @@ void main() {
   testWidgets('dashboard hero and toolkit remain distinct semantic headings',
       (tester) async {
     tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     SharedPreferences.setMockInitialValues({'appearance.language': 'en', 'onboarding.completed.v1': true});
 
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
+    await revealDashboardContent(tester);
 
     expect(find.textContaining('Check before'), findsOneWidget);
     expect(find.text('Your safety toolkit'), findsOneWidget);
