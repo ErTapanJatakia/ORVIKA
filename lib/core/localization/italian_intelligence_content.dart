@@ -76,6 +76,7 @@ class ItalianIntelligenceContent {
       'limit': 'Una richiesta inattesa è un segnale di allarme, non la conferma che un account sia stato compromesso.',
     },
     'url-shortener': {'title': 'Destinazione abbreviata o nascosta', 'signal': 'Un collegamento usa un servizio di abbreviazione URL o nasconde la destinazione finale dietro un reindirizzamento.', 'meaning': 'L’indirizzo visibile non mostra il sito che raggiungerai. Le catene di reindirizzamento possono nascondere una destinazione imprevista.', 'action': 'Non fidarti del testo abbreviato. Usa un’anteprima affidabile o raggiungi autonomamente il sito dell’organizzazione; evita i link abbreviati non richiesti.', 'limit': 'I servizi di abbreviazione URL sono ampiamente usati anche per campagne e servizi legittimi.'},
+    'url-lookalike': {'title': 'Ortografia di dominio simile', 'signal': 'Un dominio sostituisce, aggiunge o rimuove caratteri per assomigliare a un’organizzazione conosciuta.', 'meaning': 'Piccole differenze ortografiche, parole aggiuntive o caratteri scambiati possono far sembrare familiare un dominio controllato da un aggressore.', 'action': 'Confronta carattere per carattere l’intero dominio registrabile con un indirizzo ottenuto in modo indipendente.', 'limit': 'Un nome simile è un motivo per verificare, non una prova di proprietà malevola.'},
   };
 
   static IntelligenceEntry localize(IntelligenceEntry entry, String languageCode) {
