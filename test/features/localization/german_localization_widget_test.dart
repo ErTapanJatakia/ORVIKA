@@ -35,7 +35,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Datenschutz'), findsOneWidget);
     final firstPractice = find.text('Verwende einzigartige Passwörter für wichtige Konten');
-    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(ListView));
+    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(Scrollable).first);
     expect(firstPractice, findsOneWidget);
     await tester.scrollUntilVisible(
       find.textContaining('Website-Analyse: ORVIKA verwendet Vercel Web Analytics'),
