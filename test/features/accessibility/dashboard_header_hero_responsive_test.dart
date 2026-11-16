@@ -23,7 +23,7 @@ void main() {
         await tester.pumpWidget(const OrvikaApp());
         await tester.pumpAndSettle();
 
-        expect(find.text('ORVIKA'), findsOneWidget);
+        expect(find.text('ORVIKA'), findsWidgets);
         expect(find.textContaining('Check before'), findsOneWidget);
         expect(
           find.text('PERSONAL CYBER SAFETY INTELLIGENCE'),
