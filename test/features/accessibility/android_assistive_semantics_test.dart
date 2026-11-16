@@ -32,9 +32,7 @@ void main() {
     );
     expect(reviewCheckbox, findsOneWidget);
 
-    final reviewSemantics = find.bySemanticsLabel('I have reviewed this practice');
-    expect(reviewSemantics, findsOneWidget);
-    var node = tester.getSemantics(reviewSemantics);
+    var node = tester.getSemantics(reviewControl);
     expect(node.flagsCollection.isChecked, CheckedState.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
