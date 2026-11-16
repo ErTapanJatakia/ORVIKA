@@ -12,7 +12,7 @@ const applicationId = badging.match(/^package: name='([^']+)'/m)?.[1];
 assert.equal(applicationId, 'com.orvika.app', 'Built APK application ID must be com.orvika.app');
 
 const permissionsOutput = execFileSync(aapt, ['dump', 'permissions', apk], { encoding: 'utf8' });
-const permissions = [...permissionsOutput.matchAll(/^uses-permission(?:-sdk-\\d+)?: name='([^']+)'/gm)]
+const permissions = [...permissionsOutput.matchAll(/^uses-permission(?:-sdk-\d+)?: name='([^']+)'/gm)]
   .map((match) => match[1]);
 const actual = [...new Set(permissions)].sort();
 const expected = ['android.permission.CAMERA', 'android.permission.INTERNET'].sort();
