@@ -71,7 +71,7 @@ void main() {
     });
 
     test('localizes all canonical Intelligence references', () {
-      expect(IntelligenceLibrary.entries, hasLength(10));
+      expect(IntelligenceLibrary.entries, hasLength(22));
       for (final entry in IntelligenceLibrary.entries) {
         final translated = SpanishIntelligenceContent.localize(entry, 'es');
         expect(translated.id, entry.id);
