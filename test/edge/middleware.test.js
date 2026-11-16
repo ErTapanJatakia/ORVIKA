@@ -67,6 +67,9 @@ test("adds security headers and no third-party CAPTCHA directives", async () => 
   for (const [name, value] of Object.entries(expectedHeaders)) assert.equal(response.headers.get(name), value);
   const csp = response.headers.get("content-security-policy");
   assert.match(csp, /default-src 'none'/); assert.match(csp, /'wasm-unsafe-eval'/);
+  assert.match(csp, /script-src[^;]*https:\/\/cdn\.jsdelivr\.net/, "Web QR decoder script origin must be allowed");
+  assert.match(csp, /connect-src[^;]*https:\/\/cdn\.jsdelivr\.net/, "Web QR decoder fetch origin must be allowed");
+  assert.doesNotMatch(csp, /(?:script-src|connect-src)[^;]*\*/, "CSP must not allow wildcard script or connection origins");
   assert.doesNotMatch(csp, /challenges\.cloudflare\.com|turnstile/);
   assert.doesNotMatch(csp, /'unsafe-eval'/);
 });
