@@ -67,13 +67,16 @@ void main() {
 
     final reviewLabel = find.text('I have reviewed this practice');
     await tester.scrollUntilVisible(reviewLabel, 300, scrollable: find.byType(Scrollable).first);
-    final review = find.ancestor(of: reviewLabel, matching: find.byType(CheckboxListTile));
-    await tester.ensureVisible(review);
-    await tester.tap(review);
+    final reviewTile = find.ancestor(of: reviewLabel, matching: find.byType(CheckboxListTile));
+    final reviewCheckbox = find.descendant(of: reviewTile, matching: find.byType(Checkbox));
+    expect(reviewCheckbox, findsOneWidget);
+    await tester.ensureVisible(reviewCheckbox);
+    await tester.tap(reviewCheckbox);
     await tester.pumpAndSettle();
 
     await tester.drag(find.byType(ListView), const Offset(0, 1200));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('1 of 12 practices reviewed'));
     expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
     final preferences = await SharedPreferences.getInstance();
     expect(
