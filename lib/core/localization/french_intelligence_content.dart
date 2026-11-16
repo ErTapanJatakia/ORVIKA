@@ -76,6 +76,7 @@ class FrenchIntelligenceContent {
       'limit': 'Une demande inattendue est un signal d’alerte, pas la confirmation qu’un compte a été compromis.',
     },
     'url-shortener': {'title': 'Destination raccourcie ou masquée', 'signal': 'Un lien utilise un raccourcisseur d’URL ou masque la destination finale derrière une redirection.', 'meaning': 'L’adresse visible ne révèle pas le site que vous allez réellement atteindre. Les chaînes de redirection peuvent dissimuler une destination inattendue.', 'action': 'Ne vous fiez pas au texte raccourci. Utilisez un aperçu fiable ou accédez au site de l’organisation de manière indépendante ; évitez les liens raccourcis non sollicités.', 'limit': 'Les raccourcisseurs d’URL sont largement utilisés pour des campagnes et services légitimes.'},
+    'url-lookalike': {'title': 'Orthographe de domaine ressemblante', 'signal': 'Un domaine remplace, ajoute ou supprime des caractères pour ressembler à une organisation connue.', 'meaning': 'De petites différences d’orthographe, des mots supplémentaires ou des caractères inversés peuvent donner une apparence familière à un domaine contrôlé par un attaquant.', 'action': 'Comparez chaque caractère du domaine enregistrable complet avec une adresse obtenue indépendamment.', 'limit': 'Un nom ressemblant est une raison de vérifier, pas une preuve que son propriétaire est malveillant.'},
   };
 
   static IntelligenceEntry localize(IntelligenceEntry entry, String languageCode) {
