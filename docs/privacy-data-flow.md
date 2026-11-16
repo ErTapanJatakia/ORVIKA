@@ -45,6 +45,10 @@ These values represent app preferences or progress markers. The inspected write 
 - The pixel decoder tries red, green, blue and weighted-luminance interpretations, stretches usable contrast, and enables ZXing's `tryHarder` and inverted-image hints. It continues through all channel interpretations and merges distinct results so a first hit in one channel does not suppress additional codes visible in another. These local attempts improve resilience to coloured foregrounds/backgrounds and some low-contrast designs; they do not guarantee decoding of decorative, distorted, occluded or logo-covered codes.
 - The pure-Dart fallback prioritises compatibility and local processing; it can be slower and less accurate than native platform decoders. A no-result outcome is not proof that an image contains no barcode. Browser-specific image decoding, canvas and file-format support still require real-browser validation.
 
+## Static privacy-boundary guard
+
+`scripts/verify-privacy-boundaries.cjs` scans the Link, QR and Message feature source for accidental network clients, outbound navigation, persistent browser storage, SharedPreferences and analytics calls. The temporary-file cleanup implementation is explicitly excluded from the `dart:io` restriction because native cache-file deletion is its purpose. The guard also checks that the analytics bootstrap does not read form/input content or emit custom feature events. This is a source-regression guard, not a proof against indirect dependencies, runtime platform traffic, browser extensions, crash reporting or hosting/CDN logs.
+
 ## Analytics boundary
 
 The Vercel integration remains a static page-view-only integration as documented in [analytics.md](analytics.md). It measures aggregate page-view and basic technical visitor metrics; ORVIKA does not add custom feature events, route instrumentation, user identifiers or security-analysis telemetry. Hosting/CDN infrastructure may independently process request metadata such as IP address, browser headers and security logs. This application-source audit does not establish the provider's exact retention or prove that no technical personal data is processed. The existing production Network-tab and dashboard verification remains the evidence for deployment-level analytics operation.
@@ -76,3 +80,8 @@ This is a source-level architecture statement, not a packet-capture claim. Platf
 - Keep analytics separate from security analysis.
 - Preserve deterministic local analysis and explicit uncertainty.
 - Do not describe this source audit or its widget tests as proof of total network isolation or complete privacy certification.
+
+
+## Live camera network dependency
+
+The Web live-camera scanning path uses the package's ZXing WebAssembly runtime fetched from `cdn.jsdelivr.net`; this is distinct from selected-image scanning, whose pure-Dart pixel decoder is bundled locally. The camera decoder download is permitted by the exact-origin CSP rule documented in [qr-camera-privacy.md](qr-camera-privacy.md). Camera frames and decoded payloads are not intentionally uploaded by ORVIKA, but live camera scanning may be unavailable offline or when the CDN is blocked.
