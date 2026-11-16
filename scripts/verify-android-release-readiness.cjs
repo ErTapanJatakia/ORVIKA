@@ -117,8 +117,8 @@ const envSigningReady = envSigningValuesPresent && signingStoreFileExists;
 const propertiesSigningReady = propertiesSigningValuesPresent && signingStoreFileExists;
 
 const version = pubspec.match(/^version:\s*(.+)$/m)?.[1]?.trim() ?? 'not declared';
-const gradlePlugin = settings.match(/id\\("com\\.android\\.application"\\)\\s+version\\s+"([0-9.]+)"/)?.[1] ?? 'not detected';
-const kotlinPlugin = settings.match(/id\\("org\\.jetbrains\\.kotlin\\.android"\\)\\s+version\\s+"([0-9.]+)"/)?.[1] ?? 'not detected';
+const gradlePlugin = settings.match(/id\("com\.android\.application"\)\s+version\s+"([0-9.]+)"/)?.[1] ?? 'not detected';
+const kotlinPlugin = settings.match(/id\("org\.jetbrains\.kotlin\.android"\)\s+version\s+"([0-9.]+)"/)?.[1] ?? 'not detected';
 
 console.log('ORVIKA Android release preflight: STRUCTURE PASS');
 console.log(`- Application ID: com.orvika.app`);
