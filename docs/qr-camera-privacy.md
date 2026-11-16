@@ -52,3 +52,8 @@ The Web camera implementation uses the native `BarcodeDetector` API where availa
 Camera use on the Web requires a secure context (HTTPS, or an eligible localhost context), a browser that exposes camera capture, and user permission. Embedded browsers, iframe permission policies, device hardware, enterprise policy and browser versions can restrict access.
 
 The package supports Android, iOS, macOS and Web camera scanning. It does not provide native Linux or Windows camera scanning. Browser-based ORVIKA Web may run on Linux/Windows where the browser exposes camera capture; native desktop scanning is not provided by the current app.
+
+
+## Content Security Policy compatibility
+
+The Web live-camera ZXing WebAssembly runtime is fetched from `cdn.jsdelivr.net`; the production CSP allows this exact CDN origin for the required script and fetch operations. Camera frames and decoded values are not uploaded to that CDN by ORVIKA. The decoder asset itself is a third-party download and live Web camera scanning may be unavailable when that origin is blocked or offline. Selected-image fallback decoding remains bundled locally.

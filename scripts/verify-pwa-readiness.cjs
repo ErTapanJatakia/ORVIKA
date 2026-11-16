@@ -63,6 +63,7 @@ for (const marker of [
   '<meta name="apple-mobile-web-app-capable" content="yes">',
   '<meta name="apple-mobile-web-app-title" content="ORVIKA">',
   '<link rel="mask-icon"',
+  '<link rel="apple-touch-icon" sizes="192x192" href="icons/apple-touch-icon.png">',
   'src="flutter_bootstrap.js"',
   'src="orvika-analytics-bootstrap.js"',
 ]) {
@@ -70,6 +71,7 @@ for (const marker of [
 }
 
 assert.ok(!/serviceWorker\.register\s*\(/.test(index), 'Do not add a second hand-written service-worker registration beside Flutter bootstrap');
+assert.ok(fs.existsSync(path.join(web, 'icons', 'apple-touch-icon.png')), 'Apple touch icon PNG is missing');
 
 console.log('ORVIKA PWA source metadata and icon references: PASS');
 

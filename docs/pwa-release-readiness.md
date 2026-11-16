@@ -35,3 +35,8 @@ The preflight validates manifest identity/scope/start URL, icon references and d
 ## Offline limitations
 
 The PWA shell and Flutter assets may be cached by the Flutter-generated service worker, depending on the Flutter build strategy. This does not guarantee that every feature is available offline: the browser decoder dependency may require a first network fetch, and hosted analytics needs connectivity. Never claim total offline capability until the production artifact has passed the checks above.
+
+
+## Web camera decoder CSP dependency
+
+The live Web camera scanner currently loads its ZXing WebAssembly decoder from `cdn.jsdelivr.net`. The deployed Content Security Policy therefore permits that exact origin for script loading and decoder fetches (`script-src` and `connect-src`); it does not permit wildcard external sources. This remains a third-party runtime dependency and can be unavailable when the CDN is blocked or offline. Selected-image fallback decoding remains bundled locally.
