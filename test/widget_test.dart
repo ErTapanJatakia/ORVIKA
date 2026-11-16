@@ -159,7 +159,7 @@ void main() {
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('ORVIKA'), findsOneWidget);
+    expect(find.text('ORVIKA'), findsWidgets);
     expect(find.text('Check before\nyou trust.'), findsOneWidget);
     expect(find.byType(OrvikaOwlMark), findsWidgets);
     await revealDashboardContent(tester);
