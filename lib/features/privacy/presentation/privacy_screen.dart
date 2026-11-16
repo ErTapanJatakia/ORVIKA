@@ -27,6 +27,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   Set<String> _reviewedIds = <String>{};
   final Map<String, PrivacyAssessmentStatus> _assessment = {};
   bool _isLoading = true;
+  Future<void> _progressWriteQueue = Future<void>.value();
 
   @override
   void initState() {
@@ -50,6 +51,30 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     }
   }
 
+  Future<void> _persistReviewedProgress({required bool clear}) {
+    final snapshot = _reviewedIds.toList()..sort();
+    _progressWriteQueue = _progressWriteQueue.then((_) async {
+      try {
+        final preferences = await SharedPreferences.getInstance();
+        if (clear) {
+          await preferences.remove(_progressKey);
+        } else {
+          await preferences.setStringList(_progressKey, snapshot);
+        }
+      } catch (_) {
+        if (mounted) {
+          final message = clear
+              ? OrvikaLocalizations.of(context).text('privacy.error.clear', 'Could not clear saved review progress.')
+              : OrvikaLocalizations.of(context).text('privacy.error.save', 'Could not save this review on the device.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),
+          );
+        }
+      }
+    });
+    return _progressWriteQueue;
+  }
+
   Future<void> _setReviewed(String id, bool reviewed) async {
     final updated = Set<String>.from(_reviewedIds);
     if (reviewed) {
@@ -58,16 +83,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       updated.remove(id);
     }
     setState(() => _reviewedIds = updated);
-    try {
-      final preferences = await SharedPreferences.getInstance();
-      await preferences.setStringList(_progressKey, updated.toList()..sort());
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(OrvikaLocalizations.of(context).text('privacy.error.save', 'Could not save this review on the device.'))),
-        );
-      }
-    }
+    await _persistReviewedProgress(clear: false);
   }
 
   void _setAssessment(String id, PrivacyAssessmentStatus? status) {
@@ -115,16 +131,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       _reviewedIds = <String>{};
       _assessment.clear();
     });
-    try {
-      final preferences = await SharedPreferences.getInstance();
-      await preferences.remove(_progressKey);
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(OrvikaLocalizations.of(context).text('privacy.error.clear', 'Could not clear saved review progress.'))),
-        );
-      }
-    }
+    await _persistReviewedProgress(clear: true);
   }
 
   String _categoryLabel(PrivacyCategory category) => switch (category) {
