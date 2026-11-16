@@ -63,7 +63,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Revisión de privacidad'), findsOneWidget);
     final spanishPractice = find.text('Utiliza contraseñas únicas para tus cuentas importantes');
-    await tester.scrollUntilVisible(spanishPractice, 300, scrollable: find.byType(ListView));
+    await tester.scrollUntilVisible(spanishPractice, 300, scrollable: find.byType(Scrollable).first);
     expect(spanishPractice, findsOneWidget);
     expect(tester.takeException(), isNull);
 
