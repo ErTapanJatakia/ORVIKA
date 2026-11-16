@@ -27,10 +27,20 @@ for (const relative of requiredFiles) {
 }
 
 const wrapper = read('android/gradle/wrapper/gradle-wrapper.properties');
-const wrapperVersion = wrapper.match(/distributionUrl=.*gradle-([0-9.]+)-all\.zip/)?.[1];
-assert.ok(wrapperVersion, 'Gradle wrapper distribution must be pinned to a versioned all.zip');
+const distributionUrl = wrapper.match(/^distributionUrl=(.+)$/m)?.[1]?.replace(/\\:/g, ':');
+const wrapperVersion = distributionUrl?.match(/gradle-([0-9.]+)-all\.zip/)?.[1];
+assert.equal(wrapperVersion, '9.3.1', 'Review and update the expected wrapper checksum when changing Gradle versions');
+assert.equal(
+  distributionUrl,
+  'https://services.gradle.org/distributions/gradle-9.3.1-all.zip',
+  'Gradle wrapper distribution must use the reviewed official HTTPS URL',
+);
 const wrapperChecksum = wrapper.match(/^distributionSha256Sum=([a-f0-9]{64})$/m)?.[1];
-assert.ok(wrapperChecksum, 'Gradle wrapper distribution must pin its official SHA-256 checksum');
+assert.equal(
+  wrapperChecksum,
+  '17f277867f6914d61b1aa02efab1ba7bb439ad652ca485cd8ca6842fccec6e43',
+  'Gradle 9.3.1 distribution checksum differs from the reviewed official SHA-256',
+);
 
 const settings = read('android/settings.gradle.kts');
 const appGradle = read('android/app/build.gradle.kts');
@@ -73,9 +83,10 @@ const signingKeys = [
   'ORVIKA_UPLOAD_KEY_ALIAS',
   'ORVIKA_UPLOAD_KEY_PASSWORD',
 ];
-const envSigningReady = signingKeys.every((key) => Boolean(process.env[key]?.trim()));
+const envSigningValuesPresent = signingKeys.every((key) => Boolean(process.env[key]?.trim()));
 const propertiesPath = path.join(android, 'key.properties');
-let propertiesSigningReady = false;
+let propertiesSigningValuesPresent = false;
+let propertiesStoreFile = null;
 if (fs.existsSync(propertiesPath)) {
   const properties = fs.readFileSync(propertiesPath, 'utf8');
   const values = new Map(
@@ -85,9 +96,25 @@ if (fs.existsSync(propertiesPath)) {
         return separator < 0 ? [line, ''] : [line.slice(0, separator).trim(), line.slice(separator + 1).trim()];
       }),
   );
-  propertiesSigningReady = ['storeFile', 'storePassword', 'keyAlias', 'keyPassword']
+  propertiesSigningValuesPresent = ['storeFile', 'storePassword', 'keyAlias', 'keyPassword']
     .every((key) => Boolean(values.get(key)));
+  propertiesStoreFile = values.get('storeFile') || null;
 }
+const signingValuesPresent = envSigningValuesPresent || propertiesSigningValuesPresent;
+const configuredStoreFile = propertiesStoreFile || process.env.ORVIKA_UPLOAD_STORE_FILE || null;
+const resolvedStoreFile = configuredStoreFile
+  ? (path.isAbsolute(configuredStoreFile)
+      ? configuredStoreFile
+      : path.resolve(android, 'app', configuredStoreFile))
+  : null;
+const signingStoreFileExists = Boolean(
+  resolvedStoreFile && fs.existsSync(resolvedStoreFile) && fs.statSync(resolvedStoreFile).isFile(),
+);
+if (signingValuesPresent) {
+  assert.ok(signingStoreFileExists, 'Release signing values are present but the configured keystore file is missing');
+}
+const envSigningReady = envSigningValuesPresent && signingStoreFileExists;
+const propertiesSigningReady = propertiesSigningValuesPresent && signingStoreFileExists;
 
 const version = pubspec.match(/^version:\s*(.+)$/m)?.[1]?.trim() ?? 'not declared';
 const gradlePlugin = settings.match(/com\.android\.application" version "([0-9.]+)"/)?.[1] ?? 'not detected';
