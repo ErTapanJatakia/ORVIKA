@@ -50,8 +50,8 @@ const extractionRules = read('android/app/src/main/res/xml/data_extraction_rules
 const ignore = read('android/.gitignore');
 const pubspec = read('pubspec.yaml');
 
-assert.match(settings, /id\\("com\\.android\\.application"\\)\\s+version\\s+"[0-9.]+"\/);
-assert.match(settings, /id\\("org\\.jetbrains\\.kotlin\\.android"\\)\\s+version\\s+"[0-9.]+"\/);
+assert.match(settings, /id\("com\.android\.application"\)\s+version\s+"[0-9.]+"/);
+assert.match(settings, /id\("org\.jetbrains\.kotlin\.android"\)\s+version\s+"[0-9.]+"/);
 assert.match(appGradle, /namespace = "com\.orvika\.app"/);
 assert.match(appGradle, /applicationId = "com\.orvika\.app"/);
 assert.match(appGradle, /sourceCompatibility = JavaVersion\.VERSION_17/);
