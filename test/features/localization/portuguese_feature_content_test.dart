@@ -235,7 +235,7 @@ void main() {
     });
 
     test('localizes all canonical Intelligence references', () {
-      expect(IntelligenceLibrary.entries, hasLength(10));
+      expect(IntelligenceLibrary.entries, hasLength(22));
       for (final entry in IntelligenceLibrary.entries) {
         final translated = PortugueseIntelligenceContent.localize(entry, 'pt');
         expect(translated.id, entry.id);
