@@ -26,6 +26,8 @@ The application stores interface preferences (language, theme and accessibility 
 
 Local preferences can remain on the device until the user clears application data or browser site data. The current application does not provide an ORVIKA account or cloud history synchronisation.
 
+On Android, ORVIKA disables application backup and configures legacy and Android 12+ backup rules to exclude application data from cloud backup and device-to-device transfer. This is intended to keep the app's local preferences and progress on the device rather than in Android-managed backups. Device-manufacturer migration behaviour and platform-managed data outside ORVIKA's app sandbox may vary.
+
 ## Web analytics
 
 The hosted Web application uses Vercel Web Analytics for basic page-view measurement. ORVIKA does not intentionally add submitted analysis content, account identifiers or custom security-analysis events to analytics.
