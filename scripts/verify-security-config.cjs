@@ -43,6 +43,7 @@ for (const directive of [
   assert.ok(csp.includes(directive), `CSP is missing: ${directive}`);
 }
 assert.ok(!/connect-src[^;]*\*/.test(csp), 'CSP must not allow wildcard connections');
+assert.ok(!/script-src[^;]*\*/.test(csp), 'CSP must not allow wildcard script sources');
 
 console.log('ORVIKA Web response-header configuration: PASS');
 
