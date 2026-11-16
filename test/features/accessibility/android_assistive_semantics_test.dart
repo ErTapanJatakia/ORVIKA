@@ -26,9 +26,14 @@ void main() {
       matching: find.byType(CheckboxListTile),
     );
     expect(reviewControl, findsOneWidget);
+    final reviewCheckbox = find.descendant(
+      of: reviewControl,
+      matching: find.byType(Checkbox),
+    );
+    expect(reviewCheckbox, findsOneWidget);
 
-    var node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, CheckedState.none);
+    var node = tester.getSemantics(reviewCheckbox);
+    expect(node.flagsCollection.isChecked, CheckedState.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
@@ -37,8 +42,8 @@ void main() {
     await tester.tap(reviewLabel);
     await tester.pumpAndSettle();
 
-    node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, CheckedState.checked);
+    node = tester.getSemantics(reviewCheckbox);
+    expect(node.flagsCollection.isChecked, CheckedState.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
