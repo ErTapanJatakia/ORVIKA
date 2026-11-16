@@ -44,7 +44,7 @@ void main() {
   testWidgets('each theme applies immediately and survives app restart',
       (tester) async {
     for (final theme in OrvikaTheme.values) {
-      SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
+      SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en', 'appearance.theme': theme == OrvikaTheme.obsidian ? OrvikaTheme.daylight.name : OrvikaTheme.obsidian.name});
       await tester.pumpWidget(OrvikaApp(key: ValueKey('theme-${theme.name}')));
       await tester.pumpAndSettle();
 
