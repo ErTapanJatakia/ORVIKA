@@ -72,6 +72,10 @@ for (const marker of [
 
 assert.ok(!/serviceWorker\.register\s*\(/.test(index), 'Do not add a second hand-written service-worker registration beside Flutter bootstrap');
 assert.ok(fs.existsSync(path.join(web, 'icons', 'apple-touch-icon.png')), 'Apple touch icon PNG is missing');
+const appleTouchIcon = fs.readFileSync(path.join(web, 'icons', 'apple-touch-icon.png'));
+assert.deepEqual([...appleTouchIcon.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], 'Apple touch icon must be a valid PNG');
+assert.equal(appleTouchIcon.readUInt32BE(16), 192, 'Apple touch icon width must be 192px');
+assert.equal(appleTouchIcon.readUInt32BE(20), 192, 'Apple touch icon height must be 192px');
 
 console.log('ORVIKA PWA source metadata and icon references: PASS');
 
