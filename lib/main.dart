@@ -406,14 +406,6 @@ class _OrvikaAppState extends State<OrvikaApp> {
             ),
           ),
         ),
-        materialTapTargetSize: MaterialTapTargetSize.padded,
-        visualDensity: VisualDensity.standard,
-        iconButtonTheme: const IconButtonThemeData(
-          style: ButtonStyle(
-            minimumSize: WidgetStatePropertyAll<Size>(Size(48, 48)),
-            tapTargetSize: MaterialTapTargetSize.padded,
-          ),
-        ),
         appBarTheme: AppBarTheme(
           backgroundColor: palette.background,
           foregroundColor: scheme.onSurface,
