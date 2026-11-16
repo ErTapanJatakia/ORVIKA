@@ -11,9 +11,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('0 of 12 practices reviewed'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Accounts'), 300, scrollable: find.byType(ListView));
     expect(find.text('Accounts'), findsOneWidget);
 
-    await tester.tap(find.text('Use unique passwords for important accounts'));
+    final firstPractice = find.text('Use unique passwords for important accounts');
+    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(ListView));
+    await tester.tap(firstPractice);
     await tester.pumpAndSettle();
 
     expect(find.text('WHY IT MATTERS'), findsOneWidget);
@@ -49,6 +52,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final firstPractice = find.text('Use unique passwords for important accounts');
+    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(ListView));
     await tester.ensureVisible(firstPractice);
     await tester.tap(firstPractice);
     await tester.pumpAndSettle();
