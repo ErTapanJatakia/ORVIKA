@@ -102,6 +102,17 @@ void main() {
     expect(result.detectedLinks, isEmpty);
     expect(result.notice, contains('no link was opened'));
   });
+  test('preserves balanced URL brackets and trims unmatched closing punctuation', () {
+    final result = analyzer.analyze(
+      'See https://example.test/path_(campaign) and https://example.test/other_(x)).',
+    );
+
+    expect(result.detectedLinks, [
+      'https://example.test/path_(campaign)',
+      'https://example.test/other_(x)',
+    ]);
+  });
+
   test('deduplicates repeated links', () {
     final result = analyzer.analyze(
       'Review https://example.test and https://example.test before continuing.',

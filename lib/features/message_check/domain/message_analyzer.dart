@@ -182,9 +182,32 @@ class MessageAnalyzer {
 
   String _trimTrailingPunctuation(String value) {
     var end = value.length;
-    const trailingCharacters = '.,!?;:)\\]}>’”';
-    while (end > 0 && trailingCharacters.contains(value[end - 1])) {
-      end--;
+    const trailingCharacters = ".,!?;:’”\"'";
+    const closingToOpening = <String, String>{
+      ')': '(',
+      ']': '[',
+      '}': '{',
+      '>': '<',
+    };
+
+    while (end > 0) {
+      final character = value[end - 1];
+      if (trailingCharacters.contains(character)) {
+        end--;
+        continue;
+      }
+
+      final opening = closingToOpening[character];
+      if (opening != null) {
+        final prefix = value.substring(0, end);
+        final closingCount = prefix.split(character).length - 1;
+        final openingCount = prefix.split(opening).length - 1;
+        if (closingCount > openingCount) {
+          end--;
+          continue;
+        }
+      }
+      break;
     }
     return value.substring(0, end);
   }
