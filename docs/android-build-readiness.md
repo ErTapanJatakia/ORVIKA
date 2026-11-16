@@ -39,6 +39,18 @@ A structural preflight pass does not build an APK/AAB, inspect the merged manife
 - Do not regenerate a published upload key without following the relevant store recovery/rotation procedure.
 - See [Android release signing](../android/RELEASE_SIGNING.md).
 
+## Native SDK and distribution terms
+
+The locked `mobile_scanner 7.5.0` package uses Google's **bundled ML Kit Barcode Scanning SDK** on Android by default. This keeps the model available without a first-use Google Play Services model download, but increases application size. The plugin's BSD-3-Clause licence does not itself grant rights to the separately distributed ML Kit SDK; Google's ML Kit terms apply to that SDK.
+
+Before any Android store submission:
+
+- Review the current Google ML Kit terms and applicable Google API terms for the intended distribution and operating regions.
+- Confirm that the selected bundled ML Kit implementation is acceptable for the target store and supported device ecosystem, including Aurora OS. Do not assume that the presence of an Android-compatible APK establishes Aurora compatibility.
+- Confirm whether the store requires additional SDK attribution, privacy disclosures, or other declarations.
+- Record the resolved native dependency graph and its licences from the actual release build; the Flutter lockfile alone does not enumerate every transitive Maven/AAR dependency.
+- Reassess the dependency inventory and advisories at release time. The current targeted advisory review is not a complete SBOM or CVE clearance.
+
 ## Store preparation
 
 - RuStore: confirm the current package, signing, target SDK, privacy disclosure and metadata requirements from the official publisher documentation before submission.
