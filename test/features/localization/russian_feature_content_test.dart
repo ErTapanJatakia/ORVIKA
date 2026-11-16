@@ -146,7 +146,7 @@ void main() {
     });
 
     test('localizes all canonical Intelligence references', () {
-      expect(IntelligenceLibrary.entries, hasLength(10));
+      expect(IntelligenceLibrary.entries, hasLength(22));
       for (final source in IntelligenceLibrary.entries) {
         final item = RussianIntelligenceContent.localize(source, code);
         expect(item.id, source.id);
