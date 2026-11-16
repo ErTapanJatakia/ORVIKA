@@ -28,6 +28,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
+      - name: Verify Android release inputs
+        run: npm run verify:android
+
       - name: Select JDK 17
         shell: bash
         run: |
