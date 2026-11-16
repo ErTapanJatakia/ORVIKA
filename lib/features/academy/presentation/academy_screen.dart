@@ -26,6 +26,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
   final Set<String> _completed = <String>{};
   final Map<String, int> _answers = <String, int>{};
   bool _loading = true;
+  Future<void> _progressWriteQueue = Future<void>.value();
 
   @override
   void initState() {
@@ -49,16 +50,28 @@ class _AcademyScreenState extends State<AcademyScreen> {
     }
   }
 
+  Future<void> _persistCompletedProgress({required bool clear}) {
+    final snapshot = _completed.toList()..sort();
+    _progressWriteQueue = _progressWriteQueue.then((_) async {
+      try {
+        final preferences = await SharedPreferences.getInstance();
+        if (clear) {
+          await preferences.remove(_progressKey);
+        } else {
+          await preferences.setStringList(_progressKey, snapshot);
+        }
+      } catch (_) {
+        // Keep the current learning session usable if local storage is unavailable.
+      }
+    });
+    return _progressWriteQueue;
+  }
+
   Future<void> _submitAnswer(AcademyLesson lesson, int index) async {
     setState(() => _answers[lesson.id] = index);
     if (index != lesson.correctIndex) return;
     setState(() => _completed.add(lesson.id));
-    try {
-      final preferences = await SharedPreferences.getInstance();
-      await preferences.setStringList(_progressKey, _completed.toList()..sort());
-    } catch (_) {
-      // Learning remains usable if local progress storage is unavailable.
-    }
+    await _persistCompletedProgress(clear: false);
   }
 
   Future<void> _resetProgress() async {
@@ -90,12 +103,7 @@ class _AcademyScreenState extends State<AcademyScreen> {
       _completed.clear();
       _answers.clear();
     });
-    try {
-      final preferences = await SharedPreferences.getInstance();
-      await preferences.remove(_progressKey);
-    } catch (_) {
-      // Keep the current session usable if storage is unavailable.
-    }
+    await _persistCompletedProgress(clear: true);
   }
 
   String _categoryLabel(AcademyCategory category, OrvikaLocalizations l10n) => switch (category) {
