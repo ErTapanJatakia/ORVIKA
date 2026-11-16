@@ -27,6 +27,25 @@ void main() {
       expect(result.findings.any((f) => f.title == 'Embedded sign-in information'), isTrue);
     });
 
+    test('rejects ports outside the valid TCP/UDP range', () {
+      for (final input in [
+        'https://example.com:65536',
+        'https://example.com:99999/path',
+      ]) {
+        final result = analyzer.analyze(input);
+        expect(result.isValid, isFalse, reason: input);
+        expect(result.normalizedUrl, isNull, reason: input);
+        expect(result.findings.single.title, 'Address not analysed');
+      }
+    });
+
+    test('accepts the highest valid numeric port', () {
+      final result = analyzer.analyze('https://example.com:65535');
+      expect(result.isValid, isTrue);
+      expect(result.normalizedUrl, 'https://example.com:65535');
+      expect(result.findings.any((finding) => finding.title == 'Non-standard port'), isTrue);
+    });
+
     test('flags Punycode hostnames for careful review', () {
       final result = analyzer.analyze('https://xn--e1afmkfd.example');
       expect(result.findings.any((f) => f.title == 'Internationalised domain encoding'), isTrue);
