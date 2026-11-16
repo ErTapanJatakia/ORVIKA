@@ -50,8 +50,8 @@ const extractionRules = read('android/app/src/main/res/xml/data_extraction_rules
 const ignore = read('android/.gitignore');
 const pubspec = read('pubspec.yaml');
 
-assert.match(settings, /com\.android\.application" version "[0-9.]+"/);
-assert.match(settings, /org\.jetbrains\.kotlin\.android" version "[0-9.]+"/);
+assert.match(settings, /id\("com\.android\.application"\)\s+version\s+"[0-9.]+"/);
+assert.match(settings, /id\("org\.jetbrains\.kotlin\.android"\)\s+version\s+"[0-9.]+"/);
 assert.match(appGradle, /namespace = "com\.orvika\.app"/);
 assert.match(appGradle, /applicationId = "com\.orvika\.app"/);
 assert.match(appGradle, /sourceCompatibility = JavaVersion\.VERSION_17/);
@@ -117,8 +117,8 @@ const envSigningReady = envSigningValuesPresent && signingStoreFileExists;
 const propertiesSigningReady = propertiesSigningValuesPresent && signingStoreFileExists;
 
 const version = pubspec.match(/^version:\s*(.+)$/m)?.[1]?.trim() ?? 'not declared';
-const gradlePlugin = settings.match(/com\.android\.application" version "([0-9.]+)"/)?.[1] ?? 'not detected';
-const kotlinPlugin = settings.match(/org\.jetbrains\.kotlin\.android" version "([0-9.]+)"/)?.[1] ?? 'not detected';
+const gradlePlugin = settings.match(/id\("com\.android\.application"\)\s+version\s+"([0-9.]+)"/)?.[1] ?? 'not detected';
+const kotlinPlugin = settings.match(/id\("org\.jetbrains\.kotlin\.android"\)\s+version\s+"([0-9.]+)"/)?.[1] ?? 'not detected';
 
 console.log('ORVIKA Android release preflight: STRUCTURE PASS');
 console.log(`- Application ID: com.orvika.app`);
