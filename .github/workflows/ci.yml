@@ -91,7 +91,9 @@ jobs:
     needs: change-scope
     if: needs.change-scope.outputs.android == 'true'
     uses: ./.github/workflows/android-build.yml
-    secrets: inherit
+    # Do not pass repository secrets to Gradle or third-party build plugins.
+    # Automatic main-branch validation is debug-only; release signing remains
+    # available solely through the separately manual Android workflow.
 
   flutter:
     name: Analyze, test, build and deploy Web
