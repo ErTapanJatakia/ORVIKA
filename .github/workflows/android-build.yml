@@ -227,8 +227,8 @@ jobs:
           fi
           keytool -printcert -jarfile "$AAB" > "$AAB_SIGNATURE" 2>&1
 
-          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
-          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
+          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
+          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
           if [ -z "$APK_SIGNERS" ] || [ -z "$AAB_SIGNERS" ]; then
             echo "Unable to extract signer certificate fingerprints from both release artifacts." >&2
             exit 1
