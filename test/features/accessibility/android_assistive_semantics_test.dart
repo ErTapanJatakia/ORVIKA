@@ -1,4 +1,4 @@
-import 'dart:ui' show SemanticsAction, Tristate;
+import 'dart:ui' show CheckedState, SemanticsAction, Tristate;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/features/intelligence/presentation/intelligence_screen.dart';
@@ -28,7 +28,7 @@ void main() {
     expect(reviewControl, findsOneWidget);
 
     var node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, Tristate.isFalse);
+    expect(node.flagsCollection.isChecked, CheckedState.none);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
@@ -38,7 +38,7 @@ void main() {
     await tester.pumpAndSettle();
 
     node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, Tristate.isTrue);
+    expect(node.flagsCollection.isChecked, CheckedState.checked);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });

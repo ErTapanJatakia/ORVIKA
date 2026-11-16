@@ -42,8 +42,9 @@ void main() {
     await tester.scrollUntilVisible(find.text('help@example.test'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('help@example.test'), findsOneWidget);
 
-    await tester.scrollUntilVisible(find.text('Clear message and results'), 300, scrollable: find.byType(Scrollable).first);
-    await tester.tap(find.text('Clear message and results'));
+    await tester.drag(find.byType(ListView), const Offset(0, 1400));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.clear_all_rounded));
     await tester.pumpAndSettle();
     expect(find.text('Review findings'), findsNothing);
     expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);

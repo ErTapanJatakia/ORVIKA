@@ -48,14 +48,9 @@ void main() {
       await tester.pumpWidget(OrvikaApp(key: ValueKey('theme-${theme.name}')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('Appearance and accessibility settings'));
+      await tester.tap(find.byTooltip('Choose visual theme'));
       await tester.pumpAndSettle();
-      await tester.pumpAndSettle();
-      final themeTile = find.byWidgetPredicate(
-        (widget) => widget is RadioListTile<OrvikaTheme> && widget.value == theme,
-      );
-      await tester.ensureVisible(themeTile);
-      await tester.tap(themeTile);
+      await tester.tap(find.text(theme.label).last);
       await tester.pumpAndSettle();
 
       final preferences = await SharedPreferences.getInstance();

@@ -20,7 +20,6 @@ void main() {
 
       await tester.pumpWidget(OrvikaApp(key: ValueKey('brand-$width')));
       await tester.pumpAndSettle();
-      await revealDashboardContent(tester);
 
       final wordmark = find.text('ORVIKA').first;
       expect(find.text('ORVIKA'), findsWidgets);
@@ -36,6 +35,7 @@ void main() {
                 'ORVIKA — Personal Cyber Safety Intelligence',
       );
       expect(brandHeading, findsOneWidget);
+      await revealDashboardContent(tester);
       expect(tester.takeException(), isNull);
     }
   });

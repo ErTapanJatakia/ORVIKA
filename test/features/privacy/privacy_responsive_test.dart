@@ -65,7 +65,9 @@ void main() {
     expect(find.text('WHAT YOU CAN DO'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
 
-    final review = find.byType(CheckboxListTile).first;
+    final reviewLabel = find.text('I have reviewed this practice');
+    await tester.scrollUntilVisible(reviewLabel, 300, scrollable: find.byType(Scrollable).first);
+    final review = find.ancestor(of: reviewLabel, matching: find.byType(CheckboxListTile));
     await tester.ensureVisible(review);
     await tester.tap(review);
     await tester.pumpAndSettle();
