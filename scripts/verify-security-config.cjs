@@ -37,7 +37,8 @@ for (const directive of [
   "object-src 'none'",
   "frame-ancestors 'none'",
   "form-action 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://cdn.jsdelivr.net",
+  "script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'",
 ]) {
   assert.ok(csp.includes(directive), `CSP is missing: ${directive}`);
 }
