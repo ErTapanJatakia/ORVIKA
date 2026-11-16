@@ -34,6 +34,11 @@ class UrlAnalyzer {
     final uri = Uri.tryParse(candidate);
     if (uri == null || !uri.hasAuthority || uri.host.isEmpty) return _invalid(rawInput, 'The address could not be parsed as a web URL.');
     if (uri.scheme != 'http' && uri.scheme != 'https') return _invalid(rawInput, 'Only HTTP and HTTPS web addresses are supported.');
+    // URI parsing accepts numeric ports outside the TCP/UDP port range.
+    // Reject them before presenting the address as a valid web destination.
+    if (uri.hasPort && (uri.port < 0 || uri.port > 65535)) {
+      return _invalid(rawInput, 'The address uses a port outside the valid range (0–65,535).');
+    }
 
     final findings = <LinkFinding>[];
     final host = uri.host.toLowerCase();
