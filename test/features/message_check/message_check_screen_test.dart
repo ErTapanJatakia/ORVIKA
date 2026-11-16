@@ -42,7 +42,7 @@ void main() {
     await tester.scrollUntilVisible(find.text('help@example.test'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('help@example.test'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Clear message and results'));
+    await tester.scrollUntilVisible(find.text('Clear message and results'), 300, scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Clear message and results'));
     await tester.pumpAndSettle();
     expect(find.text('Review findings'), findsNothing);
