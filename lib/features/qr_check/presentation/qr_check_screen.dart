@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../core/localization/arabic_checker_content.dart';
 
@@ -128,6 +129,16 @@ class _QrCheckScreenState extends State<QrCheckScreen> {
               icon: const Icon(Icons.document_scanner_outlined),
               label: Text(l10n.text('checker.qr.scanCamera', 'Scan QR / barcode with camera')),
             ),
+            if (kIsWeb) ...[
+              const SizedBox(height: 6),
+              Text(
+                l10n.text(
+                  'checker.camera.webDecoder.short',
+                  'Web camera scanning may download a decoder from jsDelivr, a third-party CDN. Camera frames and decoded content are not uploaded to this service.',
+                ),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11, height: 1.4),
+              ),
+            ],
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: _scanFromImage,
