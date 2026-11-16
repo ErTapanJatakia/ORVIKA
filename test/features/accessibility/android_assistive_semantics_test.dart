@@ -1,4 +1,4 @@
-import 'dart:ui' show SemanticsAction;
+import 'dart:ui' show SemanticsAction, Tristate;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/features/intelligence/presentation/intelligence_screen.dart';
@@ -55,7 +55,7 @@ void main() {
     expect(linksChip, findsOneWidget);
 
     var node = tester.getSemantics(linksChip);
-    expect(node.flagsCollection.isSelected, isFalse);
+    expect(node.flagsCollection.isSelected, Tristate.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
@@ -65,7 +65,7 @@ void main() {
     await tester.pumpAndSettle();
 
     node = tester.getSemantics(linksChip);
-    expect(node.flagsCollection.isSelected, isTrue);
+    expect(node.flagsCollection.isSelected, Tristate.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
