@@ -14,7 +14,8 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(ExpansionTile).first);
+    await tester.scrollUntilVisible(find.text('Use unique passwords for important accounts'), 300, scrollable: find.byType(ListView));
+    await tester.tap(find.text('Use unique passwords for important accounts'));
     await tester.pumpAndSettle();
 
     final reviewLabel = find.text('I have reviewed this practice');
@@ -26,7 +27,7 @@ void main() {
     expect(reviewControl, findsOneWidget);
 
     var node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, isFalse);
+    expect(node.flagsCollection.isChecked, Tristate.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
@@ -36,7 +37,7 @@ void main() {
     await tester.pumpAndSettle();
 
     node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, isTrue);
+    expect(node.flagsCollection.isChecked, Tristate.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
@@ -61,7 +62,7 @@ void main() {
       isTrue,
     );
 
-    await tester.tap(linksLabel);
+    await tester.tap(linksChip);
     await tester.pumpAndSettle();
 
     node = tester.getSemantics(linksChip);
