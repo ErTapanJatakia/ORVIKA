@@ -104,6 +104,10 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
         return;
       }
       await _cleanupSelectedFile();
+      if (!mounted) {
+        if (!kIsWeb) await deleteTemporaryQrImage(selected.path);
+        return;
+      }
       setState(() {
         _selectedFile = selected;
         _imageBytes = bytes;
