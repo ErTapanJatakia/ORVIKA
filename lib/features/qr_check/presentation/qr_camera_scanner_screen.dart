@@ -116,7 +116,18 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
     } catch (_) {
       // Best-effort release when the platform is already transitioning.
     }
-    if (mounted) setState(() => _cameraActive = false);
+    if (!mounted) return;
+    setState(() => _cameraActive = false);
+
+    // A quick foreground transition can arrive while stop() is still pending.
+    // The resumed callback may try to restart while _cameraActive is still true;
+    // retry only after the pending stop has completed.
+    if (_cameraRequested &&
+        !_pausedByLifecycle &&
+        !_handledCapture &&
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
+      unawaited(_startCamera());
+    }
   }
 
   Future<void> _handleCapture(BarcodeCapture capture) async {
