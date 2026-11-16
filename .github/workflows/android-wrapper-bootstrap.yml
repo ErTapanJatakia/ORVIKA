@@ -1,14 +1,6 @@
 name: Commit Android Gradle wrapper
 
 on:
-  push:
-    branches:
-      - main
-      - feat/android-permanent-scaffold
-    paths:
-      - ".github/workflows/android-wrapper-bootstrap.yml"
-      - "android/gradle/wrapper/gradle-wrapper.properties"
-      - "android/app/build.gradle.kts"
   workflow_dispatch:
 
 permissions:
@@ -28,6 +20,14 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
+
+      - name: Refuse direct wrapper commits to main
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            echo "Run this workflow on feat/android-permanent-scaffold or another review branch; direct main commits are blocked." >&2
+            exit 1
+          fi
 
       - name: Install Flutter SDK
         shell: bash
