@@ -10,6 +10,12 @@ if [ ! -x "$FLUTTER_DIR/bin/flutter" ]; then
 fi
 
 export PATH="$FLUTTER_DIR/bin:$PATH"
+
+# Run source-only checks that do not depend on a Git checkout before building.
+node scripts/verify-security-config.cjs
+node scripts/verify-pwa-readiness.cjs
+node scripts/verify-privacy-boundaries.cjs
+
 flutter --version
 flutter pub get --enforce-lockfile
 flutter analyze --fatal-infos
