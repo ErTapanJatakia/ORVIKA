@@ -20,6 +20,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Refuse direct wrapper commits to main
         shell: bash
@@ -55,6 +56,8 @@ jobs:
 
       - name: Commit wrapper scripts and JAR
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -64,4 +67,4 @@ jobs:
             exit 0
           fi
           git commit -m "chore(android): commit Gradle wrapper [skip android wrapper bootstrap]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0='http.https://github.com/.extraheader' GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" git push origin "HEAD:${GITHUB_REF_NAME}"
