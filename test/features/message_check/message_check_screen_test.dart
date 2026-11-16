@@ -35,8 +35,11 @@ void main() {
     expect(find.text('Urgency or pressure language'), findsOneWidget);
     expect(find.text('Link or web address detected'), findsOneWidget);
     expect(find.textContaining('No message was uploaded'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Safer next steps'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('Safer next steps'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Detected contact details'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('Detected contact details'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('help@example.test'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('help@example.test'), findsOneWidget);
 
     await tester.ensureVisible(find.text('Clear message and results'));
