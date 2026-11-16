@@ -75,6 +75,7 @@ class ItalianIntelligenceContent {
       'action': 'Rifiuta la richiesta, non condividere il codice, se opportuno cambia la password tramite il servizio ufficiale e controlla le sessioni attive.',
       'limit': 'Una richiesta inattesa è un segnale di allarme, non la conferma che un account sia stato compromesso.',
     },
+    'url-shortener': {'title': 'Destinazione abbreviata o nascosta', 'signal': 'Un collegamento usa un servizio di abbreviazione URL o nasconde la destinazione finale dietro un reindirizzamento.', 'meaning': 'L’indirizzo visibile non mostra il sito che raggiungerai. Le catene di reindirizzamento possono nascondere una destinazione imprevista.', 'action': 'Non fidarti del testo abbreviato. Usa un’anteprima affidabile o raggiungi autonomamente il sito dell’organizzazione; evita i link abbreviati non richiesti.', 'limit': 'I servizi di abbreviazione URL sono ampiamente usati anche per campagne e servizi legittimi.'},
   };
 
   static IntelligenceEntry localize(IntelligenceEntry entry, String languageCode) {
