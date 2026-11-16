@@ -11,18 +11,18 @@ const featureRoots = [
   'lib/features/message_check',
 ];
 const forbidden = [
-  [/package:http\\//, 'HTTP client dependency'],
-  [/package:dio\\//, 'Dio network client'],
-  [/\\bHttpClient\\b/, 'Dart HttpClient'],
-  [/\\bhttp\\.(?:get|post|put|patch|delete)\\s*\\(/, 'HTTP request'],
-  [/\\bfetch\\s*\\(/, 'Fetch request'],
-  [/\\bXMLHttpRequest\\b/, 'XMLHttpRequest'],
-  [/\\b(?:navigator|window)\\.sendBeacon\\b/, 'Beacon request'],
-  [/\\b(?:launchUrl|canLaunchUrl)\\s*\\(/, 'External URL launch'],
-  [/package:url_launcher\\//, 'URL launcher dependency'],
+  [/package:http\//, 'HTTP client dependency'],
+  [/package:dio\//, 'Dio network client'],
+  [/\bHttpClient\b/, 'Dart HttpClient'],
+  [/\bhttp\.(?:get|post|put|patch|delete)\s*\(/, 'HTTP request'],
+  [/\bfetch\s*\(/, 'Fetch request'],
+  [/\bXMLHttpRequest\b/, 'XMLHttpRequest'],
+  [/\b(?:navigator|window)\.sendBeacon\b/, 'Beacon request'],
+  [/\b(?:launchUrl|canLaunchUrl)\s*\(/, 'External URL launch'],
+  [/package:url_launcher\//, 'URL launcher dependency'],
   [/SharedPreferences/, 'Persistent preferences access'],
   [/localStorage|sessionStorage|indexedDB/i, 'Persistent browser storage'],
-  [/FirebaseAnalytics|VercelAnalytics|window\\.va\\s*\\(/, 'Analytics instrumentation'],
+  [/FirebaseAnalytics|VercelAnalytics|window\.va\s*\(/, 'Analytics instrumentation'],
 ];
 
 function walk(directory) {
@@ -40,9 +40,7 @@ for (const file of scanned) {
   const relative = path.relative(root, file).split(path.sep).join('/');
   const source = fs.readFileSync(file, 'utf8');
   for (const [pattern, label] of forbidden) {
-    if (relative === 'lib/features/qr_check/domain/qr_image_file_cleanup_io.dart' &&
-        label === 'Dart HttpClient') continue;
-    assert.ok(!pattern.test(source), `${relative} contains forbidden ${label}`);
+    assert.ok(!pattern.test(source), relative + ' contains forbidden ' + label);
   }
 }
 
@@ -51,13 +49,13 @@ for (const file of scanned) {
   const relative = path.relative(root, file).split(path.sep).join('/');
   if (relative === 'lib/features/qr_check/domain/qr_image_file_cleanup_io.dart') continue;
   const source = fs.readFileSync(file, 'utf8');
-  assert.ok(!/import\\s+['"]dart:io['"]/.test(source), `${relative} must not import dart:io`);
+  assert.ok(!/import\s+['"]dart:io['"]/.test(source), relative + ' must not import dart:io');
 }
 
 const analytics = fs.readFileSync(path.join(root, 'web/orvika-analytics-bootstrap.js'), 'utf8');
-assert.ok(!/document\\.(?:body|forms)|querySelectorAll\\s*\\(.*(?:input|textarea)/is.test(analytics),
+assert.ok(!/document\.(?:body|forms)|querySelectorAll\s*\(.*(?:input|textarea)/is.test(analytics),
   'Analytics bootstrap must not inspect form or input content');
-assert.ok(!/window\\.va\\s*\\(\\s*['"]event['"]/i.test(analytics),
+assert.ok(!/window\.va\s*\(\s*['"]event['"]/i.test(analytics),
   'Analytics bootstrap must not emit custom feature events');
 
-console.log(`ORVIKA checker privacy source boundaries: PASS (${scanned.length} Dart files scanned)`);
+console.log('ORVIKA checker privacy source boundaries: PASS (' + scanned.length + ' Dart files scanned)');
