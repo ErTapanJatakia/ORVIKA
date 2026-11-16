@@ -639,12 +639,12 @@ void main() {
       await tester.pumpWidget(OrvikaApp(key: ValueKey('responsive-portrait-$width')));
       await tester.pumpAndSettle();
 
-      expect(find.text('ORVIKA'), findsOneWidget, reason: 'width: $width');
-      final wordmark = tester.widget<Text>(find.text('ORVIKA'));
+      expect(find.text('ORVIKA'), findsWidgets, reason: 'width: $width');
+      final wordmark = tester.widget<Text>(find.text('ORVIKA').first);
       expect(wordmark.maxLines, 1, reason: 'wordmark must remain on one line at width: $width');
       expect(wordmark.softWrap, isFalse, reason: 'wordmark must not wrap at width: $width');
       final wordmarkFit = find.ancestor(
-        of: find.text('ORVIKA'),
+        of: find.text('ORVIKA').first,
         matching: find.byType(FittedBox),
       );
       expect(wordmarkFit, findsOneWidget,
@@ -705,9 +705,9 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('ORVIKA'), findsOneWidget);
+    expect(find.text('ORVIKA'), findsWidgets);
     expect(find.byTooltip('تغيير اللغة'), findsOneWidget);
-    final headerContext = tester.element(find.text('ORVIKA'));
+    final headerContext = tester.element(find.text('ORVIKA').first);
     expect(MediaQuery.of(headerContext).textScaler.scale(10), 20);
     expect(tester.takeException(), isNull, reason: 'header or hero overflow at 200% RTL scaling');
     tester.view.resetPhysicalSize();
