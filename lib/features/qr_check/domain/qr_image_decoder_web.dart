@@ -46,9 +46,6 @@ Future<List<QrImageCode>> decodeQrImage({
       );
     }
 
-    // Use the native API when available, but never make it a requirement.
-    final nativeResults = await _tryNativeBarcodeDetector(image);
-
     final sourceWidth = image.naturalWidth;
     final sourceHeight = image.naturalHeight;
     if (sourceWidth <= 0 || sourceHeight <= 0) {
@@ -83,6 +80,10 @@ Future<List<QrImageCode>> decodeQrImage({
         .data
         .toDart;
 
+    // Apply the same pixel ceiling to the native browser decoder. Passing the
+    // original image here could make BarcodeDetector process an arbitrarily
+    // large decoded image before the bounded fallback path runs.
+    final nativeResults = await _tryNativeBarcodeDetector(canvas);
     final fallbackResults = decodeQrImagePixels(
       width: decodeWidth,
       height: decodeHeight,
@@ -105,11 +106,11 @@ Future<List<QrImageCode>> decodeQrImage({
 }
 
 Future<List<QrImageCode>> _tryNativeBarcodeDetector(
-  web.HTMLImageElement image,
+  JSAny source,
 ) async {
   try {
     final detector = _BarcodeDetector();
-    final detected = await detector.detect(image).toDart;
+    final detected = await detector.detect(source).toDart;
     return detected.toDart
         .where((barcode) => barcode.rawValue.toDart.trim().isNotEmpty)
         .map((barcode) => (
