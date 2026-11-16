@@ -26,6 +26,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
   String? _imageName;
   List<QrImageCode> _codes = const [];
   bool _loading = false;
+  bool _decodingImage = false;
   bool _recoveringLostData = false;
   String? _message;
 
@@ -171,8 +172,10 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     final path = _imagePath;
     if (bytes == null || path == null || _loading) return;
 
+    final selectedFile = _selectedFile;
     setState(() {
       _loading = true;
+      _decodingImage = true;
       _message = null;
       _codes = const [];
     });
@@ -207,6 +210,13 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
         _message = l10n.text('checker.image.error.decode', 'This image could not be decoded on this device or browser.');
         _loading = false;
       });
+    } finally {
+      _decodingImage = false;
+      // If this route was popped during native analyzeImage(), let the plugin
+      // finish reading its temporary file before removing it.
+      if (!mounted && selectedFile != null && !kIsWeb) {
+        await deleteTemporaryQrImage(selectedFile.path);
+      }
     }
   }
 
@@ -227,7 +237,7 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
     _imageBytes = null;
     final selected = _selectedFile;
     _selectedFile = null;
-    if (selected != null && !kIsWeb) {
+    if (selected != null && !kIsWeb && !_decodingImage) {
       unawaited(deleteTemporaryQrImage(selected.path));
     }
     super.dispose();
