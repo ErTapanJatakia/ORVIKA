@@ -8,7 +8,7 @@ Status: source/configuration review only; no build or device execution performed
 
 - Application ID and namespace are `com.orvika.app`.
 - Main manifest declares CAMERA and INTERNET only.
-- Camera hardware is optional, so devices without a camera can still use manual inspection paths.
+- Camera and camera-autofocus hardware are explicitly optional, so devices without either capability are not unnecessarily filtered out; manual inspection paths remain available.
 - Cleartext traffic is disabled in the main application manifest.
 - No production `android:debuggable="true"` flag is declared in the main manifest.
 - Release build tasks fail when the complete upload-signing configuration is absent.
