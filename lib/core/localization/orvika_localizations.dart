@@ -809,6 +809,23 @@ class OrvikaLocalizations {
     'response.limit':'Wichtige Einschränkung',
     'response.notice':'Die passenden Maßnahmen hängen vom konkreten Vorfall ab. Bewahren Sie Belege auf und wenden Sie sich bei finanziellen Verlusten an Ihre Bank und die zuständigen offiziellen Meldestellen.',
 
+    'a11y.statement.title': 'ORVIKA-Erklärung zur Barrierefreiheit',
+    'a11y.statement.badge': 'Informationen zur Barrierefreiheit',
+    'a11y.statement.reviewed': 'Zuletzt überprüft: 15. November 2026',
+    'a11y.statement.commitment.title': 'Verpflichtung zur Barrierefreiheit',
+    'a11y.statement.commitment.body': 'ORVIKA verwendet WCAG 2.2 Level AA als Ziel für das Design und die Tests der Web-Barrierefreiheit. Umgesetzte Maßnahmen umfassen Tastaturnavigation und sichtbaren Fokus, semantische Beschriftungen und Überschriften, Formularsemantik, Textskalierung, responsive Layouts, Unterstützung reduzierter Bewegung und kontrastbewusste Designs.',
+    'a11y.statement.evaluation.title': 'Aktueller Bewertungsstand',
+    'a11y.statement.evaluation.body': 'Der Projektverantwortliche berichtet von einer manuellen Prüfung der Implementierungen A11Y-01 bis A11Y-10. Automatisierte Flutter-Tests decken ausgewählte Aspekte von Semantik, Überschriften, Formularbeschriftungen, Tastaturnavigation, responsiven Layouts und Textskalierung ab. Diese Projektprüfung ist kein unabhängiges Audit durch Dritte.',
+    'a11y.statement.conformance.title': 'Konformitätsstatus und Einschränkungen',
+    'a11y.statement.conformance.body': 'ORVIKA behauptet keine vollständige Konformität mit WCAG 2.2 Level AA. Automatisierte Tests und die Prüfung durch den Projektverantwortlichen belegen nicht, dass alle anwendbaren Erfolgskriterien auf jeder Seite, in jedem Zustand, Browser, jeder assistiven Technologie und Benutzerkonfiguration erfüllt sind. Das Barrierefreiheitskennzeichen verweist nur auf diese Erklärung und den Feedbackweg; es ist kein Konformitäts- oder Zertifizierungszeichen.',
+    'a11y.statement.platform.title': 'Plattformabdeckung',
+    'a11y.statement.platform.body': 'Diese Erklärung gilt für das gehostete Webangebot. Die Android-Anwendung benötigt eine separate native Bewertung, einschließlich TalkBack, Switch Access und Android-Anzeigeskalierung. Die Web-Prüfung ist kein Nachweis für Android-Konformität.',
+    'a11y.statement.report.title': 'So melden Sie eine Barriere',
+    'a11y.statement.report.body': 'Geben Sie bei einer Meldung die betroffene Seite oder Funktion, die ausgeführte Aktion, das erwartete Ergebnis und kurze Schritte zur Reproduktion an. Angaben zu Browser und assistiver Technologie sind optional. Geben Sie keine Passwörter, Einmalcodes oder nicht zugehörigen sensiblen personenbezogenen Daten an. CAPTCHA, Konto oder Verifizierung sind nicht erforderlich.',
+    'a11y.statement.contact.title': 'Feedback und Kontakt zur Barrierefreiheit',
+    'a11y.statement.contact.body': 'CAPTCHA oder Verifizierung sind nicht erforderlich. Kontaktieren Sie uns direkt:',
+    'a11y.statement.contact.action': 'Web-Erklärung zur Barrierefreiheit und Kontakt öffnen',
+    'a11y.statement.contact.disclosure': 'E-Mail-Adressen sind öffentlich, damit Feedback zur Barrierefreiheit ohne CAPTCHA möglich ist. Sie können Spam erhalten.',
   };
 
   static const Map<String, String> _frenchDraft = {
