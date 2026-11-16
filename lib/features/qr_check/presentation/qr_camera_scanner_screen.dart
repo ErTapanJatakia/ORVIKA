@@ -27,6 +27,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
   bool _cameraRequested = false;
   bool _pausedByLifecycle = false;
   String? _statusMessage;
+  String? _reportedScannerError;
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
   Future<void> _startCamera() async {
     final l10n = OrvikaLocalizations.of(context);
     if (_starting || _cameraActive || !_cameraRequested) return;
+    _reportedScannerError = null;
     setState(() {
       _starting = true;
       _statusMessage = null;
@@ -73,6 +75,23 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
     } finally {
       if (mounted) setState(() => _starting = false);
     }
+  }
+
+  void _announceScannerError(
+    MobileScannerException error,
+    OrvikaLocalizations l10n,
+  ) {
+    final message = l10n.textWithParameters(
+      'checker.camera.previewError',
+      fallback: 'Camera preview could not start. {error}',
+      parameters: {'error': error.errorCode.name},
+    );
+    if (_reportedScannerError == message) return;
+    _reportedScannerError = message;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => _statusMessage = message);
+    });
   }
 
   Future<void> _stopCamera() async {
@@ -216,16 +235,21 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                         child: Icon(Icons.camera_alt_outlined,
                             color: Colors.white54, size: 56),
                       ),
-                      errorBuilder: (context, error) => Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            l10n.textWithParameters('checker.camera.previewError', fallback: 'Camera preview could not start. {error}', parameters: {'error': error.errorCode.name}),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.white),
+                      errorBuilder: (context, error) {
+                        // The preview subtree is excluded from semantics. Mirror
+                        // this failure into the live-region status outside it.
+                        _announceScannerError(error, l10n);
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              l10n.textWithParameters('checker.camera.previewError', fallback: 'Camera preview could not start. {error}', parameters: {'error': error.errorCode.name}),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                     IgnorePointer(
                       child: Center(
