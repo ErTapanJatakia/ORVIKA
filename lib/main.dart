@@ -119,6 +119,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
   double _textScale = 1.0;
   bool _boldText = false;
   bool _reduceMotion = false;
+  bool _preferencesLoaded = false;
+  bool _showLanguageSelection = true;
 
   @override
   void initState() {
@@ -141,9 +143,11 @@ class _OrvikaAppState extends State<OrvikaApp> {
       if (!mounted) return;
       setState(() {
         _selectedCatalogue = savedCatalogue;
-        // Never restore an incomplete draft into the live application UI.
-        // Keep the stored preference untouched so the user's previous choice
-        // is not silently overwritten; show the language picker instead.
+        _preferencesLoaded = true;
+        // A reviewed saved language can enter the dashboard directly.
+        // First-time installs and incomplete/unknown saved locales must choose
+        // a reviewed language before the application opens.
+        _showLanguageSelection = !hasReviewedSavedLanguage;
         _selectedLanguage = hasReviewedSavedLanguage
             ? restoredLanguage
             : OrvikaLanguage.english;
@@ -160,7 +164,15 @@ class _OrvikaAppState extends State<OrvikaApp> {
         _reduceMotion = reduceMotion;
       });
     } catch (_) {
-      // The dashboard remains available with English and default preferences.
+      // If local preferences are unavailable, keep the first-run language
+      // choice visible rather than silently bypassing the selection screen.
+      if (!mounted) return;
+      setState(() {
+        _selectedLanguage = OrvikaLanguage.english;
+        _selectedCatalogue = 'russia';
+        _preferencesLoaded = true;
+        _showLanguageSelection = true;
+      });
     }
   }
 
@@ -169,6 +181,7 @@ class _OrvikaAppState extends State<OrvikaApp> {
     try {
       final preferences = await SharedPreferences.getInstance();
       await preferences.setString('appearance.language', language.code);
+      await preferences.setBool('onboarding.completed.v1', true);
     } catch (_) {
       // Keep the selected language for this session if storage is unavailable.
     }
@@ -420,23 +433,33 @@ class _OrvikaAppState extends State<OrvikaApp> {
           ),
         ),
       ),
-      // ORVIKA opens directly on the dashboard. English is the default;
-      // a previously saved, reviewed language is restored by preferences.
-      // First-run language selection and onboarding remain available separately.
-      home: SentinelDashboard(
-        selectedTheme: _selectedTheme,
-        onThemeChanged: _selectTheme,
-        selectedLanguage: _selectedLanguage,
-        selectedCatalogue: _selectedCatalogue,
-        onLanguageChanged: _selectLanguage,
-        onCatalogueChanged: _selectCatalogue,
-        textScale: _textScale,
-        onTextScaleChanged: _setTextScale,
-        boldText: _boldText,
-        onBoldTextChanged: _setBoldText,
-        reduceMotion: _reduceMotion,
-        onReduceMotionChanged: _setReduceMotion,
-      ),
+      // Wait for local preferences before choosing the initial route. New
+      // installs must select a reviewed language; returning users with a
+      // reviewed saved language proceed directly to the dashboard.
+      home: !_preferencesLoaded
+          ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+          : _showLanguageSelection
+              ? LanguageSelectionScreen(
+                  selectedLanguage: _selectedLanguage,
+                  selectedCatalogue: _selectedCatalogue,
+                  onLanguageChanged: _selectLanguage,
+                  onCatalogueChanged: _selectCatalogue,
+                  onContinue: () => setState(() => _showLanguageSelection = false),
+                )
+              : SentinelDashboard(
+                  selectedTheme: _selectedTheme,
+                  onThemeChanged: _selectTheme,
+                  selectedLanguage: _selectedLanguage,
+                  selectedCatalogue: _selectedCatalogue,
+                  onLanguageChanged: _selectLanguage,
+                  onCatalogueChanged: _selectCatalogue,
+                  textScale: _textScale,
+                  onTextScaleChanged: _setTextScale,
+                  boldText: _boldText,
+                  onBoldTextChanged: _setBoldText,
+                  reduceMotion: _reduceMotion,
+                  onReduceMotionChanged: _setReduceMotion,
+                ),
     );
   }
 }
