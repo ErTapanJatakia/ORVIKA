@@ -12,7 +12,7 @@ The repository now contains a permanent Android project scaffold:
 - Gradle wrapper and pinned Gradle distribution.
 - Android Gradle Plugin and Kotlin plugin versions declared in `android/settings.gradle.kts`.
 - Java 17 source/target compatibility.
-- Main manifest with CAMERA and INTERNET permissions; camera hardware is optional and cleartext traffic is disabled.
+- Main manifest with CAMERA and INTERNET permissions; camera and autofocus hardware are optional, and cleartext traffic is disabled.
 - Release signing is fail-closed: release build tasks throw a Gradle exception unless all four signing values are supplied.
 - `android/key.properties` and keystore files are ignored by Git.
 
