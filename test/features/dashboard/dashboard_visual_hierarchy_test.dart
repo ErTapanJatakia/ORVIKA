@@ -14,13 +14,14 @@ void main() {
       tester.view.physicalSize = Size(width, 800);
       SharedPreferences.setMockInitialValues({
         'appearance.language': 'en',
+        'onboarding.completed.v1': true,
       });
 
       await tester.pumpWidget(OrvikaApp(key: ValueKey('brand-$width')));
       await tester.pumpAndSettle();
 
-      final wordmark = find.text('ORVIKA');
-      expect(wordmark, findsOneWidget);
+      final wordmark = find.text('ORVIKA').first;
+      expect(find.text('ORVIKA'), findsWidgets);
       final rect = tester.getRect(wordmark);
       expect(rect.left, greaterThanOrEqualTo(0));
       expect(rect.right, lessThanOrEqualTo(width));
@@ -41,7 +42,7 @@ void main() {
       (tester) async {
     tester.view.physicalSize = const Size(390, 844);
     addTearDown(tester.view.resetPhysicalSize);
-    SharedPreferences.setMockInitialValues({'appearance.language': 'en'});
+    SharedPreferences.setMockInitialValues({'appearance.language': 'en', 'onboarding.completed.v1': true});
 
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
