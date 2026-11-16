@@ -56,7 +56,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final firstPractice = find.text('Use unique passwords for important accounts');
-    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(ListView));
+    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(Scrollable).first);
     await tester.ensureVisible(firstPractice);
     await tester.tap(firstPractice);
     await tester.pumpAndSettle();
