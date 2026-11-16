@@ -75,6 +75,7 @@ class FrenchIntelligenceContent {
       'action': 'Refusez la demande, ne partagez pas le code, changez votre mot de passe via le service officiel si nécessaire et vérifiez les sessions actives.',
       'limit': 'Une demande inattendue est un signal d’alerte, pas la confirmation qu’un compte a été compromis.',
     },
+    'url-shortener': {'title': 'Destination raccourcie ou masquée', 'signal': 'Un lien utilise un raccourcisseur d’URL ou masque la destination finale derrière une redirection.', 'meaning': 'L’adresse visible ne révèle pas le site que vous allez réellement atteindre. Les chaînes de redirection peuvent dissimuler une destination inattendue.', 'action': 'Ne vous fiez pas au texte raccourci. Utilisez un aperçu fiable ou accédez au site de l’organisation de manière indépendante ; évitez les liens raccourcis non sollicités.', 'limit': 'Les raccourcisseurs d’URL sont largement utilisés pour des campagnes et services légitimes.'},
   };
 
   static IntelligenceEntry localize(IntelligenceEntry entry, String languageCode) {
