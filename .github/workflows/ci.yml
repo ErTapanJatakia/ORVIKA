@@ -1,10 +1,6 @@
 name: ORVIKA CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
     inputs:
       deploy_production:
@@ -104,6 +100,7 @@ jobs:
           node --check .github/scripts/verify-vercel-output.cjs
           node --check functions/_middleware.js
           npm run test:edge
+          npm run verify:source
           npx --yes wrangler@4 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
           test -s "$RUNNER_TEMP/orvika-pages-worker.js"
 
