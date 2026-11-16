@@ -29,9 +29,9 @@ QR Check retains its existing manual paste-and-inspect workflow. Live camera sca
 ## Decoder/platform boundaries
 
 - Android and Apple native implementations use `mobile_scanner.analyzeImage` and the same native scanning engines as the camera feature where supported.
-- The current `mobile_scanner` release does not support `analyzeImage` on Web. ORVIKA Web therefore tries the browser's native Shape Detection `BarcodeDetector` API first and then uses the bundled pure-Dart ZXing pixel decoder when the API is missing, returns no result, or cannot decode the image.
-- Firefox and other browsers without `BarcodeDetector` can use the bundled fallback; image scanning does not depend on a remote decoder, CDN script or WASM download.
-- The fallback reads the selected image into an in-memory canvas, downsizes images above 8 megapixels, and tries red, green, blue and weighted-luminance interpretations with contrast stretching and inverted-image/try-harder hints. It can decode supported 1D and 2D formats, but decorative, distorted, occluded or heavily logo-covered codes may still fail.
+- The current `mobile_scanner` release does not support `analyzeImage` on Web. ORVIKA Web decodes the selected image into an in-memory canvas and downsizes images above 8 megapixels before running barcode decoders.
+- Where available, the browser's native Shape Detection `BarcodeDetector` API runs against the bounded canvas. The bundled pure-Dart ZXing pixel decoder also runs against the bounded pixel buffer, and distinct results from both paths are merged and deduplicated.
+- Firefox and other browsers without `BarcodeDetector` use the bundled fallback; image scanning does not depend on a remote decoder, CDN script or WASM download. The fallback tries red, green, blue and weighted-luminance interpretations with contrast stretching and inverted-image/try-harder hints. It can decode supported 1D and 2D formats, but decorative, distorted, occluded or heavily logo-covered codes may still fail.
 - Image decoding still depends on the browser being able to decode the selected image format and expose canvas pixel data. Unsupported image formats, tainted canvas contexts and browser-specific decoder behaviour can prevent scanning; users receive a recoverable error and can choose another image.
 - Linux and Windows native app projects are not currently shipped. Browser-based ORVIKA Web may be used on those systems subject to browser support.
 
