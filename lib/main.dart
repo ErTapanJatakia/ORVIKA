@@ -195,26 +195,42 @@ class _OrvikaAppState extends State<OrvikaApp> {
   Future<void> _setTextScale(double value) async {
     final safeValue = ((value.clamp(0.5, 2.0) * 20).round() / 20).toDouble();
     setState(() => _textScale = safeValue);
-    final preferences = await SharedPreferences.getInstance();
-    await preferences.setDouble('accessibility.textScale', safeValue);
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setDouble('accessibility.textScale', safeValue);
+    } catch (_) {
+      // Keep the selected value for this session if local storage is unavailable.
+    }
   }
 
   Future<void> _setBoldText(bool value) async {
     setState(() => _boldText = value);
-    final preferences = await SharedPreferences.getInstance();
-    await preferences.setBool('accessibility.boldText', value);
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setBool('accessibility.boldText', value);
+    } catch (_) {
+      // Keep the selected value for this session if local storage is unavailable.
+    }
   }
 
   Future<void> _setReduceMotion(bool value) async {
     setState(() => _reduceMotion = value);
-    final preferences = await SharedPreferences.getInstance();
-    await preferences.setBool('accessibility.reduceMotion', value);
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setBool('accessibility.reduceMotion', value);
+    } catch (_) {
+      // Keep the selected value for this session if local storage is unavailable.
+    }
   }
 
   Future<void> _selectTheme(OrvikaTheme theme) async {
     setState(() => _selectedTheme = theme);
-    final preferences = await SharedPreferences.getInstance();
-    await preferences.setString(_themePreferenceKey, theme.name);
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      await preferences.setString(_themePreferenceKey, theme.name);
+    } catch (_) {
+      // Keep the selected theme for this session if local storage is unavailable.
+    }
   }
 
   @override
