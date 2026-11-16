@@ -126,7 +126,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         ],
       ),
     );
-    if (confirmed != true) return;
+    if (confirmed != true || !mounted) return;
     setState(() {
       _reviewedIds = <String>{};
       _assessment.clear();
