@@ -82,31 +82,39 @@ const trackedSecrets = tracked.filter((file) =>
 );
 assert.deepEqual(trackedSecrets, [], 'Signing properties or keystore material must never be tracked');
 
-const signingKeys = [
+const signingPropertyNames = ['storeFile', 'storePassword', 'keyAlias', 'keyPassword'];
+const signingEnvironmentNames = [
   'ORVIKA_UPLOAD_STORE_FILE',
   'ORVIKA_UPLOAD_STORE_PASSWORD',
   'ORVIKA_UPLOAD_KEY_ALIAS',
   'ORVIKA_UPLOAD_KEY_PASSWORD',
 ];
-const envSigningValuesPresent = signingKeys.every((key) => Boolean(process.env[key]?.trim()));
 const propertiesPath = path.join(android, 'key.properties');
-let propertiesSigningValuesPresent = false;
-let propertiesStoreFile = null;
+const properties = new Map();
 if (fs.existsSync(propertiesPath)) {
-  const properties = fs.readFileSync(propertiesPath, 'utf8');
-  const values = new Map(
-    properties.split(/\r?\n/).map((line) => line.trim()).filter((line) => line && !line.startsWith('#'))
-      .map((line) => {
-        const separator = line.indexOf('=');
-        return separator < 0 ? [line, ''] : [line.slice(0, separator).trim(), line.slice(separator + 1).trim()];
-      }),
-  );
-  propertiesSigningValuesPresent = ['storeFile', 'storePassword', 'keyAlias', 'keyPassword']
-    .every((key) => Boolean(values.get(key)));
-  propertiesStoreFile = values.get('storeFile') || null;
+  for (const line of fs.readFileSync(propertiesPath, 'utf8').split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const separator = trimmed.indexOf('=');
+    if (separator < 0) {
+      properties.set(trimmed, '');
+    } else {
+      properties.set(trimmed.slice(0, separator).trim(), trimmed.slice(separator + 1).trim());
+    }
+  }
 }
-const signingValuesPresent = envSigningValuesPresent || propertiesSigningValuesPresent;
-const configuredStoreFile = propertiesStoreFile || process.env.ORVIKA_UPLOAD_STORE_FILE || null;
+
+// Match Gradle's per-key precedence exactly: a present but blank property does
+// not fall back to its environment variable because signingValue() applies
+// the blank-value filter after the property/environment choice.
+const resolvedSigningValues = signingPropertyNames.map((propertyName, index) => {
+  const value = properties.has(propertyName)
+    ? properties.get(propertyName)
+    : process.env[signingEnvironmentNames[index]];
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+});
+const signingValuesComplete = resolvedSigningValues.every(Boolean);
+const configuredStoreFile = resolvedSigningValues[0];
 const resolvedStoreFile = configuredStoreFile
   ? (path.isAbsolute(configuredStoreFile)
       ? configuredStoreFile
@@ -115,11 +123,10 @@ const resolvedStoreFile = configuredStoreFile
 const signingStoreFileExists = Boolean(
   resolvedStoreFile && fs.existsSync(resolvedStoreFile) && fs.statSync(resolvedStoreFile).isFile(),
 );
-if (signingValuesPresent) {
+if (signingValuesComplete) {
   assert.ok(signingStoreFileExists, 'Release signing values are present but the configured keystore file is missing');
 }
-const envSigningReady = envSigningValuesPresent && signingStoreFileExists;
-const propertiesSigningReady = propertiesSigningValuesPresent && signingStoreFileExists;
+const signingReady = signingValuesComplete && signingStoreFileExists;
 
 const version = pubspec.match(/^version:\s*(.+)$/m)?.[1]?.trim() ?? 'not declared';
 const gradlePlugin = settings.match(/id\("com\.android\.application"\)\s+version\s+"([0-9.]+)"/)?.[1] ?? 'not detected';
@@ -134,4 +141,4 @@ console.log(`- Kotlin plugin: ${kotlinPlugin}`);
 console.log(`- Java compatibility: 17`);
 console.log(`- Android app backup: disabled; full backup and device-transfer exclusions present`);
 console.log(`- Tracked signing secrets: none`);
-console.log(`- Release signing: ${envSigningReady || propertiesSigningReady ? 'CONFIGURED (credentials not displayed)' : 'NOT CONFIGURED — release artifacts must not be built or submitted'}`);
+console.log(`- Release signing: ${signingReady ? 'CONFIGURED (credentials not displayed)' : signingValuesComplete ? 'INVALID — configured keystore file is missing' : resolvedSigningValues.some(Boolean) ? 'INCOMPLETE — signing values are partial' : 'NOT CONFIGURED — release artifacts must not be built or submitted'}`);
