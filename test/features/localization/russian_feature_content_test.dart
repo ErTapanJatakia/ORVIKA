@@ -20,7 +20,7 @@ void main() {
     final l10n = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
 
     test('covers all reviewed core interface keys', () {
-      expect(OrvikaLocalizations.requiredTranslationKeys, hasLength(146));
+      expect(OrvikaLocalizations.requiredTranslationKeys, hasLength(163));
       for (final key in OrvikaLocalizations.requiredTranslationKeys) {
         expect(l10n.hasTranslation(key), isTrue, reason: 'Missing Russian key: $key');
         expect(l10n.text(key), isNot(key), reason: 'Unresolved Russian key: $key');
@@ -145,7 +145,7 @@ void main() {
       }
     });
 
-    test('localizes all ten Intelligence references', () {
+    test('localizes all canonical Intelligence references', () {
       expect(IntelligenceLibrary.entries, hasLength(10));
       for (final source in IntelligenceLibrary.entries) {
         final item = RussianIntelligenceContent.localize(source, code);
