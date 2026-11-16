@@ -141,7 +141,7 @@ jobs:
           echo "Flutter Web output and required response-header policy are present."
 
       - name: Install Wrangler
-        run: npm install --global wrangler@4
+        run: npm install --global wrangler@4.163.0
 
       - name: Compile Pages Functions before deployment
         run: |
