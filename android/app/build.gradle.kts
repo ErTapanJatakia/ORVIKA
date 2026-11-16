@@ -22,12 +22,13 @@ val releaseStorePassword = signingValue("storePassword", "ORVIKA_UPLOAD_STORE_PA
 val releaseKeyAlias = signingValue("keyAlias", "ORVIKA_UPLOAD_KEY_ALIAS")
 val releaseKeyPassword = signingValue("keyPassword", "ORVIKA_UPLOAD_KEY_PASSWORD")
 
+val releaseStoreFileExists = releaseStoreFile?.let { file(it).isFile } == true
 val hasReleaseSigning = listOf(
     releaseStoreFile,
     releaseStorePassword,
     releaseKeyAlias,
     releaseKeyPassword,
-).all { it != null }
+).all { it != null } && releaseStoreFileExists
 
 if (gradle.startParameter.taskNames.any { task ->
         task.contains("assembleRelease", ignoreCase = true) ||
