@@ -1596,6 +1596,20 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             OrvikaLocalizations(_selectedLanguage).text('settings.accessibility', 'Accessibility note: High contrast uses brighter signal colours and stronger visual separation. Security findings always include text labels; colour is never the only indicator.'),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
           ),
+          const Divider(height: 28),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.policy_outlined),
+              title: const Text('Open-source licences'),
+              subtitle: const Text('Review licences for software included with ORVIKA.'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showLicensePage(
+                context: context,
+                applicationName: 'ORVIKA',
+                applicationLegalese: 'Third-party software notices',
+              ),
+            ),
+          ),
             ],
           ),
         ),
