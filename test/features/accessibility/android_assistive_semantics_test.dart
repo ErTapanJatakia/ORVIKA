@@ -14,11 +14,12 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(find.text('Use unique passwords for important accounts'), 300, scrollable: find.byType(ListView));
+    await tester.scrollUntilVisible(find.text('Use unique passwords for important accounts'), 300, scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Use unique passwords for important accounts'));
     await tester.pumpAndSettle();
 
     final reviewLabel = find.text('I have reviewed this practice');
+    await tester.scrollUntilVisible(reviewLabel, 300, scrollable: find.byType(Scrollable).first);
     expect(reviewLabel, findsOneWidget);
     final reviewControl = find.ancestor(
       of: reviewLabel,
