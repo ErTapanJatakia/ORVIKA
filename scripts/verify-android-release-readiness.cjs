@@ -17,6 +17,8 @@ const requiredFiles = [
   'android/build.gradle.kts',
   'android/app/build.gradle.kts',
   'android/app/src/main/AndroidManifest.xml',
+  'android/app/src/main/res/xml/backup_rules.xml',
+  'android/app/src/main/res/xml/data_extraction_rules.xml',
   'android/.gitignore',
 ];
 
@@ -27,10 +29,14 @@ for (const relative of requiredFiles) {
 const wrapper = read('android/gradle/wrapper/gradle-wrapper.properties');
 const wrapperVersion = wrapper.match(/distributionUrl=.*gradle-([0-9.]+)-all\.zip/)?.[1];
 assert.ok(wrapperVersion, 'Gradle wrapper distribution must be pinned to a versioned all.zip');
+const wrapperChecksum = wrapper.match(/^distributionSha256Sum=([a-f0-9]{64})$/m)?.[1];
+assert.ok(wrapperChecksum, 'Gradle wrapper distribution must pin its official SHA-256 checksum');
 
 const settings = read('android/settings.gradle.kts');
 const appGradle = read('android/app/build.gradle.kts');
 const manifest = read('android/app/src/main/AndroidManifest.xml');
+const legacyBackupRules = read('android/app/src/main/res/xml/backup_rules.xml');
+const extractionRules = read('android/app/src/main/res/xml/data_extraction_rules.xml');
 const ignore = read('android/.gitignore');
 const pubspec = read('pubspec.yaml');
 
@@ -42,6 +48,12 @@ assert.match(appGradle, /sourceCompatibility = JavaVersion\.VERSION_17/);
 assert.match(appGradle, /targetCompatibility = JavaVersion\.VERSION_17/);
 assert.match(appGradle, /throw GradleException\([\s\S]*?release signing is not configured/);
 assert.match(manifest, /android:usesCleartextTraffic="false"/);
+assert.match(manifest, /android:allowBackup="false"/);
+assert.match(manifest, /android:fullBackupContent="@xml\/backup_rules"/);
+assert.match(manifest, /android:dataExtractionRules="@xml\/data_extraction_rules"/);
+assert.match(legacyBackupRules, /<exclude domain="root" path="\."\s*\/>/);
+assert.match(extractionRules, /<cloud-backup>[\s\S]*?<exclude domain="root" path="\."\s*\/>[\s\S]*?<\/cloud-backup>/);
+assert.match(extractionRules, /<device-transfer>[\s\S]*?<exclude domain="root" path="\."\s*\/>[\s\S]*?<\/device-transfer>/);
 assert.match(manifest, /android:name="android\.hardware\.camera"[\s\S]*?android:required="false"/);
 assert.match(ignore, /key\.properties/);
 assert.match(ignore, /\*\*\/\*\.jks/);
@@ -84,9 +96,10 @@ const kotlinPlugin = settings.match(/org\.jetbrains\.kotlin\.android" version "(
 console.log('ORVIKA Android release preflight: STRUCTURE PASS');
 console.log(`- Application ID: com.orvika.app`);
 console.log(`- App version: ${version}`);
-console.log(`- Gradle wrapper: ${wrapperVersion}`);
+console.log(`- Gradle wrapper: ${wrapperVersion} (SHA-256 pinned)`);
 console.log(`- Android Gradle Plugin: ${gradlePlugin}`);
 console.log(`- Kotlin plugin: ${kotlinPlugin}`);
 console.log(`- Java compatibility: 17`);
+console.log(`- Android app backup: disabled; full backup and device-transfer exclusions present`);
 console.log(`- Tracked signing secrets: none`);
 console.log(`- Release signing: ${envSigningReady || propertiesSigningReady ? 'CONFIGURED (credentials not displayed)' : 'NOT CONFIGURED — release artifacts must not be built or submitted'}`);
