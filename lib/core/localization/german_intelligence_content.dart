@@ -76,6 +76,7 @@ class GermanIntelligenceContent {
       'action': 'Lehne die Aufforderung ab, gib den Code nicht weiter, ändere bei Bedarf das Passwort über den offiziellen Dienst und prüfe aktive Sitzungen.',
       'limit': 'Eine unerwartete Aufforderung ist ein Warnsignal, aber keine Bestätigung dafür, dass ein Konto kompromittiert wurde.',
     },
+    'url-shortener': {'title': 'Verkürztes oder verschleiertes Ziel', 'signal': 'Ein Link verwendet einen URL-Kürzungsdienst oder verbirgt das endgültige Ziel hinter einer Weiterleitung.', 'meaning': 'Die sichtbare Adresse zeigt nicht die Website, die Sie letztlich erreichen. Weiterleitungsketten können ein unerwartetes Ziel verschleiern.', 'action': 'Verlassen Sie sich nicht auf den verkürzten Text. Verwenden Sie eine vertrauenswürdige Vorschau oder rufen Sie die Organisation unabhängig auf; öffnen Sie keine unaufgefordert zugesandten Kurzlinks.', 'limit': 'URL-Kürzungsdienste werden häufig auch für legitime Kampagnen und Dienste verwendet.'},
   };
 
   static IntelligenceEntry localize(IntelligenceEntry entry, String languageCode) {
