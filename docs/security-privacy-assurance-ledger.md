@@ -58,3 +58,12 @@ node scripts/verify-security-config.cjs
 ## 5. Change control
 
 Do not add remote reputation APIs, telemetry, account services or cloud analysis as part of assurance work without a separate architecture and privacy decision. Do not weaken tests or relax security headers merely to obtain a passing build. Record unavailable platform checks as **not tested**, not passed.
+
+
+## Consolidated source-review remediation (16 November 2026)
+
+- URL analysis rejects explicitly supplied ports outside the 0–65,535 range; boundary regression tests cover 65,536, 99,999 and 65,535.
+- Web live-camera CSP permits only the documented `cdn.jsdelivr.net` origin for its ZXing WebAssembly runtime; wildcard external script and connection sources remain prohibited by preflight checks.
+- Web entrypoint uses a PNG Apple touch icon copied from the existing 192px application launcher asset; PWA preflight verifies PNG signature and dimensions.
+- Checker privacy source guard scans Link, QR and Message features for direct network clients, external URL launch, persistent browser storage and analytics instrumentation.
+- These source checks and tests are committed but have not been executed in this environment. Runtime network isolation, actual response headers, camera lifecycle, browser installability and device permission behaviour remain release validation gates.
