@@ -222,7 +222,7 @@ jobs:
           AAB_VERIFY="$(jarsigner -verify -verbose -certs "$AAB" 2>&1)"
           if ! grep -qi 'jar verified' <<< "$AAB_VERIFY"; then
             echo "The Android App Bundle signature could not be verified." >&2
-            printf '%s\\n' "$AAB_VERIFY" >&2
+            printf '%s\n' "$AAB_VERIFY" >&2
             exit 1
           fi
           keytool -printcert -jarfile "$AAB" > "$AAB_SIGNATURE" 2>&1
