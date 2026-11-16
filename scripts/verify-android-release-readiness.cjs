@@ -28,7 +28,7 @@ for (const relative of requiredFiles) {
 
 const wrapper = read('android/gradle/wrapper/gradle-wrapper.properties');
 const distributionUrl = wrapper.match(/^distributionUrl=(.+)$/m)?.[1]?.replace(/\\:/g, ':');
-const wrapperVersion = distributionUrl?.match(/gradle-([0-9.]+)-all\\.zip/)?.[1];
+const wrapperVersion = distributionUrl?.match(/gradle-([0-9.]+)-all\.zip/)?.[1];
 assert.equal(wrapperVersion, '9.3.1', 'Review and update the expected wrapper checksum when changing Gradle versions');
 assert.equal(
   distributionUrl,
@@ -90,7 +90,7 @@ let propertiesStoreFile = null;
 if (fs.existsSync(propertiesPath)) {
   const properties = fs.readFileSync(propertiesPath, 'utf8');
   const values = new Map(
-    properties.split(/\\r?\\n/).map((line) => line.trim()).filter((line) => line && !line.startsWith('#'))
+    properties.split(/\r?\n/).map((line) => line.trim()).filter((line) => line && !line.startsWith('#'))
       .map((line) => {
         const separator = line.indexOf('=');
         return separator < 0 ? [line, ''] : [line.slice(0, separator).trim(), line.slice(separator + 1).trim()];
