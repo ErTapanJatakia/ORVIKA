@@ -44,11 +44,12 @@ void main() {
   testWidgets('each theme applies immediately and survives app restart',
       (tester) async {
     for (final theme in OrvikaTheme.values) {
-      SharedPreferences.setMockInitialValues({});
+      SharedPreferences.setMockInitialValues({'onboarding.completed.v1': true, 'appearance.language': 'en'});
       await tester.pumpWidget(OrvikaApp(key: ValueKey('theme-${theme.name}')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(PopupMenuButton<OrvikaTheme>));
+      await tester.tap(find.byTooltip('Appearance and accessibility settings'));
+      await tester.pumpAndSettle();
       await tester.pumpAndSettle();
       await tester.tap(find.text(theme.label).last);
       await tester.pumpAndSettle();
