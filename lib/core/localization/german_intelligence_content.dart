@@ -77,6 +77,7 @@ class GermanIntelligenceContent {
       'limit': 'Eine unerwartete Aufforderung ist ein Warnsignal, aber keine Bestätigung dafür, dass ein Konto kompromittiert wurde.',
     },
     'url-shortener': {'title': 'Verkürztes oder verschleiertes Ziel', 'signal': 'Ein Link verwendet einen URL-Kürzungsdienst oder verbirgt das endgültige Ziel hinter einer Weiterleitung.', 'meaning': 'Die sichtbare Adresse zeigt nicht die Website, die Sie letztlich erreichen. Weiterleitungsketten können ein unerwartetes Ziel verschleiern.', 'action': 'Verlassen Sie sich nicht auf den verkürzten Text. Verwenden Sie eine vertrauenswürdige Vorschau oder rufen Sie die Organisation unabhängig auf; öffnen Sie keine unaufgefordert zugesandten Kurzlinks.', 'limit': 'URL-Kürzungsdienste werden häufig auch für legitime Kampagnen und Dienste verwendet.'},
+    'url-lookalike': {'title': 'Ähnlich geschriebene Domain', 'signal': 'Eine Domain ersetzt, ergänzt oder entfernt Zeichen, um einer bekannten Organisation zu ähneln.', 'meaning': 'Kleine Schreibunterschiede, zusätzliche Wörter oder vertauschte Zeichen können eine von Angreifern kontrollierte Domain vertraut erscheinen lassen.', 'action': 'Vergleiche die vollständige registrierbare Domain Zeichen für Zeichen mit einer unabhängig bezogenen Adresse.', 'limit': 'Ein ähnlich aussehender Name ist ein Anlass zur Prüfung, kein Beweis für bösartige Inhaberschaft.'},
   };
 
   static IntelligenceEntry localize(IntelligenceEntry entry, String languageCode) {
