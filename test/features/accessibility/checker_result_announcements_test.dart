@@ -17,7 +17,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final announcement = find.byWidgetPredicate(
-      (widget) => widget is Semantics && widget.properties.liveRegion,
+      (widget) => widget is Semantics && widget.properties.liveRegion == true,
       description: 'a live-region result announcement',
     );
     expect(announcement, findsOneWidget);
