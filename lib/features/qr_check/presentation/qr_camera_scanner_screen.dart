@@ -71,10 +71,13 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
           // Best-effort release after a lifecycle transition.
         }
         if (mounted) setState(() => _cameraActive = false);
+        // If the app resumed while stop() was pending, the lifecycle callback
+        // has already cleared _pausedByLifecycle but could not start because
+        // this startup operation still owns the _starting guard.
         restartAfterLifecycleStop =
             _cameraRequested &&
-            !_pausedByLifecycle &&
             WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+        if (restartAfterLifecycleStop) _pausedByLifecycle = false;
         return;
       }
       if (!_controller.value.hasCameraPermission) {
