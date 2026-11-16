@@ -37,8 +37,8 @@ void main() {
         expect(brandText.maxLines, 1);
         expect(brandText.softWrap, isFalse);
 
-        final brandParagraph = tester.renderObject<RenderParagraph>(brand);
-        expect(brandParagraph.size.width, lessThanOrEqualTo(130));
+        final brandFit = find.ancestor(of: brand, matching: find.byType(FittedBox)).first;
+        expect(tester.getSize(brandFit).width, lessThanOrEqualTo(130));
 
         final heroHeading = find.textContaining('Check before');
         expect(heroHeading, findsOneWidget);
