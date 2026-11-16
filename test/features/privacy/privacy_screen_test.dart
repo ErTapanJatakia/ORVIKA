@@ -67,6 +67,26 @@ void main() {
         reason: 'Assessment answers must remain in active screen memory');
   });
 
+  testWidgets('Privacy reset requires confirmation and clears saved review progress', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'privacy.reviewed.v1': <String>['account-unique-passwords'],
+    });
+    await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Reset review progress'));
+    await tester.pumpAndSettle();
+    expect(find.text('Reset review progress?'), findsOneWidget);
+    expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Reset progress'));
+    await tester.pumpAndSettle();
+    expect(find.text('0 of 12 practices reviewed'), findsOneWidget);
+    final preferences = await SharedPreferences.getInstance();
+    expect(preferences.getStringList('privacy.reviewed.v1'), isNull);
+  });
+
   testWidgets('Privacy screen clearly explains its self-audit boundary', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
