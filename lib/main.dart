@@ -385,25 +385,19 @@ class _OrvikaAppState extends State<OrvikaApp> {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
-            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
-              MaterialTapTargetSize.padded,
-            ),
+            tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: ButtonStyle(
             minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
-            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
-              MaterialTapTargetSize.padded,
-            ),
+            tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
             minimumSize: const WidgetStatePropertyAll<Size>(Size(48, 48)),
-            tapTargetSize: const WidgetStatePropertyAll<MaterialTapTargetSize>(
-              MaterialTapTargetSize.padded,
-            ),
+            tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
         appBarTheme: AppBarTheme(

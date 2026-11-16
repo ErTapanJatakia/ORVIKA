@@ -31,7 +31,7 @@ void main() {
         reason: '${entry.key} buttons must have a 48x48 logical-pixel minimum',
       );
       expect(
-        style.tapTargetSize!.resolve(const <WidgetState>{}),
+        style.tapTargetSize,
         MaterialTapTargetSize.padded,
         reason: entry.key,
       );

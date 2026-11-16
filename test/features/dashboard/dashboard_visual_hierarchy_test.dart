@@ -28,7 +28,7 @@ void main() {
       final brandHeading = find.byWidgetPredicate(
         (widget) =>
             widget is Semantics &&
-            widget.header &&
+            widget.properties.header &&
             widget.properties.label ==
                 'ORVIKA — Personal Cyber Safety Intelligence',
       );

@@ -26,8 +26,8 @@ void main() {
         );
 
         final locale = tester.getSemantics(visibleText).getSemanticsData().locale;
-        expect(locale.languageCode, code);
-        expect(locale.scriptCode, isNull);
+        expect(locale?.languageCode, code);
+        expect(locale?.scriptCode, isNull);
         expect(find.byType(FocusTraversalGroup), findsWidgets);
         semantics.dispose();
       },
