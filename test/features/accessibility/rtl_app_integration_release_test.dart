@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
+import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  for (final code in ['ar', 'ur']) {
+  for (final code in ['ar']) {
     testWidgets(
       '$code publishes RTL direction and the selected semantics locale through the app tree',
       (tester) async {
@@ -33,6 +34,10 @@ void main() {
       },
     );
   }
+
+  test('Urdu remains classified as right-to-left while its draft pack is gated', () {
+    expect(OrvikaLanguage.fromCode('ur').isRightToLeft, isTrue);
+  });
 
   testWidgets('switching to a left-to-right locale does not retain RTL direction',
       (tester) async {
