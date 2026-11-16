@@ -216,13 +216,28 @@ jobs:
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
           test -s "$APK"
           test -s "$AAB"
-          "$APKSIGNER" verify --verbose --print-certs "$APK"
+          APK_SIGNATURE="$RUNNER_TEMP/orvika-apk-signature.txt"
+          AAB_SIGNATURE="$RUNNER_TEMP/orvika-aab-signature.txt"
+          "$APKSIGNER" verify --verbose --print-certs "$APK" > "$APK_SIGNATURE" 2>&1
           AAB_VERIFY="$(jarsigner -verify -verbose -certs "$AAB" 2>&1)"
-          printf '%s\\n' "$AAB_VERIFY"
           if ! grep -qi 'jar verified' <<< "$AAB_VERIFY"; then
             echo "The Android App Bundle signature could not be verified." >&2
+            printf '%s\n' "$AAB_VERIFY" >&2
             exit 1
           fi
+          keytool -printcert -jarfile "$AAB" > "$AAB_SIGNATURE" 2>&1
+
+          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
+          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
+          if [ -z "$APK_SIGNERS" ] || [ -z "$AAB_SIGNERS" ]; then
+            echo "Unable to extract signer certificate fingerprints from both release artifacts." >&2
+            exit 1
+          fi
+          if [ "$APK_SIGNERS" != "$AAB_SIGNERS" ]; then
+            echo "APK and AAB were not signed by the same certificate set." >&2
+            exit 1
+          fi
+
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
           APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
           test "$APP_ID" = "com.orvika.app"
@@ -232,6 +247,7 @@ jobs:
             echo "- APK: $APK"
             echo "- AAB: $AAB"
             echo "- Application ID: $APP_ID"
+            echo "- APK/AAB signer certificate sets: match"
             echo "- Signing: configured upload key; verify store-specific requirements before submission."
           } >> "$GITHUB_STEP_SUMMARY"
 
