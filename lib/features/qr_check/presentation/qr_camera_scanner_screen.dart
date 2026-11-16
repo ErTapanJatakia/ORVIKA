@@ -81,6 +81,11 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
         return;
       }
       if (!_controller.value.hasCameraPermission) {
+        // A denied permission is not an ongoing request to use the camera.
+        // Require another explicit tap before any later lifecycle resume can
+        // attempt to request permission again.
+        _cameraRequested = false;
+        _pausedByLifecycle = false;
         setState(() {
           _statusMessage =
               l10n.text('checker.camera.permissionDenied', 'Camera permission was not granted. Check your browser or device settings, or continue by pasting decoded content.');
@@ -90,6 +95,10 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
       }
     } catch (_) {
       if (!mounted) return;
+      // A failed start must not silently re-request camera access on the next
+      // background/foreground transition. The user can retry explicitly.
+      _cameraRequested = false;
+      _pausedByLifecycle = false;
       setState(() {
         _statusMessage =
             l10n.text('checker.camera.unavailable', 'Camera access is unavailable or was denied. Check that this page uses HTTPS, that a camera is connected, and that your browser or device permits camera access. You can still paste decoded content.');
