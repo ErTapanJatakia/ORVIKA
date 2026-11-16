@@ -51,9 +51,11 @@ void main() {
       await tester.tap(find.byTooltip('Appearance and accessibility settings'));
       await tester.pumpAndSettle();
       await tester.pumpAndSettle();
-      final themeLabel = find.text(theme.label).last;
-      await tester.scrollUntilVisible(themeLabel, 240, scrollable: find.byType(Scrollable).first);
-      await tester.tap(themeLabel);
+      final themeTile = find.byWidgetPredicate(
+        (widget) => widget is RadioListTile<OrvikaTheme> && widget.value == theme,
+      );
+      await tester.ensureVisible(themeTile);
+      await tester.tap(themeTile);
       await tester.pumpAndSettle();
 
       final preferences = await SharedPreferences.getInstance();
