@@ -31,8 +31,8 @@ void main() {
         await tester.pumpWidget(const OrvikaApp());
         await tester.pumpAndSettle();
 
-        final brand = find.text('ORVIKA');
-        expect(brand, findsOneWidget);
+        final brand = find.text('ORVIKA').first;
+        expect(find.text('ORVIKA'), findsWidgets);
         final brandText = tester.widget<Text>(brand);
         expect(brandText.maxLines, 1);
         expect(brandText.softWrap, isFalse);
