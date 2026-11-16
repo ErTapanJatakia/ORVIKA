@@ -74,6 +74,11 @@ assert.match(
   /<uses-feature[\s\S]*?android:name="android\.hardware\.camera"[\s\S]*?android:required="false"/,
   'Camera must remain an optional device feature',
 );
+assert.match(
+  manifest,
+  /<uses-feature\b(?=[^>]*\bandroid:name="android\.hardware\.camera\.autofocus")(?=[^>]*\bandroid:required="false")[^>]*\/>/s,
+  "Camera autofocus must remain an optional device feature",
+);
 assert.match(manifest, /android:usesCleartextTraffic="false"/, 'Android cleartext traffic must remain disabled');
 assert.ok(!/android:debuggable="true"/.test(manifest), 'Production manifest must not enable debugging');
 assert.match(manifest, /android:exported="true"/, 'Launcher activity must declare its exported state');

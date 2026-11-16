@@ -65,6 +65,11 @@ assert.match(legacyBackupRules, /<exclude domain="root" path="\."\s*\/>/);
 assert.match(extractionRules, /<cloud-backup>[\s\S]*?<exclude domain="root" path="\."\s*\/>[\s\S]*?<\/cloud-backup>/);
 assert.match(extractionRules, /<device-transfer>[\s\S]*?<exclude domain="root" path="\."\s*\/>[\s\S]*?<\/device-transfer>/);
 assert.match(manifest, /android:name="android\.hardware\.camera"[\s\S]*?android:required="false"/);
+assert.match(
+  manifest,
+  /<uses-feature\b(?=[^>]*\bandroid:name="android\.hardware\.camera\.autofocus")(?=[^>]*\bandroid:required="false")[^>]*\/>/s,
+  "Camera autofocus must remain an optional device feature",
+);
 assert.match(ignore, /key\.properties/);
 assert.match(ignore, /\*\*\/\*\.jks/);
 assert.match(ignore, /\*\*\/\*\.keystore/);
