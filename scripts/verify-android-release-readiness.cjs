@@ -73,12 +73,14 @@ assert.match(
 assert.match(ignore, /key\.properties/);
 assert.match(ignore, /\*\*\/\*\.jks/);
 assert.match(ignore, /\*\*\/\*\.keystore/);
+assert.match(ignore, /\*\*\/\*\.p12/);
+assert.match(ignore, /\*\*\/\*\.pfx/);
 
 const tracked = execFileSync('git', ['-C', root, 'ls-files', '--', 'android'], {
   encoding: 'utf8',
 }).split(/\r?\n/).filter(Boolean);
 const trackedSecrets = tracked.filter((file) =>
-  /(^|\/)(key\.properties|[^/]+\.(?:jks|keystore))$/i.test(file),
+  /(^|\/)(key\.properties|[^/]+\.(?:jks|keystore|p12|pfx))$/i.test(file),
 );
 assert.deepEqual(trackedSecrets, [], 'Signing properties or keystore material must never be tracked');
 
