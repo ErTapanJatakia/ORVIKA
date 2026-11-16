@@ -51,6 +51,7 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
     final l10n = OrvikaLocalizations.of(context);
     if (_starting || _cameraActive || !_cameraRequested) return;
     _reportedScannerError = null;
+    var restartAfterLifecycleStop = false;
     setState(() {
       _starting = true;
       _statusMessage = null;
@@ -70,6 +71,10 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
           // Best-effort release after a lifecycle transition.
         }
         if (mounted) setState(() => _cameraActive = false);
+        restartAfterLifecycleStop =
+            _cameraRequested &&
+            !_pausedByLifecycle &&
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
         return;
       }
       if (!_controller.value.hasCameraPermission) {
@@ -92,7 +97,8 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
         // A resume event can arrive while start() is still awaiting the
         // platform permission/result. Its callback cannot start a second
         // session while _starting is true, so retry once startup has settled.
-        if (_cameraRequested &&
+        if (restartAfterLifecycleStop &&
+            _cameraRequested &&
             !_pausedByLifecycle &&
             !_cameraActive &&
             WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
