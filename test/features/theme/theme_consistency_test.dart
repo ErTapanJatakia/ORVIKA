@@ -51,7 +51,9 @@ void main() {
       await tester.tap(find.byTooltip('Appearance and accessibility settings'));
       await tester.pumpAndSettle();
       await tester.pumpAndSettle();
-      await tester.tap(find.text(theme.label).last);
+      final themeLabel = find.text(theme.label).last;
+      await tester.scrollUntilVisible(themeLabel, 240, scrollable: find.byType(Scrollable).first);
+      await tester.tap(themeLabel);
       await tester.pumpAndSettle();
 
       final preferences = await SharedPreferences.getInstance();
