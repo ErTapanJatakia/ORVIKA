@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   const descriptions = <String>[
-    'Your safety overview and recent checks.',
     'Inspect website addresses before you open them.',
     'Review decoded QR content before taking action.',
     'Review suspicious texts, emails and messages.',
