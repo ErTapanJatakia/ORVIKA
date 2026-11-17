@@ -574,7 +574,7 @@ void main() {
         ...privacyKeys,
         ...accessibilityKeys,
       ];
-      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es', 'de', 'fr', 'it']) {
+      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es', 'de', 'fr', 'it', 'ar', 'ur', 'pa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in legalContentKeys) {
           expect(localization.hasTranslation(key), isTrue,
