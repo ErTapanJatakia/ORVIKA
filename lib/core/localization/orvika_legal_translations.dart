@@ -37,6 +37,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.email': 'Email',
       'a11y.statement.contact.phone': 'Phone Number',
       'a11y.statement.contact.website': 'Website',
+      'a11y.statement.title': 'Accessibility Statement',
+      'a11y.statement.reviewed.current': 'Last reviewed: 17 November 2026',
+      'a11y.statement.contact.action': 'Open web accessibility statement and contact',
     },
     'ru': {
       'privacy.notice.title': 'Уведомление о конфиденциальности ORVIKA',
@@ -73,6 +76,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'Заявление о соответствии относится только к размещённому веб-приложению ORVIKA. Нативное приложение Android оценивается отдельно с использованием применимых рекомендаций по нативной доступности и тестирования вспомогательных технологий; оно не входит в это заявление о соответствии WCAG для веб-версии.',
       'a11y.statement.report.title': 'Как сообщить о барьере доступности',
       'a11y.statement.report.body': 'При сообщении о барьере укажите затронутую страницу или функцию, выполненное действие, ожидаемый результат и краткие шаги для воспроизведения проблемы. Сведения о браузере и вспомогательных технологиях необязательны. Не указывайте пароли, одноразовые коды или посторонние конфиденциальные персональные данные.',
+      'a11y.statement.title': 'Заявление о доступности',
+      'a11y.statement.reviewed.current': 'Последняя проверка: 17 ноября 2026 г.',
+      'a11y.statement.contact.action': 'Открыть веб-заявление о доступности и контакты',
     },
     'pt': {
       'privacy.notice.title': 'Aviso de privacidade da ORVIKA',
@@ -109,6 +115,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'Esta declaração de conformidade abrange apenas a aplicação Web ORVIKA alojada. A aplicação Android nativa é avaliada separadamente, segundo as orientações de acessibilidade nativa aplicáveis e testes com tecnologias de apoio; não está incluída nesta declaração de conformidade WCAG para a Web.',
       'a11y.statement.report.title': 'Como comunicar uma barreira de acessibilidade',
       'a11y.statement.report.body': 'Ao comunicar uma barreira, indique a página ou funcionalidade afetada, a ação que tentou executar, o resultado esperado e passos breves para reproduzir o problema. Os detalhes do navegador e das tecnologias de apoio são opcionais. Não inclua palavras-passe, códigos de utilização única ou dados pessoais sensíveis sem relação com o caso.',
+      'a11y.statement.title': 'Declaração de acessibilidade',
+      'a11y.statement.reviewed.current': 'Última revisão: 17 de novembro de 2026',
+      'a11y.statement.contact.action': 'Abrir declaração de acessibilidade e contactos na Web',
     },
     'pt-PT': {
       'privacy.notice.title': 'Aviso de privacidade da ORVIKA',
@@ -145,6 +154,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'Esta declaração de conformidade abrange apenas a aplicação Web ORVIKA alojada. A aplicação Android nativa é avaliada separadamente, segundo as orientações de acessibilidade nativa aplicáveis e testes com tecnologias de apoio; não está incluída nesta declaração de conformidade WCAG para a Web.',
       'a11y.statement.report.title': 'Como comunicar uma barreira de acessibilidade',
       'a11y.statement.report.body': 'Ao comunicar uma barreira, indique a página ou funcionalidade afetada, a ação que tentou executar, o resultado esperado e passos breves para reproduzir o problema. Os detalhes do navegador e das tecnologias de apoio são opcionais. Não inclua palavras-passe, códigos de utilização única ou dados pessoais sensíveis sem relação com o caso.',
+      'a11y.statement.title': 'Declaração de acessibilidade',
+      'a11y.statement.reviewed.current': 'Última revisão: 17 de novembro de 2026',
+      'a11y.statement.contact.action': 'Abrir declaração de acessibilidade e contactos na Web',
     },
     'es': {
       'privacy.notice.title': 'Aviso de privacidad de ORVIKA',
@@ -181,6 +193,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'Esta declaración de conformidad cubre únicamente la aplicación web alojada de ORVIKA. La aplicación nativa de Android se evalúa por separado mediante las pautas de accesibilidad nativa aplicables y pruebas con tecnologías de asistencia; no está incluida en esta declaración de conformidad WCAG para la web.',
       'a11y.statement.report.title': 'Cómo informar de una barrera de accesibilidad',
       'a11y.statement.report.body': 'Al informar de una barrera, indica la página o función afectada, la acción que intentaste realizar, el resultado esperado y unos pasos breves para reproducir el problema. Los detalles del navegador y de las tecnologías de asistencia son opcionales. No incluyas contraseñas, códigos de un solo uso ni datos personales sensibles que no estén relacionados con el caso.',
+      'a11y.statement.title': 'Declaración de accesibilidad',
+      'a11y.statement.reviewed.current': 'Última revisión: 17 de noviembre de 2026',
+      'a11y.statement.contact.action': 'Abrir la declaración de accesibilidad web y los datos de contacto',
     },
     'hi': {
       'privacy.notice.title': 'ORVIKA गोपनीयता सूचना',
@@ -217,6 +232,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'यह अनुरूपता दावा केवल होस्टेड ORVIKA वेब एप्लिकेशन पर लागू है। नेटिव Android ऐप का अलग से मूल्यांकन लागू नेटिव एक्सेसिबिलिटी मार्गदर्शन और सहायक तकनीक परीक्षण के साथ किया जाता है; यह WCAG वेब अनुरूपता दावे में शामिल नहीं है।',
       'a11y.statement.report.title': 'पहुँच संबंधी बाधा की रिपोर्ट कैसे करें',
       'a11y.statement.report.body': 'बाधा की रिपोर्ट करते समय प्रभावित पृष्ठ या सुविधा, आपके द्वारा की गई कार्रवाई, अपेक्षित परिणाम और समस्या दोहराने के संक्षिप्त चरण बताएँ। ब्राउज़र और सहायक तकनीक का विवरण वैकल्पिक है। पासवर्ड, एक बार उपयोग होने वाले कोड या असंबंधित संवेदनशील व्यक्तिगत जानकारी शामिल न करें।',
+      'a11y.statement.title': 'सुलभता वक्तव्य',
+      'a11y.statement.reviewed.current': 'अंतिम समीक्षा: 17 नवंबर 2026',
+      'a11y.statement.contact.action': 'वेब सुलभता वक्तव्य और संपर्क खोलें',
     },
     'de': {
       'privacy.notice.title': 'ORVIKA-Datenschutzhinweis',
@@ -253,6 +271,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'Diese Konformitätserklärung gilt ausschließlich für die gehostete ORVIKA-Webanwendung. Die native Android-Anwendung wird separat anhand einschlägiger Richtlinien für native Barrierefreiheit und durch Tests mit assistiven Technologien bewertet; sie ist nicht Teil dieser WCAG-Web-Konformitätserklärung.',
       'a11y.statement.report.title': 'So melden Sie eine Barriere',
       'a11y.statement.report.body': 'Nennen Sie bei einer Meldung die betroffene Seite oder Funktion, die ausgeführte Aktion, das erwartete Ergebnis und kurze Schritte zur Reproduktion. Angaben zu Browser und assistiven Technologien sind optional. Geben Sie keine Passwörter, Einmalcodes oder sachfremden sensiblen personenbezogenen Daten an.',
+      'a11y.statement.title': 'Barrierefreiheitserklärung',
+      'a11y.statement.reviewed.current': 'Zuletzt überprüft: 17. November 2026',
+      'a11y.statement.contact.action': 'Web-Erklärung zur Barrierefreiheit und Kontakt öffnen',
     },
     'fr': {
       'privacy.notice.title': 'Avis de confidentialité d’ORVIKA',
@@ -289,6 +310,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'Cette déclaration de conformité concerne uniquement l’application Web ORVIKA hébergée. L’application Android native est évaluée séparément selon les recommandations applicables en matière d’accessibilité native et au moyen de tests avec des technologies d’assistance ; elle n’est pas incluse dans cette déclaration de conformité WCAG pour le Web.',
       'a11y.statement.report.title': 'Comment signaler un obstacle à l’accessibilité',
       'a11y.statement.report.body': 'Pour signaler un obstacle, indiquez la page ou la fonctionnalité concernée, l’action tentée, le résultat attendu et quelques étapes permettant de reproduire le problème. Les détails du navigateur et des technologies d’assistance sont facultatifs. N’incluez pas de mots de passe, de codes à usage unique ni de données personnelles sensibles sans rapport avec le problème.',
+      'a11y.statement.title': 'Déclaration d’accessibilité',
+      'a11y.statement.reviewed.current': 'Dernière révision : 17 novembre 2026',
+      'a11y.statement.contact.action': 'Ouvrir la déclaration d’accessibilité Web et les coordonnées',
     },
     'it': {
       'privacy.notice.title': 'Informativa sulla privacy di ORVIKA',
@@ -325,6 +349,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'Questa dichiarazione di conformità riguarda esclusivamente l’applicazione Web ORVIKA ospitata. L’applicazione Android nativa viene valutata separatamente secondo le linee guida applicabili per l’accessibilità nativa e mediante test con tecnologie assistive; non è inclusa in questa dichiarazione di conformità WCAG per il Web.',
       'a11y.statement.report.title': 'Come segnalare una barriera di accessibilità',
       'a11y.statement.report.body': 'Quando segnali una barriera, indica la pagina o la funzionalità interessata, l’azione che hai tentato, il risultato atteso e brevi passaggi per riprodurre il problema. I dettagli del browser e delle tecnologie assistive sono facoltativi. Non includere password, codici monouso o dati personali sensibili non pertinenti.',
+      'a11y.statement.title': 'Dichiarazione di accessibilità',
+      'a11y.statement.reviewed.current': 'Ultima revisione: 17 novembre 2026',
+      'a11y.statement.contact.action': 'Apri la dichiarazione di accessibilità Web e i contatti',
     },
     'pa': {
       'privacy.notice.title': 'ORVIKA ਗੋਪਨੀਯਤਾ ਨੋਟਿਸ',
@@ -361,6 +388,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'ਇਹ ਅਨੁਕੂਲਤਾ ਬਿਆਨ ਸਿਰਫ਼ ਹੋਸਟ ਕੀਤੀ ORVIKA ਵੈੱਬ ਐਪਲੀਕੇਸ਼ਨ ਉੱਤੇ ਲਾਗੂ ਹੁੰਦਾ ਹੈ। ਮੂਲ Android ਐਪਲੀਕੇਸ਼ਨ ਦਾ ਵੱਖਰੇ ਤੌਰ ਉੱਤੇ ਲਾਗੂ ਮੂਲ ਪਹੁੰਚਯੋਗਤਾ ਦਿਸ਼ਾ-ਨਿਰਦੇਸ਼ਾਂ ਅਤੇ ਸਹਾਇਕ ਤਕਨਾਲੋਜੀ ਜਾਂਚ ਨਾਲ ਮੁਲਾਂਕਣ ਕੀਤਾ ਜਾਂਦਾ ਹੈ; ਇਹ ਵੈੱਬ WCAG ਅਨੁਕੂਲਤਾ ਬਿਆਨ ਵਿੱਚ ਸ਼ਾਮਲ ਨਹੀਂ।',
       'a11y.statement.report.title': 'ਪਹੁੰਚਯੋਗਤਾ ਰੁਕਾਵਟ ਦੀ ਰਿਪੋਰਟ ਕਿਵੇਂ ਕਰੀਏ',
       'a11y.statement.report.body': 'ਰੁਕਾਵਟ ਦੀ ਰਿਪੋਰਟ ਕਰਦੇ ਸਮੇਂ ਪ੍ਰਭਾਵਿਤ ਪੰਨਾ ਜਾਂ ਵਿਸ਼ੇਸ਼ਤਾ, ਤੁਹਾਡੇ ਵੱਲੋਂ ਕੀਤੀ ਕਾਰਵਾਈ, ਉਮੀਦ ਕੀਤਾ ਨਤੀਜਾ ਅਤੇ ਸਮੱਸਿਆ ਦੁਹਰਾਉਣ ਲਈ ਸੰਖੇਪ ਕਦਮ ਦੱਸੋ। ਬ੍ਰਾਊਜ਼ਰ ਅਤੇ ਸਹਾਇਕ ਤਕਨਾਲੋਜੀ ਦੇ ਵੇਰਵੇ ਵਿਕਲਪਿਕ ਹਨ। ਪਾਸਵਰਡ, ਇੱਕ-ਵਾਰੀ ਕੋਡ ਜਾਂ ਗੈਰ-ਸੰਬੰਧਿਤ ਸੰਵੇਦਨਸ਼ੀਲ ਨਿੱਜੀ ਜਾਣਕਾਰੀ ਸ਼ਾਮਲ ਨਾ ਕਰੋ।',
+      'a11y.statement.title': 'ਪਹੁੰਚਯੋਗਤਾ ਬਿਆਨ',
+      'a11y.statement.reviewed.current': 'ਆਖਰੀ ਸਮੀਖਿਆ: 17 ਨਵੰਬਰ 2026',
+      'a11y.statement.contact.action': 'ਵੈੱਬ ਪਹੁੰਚਯੋਗਤਾ ਬਿਆਨ ਅਤੇ ਸੰਪਰਕ ਖੋਲ੍ਹੋ',
     },
     'ur': {
       'privacy.notice.title': 'ORVIKA رازداری کا نوٹس',
@@ -397,6 +427,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'یہ مطابقت کا بیان صرف میزبان ORVIKA ویب ایپلیکیشن پر لاگو ہوتا ہے۔ مقامی Android ایپ کا الگ سے متعلقہ مقامی رسائی رہنمائی اور معاون ٹیکنالوجی کی جانچ کے ذریعے جائزہ لیا جاتا ہے؛ یہ ویب کے WCAG مطابقتی بیان میں شامل نہیں۔',
       'a11y.statement.report.title': 'رسائی کی رکاوٹ کی اطلاع کیسے دیں',
       'a11y.statement.report.body': 'رکاوٹ کی اطلاع دیتے وقت متاثرہ صفحہ یا فیچر، آپ کی کوشش کردہ کارروائی، متوقع نتیجہ اور مسئلہ دہرانے کے مختصر مراحل بیان کریں۔ براؤزر اور معاون ٹیکنالوجی کی تفصیلات اختیاری ہیں۔ پاس ورڈ، ایک بار استعمال ہونے والے کوڈ یا غیر متعلقہ حساس ذاتی معلومات شامل نہ کریں۔',
+      'a11y.statement.title': 'رسائی کا بیان',
+      'a11y.statement.reviewed.current': 'آخری جائزہ: 17 نومبر 2026',
+      'a11y.statement.contact.action': 'ویب رسائی کا بیان اور رابطہ معلومات کھولیں',
     },
     'ar': {
       'privacy.notice.title': 'إشعار الخصوصية في ORVIKA',
@@ -433,6 +466,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'ينطبق بيان المطابقة هذا على تطبيق ORVIKA المستضاف على الويب فقط. ويُقيّم تطبيق Android الأصلي بشكل منفصل باستخدام إرشادات إمكانية الوصول الأصلية المناسبة واختبارات التقنيات المساعدة؛ ولا يدخل ضمن بيان مطابقة WCAG للويب.',
       'a11y.statement.report.title': 'كيفية الإبلاغ عن عائق في إمكانية الوصول',
       'a11y.statement.report.body': 'عند الإبلاغ عن عائق، اذكر الصفحة أو الميزة المتأثرة والإجراء الذي حاولت تنفيذه والنتيجة المتوقعة وخطوات موجزة لإعادة المشكلة. تفاصيل المتصفح والتقنيات المساعدة اختيارية. لا تُدرج كلمات المرور أو رموز الاستخدام لمرة واحدة أو معلومات شخصية حساسة لا صلة لها بالمشكلة.',
+      'a11y.statement.title': 'بيان إمكانية الوصول',
+      'a11y.statement.reviewed.current': 'آخر مراجعة: 17 نوفمبر 2026',
+      'a11y.statement.contact.action': 'فتح بيان إمكانية الوصول على الويب ومعلومات الاتصال',
     },
     'mr': {
       'privacy.notice.title': 'ORVIKA गोपनीयता सूचना',
@@ -469,6 +505,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'हा अनुरूपता दावा फक्त होस्ट केलेल्या ORVIKA वेब अॅप्लिकेशनला लागू होतो. मूळ Android अॅप्लिकेशनचे स्वतंत्रपणे लागू मूळ प्रवेशयोग्यता मार्गदर्शक तत्त्वे आणि सहाय्यक तंत्रज्ञान चाचणीद्वारे मूल्यमापन केले जाते; ते या वेब WCAG अनुरूपता दाव्यात समाविष्ट नाही.',
       'a11y.statement.report.title': 'प्रवेशयोग्यता अडथळ्याची तक्रार कशी करावी',
       'a11y.statement.report.body': 'अडथळा नोंदवताना प्रभावित पृष्ठ किंवा वैशिष्ट्य, तुम्ही केलेली कृती, अपेक्षित परिणाम आणि समस्या पुन्हा निर्माण करण्याच्या संक्षिप्त पायऱ्या द्या. ब्राउझर आणि सहाय्यक तंत्रज्ञानाचे तपशील ऐच्छिक आहेत. पासवर्ड, एकदाच वापरायचे कोड किंवा असंबंधित संवेदनशील वैयक्तिक माहिती देऊ नका.',
+      'a11y.statement.title': 'प्रवेशयोग्यता विधान',
+      'a11y.statement.reviewed.current': 'शेवटचे पुनरावलोकन: १७ नोव्हेंबर २०२६',
+      'a11y.statement.contact.action': 'वेब प्रवेशयोग्यता विधान आणि संपर्क उघडा',
     },
     'gu': {
       'privacy.notice.title': 'ORVIKA ગોપનીયતા સૂચના',
@@ -505,6 +544,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'આ અનુરૂપતા દાવો ફક્ત હોસ્ટ કરેલી ORVIKA વેબ એપ્લિકેશનને લાગુ પડે છે. મૂળ Android એપ્લિકેશનનું લાગુ પડતા નેટિવ ઍક્સેસિબિલિટી માર્ગદર્શન અને સહાયક ટેક્નોલોજી પરીક્ષણથી અલગ મૂલ્યાંકન થાય છે; તે આ વેબ WCAG અનુરૂપતા દાવામાં સામેલ નથી.',
       'a11y.statement.report.title': 'ઍક્સેસિબિલિટી અવરોધની જાણ કેવી રીતે કરવી',
       'a11y.statement.report.body': 'અવરોધની જાણ કરતી વખતે અસરગ્રસ્ત પૃષ્ઠ અથવા સુવિધા, તમે કરેલી ક્રિયા, અપેક્ષિત પરિણામ અને સમસ્યા ફરી સર્જવા માટેના ટૂંકા પગલાં જણાવો. બ્રાઉઝર અને સહાયક ટેક્નોલોજીની વિગતો વૈકલ્પિક છે. પાસવર્ડ, એક વખતના કોડ અથવા અસંબંધિત સંવેદનશીલ વ્યક્તિગત માહિતી સામેલ ન કરો.',
+      'a11y.statement.title': 'ઍક્સેસિબિલિટી નિવેદન',
+      'a11y.statement.reviewed.current': 'છેલ્લી સમીક્ષા: 17 નવેમ્બર 2026',
+      'a11y.statement.contact.action': 'વેબ ઍક્સેસિબિલિટી નિવેદન અને સંપર્ક ખોલો',
     },
     'sa': {
       'privacy.notice.title': 'ORVIKA गोपनीयतासूचना',
@@ -541,6 +583,9 @@ class OrvikaLegalTranslations {
       'a11y.statement.platform.body': 'एषा अनुरूपताघोषणा केवलम् आश्रितस्य ORVIKA-जालानुप्रयोगस्य कृते प्रवर्तते। मूल Android-अनुप्रयोगः पृथक्, उपयुक्तैः मूलसुलभतामार्गदर्शकैः सहाय्यप्रौद्योगिकीपरीक्षणैश्च मूल्याङ्क्यते; सः अस्यां जाल-WCAG-अनुरूपताघोषणायां न अन्तर्भवति।',
       'a11y.statement.report.title': 'सुलभताबाधायाः निवेदनं कथं कुर्यात्',
       'a11y.statement.report.body': 'बाधां निवेदयन् प्रभावितं पृष्ठं वा सुविधां, कृतं कार्यं, अपेक्षितं फलितं तथा समस्यां पुनरुत्पादयितुं संक्षिप्ताः चरणाः लिखतु। ब्राउजर्-सहाय्यप्रौद्योगिकीविवरणानि वैकल्पिकानि। गुप्तशब्दान्, एकवारोपयोगिसङ्केतान् अथवा असम्बद्धां संवेदनशीलां व्यक्तिगतसूचनां मा लिखतु।',
+      'a11y.statement.title': 'सुलभतावक्तव्यम्',
+      'a11y.statement.reviewed.current': 'अन्तिमसमीक्षा: १७ नवम्बर २०२६',
+      'a11y.statement.contact.action': 'जालसुलभतावक्तव्यं सम्पर्कसूचनां च उद्घाटयतु',
     },
   };
 
