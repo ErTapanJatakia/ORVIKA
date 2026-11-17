@@ -540,6 +540,37 @@ void main() {
       }
     });
 
+    test('Russian and Hindi cover the complete first privacy notice content batch', () {
+      const privacyKeys = [
+        'privacy.notice.intro',
+        'privacy.notice.reviewed',
+        'privacy.notice.closing',
+        'privacy.notice.analysis.title',
+        'privacy.notice.analysis.body',
+        'privacy.notice.analytics.title',
+        'privacy.notice.analytics.body',
+        'privacy.notice.camera.title',
+        'privacy.notice.camera.body',
+        'privacy.notice.runtime.title',
+        'privacy.notice.runtime.body',
+        'privacy.notice.storage.title',
+        'privacy.notice.storage.body',
+        'privacy.notice.cloud.title',
+        'privacy.notice.cloud.body',
+        'privacy.notice.reports.title',
+        'privacy.notice.reports.body',
+      ];
+      for (final code in ['ru', 'hi']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in privacyKeys) {
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing privacy notice content $key');
+          expect(localization.text(key), isNot(key),
+              reason: '$code must not fall back to an untranslated key for $key');
+        }
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
