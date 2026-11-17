@@ -16,6 +16,20 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.phone': 'Телефон',
       'a11y.statement.contact.website': 'Веб-сайт',
     },
+    'pt': {
+      'a11y.statement.contact.auditor': 'Contacto do auditor WCAG:',
+      'a11y.statement.contact.name': 'Nome',
+      'a11y.statement.contact.email': 'E-mail',
+      'a11y.statement.contact.phone': 'Telefone',
+      'a11y.statement.contact.website': 'Website',
+    },
+    'pt-PT': {
+      'a11y.statement.contact.auditor': 'Contacto do auditor WCAG:',
+      'a11y.statement.contact.name': 'Nome',
+      'a11y.statement.contact.email': 'E-mail',
+      'a11y.statement.contact.phone': 'Telefone',
+      'a11y.statement.contact.website': 'Sítio Web',
+    },
     'es': {
       'a11y.statement.contact.auditor': 'Contacto del auditor WCAG:',
       'a11y.statement.contact.name': 'Nombre',
