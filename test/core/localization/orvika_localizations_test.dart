@@ -247,7 +247,7 @@ void main() {
         'checker.severity.caution',
         'checker.severity.warning',
       ];
-      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es', 'de', 'fr', 'it']) {
+      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es']) {
         final localization =
             OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in checkerKeys) {
@@ -574,7 +574,7 @@ void main() {
         ...privacyKeys,
         ...accessibilityKeys,
       ];
-      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es']) {
+      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es', 'de', 'fr', 'it']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in legalContentKeys) {
           expect(localization.hasTranslation(key), isTrue,
