@@ -92,12 +92,12 @@ jobs:
           const fs = require('node:fs');
           const path = 'build/web/index.html';
           let html = fs.readFileSync(path, 'utf8');
-          const marker = /\\s*<meta\\s+name=["']vercel-analytics-script["'][^>]*>\\s*/i;
+          const marker = /\s*<meta\s+name=["']vercel-analytics-script["'][^>]*>\s*/i;
           if (!marker.test(html)) {
             throw new Error('Expected Vercel Analytics marker was not found in the generated web entry point.');
           }
-          html = html.replace(marker, '\\n');
-          if (/vercel-analytics-script|\\/_vercel\\/insights\\/script\\.js/i.test(html)) {
+          html = html.replace(marker, '\n');
+          if (/vercel-analytics-script|\/_vercel\/insights\/script\.js/i.test(html)) {
             throw new Error('Vercel Analytics reference remains in Cloudflare output.');
           }
           fs.writeFileSync(path, html);
@@ -242,14 +242,14 @@ jobs:
 
       - name: Publish deployment summary
         env:
-          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_PAGES_PROJECT: \${{ vars.CLOUDFLARE_PAGES_PROJECT }}
         run: |
           {
-            printf '%s\\n' '## ORVIKA Cloudflare Pages deployment' ''
-            printf '%s\\n' "- Project: `$CLOUDFLARE_PAGES_PROJECT`"
-            printf '%s\\n' '- Production branch: `main`'
-            printf '%s\\n' "- URL: https://$CLOUDFLARE_PAGES_PROJECT.pages.dev"
-            printf '%s\\n' '- Deployment was explicitly requested through workflow_dispatch.'
-            printf '%s\\n' '- Security headers were generated from the verified repository policy.'
-            printf '%s\\n' '- Vercel deployment was not modified.'
+            printf '%s\n' '## ORVIKA Cloudflare Pages deployment' ''
+            printf '%s\n' "- Project: \`$CLOUDFLARE_PAGES_PROJECT\`"
+            printf '%s\n' '- Production branch: \`main\`'
+            printf '%s\n' "- URL: https://$CLOUDFLARE_PAGES_PROJECT.pages.dev"
+            printf '%s\n' '- Deployment was explicitly requested through workflow_dispatch.'
+            printf '%s\n' '- Security headers were generated from the verified repository policy.'
+            printf '%s\n' '- Vercel deployment was not modified.'
           } >> "$GITHUB_STEP_SUMMARY"
