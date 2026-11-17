@@ -48,7 +48,7 @@ assert.ok(
 );
 assert.match(
   dynamicPermissionDeclaration,
-  /android:protectionLevel\\([^)]*\\)=(?:0x2|"signature")/,
+  /android:protectionLevel\([^)]*\)=(?:\(type 0x[0-9a-f]+\))?(?:0x2|"signature")/i,
   'AndroidX dynamic receiver permission must use signature-level protection',
 );
 
