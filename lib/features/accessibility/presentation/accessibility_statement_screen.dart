@@ -55,7 +55,7 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
                 const SizedBox(height: 12),
               ],
               Semantics(header: true, child: Text(
-                'The Contact Information of the WCAG Auditor is:',
+                l10n.text('a11y.statement.contact.auditor', 'WCAG Auditor contact information:'),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
               const SizedBox(height: 6),
               const SelectableText(
