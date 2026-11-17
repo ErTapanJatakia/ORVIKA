@@ -65,10 +65,20 @@ For a suspected vulnerability, use the repository's Security tab and private vul
 
 This notice should be updated when the application adds network-connected analysis, accounts, synchronisation, new analytics, new data storage or materially different third-party dependencies.
 
-## App developer and Data Protection Officer
+## App developer and Support Team
+
+**The Contact Information of the App Developer and the Support Team is:**
 
 **Name:** Er. Tapan Jatakia (C.Eng.)  
-**Contact email:** ertapanjatakia@yandex.com  
-**Additional contact email:** tapan_ditu_17.20@outlook.com  
-**Contact number:** +91 9664332984  
-**Website:** http://linktr.ee/ertapanjatakia
+**Email:** ertapanjatakia@yandex.com (for Russia), tapan_ditu_17.20@outlook.com (for regions except Russia)  
+**Phone Number:** +91 9664332984  
+**Website:** https://linktr.ee/ertapanjatakia
+
+## Data Protection Officer
+
+**The Contact Information of the Data Protection Officer is:**
+
+**Name:** Er. Tapan Jatakia (C.Eng.)  
+**Email:** cyber.litigation.advisor@gmail.com  
+**Phone Number:** +91 9664332984  
+**Website:** https://linktr.ee/ertapanjatakia
