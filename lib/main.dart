@@ -438,6 +438,27 @@ class _OrvikaAppState extends State<OrvikaApp> {
   }
 }
 
+class _Wcag22AaBadge extends StatelessWidget {
+  const _Wcag22AaBadge();
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: 'WCAG 2.2 Level AA conformance claim',
+    child: Container(
+      key: const ValueKey('wcag-22-aa-badge'),
+      width: 112, height: 36, alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFD166),
+        border: Border.all(color: const Color(0xFF111827), width: 1.2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: const Text('WCAG 2.2 AA', textAlign: TextAlign.center,
+        style: TextStyle(color: Color(0xFF111827), fontSize: 13,
+          fontWeight: FontWeight.w900, letterSpacing: 0.25,
+          decoration: TextDecoration.none)),
+    ),
+  );
+}
+
 /// Displays the ORVIKA brand on every cold app launch, then fades away.
 class OrvikaLaunchOverlay extends StatefulWidget {
   const OrvikaLaunchOverlay({required this.child, super.key});
@@ -499,53 +520,40 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
                   child: const ColoredBox(
                     color: Color(0xE6081426),
                     child: SafeArea(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              OrvikaOwlMark(
-                                size: 116,
-                                palette: OrvikaPalette.obsidian,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const OrvikaOwlMark(size: 116, palette: OrvikaPalette.obsidian),
+                                  const SizedBox(height: 22),
+                                  const Text('ORVIKA', textAlign: TextAlign.center,
+                                    style: TextStyle(color: Color(0xFFF3F7FC), fontSize: 28,
+                                      fontWeight: FontWeight.w900, letterSpacing: 5,
+                                      decoration: TextDecoration.none)),
+                                  const SizedBox(height: 12),
+                                  const Text('CHECK BEFORE YOU TRUST.', textAlign: TextAlign.center,
+                                    style: TextStyle(color: Color(0xFF00D5FF), fontSize: 12,
+                                      fontWeight: FontWeight.w800, letterSpacing: 2,
+                                      decoration: TextDecoration.none)),
+                                  const SizedBox(height: 8),
+                                  const Text('See the Risk. Verify the Signal. Stay in Control.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Color(0xFFD5E2F0), fontSize: 12,
+                                      height: 1.5, fontWeight: FontWeight.w500,
+                                      decoration: TextDecoration.none)),
+                                ],
                               ),
-                              SizedBox(height: 22),
-                              Text(
-                                'ORVIKA',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFFF3F7FC),
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 5,
-                                ),
-                              ),
-                              SizedBox(height: 12),
-                              Text(
-                                'CHECK BEFORE YOU TRUST.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF00D5FF),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                'See the Risk. Verify the Signal. Stay in Control.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFFD5E2F0),
-                                  fontSize: 12,
-                                  height: 1.5,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          const Positioned(left: 0, right: 0, bottom: 18,
+                            child: Center(child: _Wcag22AaBadge())),
+                        ],
                       ),
+                    )
                     ),
                   ),
                 ),
@@ -1247,20 +1255,7 @@ class SentinelDashboard extends StatelessWidget {
                           boldText: boldText, onBoldTextChanged: onBoldTextChanged,
                           reduceMotion: reduceMotion, onReduceMotionChanged: onReduceMotionChanged,
                         ),
-                        Align(
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: ActionChip(
-                            key: const ValueKey('accessibility-statement-top'),
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const OrvikaAccessibilityStatementScreen(),
-                              ),
-                            ),
-                            avatar: const Icon(Icons.accessibility_new_rounded, size: 18),
-                            label: const Text('Accessibility statement'),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
+
                         _HeroPanel(palette: palette, language: selectedLanguage),
                         const SizedBox(height: 30),
                         LayoutBuilder(
@@ -1412,6 +1407,8 @@ class SentinelDashboard extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 8),
+                                    const _Wcag22AaBadge(),
+                                    const SizedBox(height: 8),
                                     ActionChip(
                                       key: const ValueKey('accessibility-statement-footer'),
                                       onPressed: () => Navigator.of(context).push(
@@ -1420,7 +1417,7 @@ class SentinelDashboard extends StatelessWidget {
                                         ),
                                       ),
                                       avatar: const Icon(Icons.accessibility_new_rounded, size: 17),
-                                      label: const Text('Accessibility statement'),
+                                      label: const Text('Accessibility Statement'),
                                     ),
                                   ],
                                 ),
@@ -2331,18 +2328,28 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'App developer and Data Protection Officer',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                'The Contact Information of the App Developer and the Support Team is:',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
               const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\n'
-                'Contact email: ertapanjatakia@yandex.com\n'
-                'Additional email: tapan_ditu_17.20@outlook.com\n'
-                'Contact number: +91 9664332984\n'
-                'Website: http://linktr.ee/ertapanjatakia',
+                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
+                'Email: ertapanjatakia@yandex.com (for Russia)\\n'
+                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\\n'
+                'Phone Number: +91 9664332984\\n'
+                'Website: https://linktr.ee/ertapanjatakia',
+              ),
+              const SizedBox(height: 18),
+              Text(
+                'The Contact Information of the Data Protection Officer is:',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 8),
+              const SelectableText(
+                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
+                'Email: cyber.litigation.advisor@gmail.com\\n'
+                'Phone Number: +91 9664332984\\n'
+                'Website: https://linktr.ee/ertapanjatakia',
               ),
             ],
           ),
