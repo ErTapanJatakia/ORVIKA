@@ -540,7 +540,7 @@ void main() {
       }
     });
 
-    test('Russian and Hindi cover the complete first privacy notice content batch', () {
+    test('five locales cover the first complete privacy and accessibility legal-content batch', () {
       const privacyKeys = [
         'privacy.notice.intro',
         'privacy.notice.reviewed',
@@ -560,8 +560,6 @@ void main() {
         'privacy.notice.reports.title',
         'privacy.notice.reports.body',
       ];
-      for (final code in ['ru', 'hi']) {
-        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
       const accessibilityKeys = [
         'a11y.statement.commitment.title',
         'a11y.statement.commitment.body',
@@ -576,9 +574,11 @@ void main() {
         ...privacyKeys,
         ...accessibilityKeys,
       ];
+      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in legalContentKeys) {
           expect(localization.hasTranslation(key), isTrue,
-              reason: '$code is missing privacy notice content $key');
+              reason: '$code is missing legal content $key');
           expect(localization.text(key), isNot(key),
               reason: '$code must not fall back to an untranslated key for $key');
         }
