@@ -15,8 +15,9 @@ class Wcag22AaBadge extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
         image: true,
         label:
-            'Level AA conformance, W3C Web Content Accessibility Guidelines 2.2. '
-            'Publisher claim; not W3C certification.',
+            'This badge identifies the publisher’s WCAG 2.2 Level AA conformance claim '
+            'for the hosted ORVIKA Web application only. The native Android application '
+            'is excluded. This is not W3C certification or endorsement.',
         child: Image.network(
           imageUrl,
           key: key,

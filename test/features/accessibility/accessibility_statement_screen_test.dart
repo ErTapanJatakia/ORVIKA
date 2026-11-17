@@ -16,6 +16,12 @@ void main() {
     expect(find.byType(Image), findsNWidgets(2));
     expect(Wcag22AaBadge.imageUrl,
         'https://www.w3.org/WAI/WCAG22/wcag2.2AA-blue.png');
+    final badgeSemantics = tester.widget<Semantics>(find.descendant(
+      of: find.byType(Wcag22AaBadge).first,
+      matching: find.byType(Semantics),
+    ));
+    expect(badgeSemantics.properties.label, contains('hosted ORVIKA Web application only'));
+    expect(badgeSemantics.properties.label, contains('native Android application is excluded'));
     expect(
       find.byWidgetPredicate(
         (widget) => widget is SelectableText &&
