@@ -519,6 +519,7 @@ void main() {
         'a11y.statement.contact.email',
         'a11y.statement.contact.phone',
         'a11y.statement.contact.website',
+        'a11y.statement.badge.semantics',
       ];
       for (final code in ['en', 'ru', 'pt', 'pt-PT', 'es', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
