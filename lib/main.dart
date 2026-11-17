@@ -2325,10 +2325,10 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
-                'Contact email: ertapanjatakia@yandex.com\\n'
-                'Additional email: tapan_ditu_17.20@outlook.com\\n'
-                'Contact number: +91 9664332984\\n'
+                'Name: Er. Tapan Jatakia (C.Eng.)\n'
+                'Contact email: ertapanjatakia@yandex.com\n'
+                'Additional email: tapan_ditu_17.20@outlook.com\n'
+                'Contact number: +91 9664332984\n'
                 'Website: http://linktr.ee/ertapanjatakia',
               ),
             ],
