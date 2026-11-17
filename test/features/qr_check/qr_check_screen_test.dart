@@ -117,6 +117,11 @@ void main() {
     expect(find.text('Allow camera for this scan'), findsOneWidget);
     expect(find.text('Camera access is requested only when you start scanning.'),
         findsOneWidget);
+    expect(
+      find.textContaining("Google's bundled ML Kit"),
+      findsOneWidget,
+      reason: 'Android users must see the SDK diagnostics disclosure before starting a scan.',
+    );
     expect(tester.takeException(), isNull);
 
     await tester.tap(find.byTooltip('Close scanner'));
