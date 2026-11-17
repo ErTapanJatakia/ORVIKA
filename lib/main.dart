@@ -1176,7 +1176,20 @@ class SentinelDashboard extends StatelessWidget {
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
   final ValueChanged<String> onCatalogueChanged;
 
+  // Sentinel is intentionally retained for a future release, but hidden
+  // from the dashboard until its dedicated destination and capabilities exist.
+  // Re-enable by changing this flag to true after the feature is implemented.
+  static const bool sentinelEnabled = false;
+  static const _SafetyModule sentinelModule = _SafetyModule(
+    'Sentinel',
+    'Your safety overview and recent checks.',
+    Icons.shield_moon_outlined,
+    _ModuleAccent.cyan,
+    'OVERVIEW',
+  );
+
   static const modules = <_SafetyModule>[
+    if (sentinelEnabled) sentinelModule,
     _SafetyModule('Link Check', 'Inspect website addresses before you open them.', Icons.link_rounded, _ModuleAccent.cyan, 'AVAILABLE'),
     _SafetyModule('QR Check', 'Review decoded QR content before taking action.', Icons.qr_code_scanner_rounded, _ModuleAccent.violet, 'AVAILABLE'),
     _SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, _ModuleAccent.amber, 'AVAILABLE'),
