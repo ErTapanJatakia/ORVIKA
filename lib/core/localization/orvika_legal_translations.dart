@@ -1,0 +1,100 @@
+/// Legal and accessibility contact labels are kept outside feature packs so
+/// adding statutory or statement terminology cannot alter feature key baselines.
+class OrvikaLegalTranslations {
+  static const Map<String, Map<String, String>> _packs = {
+    'en': {
+      'a11y.statement.contact.auditor': 'WCAG Auditor contact information:',
+      'a11y.statement.contact.name': 'Name',
+      'a11y.statement.contact.email': 'Email',
+      'a11y.statement.contact.phone': 'Phone Number',
+      'a11y.statement.contact.website': 'Website',
+    },
+    'ru': {
+      'a11y.statement.contact.auditor': 'Контактные данные аудитора WCAG:',
+      'a11y.statement.contact.name': 'Имя',
+      'a11y.statement.contact.email': 'Электронная почта',
+      'a11y.statement.contact.phone': 'Телефон',
+      'a11y.statement.contact.website': 'Веб-сайт',
+    },
+    'es': {
+      'a11y.statement.contact.auditor': 'Contacto del auditor WCAG:',
+      'a11y.statement.contact.name': 'Nombre',
+      'a11y.statement.contact.email': 'Correo electrónico',
+      'a11y.statement.contact.phone': 'Teléfono',
+      'a11y.statement.contact.website': 'Sitio web',
+    },
+    'hi': {
+      'a11y.statement.contact.auditor': 'WCAG ऑडिटर संपर्क जानकारी:',
+      'a11y.statement.contact.name': 'नाम',
+      'a11y.statement.contact.email': 'ईमेल',
+      'a11y.statement.contact.phone': 'फ़ोन',
+      'a11y.statement.contact.website': 'वेबसाइट',
+    },
+    'de': {
+      'a11y.statement.contact.auditor': 'Kontakt zum WCAG-Auditor:',
+      'a11y.statement.contact.name': 'Name',
+      'a11y.statement.contact.email': 'E-Mail',
+      'a11y.statement.contact.phone': 'Telefon',
+      'a11y.statement.contact.website': 'Website',
+    },
+    'fr': {
+      'a11y.statement.contact.auditor': 'Coordonnées de l’auditeur WCAG :',
+      'a11y.statement.contact.name': 'Nom',
+      'a11y.statement.contact.email': 'E-mail',
+      'a11y.statement.contact.phone': 'Téléphone',
+      'a11y.statement.contact.website': 'Site web',
+    },
+    'it': {
+      'a11y.statement.contact.auditor': 'Contatti del revisore WCAG:',
+      'a11y.statement.contact.name': 'Nome',
+      'a11y.statement.contact.email': 'E-mail',
+      'a11y.statement.contact.phone': 'Telefono',
+      'a11y.statement.contact.website': 'Sito web',
+    },
+    'pa': {
+      'a11y.statement.contact.auditor': 'WCAG ਆਡੀਟਰ ਸੰਪਰਕ ਜਾਣਕਾਰੀ:',
+      'a11y.statement.contact.name': 'ਨਾਮ',
+      'a11y.statement.contact.email': 'ਈਮੇਲ',
+      'a11y.statement.contact.phone': 'ਫ਼ੋਨ',
+      'a11y.statement.contact.website': 'ਵੈੱਬਸਾਈਟ',
+    },
+    'ur': {
+      'a11y.statement.contact.auditor': 'WCAG آڈیٹر کے رابطے کی معلومات:',
+      'a11y.statement.contact.name': 'نام',
+      'a11y.statement.contact.email': 'ای میل',
+      'a11y.statement.contact.phone': 'فون',
+      'a11y.statement.contact.website': 'ویب سائٹ',
+    },
+    'ar': {
+      'a11y.statement.contact.auditor': 'معلومات الاتصال بمدقق WCAG:',
+      'a11y.statement.contact.name': 'الاسم',
+      'a11y.statement.contact.email': 'البريد الإلكتروني',
+      'a11y.statement.contact.phone': 'الهاتف',
+      'a11y.statement.contact.website': 'الموقع الإلكتروني',
+    },
+    'mr': {
+      'a11y.statement.contact.auditor': 'WCAG लेखापरीक्षक संपर्क माहिती:',
+      'a11y.statement.contact.name': 'नाव',
+      'a11y.statement.contact.email': 'ईमेल',
+      'a11y.statement.contact.phone': 'फोन',
+      'a11y.statement.contact.website': 'वेबसाइट',
+    },
+    'gu': {
+      'a11y.statement.contact.auditor': 'WCAG ઓડિટર સંપર્ક માહિતી:',
+      'a11y.statement.contact.name': 'નામ',
+      'a11y.statement.contact.email': 'ઇમેઇલ',
+      'a11y.statement.contact.phone': 'ફોન',
+      'a11y.statement.contact.website': 'વેબસાઇટ',
+    },
+    'sa': {
+      'a11y.statement.contact.auditor': 'WCAG परीक्षकस्य सम्पर्कसूचना:',
+      'a11y.statement.contact.name': 'नाम',
+      'a11y.statement.contact.email': 'विद्युत्पत्रम्',
+      'a11y.statement.contact.phone': 'दूरवाणी',
+      'a11y.statement.contact.website': 'जालस्थानम्',
+    },
+  };
+
+  static Map<String, String> forCode(String code) =>
+      Map<String, String>.unmodifiable(_packs[code] ?? const {});
+}
