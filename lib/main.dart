@@ -1239,7 +1239,7 @@ class SentinelDashboard extends StatelessWidget {
                 ),
                 slivers: [
                   SliverPadding(
-                    padding: EdgeInsets.fromLTRB(pagePadding, 18, pagePadding, 40),
+                    padding: EdgeInsets.fromLTRB(pagePadding, 14, pagePadding, 28),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         _TopBar(
@@ -1256,7 +1256,7 @@ class SentinelDashboard extends StatelessWidget {
                         ),
 
                         _HeroPanel(palette: palette, language: selectedLanguage),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 22),
                         LayoutBuilder(
                           builder: (context, constraints) {
                             final compact = constraints.maxWidth < 620;
@@ -1367,9 +1367,9 @@ class SentinelDashboard extends StatelessWidget {
                             label: const Text('How ORVIKA handles data'),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         Padding(
-                          padding: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.only(top: 2),
                           child: Center(
                             child: ConstrainedBox(
                               constraints: const BoxConstraints(maxWidth: 760),
@@ -1377,8 +1377,8 @@ class SentinelDashboard extends StatelessWidget {
                                 key: const ValueKey('dashboard-footer'),
                                 width: double.infinity,
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 18,
-                                  vertical: 17,
+                                  horizontal: 14,
+                                  vertical: 12,
                                 ),
                                 decoration: BoxDecoration(
                                   color: palette.surface.withValues(alpha: 0.58),
