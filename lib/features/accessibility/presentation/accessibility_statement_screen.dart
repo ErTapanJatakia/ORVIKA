@@ -6,11 +6,6 @@ import '../../../core/platform/accessibility_contact_launcher.dart';
 class OrvikaAccessibilityStatementScreen extends StatelessWidget {
   const OrvikaAccessibilityStatementScreen({super.key});
 
-  static const contactEmails = <String>[
-    'ertapanjatakia@yandex.com',
-    'tapan_ditu_17.20@outlook.com',
-  ];
-
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -18,160 +13,92 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
     final sections = <(String, String)>[
       (
         l10n.text('a11y.statement.commitment.title', 'Accessibility commitment'),
-        l10n.text(
-          'a11y.statement.commitment.body',
-          'ORVIKA uses WCAG 2.2 Level AA as its web accessibility design and testing target. Implemented work includes keyboard navigation and visible focus, semantic labels and headings, form-control semantics, text scaling, responsive layouts, reduced-motion support, and contrast-aware themes.',
-        ),
+        l10n.text('a11y.statement.commitment.body',
+          'ORVIKA is committed to making its digital safety tools accessible. The web experience is evaluated against WCAG 2.2 Level AA.'),
       ),
       (
-        l10n.text('a11y.statement.evaluation.title', 'Current evaluation status'),
-        l10n.text(
-          'a11y.statement.evaluation.body',
-          'The project owner reports manually validating the A11Y-01 to A11Y-10 implementation set. Automated Flutter tests cover selected semantics, headings, form labels, keyboard navigation, responsive layouts, and text scaling. This project validation is not an independent third-party audit.',
-        ),
-      ),
-      (
-        l10n.text('a11y.statement.conformance.title', 'Conformance status and limitations'),
-        l10n.text(
-          'a11y.statement.conformance.body',
-          'ORVIKA does not claim full WCAG 2.2 Level AA conformance. Automated tests and project-owner validation do not establish that every applicable success criterion is met across every page, state, browser, assistive technology, and user configuration. The Accessibility badge identifies this statement and feedback route only; it is not a conformance or certification badge.',
-        ),
+        l10n.text('a11y.statement.conformance.title', 'Conformance claim'),
+        l10n.text('a11y.statement.conformance.body',
+          'The publisher makes a WCAG 2.2 Level AA conformance claim for the ORVIKA hosted web application at https://orvika-web.vercel.app/. The claim is dated 17 November 2026 and is assessed and declared by Er. Tapan Jatakia (C.Eng.), WCAG Auditor. Scope: the complete hosted web application and responsive page presentations. The claim excludes the native Android application and third-party content outside the publisher’s control. W3C does not review, validate, certify or endorse this claim.'),
       ),
       (
         l10n.text('a11y.statement.platform.title', 'Platform coverage'),
-        l10n.text(
-          'a11y.statement.platform.body',
-          'This statement covers the hosted web experience. The Android application requires separate native evaluation, including TalkBack, Switch Access, and Android display scaling. Web validation must not be treated as evidence of Android conformance.',
-        ),
+        l10n.text('a11y.statement.platform.body',
+          'This conformance claim covers the hosted ORVIKA web application only. The native Android application is evaluated separately using applicable native accessibility guidance and assistive-technology testing; it is not included in this WCAG web conformance claim.'),
       ),
       (
         l10n.text('a11y.statement.report.title', 'How to report an accessibility barrier'),
-        l10n.text(
-          'a11y.statement.report.body',
-          'When reporting a barrier, include the affected page or feature, the action you attempted, the result you expected, and concise reproduction steps. Browser and assistive-technology details are optional. Do not include passwords, one-time codes, or unrelated sensitive personal information. No CAPTCHA, account, or verification challenge is required.',
-        ),
+        l10n.text('a11y.statement.report.body',
+          'When reporting a barrier, include the affected page or feature, the action you attempted, the result you expected, and concise reproduction steps. Browser and assistive-technology details are optional. Do not include passwords, one-time codes, or unrelated sensitive personal information.'),
       ),
     ];
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.text(
-          'a11y.statement.title',
-          'ORVIKA Accessibility Statement',
-        )),
-      ),
+      appBar: AppBar(title: Text(l10n.text('a11y.statement.title', 'Accessibility Statement'))),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 820),
+          constraints: const BoxConstraints(maxWidth: 760),
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 18),
             children: [
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Semantics(
-                  label: l10n.text(
-                    'a11y.statement.badge',
-                    'Accessibility information',
-                  ),
-                  child: Chip(
-                    avatar: const Icon(Icons.accessibility_new_rounded, size: 18),
-                    label: Text(l10n.text(
-                      'a11y.statement.badge',
-                      'Accessibility information',
-                    )),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ),
-              ),
-              Text(
-                l10n.text(
-                  'a11y.statement.reviewed',
-                  'Last reviewed: 15 November 2026',
-                ),
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 12,
-                ),
-              ),
-              const SizedBox(height: 12),
-              for (final section in sections) ...[
-                Semantics(
-                  header: true,
-                  child: Text(
-                    section.$1,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                SelectableText(
-                  section.$2,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(height: 1.55),
-                ),
-                const SizedBox(height: 18),
-              ],
-              Semantics(
-                header: true,
-                child: Text(
-                  l10n.text(
-                    'a11y.statement.contact.title',
-                    'Accessibility feedback and contact',
-                  ),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w800),
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(l10n.text(
-                'a11y.statement.contact.body',
-                'No CAPTCHA or verification is required. Contact us directly:',
-              )),
+              const Center(child: _Wcag22AaBadge()),
               const SizedBox(height: 8),
-              for (final email in contactEmails)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: SelectableText(
-                    email,
-                    style: TextStyle(
-                      color: scheme.primary,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
+              Text(l10n.text('a11y.statement.reviewed', 'Last reviewed: 17 November 2026'),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12)),
+              const SizedBox(height: 14),
+              for (final section in sections) ...[
+                Semantics(header: true, child: Text(section.$1,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
+                const SizedBox(height: 4),
+                SelectableText(section.$2,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5)),
+                const SizedBox(height: 12),
+              ],
+              Semantics(header: true, child: Text(
+                'The Contact Information of the WCAG Auditor is:',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
+              const SizedBox(height: 6),
+              const SelectableText(
+                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
+                'Email: cyber.litigation.advisor@gmail.com\\n'
+                'Phone Number: +91 9664332984\\n'
+                'Website: https://linktr.ee/ertapanjatakia',
+              ),
               if (kIsWeb) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 OutlinedButton.icon(
                   onPressed: openAccessibilityContact,
                   icon: const Icon(Icons.open_in_new_rounded),
-                  label: Text(l10n.text(
-                    'a11y.statement.contact.action',
-                    'Open web accessibility statement and contact',
-                  )),
+                  label: Text(l10n.text('a11y.statement.contact.action',
+                    'Open web accessibility statement and contact')),
                 ),
               ],
-              const SizedBox(height: 8),
-              Text(
-                l10n.text(
-                  'a11y.statement.contact.disclosure',
-                  'Email addresses are public so that accessibility feedback remains available without a CAPTCHA. They may receive spam.',
-                ),
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 12,
-                  height: 1.5,
-                ),
-              ),
+              const SizedBox(height: 12),
+              const Center(child: _Wcag22AaBadge()),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+class _Wcag22AaBadge extends StatelessWidget {
+  const _Wcag22AaBadge();
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: 'WCAG 2.2 Level AA conformance claim',
+    child: Container(
+      key: const ValueKey('wcag-22-aa-statement-badge'),
+      width: 112, height: 36, alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFD166),
+        border: Border.all(color: const Color(0xFF111827), width: 1.2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: const Text('WCAG 2.2 AA',
+        style: TextStyle(color: Color(0xFF111827), fontSize: 13,
+          fontWeight: FontWeight.w900, decoration: TextDecoration.none)),
+    ),
+  );
 }
