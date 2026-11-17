@@ -18,7 +18,7 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
       ),
       (
         l10n.text('a11y.statement.conformance.title', 'Conformance claim'),
-        l10n.text('a11y.statement.conformance.body',
+        l10n.text('a11y.statement.publisherClaim.body',
           'The publisher makes a WCAG 2.2 Level AA conformance claim for the ORVIKA hosted web application at https://orvika-web.vercel.app/. The claim is dated 17 November 2026 and is assessed and declared by Er. Tapan Jatakia (C.Eng.), WCAG Auditor. Scope: the complete hosted web application and responsive page presentations. The claim excludes the native Android application and third-party content outside the publisher’s control. W3C does not review, validate, certify or endorse this claim.'),
       ),
       (
@@ -42,7 +42,7 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
             children: [
               const Center(child: _Wcag22AaBadge()),
               const SizedBox(height: 8),
-              Text(l10n.text('a11y.statement.reviewed', 'Last reviewed: 17 November 2026'),
+              Text(l10n.text('a11y.statement.reviewed.current', 'Last reviewed: 17 November 2026'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12)),
               const SizedBox(height: 14),
