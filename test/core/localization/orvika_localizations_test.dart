@@ -520,7 +520,7 @@ void main() {
         'a11y.statement.contact.phone',
         'a11y.statement.contact.website',
       ];
-      for (final code in ['en', 'ru', 'es', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa']) {
+      for (final code in ['en', 'ru', 'pt', 'pt-PT', 'es', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         final featurePack = OrvikaFeatureTranslations.forCode(code);
         for (final key in legalKeys) {
