@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../core/localization/orvika_localizations.dart';
+import 'wcag_conformance_badge.dart';
 import '../../../core/platform/accessibility_contact_launcher.dart';
 
 class OrvikaAccessibilityStatementScreen extends StatelessWidget {
@@ -40,7 +41,7 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 18),
             children: [
-              const Center(child: _Wcag22AaBadge()),
+              const Center(child: Wcag22AaBadge()),
               const SizedBox(height: 8),
               Text(l10n.text('a11y.statement.reviewed.current', 'Last reviewed: 17 November 2026'),
                 textAlign: TextAlign.center,
@@ -74,32 +75,11 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: 12),
-              const Center(child: _Wcag22AaBadge()),
+              const Center(child: Wcag22AaBadge()),
             ],
           ),
         ),
       ),
     );
   }
-}
-
-class _Wcag22AaBadge extends StatelessWidget {
-  const _Wcag22AaBadge();
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: OrvikaLocalizations.of(context).text(
-      'a11y.statement.badge.semantics', 'WCAG 2.2 Level AA conformance claim'),
-    child: Container(
-      key: const ValueKey('wcag-22-aa-statement-badge'),
-      width: 112, height: 36, alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFD166),
-        border: Border.all(color: const Color(0xFF111827), width: 1.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: const Text('WCAG 2.2 AA',
-        style: TextStyle(color: Color(0xFF111827), fontSize: 13,
-          fontWeight: FontWeight.w900, decoration: TextDecoration.none)),
-    ),
-  );
 }
