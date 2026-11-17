@@ -14,6 +14,11 @@ on:
         required: true
         type: boolean
         default: false
+      validate_android:
+        description: "Run the deferred Android validation batch (only when explicitly ready)"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -24,77 +29,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  change-scope:
-    name: Determine Android validation scope
-    runs-on: ubuntu-24.04
-    outputs:
-      android: ${{ steps.scope.outputs.android }}
-    steps:
-      - name: Classify changed files for Android validation
-        id: scope
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PUSH_BEFORE: ${{ github.event.before }}
-          PUSH_SHA: ${{ github.sha }}
-        run: |
-          # PRs receive fast Web/Flutter validation. Android release builds
-          # run only after application-runtime changes land on main.
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "android=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          # Manual dispatch is reserved for explicitly requested deployment
-          # validation; it must not trigger an unrelated Android APK build.
-          if [ "${{ github.event_name }}" != "push" ]; then
-            echo "android=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [[ -z "$PUSH_BEFORE" || "$PUSH_BEFORE" =~ ^0+$ ]]; then
-            echo "android=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          compare_url="https://api.github.com/repos/$GITHUB_REPOSITORY/compare/$PUSH_BEFORE...$PUSH_SHA"
-          if ! response="$(curl --fail --silent --show-error \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "$compare_url")"; then
-            echo "Unable to classify push diff; running Android validation as a safe fallback."
-            echo "android=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          total_files="$(jq -r '.files | length' <<< "$response")"
-          # The compare endpoint caps its changed-file list at 300 entries.
-          # At that boundary, conservatively validate Android rather than
-          # risk overlooking an application-runtime file beyond the listing.
-          if (( total_files >= 300 )); then
-            echo "Diff reaches the API file-list limit; running Android validation as a safe fallback."
-            echo "android=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if jq -e '[.files[].filename] | any(test("^(lib/|assets/|android/|pubspec\\.yaml$|pubspec\\.lock$)"))' \
-            <<< "$response" >/dev/null; then
-            echo "Application runtime files changed; Android validation required."
-            echo "android=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No application runtime files changed; skipping Android validation."
-            echo "android=false" >> "$GITHUB_OUTPUT"
-          fi
-
   android-validation:
     name: Android build validation
-    needs: change-scope
-    if: needs.change-scope.outputs.android == 'true'
+    # Android work is deliberately excluded from automatic PR/push validation.
+    # It runs only after an explicit manual dispatch with validate_android=true.
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.validate_android == true
     uses: ./.github/workflows/android-build.yml
-    # Do not pass repository secrets to Gradle or third-party build plugins.
-    # Automatic main-branch validation is debug-only; release signing remains
-    # available solely through the separately manual Android workflow.
-
+    # No repository secrets are inherited by the reusable build.
+    
   flutter:
     name: Analyze, test, build and deploy Web
     runs-on: ubuntu-24.04
