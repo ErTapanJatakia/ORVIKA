@@ -2333,9 +2333,9 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               SelectableText(
-                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\\n'
-                '${l10n.text('a11y.statement.contact.email', 'Email')}: ertapanjatakia@yandex.com (for Russia)\\n'\n                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\\n'
-                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\\n'
+                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\n'
+                '${l10n.text('a11y.statement.contact.email', 'Email')}: ertapanjatakia@yandex.com (for Russia)\n'\n                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\n'
+                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\n'
                 '${l10n.text('a11y.statement.contact.website', 'Website')}: https://linktr.ee/ertapanjatakia',
               ),
               const SizedBox(height: 18),
@@ -2345,9 +2345,9 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               SelectableText(
-                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\\n'
-                '${l10n.text('a11y.statement.contact.email', 'Email')}: cyber.litigation.advisor@gmail.com\\n'
-                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\\n'
+                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\n'
+                '${l10n.text('a11y.statement.contact.email', 'Email')}: cyber.litigation.advisor@gmail.com\n'
+                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\n'
                 '${l10n.text('a11y.statement.contact.website', 'Website')}: https://linktr.ee/ertapanjatakia',
               ),
             ],
