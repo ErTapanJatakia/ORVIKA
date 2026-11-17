@@ -88,6 +88,17 @@ void main() {
           );
         }
 
+        if (viewport.size.width == 1280) {
+          final linkCard = find.byKey(
+            const ValueKey('dashboard-module-card-Link Check'),
+          );
+          expect(
+            tester.getSize(linkCard).height,
+            lessThan(260),
+            reason: 'Desktop module cards should not retain the old fixed 260px height.',
+          );
+        }
+
         final title = find.text('Link Check');
         expect(tester.widget<Text>(title).style?.fontSize, 16);
         final status = find.text('AVAILABLE').first;
