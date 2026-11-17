@@ -37,6 +37,14 @@ https://vercel.com/docs/analytics/privacy-policy
 
 The current implementation is page-view analytics only. Internal Flutter screen navigation is not represented as separately tracked custom events.
 
+## Android barcode-scanning SDK
+
+The Android camera and image barcode-scanning implementation uses the bundled Google ML Kit Barcode Scanning SDK through the `mobile_scanner` package. Barcode recognition runs on the device. Google states that ML Kit does not send the input images, video, text or resulting outputs to Google servers.
+
+ML Kit does, however, send diagnostics and usage metrics to Google. The documented categories include device information (such as manufacturer, model and OS version), application/package information and app version, per-installation identifiers, performance metrics, API configuration (including image format and resolution), input/output size, feature version, event type and error codes. These metrics are encrypted in transit using HTTPS. Google states that this metrics data is not transferred to third parties. ML Kit may also contact Google servers for bug fixes, model updates and hardware-accelerator compatibility information.
+
+ORVIKA does not send camera frames, selected QR images or decoded barcode payloads to Google as part of barcode recognition. This SDK-level diagnostics and usage-metrics processing is separate from ORVIKA's own page-view analytics. Google's documentation: https://developers.google.com/ml-kit/terms and https://developers.google.com/ml-kit/android-data-disclosure
+
 ## External runtime dependency
 
 In browsers where the QR camera scanner uses the ZXing WebAssembly fallback, the browser downloads decoder code from jsDelivr. This is a code download, not an upload of camera frames, selected images or decoded QR payloads.
