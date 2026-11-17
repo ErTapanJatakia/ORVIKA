@@ -9,6 +9,17 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
+    final noticeScrollable = find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first;
+    await tester.scrollUntilVisible(
+      find.text('App developer and Data Protection Officer'),
+      250,
+      scrollable: noticeScrollable,
+    );
+    await tester.pumpAndSettle();
+
     expect(find.text('App developer and Data Protection Officer'), findsOneWidget);
     final contact = tester.widget<SelectableText>(find.byType(SelectableText).last);
     expect(contact.data, contains('Er. Tapan Jatakia (C.Eng.)'));
