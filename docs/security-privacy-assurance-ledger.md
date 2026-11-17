@@ -23,6 +23,10 @@ The Android barcode scanner uses the bundled Google ML Kit Barcode Scanning SDK 
 
 Evidence: Android camera screen disclosure; `docs/privacy-notice.md`; `docs/qr-camera-privacy.md`; Google's ML Kit terms and Android disclosure guide. Remaining: verify the final resolved Android dependency graph and store-specific privacy declarations against the exact release build. No packet capture or physical-device validation is claimed by this source/documentation change.
 
+Android backup hardening: the legacy `full-backup-content` rules and Android 12+ cloud-backup/device-transfer rules explicitly exclude root, file, database, shared-preferences, external and device-protected storage domains. The Android release preflight checks each exclusion. This closes the gap where excluding only the `root` domain did not explicitly cover the separately addressable shared-preferences, database and file domains. Physical-device backup/restore behavior remains untested.
+
+The Android build workflow also rejects manual runs from non-`main` refs before executing the job; the signing-secret detection and signed artifact steps remain behind the explicit `build_signed_release` input.
+
 ## 2. Web response hardening
 
 The current `vercel.json` defines:
