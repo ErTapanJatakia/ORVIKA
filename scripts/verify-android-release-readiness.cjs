@@ -92,8 +92,8 @@ const assertBackupDomainsExcluded = (xml, domains, context) => {
   }
 };
 assertBackupDomainsExcluded(legacyBackupRules, backupDomains, 'Legacy backup rules');
-const cloudBackupRules = extractionRules.match(/<cloud-backup>([\\s\\S]*?)<\\/cloud-backup>/)?.[1];
-const deviceTransferRules = extractionRules.match(/<device-transfer>([\\s\\S]*?)<\\/device-transfer>/)?.[1];
+const cloudBackupRules = extractionRules.match(/<cloud-backup>([\s\S]*?)<\/cloud-backup>/)?.[1];
+const deviceTransferRules = extractionRules.match(/<device-transfer>([\s\S]*?)<\/device-transfer>/)?.[1];
 assert.ok(cloudBackupRules, 'Android 12+ cloud-backup rules are required');
 assert.ok(deviceTransferRules, 'Android 12+ device-transfer rules are required');
 assertBackupDomainsExcluded(cloudBackupRules, backupDomains, 'Android 12+ cloud backup rules');
