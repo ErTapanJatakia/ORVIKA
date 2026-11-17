@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'orvika_language.dart';
 import 'orvika_feature_translations.dart';
+import 'orvika_legal_translations.dart';
 import 'portuguese_portugal_text.dart';
 import 'mandarin_chinese_draft.dart';
 
@@ -35,11 +36,6 @@ class OrvikaLocalizations {
     'settings.saved': 'Выбор сохраняется на этом устройстве. ORVIKA не отправляет настройки оформления на сервер.',
     'settings.accessibility': 'Примечание о доступности: режим высокой контрастности использует более яркие сигнальные цвета и чёткое визуальное разделение. Предупреждения всегда сопровождаются текстом; цвет не является единственным индикатором.',
     'a11y.statement.title': "Заявление о доступности ORVIKA",
-    'a11y.statement.contact.auditor': "Контактные данные аудитора WCAG:",
-    'a11y.statement.contact.name': "Имя",
-    'a11y.statement.contact.email': "Электронная почта",
-    'a11y.statement.contact.phone': "Телефон",
-    'a11y.statement.contact.website': "Веб-сайт",
     'a11y.statement.badge': "Информация о доступности",
     'a11y.statement.reviewed': "Последняя проверка: 15 ноября 2026 г.",
     'a11y.statement.commitment.title': "Обязательства по обеспечению доступности",
@@ -347,11 +343,6 @@ class OrvikaLocalizations {
     'response.avoid': 'Evite',
     'response.limit': 'Limitações',
     'response.notice': 'As medidas adequadas dependem do serviço, dispositivo e jurisdição. O ORVIKA não substitui orientação profissional nem canais oficiais de resposta.',
-    'a11y.statement.contact.auditor': "Contacto do auditor WCAG:",
-    'a11y.statement.contact.name': "Nome",
-    'a11y.statement.contact.email': "E-mail",
-    'a11y.statement.contact.phone': "Telefone",
-    'a11y.statement.contact.website': "Website",
   };
 
   static const Map<String, String> _spanishDraft = {
@@ -515,11 +506,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Comentarios y contacto sobre accesibilidad',
     'a11y.statement.contact.body': 'No se requiere CAPTCHA ni verificación. Puedes contactar directamente:',
     'a11y.statement.contact.action': 'Abrir la declaración de accesibilidad web y el contacto',
-    'a11y.statement.contact.auditor': "Contacto del auditor WCAG:",
-    'a11y.statement.contact.name': "Nombre",
-    'a11y.statement.contact.email': "Correo electrónico",
-    'a11y.statement.contact.phone': "Teléfono",
-    'a11y.statement.contact.website': "Sitio web",
   };
 
   static const Map<String, String> _hindiDraft = {
@@ -688,11 +674,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'सुलभता प्रतिक्रिया और संपर्क',
     'a11y.statement.contact.body': 'CAPTCHA या सत्यापन की आवश्यकता नहीं है। सीधे संपर्क करें:',
     'a11y.statement.contact.action': 'वेब सुलभता वक्तव्य और संपर्क खोलें',
-    'a11y.statement.contact.auditor': "WCAG ऑडिटर संपर्क जानकारी:",
-    'a11y.statement.contact.name': "नाम",
-    'a11y.statement.contact.email': "ईमेल",
-    'a11y.statement.contact.phone': "फ़ोन",
-    'a11y.statement.contact.website': "वेबसाइट",
   };
 
   // Draft UI packs for the nine additional requested languages. These cover
@@ -846,11 +827,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Feedback und Kontakt zur Barrierefreiheit',
     'a11y.statement.contact.body': 'CAPTCHA oder Verifizierung sind nicht erforderlich. Kontaktieren Sie uns direkt:',
     'a11y.statement.contact.action': 'Web-Erklärung zur Barrierefreiheit und Kontakt öffnen',
-    'a11y.statement.contact.auditor': "Kontakt zum WCAG-Auditor:",
-    'a11y.statement.contact.name': "Name",
-    'a11y.statement.contact.email': "E-Mail",
-    'a11y.statement.contact.phone': "Telefon",
-    'a11y.statement.contact.website': "Website",
   };
 
   static const Map<String, String> _frenchDraft = {
@@ -1000,11 +976,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Commentaires et contact sur l’accessibilité',
     'a11y.statement.contact.body': 'Aucun CAPTCHA ni contrôle de vérification n’est requis. Contactez-nous directement :',
     'a11y.statement.contact.action': 'Ouvrir la déclaration d’accessibilité web et les contacts',
-    'a11y.statement.contact.auditor': "Coordonnées de l’auditeur WCAG :",
-    'a11y.statement.contact.name': "Nom",
-    'a11y.statement.contact.email': "E-mail",
-    'a11y.statement.contact.phone': "Téléphone",
-    'a11y.statement.contact.website': "Site web",
   };
 
   static const Map<String, String> _italianDraft = {
@@ -1153,11 +1124,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Feedback e contatti sull’accessibilità',
     'a11y.statement.contact.body': 'Non è richiesto alcun CAPTCHA o verifica. Contattaci direttamente:',
     'a11y.statement.contact.action': 'Apri la dichiarazione di accessibilità web e i contatti',
-    'a11y.statement.contact.auditor': "Contatti del revisore WCAG:",
-    'a11y.statement.contact.name': "Nome",
-    'a11y.statement.contact.email': "E-mail",
-    'a11y.statement.contact.phone': "Telefono",
-    'a11y.statement.contact.website': "Sito web",
   };
 
   static const Map<String, String> _punjabiDraft = {
@@ -1204,11 +1170,6 @@ class OrvikaLocalizations {
     'module.status.overview':'ਸੰਖੇਪ ਜਾਣਕਾਰੀ','module.status.available':'ਉਪਲਬਧ',
     'trust.note':'ORVIKA ਇੱਕ ਸ਼ੁਰੂਆਤੀ ਪ੍ਰੋਟੋਟਾਈਪ ਹੈ। ਨਤੀਜੇ ਜਾਂਚੇ ਜਾ ਸਕਣ ਵਾਲੇ ਸੰਕੇਤਾਂ ਉੱਤੇ ਆਧਾਰਿਤ ਹਨ: ਐਲਗੋਰਿਦਮ ਦਾ ਸ਼ੱਕ ਇਸ ਗੱਲ ਦਾ ਸਬੂਤ ਨਹੀਂ ਕਿ ਕੋਈ ਵਿਅਕਤੀ, ਸੁਨੇਹਾ ਜਾਂ ਪਤਾ ਨੁਕਸਾਨਦੇਹ ਹੈ।',
     'footer.motto':'ਖ਼ਤਰਾ ਵੇਖੋ • ਸੰਕੇਤ ਦੀ ਜਾਂਚ ਕਰੋ • ਕਾਬੂ ਆਪਣੇ ਹੱਥ ਰੱਖੋ',
-    'a11y.statement.contact.auditor': "WCAG ਆਡੀਟਰ ਸੰਪਰਕ ਜਾਣਕਾਰੀ:",
-    'a11y.statement.contact.name': "ਨਾਮ",
-    'a11y.statement.contact.email': "ਈਮੇਲ",
-    'a11y.statement.contact.phone': "ਫ਼ੋਨ",
-    'a11y.statement.contact.website': "ਵੈੱਬਸਾਈਟ",
   };
 
   static const Map<String, String> _urduDraft = {
@@ -1269,11 +1230,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'رسائی کے بارے میں رائے اور رابطہ',
     'a11y.statement.contact.body': 'CAPTCHA یا تصدیق درکار نہیں۔ براہِ راست رابطہ کریں:',
     'a11y.statement.contact.action': 'ویب رسائی کا بیان اور رابطہ کھولیں',
-    'a11y.statement.contact.auditor': "WCAG آڈیٹر کے رابطے کی معلومات:",
-    'a11y.statement.contact.name': "نام",
-    'a11y.statement.contact.email': "ای میل",
-    'a11y.statement.contact.phone': "فون",
-    'a11y.statement.contact.website': "ویب سائٹ",
   };
 
   static const Map<String, String> _arabicDraft = {
@@ -1423,11 +1379,6 @@ class OrvikaLocalizations {
     'response.avoid': 'ما ينبغي تجنّبه',
     'response.limit': 'قيد مهم',
     'response.notice': 'يقدّم قسم الاستجابة في ORVIKA إرشادات تعليمية عامة، وليس خدمة طوارئ أو استشارة قانونية أو مالية، ولا يحل محل الاستجابة المتخصصة للحوادث. لا يكتشف التطبيق الحوادث، ولا يتواصل مع مزوّدي الخدمات أو السلطات، ولا يغيّر إعدادات الحسابات، ولا يرسل بلاغات عن الحوادث. تختلف قنوات الاتصال والإجراءات حسب الاختصاص القضائي؛ استخدم المصادر الرسمية التي تحققت منها بشكل مستقل.',
-    'a11y.statement.contact.auditor': "معلومات الاتصال بمدقق WCAG:",
-    'a11y.statement.contact.name': "الاسم",
-    'a11y.statement.contact.email': "البريد الإلكتروني",
-    'a11y.statement.contact.phone': "الهاتف",
-    'a11y.statement.contact.website': "الموقع الإلكتروني",
   };
 
   static const Map<String, String> _marathiDraft = {
@@ -1488,11 +1439,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'सुलभता अभिप्राय आणि संपर्क',
     'a11y.statement.contact.body': 'CAPTCHA किंवा पडताळणी आवश्यक नाही. थेट संपर्क साधा:',
     'a11y.statement.contact.action': 'वेब सुलभता निवेदन आणि संपर्क उघडा',
-    'a11y.statement.contact.auditor': "WCAG लेखापरीक्षक संपर्क माहिती:",
-    'a11y.statement.contact.name': "नाव",
-    'a11y.statement.contact.email': "ईमेल",
-    'a11y.statement.contact.phone': "फोन",
-    'a11y.statement.contact.website': "वेबसाइट",
   };
 
   static const Map<String, String> _gujaratiDraft = {
@@ -1553,11 +1499,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'સુલભતા પ્રતિસાદ અને સંપર્ક',
     'a11y.statement.contact.body': 'CAPTCHA અથવા ચકાસણી જરૂરી નથી. સીધો સંપર્ક કરો:',
     'a11y.statement.contact.action': 'વેબ સુલભતા નિવેદન અને સંપર્ક ખોલો',
-    'a11y.statement.contact.auditor': "WCAG ઓડિટર સંપર્ક માહિતી:",
-    'a11y.statement.contact.name': "નામ",
-    'a11y.statement.contact.email': "ઇમેઇલ",
-    'a11y.statement.contact.phone': "ફોન",
-    'a11y.statement.contact.website': "વેબસાઇટ",
   };
 
   static const Map<String, String> _sanskritDraft = {
@@ -1618,11 +1559,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'सुलभताप्रतिक्रिया सम्पर्कश्च',
     'a11y.statement.contact.body': 'CAPTCHA अथवा सत्यापनं न आवश्यकम्। प्रत्यक्षं सम्पर्कं कुरुत:',
     'a11y.statement.contact.action': 'जालसुलभताघोषणां सम्पर्कं च उद्घाटयतु',
-    'a11y.statement.contact.auditor': "WCAG परीक्षकस्य सम्पर्कसूचना:",
-    'a11y.statement.contact.name': "नाम",
-    'a11y.statement.contact.email': "विद्युत्पत्रम्",
-    'a11y.statement.contact.phone': "दूरवाणी",
-    'a11y.statement.contact.website': "जालस्थानम्",
   };
 
   /// European Portuguese adaptation of the complete Portuguese UI source pack.
@@ -1633,11 +1569,6 @@ class OrvikaLocalizations {
   /// continue to use their call-site fallbacks.
   static const Map<String, String> _englishAccessibility = {
     'a11y.statement.title': "Accessibility Statement",
-    'a11y.statement.contact.auditor': "WCAG Auditor contact information:",
-    'a11y.statement.contact.name': "Name",
-    'a11y.statement.contact.email': "Email",
-    'a11y.statement.contact.phone': "Phone Number",
-    'a11y.statement.contact.website': "Website",
     'a11y.statement.badge': "Accessibility information",
     'a11y.statement.reviewed': "Last reviewed: 15 November 2026",
     'a11y.statement.commitment.title': "Accessibility commitment",
@@ -1681,6 +1612,7 @@ class OrvikaLocalizations {
   /// Phase-two checker strings override or extend the initial language packs.
   Map<String, String> get _translations => {
         ..._baseTranslations,
+        ...OrvikaLegalTranslations.forCode(language.code),
         ...OrvikaFeatureTranslations.forCode(language.code),
         if (language.code == 'pt-PT') ...PortuguesePortugalText.fallbacks,
       };
