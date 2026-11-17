@@ -369,17 +369,37 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                             }).toList(),
                           ),
                           const SizedBox(height: 8),
-                          CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            value: _reviewedIds.contains(practice.id),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: Text(
-                              l10n.text('privacy.reviewed', 'I have reviewed this practice'),
-                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                          Semantics(
+                            container: true,
+                            label: l10n.text(
+                              'privacy.reviewed',
+                              'I have reviewed this practice',
                             ),
-                            onChanged: (value) {
-                              _setReviewed(practice.id, value ?? false);
-                            },
+                            checked: _reviewedIds.contains(practice.id),
+                            onTap: () => _setReviewed(
+                              practice.id,
+                              !_reviewedIds.contains(practice.id),
+                            ),
+                            child: ExcludeSemantics(
+                              child: CheckboxListTile(
+                                contentPadding: EdgeInsets.zero,
+                                value: _reviewedIds.contains(practice.id),
+                                controlAffinity: ListTileControlAffinity.leading,
+                                title: Text(
+                                  l10n.text(
+                                    'privacy.reviewed',
+                                    'I have reviewed this practice',
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  _setReviewed(practice.id, value ?? false);
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),

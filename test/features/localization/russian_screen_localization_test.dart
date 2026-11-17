@@ -29,7 +29,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Конфиденциальность'), findsOneWidget);
     expect(find.text('Возьмите конфиденциальность под контроль.'), findsOneWidget);
-    expect(find.text('Используйте уникальные пароли для важных аккаунтов'), findsOneWidget);
+    final firstPractice = find.text('Используйте уникальные пароли для важных аккаунтов');
+    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(Scrollable).first);
+    expect(firstPractice, findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(russianApp(const ResponseScreen()));

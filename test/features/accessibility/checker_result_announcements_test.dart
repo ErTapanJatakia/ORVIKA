@@ -17,14 +17,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final announcement = find.byWidgetPredicate(
-      (widget) => widget is Semantics && widget.liveRegion,
+      (widget) => widget is Semantics && widget.properties.liveRegion == true,
       description: 'a live-region result announcement',
     );
     expect(announcement, findsOneWidget);
 
     final semantics = tester.widget<Semantics>(announcement);
-    expect(semantics.label, isNotNull);
-    expect(semantics.label, isNotEmpty);
+    expect(semantics.properties.label, isNotNull);
+    expect(semantics.properties.label, isNotEmpty);
     expect(tester.takeException(), isNull);
   }
 

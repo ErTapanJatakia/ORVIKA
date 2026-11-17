@@ -62,6 +62,7 @@ void main() {
     await tester.pumpWidget(_localizedApp('hi', const PrivacyScreen()));
     await tester.pumpAndSettle();
     expect(find.text('अपनी गोपनीयता पर नियंत्रण रखें।'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('खाते'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('खाते'), findsOneWidget);
     final firstPractice = find.byType(ExpansionTile).first;
     await tester.ensureVisible(firstPractice);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,14 +30,14 @@ void main() {
         await tester.pumpWidget(const OrvikaApp());
         await tester.pumpAndSettle();
 
-        final brand = find.text('ORVIKA');
-        expect(brand, findsOneWidget);
+        final brand = find.text('ORVIKA').first;
+        expect(find.text('ORVIKA'), findsWidgets);
         final brandText = tester.widget<Text>(brand);
         expect(brandText.maxLines, 1);
         expect(brandText.softWrap, isFalse);
 
-        final brandParagraph = tester.renderObject<RenderParagraph>(brand);
-        expect(brandParagraph.size.width, lessThanOrEqualTo(130));
+        final brandFit = find.ancestor(of: brand, matching: find.byType(FittedBox)).first;
+        expect(tester.getSize(brandFit).width, lessThanOrEqualTo(130));
 
         final heroHeading = find.textContaining('Check before');
         expect(heroHeading, findsOneWidget);

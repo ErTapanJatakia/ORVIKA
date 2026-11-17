@@ -56,8 +56,8 @@ void main() {
       }
     });
 
-    test('localizes all ten Intelligence references', () {
-      expect(IntelligenceLibrary.entries, hasLength(10));
+    test('localizes all canonical Intelligence references', () {
+      expect(IntelligenceLibrary.entries, hasLength(22));
       for (final source in IntelligenceLibrary.entries) {
         final item = ArabicIntelligenceContent.localize(source, 'ar');
         expect(item.id, source.id);

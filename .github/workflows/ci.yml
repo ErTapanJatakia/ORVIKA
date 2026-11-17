@@ -1,6 +1,12 @@
 name: ORVIKA CI
 
 on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       deploy_production:
@@ -85,7 +91,9 @@ jobs:
     needs: change-scope
     if: needs.change-scope.outputs.android == 'true'
     uses: ./.github/workflows/android-build.yml
-    secrets: inherit
+    # Do not pass repository secrets to Gradle or third-party build plugins.
+    # Automatic main-branch validation is debug-only; release signing remains
+    # available solely through the separately manual Android workflow.
 
   flutter:
     name: Analyze, test, build and deploy Web
@@ -116,6 +124,10 @@ jobs:
           git init "$RUNNER_TEMP/flutter"
           git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
           git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
+          # Fetch the matching release tag so Flutter can resolve its SDK version.
+          # The tag is verified against the already-pinned immutable commit.
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
           git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version

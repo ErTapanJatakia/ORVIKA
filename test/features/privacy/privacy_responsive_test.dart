@@ -56,6 +56,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final firstPractice = find.text('Use unique passwords for important accounts');
+    await tester.scrollUntilVisible(firstPractice, 300, scrollable: find.byType(Scrollable).first);
     await tester.ensureVisible(firstPractice);
     await tester.tap(firstPractice);
     await tester.pumpAndSettle();
@@ -64,19 +65,35 @@ void main() {
     expect(find.text('WHAT YOU CAN DO'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
 
-    final review = find.byType(CheckboxListTile).first;
-    await tester.ensureVisible(review);
-    await tester.tap(review);
+    final practiceTile = find.ancestor(
+      of: firstPractice,
+      matching: find.byType(ExpansionTile),
+    );
+    final reviewControl = find.descendant(
+      of: practiceTile,
+      matching: find.byType(CheckboxListTile),
+    );
+    expect(reviewControl, findsOneWidget);
+    await tester.dragUntilVisible(
+      reviewControl,
+      find.byType(ListView).first,
+      const Offset(0, -300),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(reviewControl);
     await tester.pumpAndSettle();
 
-    await tester.drag(find.byType(ListView), const Offset(0, 1200));
-    await tester.pumpAndSettle();
-    expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
     final preferences = await SharedPreferences.getInstance();
     expect(
       preferences.getStringList('privacy.reviewed.v1'),
       contains('account-unique-passwords'),
     );
+    await tester.dragUntilVisible(
+      find.text('1 of 12 practices reviewed'),
+      find.byType(ListView),
+      const Offset(0, 300),
+    );
+    expect(find.text('1 of 12 practices reviewed'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

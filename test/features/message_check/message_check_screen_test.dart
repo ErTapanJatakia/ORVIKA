@@ -35,12 +35,16 @@ void main() {
     expect(find.text('Urgency or pressure language'), findsOneWidget);
     expect(find.text('Link or web address detected'), findsOneWidget);
     expect(find.textContaining('No message was uploaded'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Safer next steps'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('Safer next steps'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Detected contact details'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('Detected contact details'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('help@example.test'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('help@example.test'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Clear message and results'));
-    await tester.tap(find.text('Clear message and results'));
+    await tester.drag(find.byType(ListView), const Offset(0, 1400));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.clear_all_rounded));
     await tester.pumpAndSettle();
     expect(find.text('Review findings'), findsNothing);
     expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);

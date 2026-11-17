@@ -1,4 +1,4 @@
-import 'dart:ui' show SemanticsAction;
+import 'dart:ui' show CheckedState, SemanticsAction, Tristate;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/features/intelligence/presentation/intelligence_screen.dart';
@@ -14,29 +14,23 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: PrivacyScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(ExpansionTile).first);
+    await tester.scrollUntilVisible(find.text('Use unique passwords for important accounts'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.text('Use unique passwords for important accounts'));
     await tester.pumpAndSettle();
 
-    final reviewLabel = find.text('I have reviewed this practice');
-    expect(reviewLabel, findsOneWidget);
-    final reviewControl = find.ancestor(
-      of: reviewLabel,
-      matching: find.byType(CheckboxListTile),
-    );
-    expect(reviewControl, findsOneWidget);
-
-    var node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, Tristate.isFalse);
+    final reviewSemantics = find.bySemanticsLabel('I have reviewed this practice');
+    expect(reviewSemantics, findsOneWidget);
+    var node = tester.getSemantics(reviewSemantics);
+    expect(node.flagsCollection.isChecked, CheckedState.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
     );
 
-    await tester.tap(reviewLabel);
+    await tester.tap(reviewSemantics);
     await tester.pumpAndSettle();
-
-    node = tester.getSemantics(reviewControl);
-    expect(node.flagsCollection.isChecked, Tristate.isTrue);
+    node = tester.getSemantics(reviewSemantics);
+    expect(node.flagsCollection.isChecked, CheckedState.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });
@@ -61,7 +55,7 @@ void main() {
       isTrue,
     );
 
-    await tester.tap(linksLabel);
+    await tester.tap(linksChip);
     await tester.pumpAndSettle();
 
     node = tester.getSemantics(linksChip);

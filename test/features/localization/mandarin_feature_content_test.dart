@@ -57,8 +57,8 @@ void main() {
       }
     });
 
-    test('all ten Intelligence references are translated', () {
-      expect(IntelligenceLibrary.entries, hasLength(10));
+    test('all canonical Intelligence references are translated', () {
+      expect(IntelligenceLibrary.entries, hasLength(22));
       for (final source in IntelligenceLibrary.entries) {
         final item = MandarinIntelligenceContent.localize(source, 'zh');
         expect(item.id, source.id);

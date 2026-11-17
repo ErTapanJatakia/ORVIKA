@@ -62,7 +62,9 @@ void main() {
     await tester.pumpWidget(app('es', const PrivacyScreen()));
     await tester.pumpAndSettle();
     expect(find.text('Revisión de privacidad'), findsOneWidget);
-    expect(find.text('Utiliza contraseñas únicas para tus cuentas importantes'), findsOneWidget);
+    final spanishPractice = find.text('Utiliza contraseñas únicas para tus cuentas importantes');
+    await tester.scrollUntilVisible(spanishPractice, 300, scrollable: find.byType(Scrollable).first);
+    expect(spanishPractice, findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(app('es', const ResponseScreen()));
@@ -89,7 +91,9 @@ void main() {
     await tester.pumpWidget(app('pt', const PrivacyScreen()));
     await tester.pumpAndSettle();
     expect(find.text('Revisão de privacidade'), findsOneWidget);
-    expect(find.text('Use senhas exclusivas nas contas importantes'), findsOneWidget);
+    final brazilianPractice = find.text('Use senhas exclusivas nas contas importantes');
+    await tester.scrollUntilVisible(brazilianPractice, 300, scrollable: find.byType(Scrollable).first);
+    expect(brazilianPractice, findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(app('pt', const ResponseScreen()));
@@ -116,7 +120,9 @@ void main() {
     await tester.pumpWidget(app('pt-PT', const PrivacyScreen()));
     await tester.pumpAndSettle();
     expect(find.text('Revisão de privacidade'), findsOneWidget);
-    expect(find.text('Use palavras-passe exclusivas nas contas importantes'), findsOneWidget);
+    final portugalPractice = find.text('Use palavras-passe exclusivas nas contas importantes');
+    await tester.scrollUntilVisible(portugalPractice, 300, scrollable: find.byType(Scrollable).first);
+    expect(portugalPractice, findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(app('pt-PT', const ResponseScreen()));
