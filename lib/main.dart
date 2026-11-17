@@ -553,7 +553,6 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
                             child: Center(child: _Wcag22AaBadge())),
                         ],
                       ),
-                    )
                     ),
                   ),
                 ),
@@ -2333,10 +2332,10 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
-                'Email: ertapanjatakia@yandex.com (for Russia)\\n'
-                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\\n'
-                'Phone Number: +91 9664332984\\n'
+                'Name: Er. Tapan Jatakia (C.Eng.)\n'
+                'Email: ertapanjatakia@yandex.com (for Russia)\n'
+                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\n'
+                'Phone Number: +91 9664332984\n'
                 'Website: https://linktr.ee/ertapanjatakia',
               ),
               const SizedBox(height: 18),
@@ -2346,9 +2345,9 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
-                'Email: cyber.litigation.advisor@gmail.com\\n'
-                'Phone Number: +91 9664332984\\n'
+                'Name: Er. Tapan Jatakia (C.Eng.)\n'
+                'Email: cyber.litigation.advisor@gmail.com\n'
+                'Phone Number: +91 9664332984\n'
                 'Website: https://linktr.ee/ertapanjatakia',
               ),
             ],
