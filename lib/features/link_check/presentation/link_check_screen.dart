@@ -88,7 +88,7 @@ class _LinkCheckScreenState extends State<LinkCheckScreen> {
                   autocorrect: false,
                   enableSuggestions: false,
                   textInputAction: TextInputAction.done,
-                  maxLength: 2048,
+                  maxLength: 8192,
                   onChanged: (_) => setState(() => _result = null),
                   onSubmitted: (_) => _analyse(),
                   decoration: InputDecoration(
