@@ -55,6 +55,7 @@ class OrvikaFeatureTranslations {
       'checker.image.selectResult': '选择此结果',
       'privacy.analytics.notice': '网站分析：ORVIKA 使用 Vercel Web Analytics 汇总统计页面浏览量，以及设备、浏览器、引荐来源和大致地区等基本指标。Vercel Hobby 套餐不支持功能使用自定义事件。ORVIKA 不会将粘贴的网址、消息文本、二维码解码内容、账户凭据或安全检查结果发送至分析服务。网站分析与本机安全分析相互独立。根据 Vercel 的说明，Web Analytics 不使用 Cookie，访客哈希值会在 24 小时后过期。',
       'privacy.device.notice': 'ORVIKA 不会扫描您的设备、检查已安装的应用、读取账户数据或更改权限。设置及其名称因平台而异。请使用相应操作系统或服务的官方设置和文档。',
+      'checker.camera.androidMlKit.disclosure': 'Android 扫描器使用 Google 内置的 ML Kit 识别条码。扫描图像和解码内容在本设备上处理，不会发送给 Google。ML Kit 可能会向 Google 发送诊断和使用指标，包括设备与应用信息、安装标识符、性能、配置、事件及错误数据。详情：developers.google.com/ml-kit/terms',
     },
     'ru': {
       'checker.camera.webDecoder.short': 'Для сканирования камерой в веб-версии может загружаться декодер из сторонней CDN jsDelivr. Кадры камеры и декодированные данные в этот сервис не передаются.',
@@ -104,6 +105,7 @@ class OrvikaFeatureTranslations {
       'checker.image.selectResult': 'Выбрать этот результат',
       'privacy.analytics.notice': 'Аналитика сайта: ORVIKA использует Vercel Web Analytics для агрегированного подсчёта просмотров страниц и базовых показателей устройства, браузера, источника перехода и примерного региона. Тариф Vercel Hobby не поддерживает пользовательские события использования функций. ORVIKA не передаёт в аналитику вставленные URL, текст сообщений, декодированное содержимое QR-кодов, учётные данные или результаты проверок безопасности. Аналитика сайта отделена от анализа безопасности на устройстве. По заявлению Vercel, Web Analytics не использует cookie, а хеши посетителей истекают через 24 часа.',
       'privacy.device.notice': 'ORVIKA не сканирует устройство, не проверяет установленные приложения, не читает данные аккаунтов и не меняет разрешения. Настройки и их названия различаются в зависимости от платформы. Используйте официальные настройки и документацию соответствующей ОС или сервиса.',
+      'checker.camera.androidMlKit.disclosure': 'В Android для распознавания штрихкодов используется встроенный Google ML Kit. Изображения сканирования и декодированное содержимое обрабатываются на устройстве и не отправляются Google. ML Kit может передавать Google диагностические данные и показатели использования, включая сведения об устройстве и приложении, идентификаторы установки, данные о производительности, конфигурации, событиях и ошибках. Подробнее: developers.google.com/ml-kit/terms',
     },
     'hi': {
       'checker.camera.webDecoder.short': 'वेब कैमरा स्कैनिंग के दौरान तृतीय-पक्ष CDN jsDelivr से डिकोडर डाउनलोड हो सकता है। कैमरा फ़्रेम और डिकोड की गई सामग्री इस सेवा पर अपलोड नहीं की जाती।',
@@ -123,6 +125,7 @@ class OrvikaFeatureTranslations {
       'checker.severity.caution': 'सावधानी',
       'checker.severity.warning': 'चेतावनी',
 
+      'checker.camera.androidMlKit.disclosure': 'Android पर बारकोड पहचानने के लिए Google का bundled ML Kit उपयोग होता है। स्कैन की छवियाँ और डिकोड की गई सामग्री इसी डिवाइस पर संसाधित होती हैं और Google को नहीं भेजी जातीं। ML Kit Google को निदान और उपयोग संबंधी मेट्रिक्स भेज सकता है, जिनमें डिवाइस और ऐप का विवरण, इंस्टॉलेशन पहचानकर्ता, प्रदर्शन, कॉन्फ़िगरेशन, इवेंट और त्रुटि डेटा शामिल हैं। विवरण: developers.google.com/ml-kit/terms',
     },
     'de': {
       'checker.camera.webDecoder.short': 'Beim Scannen mit der Webkamera kann ein Decoder von der Drittanbieter-CDN jsDelivr geladen werden. Kamerabilder und dekodierte Inhalte werden nicht an diesen Dienst hochgeladen.',
@@ -150,6 +153,7 @@ class OrvikaFeatureTranslations {
       'checker.camera.previewError': 'Die Kameravorschau konnte nicht gestartet werden. {error}',
       'checker.camera.formats': 'Unterstützte Formate hängen von Kamera, Betriebssystem und Scan-Komponente ab. Nicht unterstützte Geräte können weiterhin die vorhandene Option zum Einfügen und Prüfen verwenden.',
       'checker.image.privacyNotice': 'ORVIKA greift für diesen Scan nur auf das von dir ausgewählte Bild zu. Die Bilddaten werden auf diesem Gerät analysiert und beim Verlassen dieses Bildschirms gelöscht. Das Betriebssystem oder der Browser kann die ausgewählte Datei vorübergehend zwischenspeichern.',
+      'checker.camera.androidMlKit.disclosure': 'Unter Android verwendet die Barcode-Erkennung Googles gebündeltes ML Kit. Scanbilder und dekodierte Inhalte werden auf diesem Gerät verarbeitet und nicht an Google gesendet. ML Kit kann Diagnose- und Nutzungsmetriken an Google senden, darunter Geräte- und App-Informationen, Installationskennungen, Leistungs-, Konfigurations-, Ereignis- und Fehlerdaten. Details: developers.google.com/ml-kit/terms',
     },
     'fr': {
       'checker.link.heading': 'Vérifiez avant de vous connecter.',
@@ -189,6 +193,7 @@ class OrvikaFeatureTranslations {
       'privacy.analytics.notice': 'Analyse du site web : ORVIKA utilise Vercel Web Analytics pour compter les pages vues de manière agrégée et recueillir des indicateurs de base concernant l’appareil, le navigateur, la provenance et la région approximative. Le forfait Vercel Hobby ne permet pas de mesurer des événements personnalisés liés à l’utilisation des fonctionnalités. ORVIKA n’envoie pas aux outils d’analyse les URL collées, le texte des messages, le contenu QR décodé, les identifiants ni les résultats des analyses de sécurité. Les statistiques du site sont séparées de l’analyse de sécurité effectuée sur l’appareil. Vercel indique que Web Analytics n’utilise pas de cookies et que les empreintes des visiteurs expirent après 24 heures.',
       'privacy.device.notice': 'ORVIKA n’analyse pas l’appareil, n’examine pas les applications installées, ne lit pas les données des comptes et ne modifie pas les autorisations. Les paramètres et leur intitulé varient selon la plateforme. Consultez les paramètres et la documentation officiels de chaque système d’exploitation ou service.',
 
+      'checker.camera.androidMlKit.disclosure': 'Sur Android, la reconnaissance des codes-barres utilise ML Kit de Google, intégré à l’application. Les images numérisées et le contenu décodé sont traités sur cet appareil et ne sont pas envoyés à Google. ML Kit peut envoyer à Google des données de diagnostic et des mesures d’utilisation, notamment des informations sur l’appareil et l’application, des identifiants d’installation, ainsi que des données de performance, de configuration, d’événements et d’erreurs. Détails : developers.google.com/ml-kit/terms',
     },
     'it': {
       'checker.link.heading': 'Verifica prima di connetterti.',
@@ -214,6 +219,7 @@ class OrvikaFeatureTranslations {
       'checker.image.privacyNotice': 'Per questa scansione ORVIKA accede soltanto all’immagine selezionata. I dati dell’immagine vengono analizzati su questo dispositivo e cancellati quando esci da questa schermata. Il sistema operativo o il browser potrebbe conservare temporaneamente nella cache il file selezionato.',
       'privacy.analytics.notice': 'Analisi del sito web: ORVIKA usa Vercel Web Analytics per conteggi aggregati delle visualizzazioni di pagina e metriche di base su dispositivo, browser, provenienza e area geografica approssimativa. Nel piano Vercel Hobby non sono disponibili eventi personalizzati sull’utilizzo delle funzioni. ORVIKA non invia come dati analitici URL incollati, testo dei messaggi, contenuti QR decodificati, credenziali o risultati delle analisi di sicurezza. Le analisi del sito sono separate dall’analisi di sicurezza eseguita sul dispositivo. Vercel dichiara che Web Analytics non usa cookie e che gli hash dei visitatori scadono dopo 24 ore.',
       'privacy.device.notice': 'ORVIKA non esegue scansioni del dispositivo, non esamina le app installate, non legge i dati degli account e non modifica le autorizzazioni. Impostazioni e denominazioni variano in base alla piattaforma. Usa le impostazioni e la documentazione ufficiali di ciascun sistema operativo o servizio.',
+      'checker.camera.androidMlKit.disclosure': 'Su Android, il riconoscimento dei codici a barre utilizza ML Kit di Google incluso nell\'app. Le immagini acquisite e i contenuti decodificati vengono elaborati su questo dispositivo e non vengono inviati a Google. ML Kit può inviare a Google dati diagnostici e metriche di utilizzo, tra cui informazioni sul dispositivo e sull\'app, identificativi di installazione e dati su prestazioni, configurazione, eventi ed errori. Dettagli: developers.google.com/ml-kit/terms',
     },
     'es': {
       'checker.link.heading': 'Comprueba antes de conectarte.',
@@ -252,6 +258,7 @@ class OrvikaFeatureTranslations {
       'checker.image.privacyNotice': 'Para este escaneo, ORVIKA solo accede a la imagen que seleccionaste. Los datos de la imagen se analizan en este dispositivo y se eliminan al salir de esta pantalla. El sistema operativo o el navegador puede almacenar temporalmente en caché el archivo seleccionado.',
       'privacy.analytics.notice': 'Analítica del sitio web: ORVIKA utiliza Vercel Web Analytics para contabilizar visitas a páginas de forma agregada y recopilar métricas básicas sobre dispositivo, navegador, referencia y región aproximada. El plan Vercel Hobby no ofrece eventos personalizados de uso de funciones. ORVIKA no envía a la analítica las URL pegadas, el texto de mensajes, el contenido QR decodificado, las credenciales ni los resultados de análisis de seguridad. La analítica del sitio está separada del análisis de seguridad realizado en el dispositivo. Vercel indica que Web Analytics no utiliza cookies y que los hashes de visitantes caducan después de 24 horas.',
       'privacy.device.notice': 'ORVIKA no escanea tu dispositivo, no inspecciona las aplicaciones instaladas, no lee datos de cuentas ni cambia permisos. Los ajustes y sus nombres varían según la plataforma. Utiliza la configuración y documentación oficiales de cada sistema operativo o servicio.',
+      'checker.camera.androidMlKit.disclosure': 'En Android, el reconocimiento de códigos de barras utiliza ML Kit de Google integrado en la aplicación. Las imágenes escaneadas y el contenido decodificado se procesan en este dispositivo y no se envían a Google. ML Kit puede enviar a Google datos de diagnóstico y métricas de uso, incluidos datos del dispositivo y de la aplicación, identificadores de instalación y datos de rendimiento, configuración, eventos y errores. Más información: developers.google.com/ml-kit/terms',
     },
     'pt': {
       'checker.link.heading': 'Confira antes de se conectar.',
@@ -312,6 +319,7 @@ class OrvikaFeatureTranslations {
       'checker.image.selectResult': 'Selecionar este resultado',
       'privacy.analytics.notice': 'Análise do site: o ORVIKA usa o Vercel Web Analytics para contabilizar visualizações de página de forma agregada e coletar métricas básicas sobre dispositivo, navegador, origem e região aproximada. O plano Vercel Hobby não oferece eventos personalizados de uso de recursos. O ORVIKA não envia URLs coladas, texto de mensagens, conteúdo QR decodificado, credenciais ou resultados de análises de segurança como dados analíticos. A análise do site é separada da análise de segurança realizada no dispositivo. A Vercel informa que o Web Analytics não usa cookies e que os hashes de visitantes expiram após 24 horas.',
       'privacy.device.notice': 'O ORVIKA não verifica seu dispositivo, não inspeciona aplicativos instalados, não lê dados de contas e não altera permissões. As configurações e seus nomes variam conforme a plataforma. Use as configurações e a documentação oficiais de cada sistema operacional ou serviço.',
+      'checker.camera.androidMlKit.disclosure': 'No Android, o reconhecimento de códigos de barras utiliza o ML Kit da Google incluído na aplicação. As imagens digitalizadas e o conteúdo descodificado são processados neste dispositivo e não são enviados para a Google. O ML Kit pode enviar à Google dados de diagnóstico e métricas de utilização, incluindo informações do dispositivo e da aplicação, identificadores de instalação e dados de desempenho, configuração, eventos e erros. Detalhes: developers.google.com/ml-kit/terms',
     },
     'pa': {
       'checker.link.heading': 'ਜੁੜਨ ਤੋਂ ਪਹਿਲਾਂ ਜਾਂਚ ਕਰੋ।',
@@ -328,6 +336,7 @@ class OrvikaFeatureTranslations {
       'checker.severity.info': 'ਜਾਣਕਾਰੀ',
       'checker.severity.caution': 'ਸਾਵਧਾਨੀ',
       'checker.severity.warning': 'ਚੇਤਾਵਨੀ',
+      'checker.camera.androidMlKit.disclosure': 'Android ਉੱਤੇ ਬਾਰਕੋਡ ਪਛਾਣ ਲਈ Google ਦਾ ਸ਼ਾਮਲ ਕੀਤਾ ਹੋਇਆ ML Kit ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ। ਸਕੈਨ ਕੀਤੀਆਂ ਤਸਵੀਰਾਂ ਅਤੇ ਡੀਕੋਡ ਕੀਤੀ ਸਮੱਗਰੀ ਇਸੇ ਡਿਵਾਈਸ ਉੱਤੇ ਪ੍ਰਕਿਰਿਆ ਕੀਤੀ ਜਾਂਦੀ ਹੈ ਅਤੇ Google ਨੂੰ ਨਹੀਂ ਭੇਜੀ ਜਾਂਦੀ। ML Kit Google ਨੂੰ ਨਿਦਾਨ ਅਤੇ ਵਰਤੋਂ ਦੇ ਮਾਪਦੰਡ ਭੇਜ ਸਕਦਾ ਹੈ, ਜਿਵੇਂ ਡਿਵਾਈਸ ਅਤੇ ਐਪ ਦੀ ਜਾਣਕਾਰੀ, ਇੰਸਟਾਲੇਸ਼ਨ ਪਛਾਣਕਰਤਾ, ਕਾਰਗੁਜ਼ਾਰੀ, ਸੰਰਚਨਾ, ਇਵੈਂਟ ਅਤੇ ਗਲਤੀ ਡਾਟਾ। ਵੇਰਵਾ: developers.google.com/ml-kit/terms',
     },
     'ur': {
       'checker.link.heading': 'رابطہ کرنے سے پہلے جانچیں۔',
@@ -420,6 +429,7 @@ class OrvikaFeatureTranslations {
       'academy.notice': 'ORVIKA Academy عمومی تعلیمی رہنمائی فراہم کرتی ہے، پیشہ ورانہ، قانونی یا مالی مشورہ نہیں۔ خطرات اور پلیٹ فارم کی سیٹنگز بدلتی رہتی ہیں؛ اہم ہدایات کی تصدیق سرکاری ذرائع سے کریں۔ سبق مکمل کرنا کسی مہارت یا قابلیت کا سرٹیفکیٹ نہیں۔',
       'response.urgent': 'اگر کسی کو فوری جسمانی خطرہ لاحق ہو تو مقامی ہنگامی خدمات سے رابطہ کریں۔ مالی نقصان کی صورت میں یا اکاؤنٹ پر قبضے کا شبہ ہو تو متعلقہ سروس فراہم کنندہ سے فوراً اس کے سرکاری ذریعے سے رابطہ کریں۔',
       'response.notice': 'ORVIKA Response عمومی تعلیمی رہنمائی فراہم کرتا ہے؛ یہ ہنگامی مدد، قانونی یا مالی مشورے، یا ماہرین کی جانب سے مناسب واقعہ جاتی ردِعمل کا متبادل نہیں۔ ایپ واقعات کا پتا نہیں لگاتی، سروس فراہم کنندگان یا حکام سے رابطہ نہیں کرتی، اکاؤنٹ کی سیٹنگز تبدیل نہیں کرتی اور واقعات کی رپورٹ جمع نہیں کراتی۔ رابطے کے ذرائع اور طریقۂ کار دائرۂ اختیار کے لحاظ سے مختلف ہوتے ہیں؛ آزادانہ طور پر تصدیق شدہ سرکاری ذرائع استعمال کریں۔',
+      'checker.camera.androidMlKit.disclosure': 'Android پر بارکوڈ کی شناخت کے لیے Google کا شامل شدہ ML Kit استعمال ہوتا ہے۔ اسکین کی گئی تصاویر اور ڈی کوڈ شدہ مواد اسی آلے پر پراسیس ہوتے ہیں اور Google کو نہیں بھیجے جاتے۔ ML Kit Google کو تشخیصی اور استعمال کے اعدادوشمار بھیج سکتا ہے، جن میں آلے اور ایپ کی معلومات، انسٹالیشن شناخت کنندگان، کارکردگی، ترتیب، واقعات اور خرابیوں کا ڈیٹا شامل ہے۔ تفصیل: developers.google.com/ml-kit/terms',
     },
     'ar': {
       'checker.link.heading': 'تحقّق قبل الاتصال.',
@@ -469,6 +479,7 @@ class OrvikaFeatureTranslations {
       'checker.image.selectResult': 'استخدام المحتوى المفكوك للفحص',
       'privacy.analytics.notice': 'ملاحظة التحليلات: بيانات استخدام التطبيق، إن جُمعت، منفصلة عن محتوى الفحوصات. لا تُدرج الروابط أو الرسائل أو محتوى QR أو البيانات الشخصية في بيانات التحليلات.',
       'privacy.device.notice': 'ملاحظة الجهاز: تُحفظ تفضيلات التطبيق وتقدّم المراجعة على هذا الجهاز. لا يعني ذلك أن ORVIKA تفحص إعدادات النظام أو تغيّرها.',
+      'checker.camera.androidMlKit.disclosure': 'على Android، يستخدم التعرّف على الرموز الشريطية ML Kit المضمّن من Google. تُعالَج صور المسح والمحتويات المفككة على هذا الجهاز ولا تُرسل إلى Google. قد يرسل ML Kit إلى Google بيانات التشخيص ومقاييس الاستخدام، بما في ذلك معلومات الجهاز والتطبيق ومعرّفات التثبيت وبيانات الأداء والإعدادات والأحداث والأخطاء. التفاصيل: developers.google.com/ml-kit/terms',
     },
     'mr': {
       'checker.link.heading': 'जोडण्यापूर्वी तपासा.',
@@ -560,6 +571,7 @@ class OrvikaFeatureTranslations {
       'response.preserve': 'महत्त्वाची माहिती जतन करा',
       'response.avoid': 'काय टाळावे',
       'response.limit': 'महत्त्वाची मर्यादा',
+      'checker.camera.androidMlKit.disclosure': 'Android वर बारकोड ओळखण्यासाठी Google चे समाविष्ट ML Kit वापरले जाते. स्कॅन केलेल्या प्रतिमा आणि डिकोड केलेला मजकूर याच उपकरणावर प्रक्रिया केला जातो आणि Google कडे पाठवला जात नाही. ML Kit Google कडे निदान आणि वापरविषयक मेट्रिक्स पाठवू शकते; यामध्ये उपकरण व अॅपची माहिती, इन्स्टॉलेशन ओळखचिन्हे, कार्यक्षमता, कॉन्फिगरेशन, घटना आणि त्रुटींचा डेटा समाविष्ट असतो. तपशील: developers.google.com/ml-kit/terms',
     },
     'gu': {
       'checker.link.heading': 'જોડાતા પહેલાં તપાસો.',
@@ -652,6 +664,7 @@ class OrvikaFeatureTranslations {
       'academy.notice': 'ORVIKA Academy સામાન્ય શૈક્ષણિક માર્ગદર્શન આપે છે, વ્યાવસાયિક, કાનૂની કે નાણાકીય સલાહ નહીં. જોખમો અને પ્લેટફોર્મની સેટિંગ્સ બદલાતી રહે છે; મહત્ત્વપૂર્ણ સૂચનાઓ સત્તાવાર સ્ત્રોતો દ્વારા ચકાસો. પાઠ પૂર્ણ કરવો એ નિષ્ણાત લાયકાતનો પુરાવો નથી.',
       'response.urgent': 'જો કોઈને તાત્કાલિક શારીરિક જોખમ હોય, તો સ્થાનિક કટોકટી સેવાઓનો સંપર્ક કરો. નાણાકીય નુકસાન થયું હોય અથવા ખાતા પર કબજો થયો હોવાની શંકા હોય, તો સંબંધિત સેવા પ્રદાતાનો સત્તાવાર માધ્યમથી તરત સંપર્ક કરો.',
       'response.notice': 'ORVIKA Response સામાન્ય શૈક્ષણિક માર્ગદર્શન આપે છે; તે કટોકટી સહાય, કાનૂની કે નાણાકીય સલાહ અથવા યોગ્ય નિષ્ણાત દ્વારા થતી ઘટના-પ્રતિસાદ કાર્યવાહીનો વિકલ્પ નથી. એપ્લિકેશન ઘટનાઓ શોધતી નથી, સેવા પ્રદાતાઓ કે સત્તાધિકારીઓનો સંપર્ક કરતી નથી, ખાતાની સેટિંગ્સ બદલતી નથી અને ઘટનાની જાણ કરતી નથી. સંપર્કના માધ્યમો અને પ્રક્રિયાઓ અધિકારક્ષેત્ર પ્રમાણે બદલાય છે; સ્વતંત્ર રીતે ચકાસેલા સત્તાવાર સ્ત્રોતોનો ઉપયોગ કરો.',
+      'checker.camera.androidMlKit.disclosure': 'Android પર બારકોડ ઓળખવા માટે Googleનું સમાવિષ્ટ ML Kit વપરાય છે. સ્કૅન કરેલી છબીઓ અને ડિકોડ કરેલી સામગ્રી આ જ ઉપકરણ પર પ્રક્રિયા થાય છે અને Googleને મોકલાતી નથી. ML Kit Googleને નિદાન અને ઉપયોગના માપદંડ મોકલી શકે છે, જેમાં ઉપકરણ અને ઍપની વિગતો, ઇન્સ્ટોલેશન ઓળખચિહ્નો, કામગીરી, ગોઠવણી, ઇવેન્ટ અને ભૂલનો ડેટા સામેલ છે. વિગતો: developers.google.com/ml-kit/terms',
     },
     'sa': {
       'checker.link.heading': 'सम्पर्कात् पूर्वं परीक्षताम्।',
@@ -743,6 +756,7 @@ class OrvikaFeatureTranslations {
       'response.preserve': 'महत्त्वपूर्णसूचनां रक्षतु',
       'response.avoid': 'किम् परिहरणीयम्',
       'response.limit': 'महत्त्वपूर्णा सीमा',
+      'checker.camera.androidMlKit.disclosure': 'Android मध्ये सङ्केतरेखाणां परिचयाय Google-संयुक्तं ML Kit उपयुज्यते। स्कैनचित्राणि विमोचितविषयाश्च अस्मिन्नेव उपकरणे संसाध्यन्ते, Google प्रति न प्रेष्यन्ते। ML Kit निदानार्थं उपयोगमापनानि च Google प्रति प्रेषयितुं शक्नोति; तेषु उपकरण-अनुप्रयोगविवरणानि, स्थापनासङ्केताः, कार्यक्षमता, विन्यासः, घटनाः, दोषदत्तांशाश्च अन्तर्भवन्ति। विवरणम्: developers.google.com/ml-kit/terms',
     },
   };
 
