@@ -8,11 +8,11 @@ void main() {
   group('URL analyzer boundary and adversarial regression', () {
     const analyzer = UrlAnalyzer();
 
-    test('accepts the documented 2,048-character boundary and rejects 2,049', () {
+    test('accepts the documented 8,192-character boundary and rejects 8,193', () {
       const prefix = 'https://example.com/';
-      final atLimit = '$prefix${'a' * (2048 - prefix.length)}';
-      final overLimit = '$prefix${'a' * (2049 - prefix.length)}';
-      expect(atLimit.length, 2048);
+      final atLimit = '$prefix${'a' * (8192 - prefix.length)}';
+      final overLimit = '$prefix${'a' * (8193 - prefix.length)}';
+      expect(atLimit.length, 8192);
       expect(analyzer.analyze(atLimit).isValid, isTrue);
       expect(analyzer.analyze(overLimit).isValid, isFalse);
     });
