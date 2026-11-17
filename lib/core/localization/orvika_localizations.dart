@@ -1626,8 +1626,9 @@ class OrvikaLocalizations {
 
   /// True only when the selected language contains an authored value for [key].
   bool hasTranslation(String key) =>
-      translatedLanguageCodes.contains(language.code) &&
-      _translations.containsKey(key);
+      _translations.containsKey(key) &&
+      (translatedLanguageCodes.contains(language.code) ||
+          OrvikaLegalTranslations.forCode(language.code).containsKey(key));
 
   /// Resolves a key using the existing positional-fallback API.
   String text(String key, [String? fallback]) =>
