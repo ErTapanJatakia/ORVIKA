@@ -37,25 +37,19 @@ void main() {
     }
   });
 
-  testWidgets('first launch language selection immediately opens the dashboard', (tester) async {
+  testWidgets('first launch opens the English dashboard without a language gate', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Choose your language'), findsOneWidget);
-    await tester.enterText(find.byType(TextField), 'English');
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('language-en')));
-    await tester.pumpAndSettle();
-
     expect(find.text('Your safety toolkit'), findsOneWidget);
     expect(find.text('Choose your language'), findsNothing);
+    expect(find.byTooltip('Change language'), findsOneWidget);
     final dashboardContext = tester.element(find.text('Your safety toolkit'));
     expect(MediaQuery.textScalerOf(dashboardContext).scale(10), 10.0,
         reason: 'A first launch should use the 100% default text size');
     final preferences = await SharedPreferences.getInstance();
     expect(preferences.getString('appearance.language'), 'en');
-    expect(preferences.getBool('onboarding.completed.v1'), isTrue);
   });
 
   testWidgets('draft packs expose native-script text and provisional font fallbacks', (tester) async {
@@ -79,7 +73,7 @@ void main() {
 
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
-    final textTheme = Theme.of(tester.element(find.text('Choose your language'))).textTheme;
+    final textTheme = Theme.of(tester.element(find.text('Your safety toolkit'))).textTheme;
     expect(
       textTheme.bodyMedium?.fontFamilyFallback,
       containsAll(const [
@@ -103,8 +97,10 @@ void main() {
       await tester.pumpWidget(const OrvikaApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Choose your language'), findsOneWidget);
-      expect(find.text('Your safety toolkit'), findsNothing);
+      expect(find.text('Your safety toolkit'), findsOneWidget);
+      expect(find.text('Choose your language'), findsNothing);
+      await tester.tap(find.byTooltip('Change language'));
+      await tester.pumpAndSettle();
       expect(find.bySemanticsLabel(
         'Languages listed: 192. Available to select: 4',
       ), findsOneWidget);
@@ -137,6 +133,9 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
+    expect(find.text('Your safety toolkit'), findsOneWidget);
+    await tester.tap(find.byTooltip('Change language'));
+    await tester.pumpAndSettle();
     expect(find.text('Continue'), findsNothing);
     await tester.enterText(find.byType(TextField), 'Hindi');
     await tester.pumpAndSettle();
@@ -163,7 +162,7 @@ void main() {
     expect(find.text('Check before\nyou trust.'), findsOneWidget);
     expect(find.byType(OrvikaOwlMark), findsWidgets);
     await revealDashboardContent(tester);
-    expect(find.text('Sentinel'), findsOneWidget);
+    expect(find.text('Sentinel'), findsNothing);
     expect(find.text('Link Check'), findsOneWidget);
     expect(find.text('QR Check'), findsOneWidget);
     expect(find.text('Message Check'), findsOneWidget);
@@ -400,6 +399,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Change language'));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Tatar');
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('language-tt')), findsNothing);
@@ -447,6 +448,8 @@ void main() {
     SharedPreferences.setMockInitialValues({'appearance.theme': 'daylight'});
     await tester.pumpWidget(const OrvikaApp());
     await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Change language'));
+    await tester.pumpAndSettle();
 
     expect(find.text('Choose your language'), findsOneWidget);
     final context = tester.element(find.text('Choose your language'));
@@ -457,6 +460,8 @@ void main() {
   testWidgets('first launch language picker can search and select a regional language', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Change language'));
     await tester.pumpAndSettle();
 
     expect(find.text('Choose your language'), findsOneWidget);
@@ -500,6 +505,8 @@ void main() {
   testWidgets('reviewed Arabic locale is selectable and opens the Arabic dashboard', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const OrvikaApp());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Change language'));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField), 'Arabic');
@@ -765,7 +772,6 @@ void main() {
     // Every dashboard module description must remain present and wrap naturally
     // at 200% scaling; fixed line caps previously hid part of the copy.
     const dashboardDescriptions = [
-      'Your safety overview and recent checks.',
       'Inspect website addresses before you open them.',
       'Review decoded QR content before taking action.',
       'Review suspicious texts, emails and messages.',
@@ -851,14 +857,9 @@ void main() {
       isTrue,
     );
 
-    final overviewCard = find.bySemanticsLabel(
+    expect(find.bySemanticsLabel(
       'Sentinel. Your safety overview and recent checks. OVERVIEW.',
-    );
-    expect(overviewCard, findsOneWidget);
-    expect(
-      tester.getSemantics(overviewCard).getSemanticsData().hasAction(SemanticsAction.tap),
-      isFalse,
-    );
+    ), findsNothing);
 
     expect(find.byType(FocusTraversalGroup), findsWidgets);
     semantics.dispose();
