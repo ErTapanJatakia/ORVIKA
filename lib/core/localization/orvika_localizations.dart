@@ -1595,7 +1595,7 @@ class OrvikaLocalizations {
   /// Language packs currently containing authored ORVIKA strings.
   /// A picker entry alone is never evidence of translation coverage.
   static const Set<String> translatedLanguageCodes = {
-    'ru', 'es', 'hi', 'de', 'fr', 'it', 'pt', 'pt-PT', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
+    'en', 'ru', 'es', 'hi', 'de', 'fr', 'it', 'pt', 'pt-PT', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
   };
 
   static const Set<String> rightToLeftLanguageCodes = {'ar', 'ur', 'he', 'fa', 'ps'};
@@ -1620,7 +1620,6 @@ class OrvikaLocalizations {
   /// True only when the selected language contains an authored value for [key].
   bool hasTranslation(String key) =>
       translatedLanguageCodes.contains(language.code) &&
-      language.code != 'en' &&
       _translations.containsKey(key);
 
   /// Resolves a key using the existing positional-fallback API.
