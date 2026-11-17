@@ -65,12 +65,21 @@ void main() {
     expect(find.text('WHAT YOU CAN DO'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
 
-    final reviewControl = find.byType(CheckboxListTile).first;
+    final practiceTile = find.ancestor(
+      of: firstPractice,
+      matching: find.byType(ExpansionTile),
+    );
+    final reviewControl = find.descendant(
+      of: practiceTile,
+      matching: find.byType(CheckboxListTile),
+    );
+    expect(reviewControl, findsOneWidget);
     await tester.dragUntilVisible(
       reviewControl,
       find.byType(ListView).first,
       const Offset(0, -300),
     );
+    await tester.pumpAndSettle();
     await tester.tap(reviewControl);
     await tester.pumpAndSettle();
 
