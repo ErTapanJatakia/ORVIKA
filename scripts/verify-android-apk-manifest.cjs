@@ -12,7 +12,7 @@ const applicationId = badging.match(/^package: name='([^']+)'/m)?.[1];
 assert.equal(applicationId, 'com.orvika.app', 'Built APK application ID must be com.orvika.app');
 
 const permissionsOutput = execFileSync(aapt, ['dump', 'permissions', apk], { encoding: 'utf8' });
-const permissions = [...permissionsOutput.matchAll(/^uses-permission(?:-sdk-\\d+)?: name='([^']+)'/gm)]
+const permissions = [...permissionsOutput.matchAll(/^uses-permission(?:-sdk-\d+)?: name='([^']+)'/gm)]
   .map((match) => match[1]);
 const actual = [...new Set(permissions)].sort();
 const dynamicReceiverPermission = `${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`;
@@ -37,9 +37,9 @@ const manifestTree = execFileSync(
   ['dump', 'xmltree', apk, 'AndroidManifest.xml'],
   { encoding: 'utf8' },
 );
-const manifestElements = manifestTree.split(/(?=^\\s*E: )/m);
+const manifestElements = manifestTree.split(/(?=^\s*E: )/m);
 const dynamicPermissionDeclaration = manifestElements.find((element) =>
-  /^\\s*E: permission(?:\\s|$)/.test(element) &&
+  /^\s*E: permission(?:\s|$)/.test(element) &&
   element.includes(dynamicReceiverPermission),
 );
 assert.ok(
