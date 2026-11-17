@@ -1,6 +1,6 @@
 # ORVIKA Privacy Notice
 
-Last reviewed: 9 November 2026  
+Last reviewed: 17 November 2026  
 Applies to: current ORVIKA Web and application prototype
 
 ## At a glance
@@ -64,3 +64,11 @@ For a suspected vulnerability, use the repository's Security tab and private vul
 ## Changes
 
 This notice should be updated when the application adds network-connected analysis, accounts, synchronisation, new analytics, new data storage or materially different third-party dependencies.
+
+## App developer and Data Protection Officer
+
+**Name:** Er. Tapan Jatakia (C.Eng.)  
+**Contact email:** ertapanjatakia@yandex.com  
+**Additional contact email:** tapan_ditu_17.20@outlook.com  
+**Contact number:** +91 9664332984  
+**Website:** http://linktr.ee/ertapanjatakia
