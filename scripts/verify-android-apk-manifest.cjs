@@ -15,7 +15,7 @@ const permissionsOutput = execFileSync(aapt, ['dump', 'permissions', apk], { enc
 const permissions = [...permissionsOutput.matchAll(/^uses-permission(?:-sdk-\d+)?: name='([^']+)'/gm)]
   .map((match) => match[1]);
 const actual = [...new Set(permissions)].sort();
-const dynamicReceiverPermission = \`\${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION\`;
+const dynamicReceiverPermission = `${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`;
 const expected = [
   'android.permission.ACCESS_NETWORK_STATE',
   'android.permission.CAMERA',
@@ -44,7 +44,7 @@ const dynamicPermissionDeclaration = manifestElements.find((element) =>
 );
 assert.ok(
   dynamicPermissionDeclaration,
-  \`Merged APK manifest must declare \${dynamicReceiverPermission}\`,
+  `Merged APK manifest must declare ${dynamicReceiverPermission}`,
 );
 // aapt may print a typed integer attribute as "(type 0x11)0x2" rather than
 // the bare "0x2". Accept that formatting variation, but require the exact
@@ -56,6 +56,6 @@ assert.match(
 );
 
 console.log('Built APK identity and merged-manifest permissions verified.');
-console.log(\`- Application ID: \${applicationId}\`);
-console.log(\`- Permissions: \${actual.join(', ')}\`);
+console.log(`- Application ID: ${applicationId}`);
+console.log(`- Permissions: ${actual.join(', ')}`);
 console.log('- AndroidX dynamic receiver permission: declared with signature protection');
