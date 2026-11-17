@@ -540,7 +540,7 @@ void main() {
       }
     });
 
-    test('five locales cover the first complete privacy and accessibility legal-content batch', () {
+    test('twelve locales cover the first complete privacy and accessibility legal-content batch', () {
       const privacyKeys = [
         'privacy.notice.intro',
         'privacy.notice.reviewed',
@@ -574,7 +574,7 @@ void main() {
         ...privacyKeys,
         ...accessibilityKeys,
       ];
-      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es', 'de', 'fr', 'it', 'ar', 'ur', 'pa']) {
+      for (final code in ['en', 'ru', 'hi', 'pt', 'pt-PT', 'es', 'de', 'fr', 'it', 'ar', 'ur', 'pa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in legalContentKeys) {
           expect(localization.hasTranslation(key), isTrue,
