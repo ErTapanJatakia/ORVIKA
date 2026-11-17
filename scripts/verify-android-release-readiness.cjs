@@ -61,9 +61,32 @@ assert.match(manifest, /android:usesCleartextTraffic="false"/);
 assert.match(manifest, /android:allowBackup="false"/);
 assert.match(manifest, /android:fullBackupContent="@xml\/backup_rules"/);
 assert.match(manifest, /android:dataExtractionRules="@xml\/data_extraction_rules"/);
-assert.match(legacyBackupRules, /<exclude domain="root" path="\."\s*\/>/);
-assert.match(extractionRules, /<cloud-backup>[\s\S]*?<exclude domain="root" path="\."\s*\/>[\s\S]*?<\/cloud-backup>/);
-assert.match(extractionRules, /<device-transfer>[\s\S]*?<exclude domain="root" path="\."\s*\/>[\s\S]*?<\/device-transfer>/);
+const backupDomains = [
+  'root',
+  'file',
+  'database',
+  'sharedpref',
+  'external',
+  'device_root',
+  'device_file',
+  'device_database',
+  'device_sharedpref',
+];
+const assertBackupDomainsExcluded = (xml, domains, context) => {
+  for (const domain of domains) {
+    assert.ok(
+      xml.includes(`<exclude domain="${domain}" path="." />`),
+      `${context} must exclude the ${domain} storage domain`,
+    );
+  }
+};
+assertBackupDomainsExcluded(legacyBackupRules, backupDomains, 'Legacy backup rules');
+const cloudBackupRules = extractionRules.match(/<cloud-backup>([\\s\\S]*?)<\\/cloud-backup>/)?.[1];
+const deviceTransferRules = extractionRules.match(/<device-transfer>([\\s\\S]*?)<\\/device-transfer>/)?.[1];
+assert.ok(cloudBackupRules, 'Android 12+ cloud-backup rules are required');
+assert.ok(deviceTransferRules, 'Android 12+ device-transfer rules are required');
+assertBackupDomainsExcluded(cloudBackupRules, backupDomains, 'Android 12+ cloud backup rules');
+assertBackupDomainsExcluded(deviceTransferRules, backupDomains, 'Android 12+ device-transfer rules');
 assert.match(manifest, /android:name="android\.hardware\.camera"[\s\S]*?android:required="false"/);
 assert.match(
   manifest,
