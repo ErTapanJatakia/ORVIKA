@@ -10,9 +10,14 @@ from pathlib import Path
 
 ANDROID_NS = "{http://schemas.android.com/apk/res/android}"
 EXPECTED_PACKAGE = "com.orvika.app"
+DYNAMIC_RECEIVER_PERMISSION = (
+    f"{EXPECTED_PACKAGE}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+)
 EXPECTED_PERMISSIONS = {
+    "android.permission.ACCESS_NETWORK_STATE",
     "android.permission.CAMERA",
     "android.permission.INTERNET",
+    DYNAMIC_RECEIVER_PERMISSION,
 }
 
 
@@ -47,6 +52,7 @@ def read_module_manifest(bundletool: Path, bundle_path: Path, module: str) -> ET
 def verify(bundletool: Path, bundle_path: Path) -> None:
     modules = module_names(bundle_path)
     all_permissions: set[str] = set()
+    has_signature_protected_dynamic_receiver_permission = False
 
     for module in modules:
         manifest = read_module_manifest(bundletool, bundle_path, module)
@@ -58,23 +64,39 @@ def verify(bundletool: Path, bundle_path: Path) -> None:
             )
 
         for element in manifest:
-            if element.tag.rsplit("}", 1)[-1].startswith("uses-permission"):
+            element_name = element.tag.rsplit("}", 1)[-1]
+            if element_name.startswith("uses-permission"):
                 permission = element.get(ANDROID_NS + "name")
                 if permission:
                     all_permissions.add(permission)
+            elif element_name == "permission":
+                permission = element.get(ANDROID_NS + "name")
+                protection_level = element.get(ANDROID_NS + "protectionLevel", "")
+                if (
+                    permission == DYNAMIC_RECEIVER_PERMISSION
+                    and protection_level.lower() == "signature"
+                ):
+                    has_signature_protected_dynamic_receiver_permission = True
 
     if all_permissions != EXPECTED_PERMISSIONS:
         unexpected = sorted(all_permissions - EXPECTED_PERMISSIONS)
         missing = sorted(EXPECTED_PERMISSIONS - all_permissions)
         raise ValueError(
-            "AAB merged module permission set differs from the reviewed allowlist; "
-            f"unexpected={unexpected}, missing={missing}"
+            "AAB merged module permission set differs from the reviewed Android + "
+            f"AndroidX allowlist; unexpected={unexpected}, missing={missing}"
+        )
+
+    if not has_signature_protected_dynamic_receiver_permission:
+        raise ValueError(
+            "AAB must declare the AndroidX dynamic receiver permission "
+            f"{DYNAMIC_RECEIVER_PERMISSION!r} with signature protection"
         )
 
     print("Android App Bundle module manifests verified.")
     print(f"- Modules: {', '.join(modules)}")
     print(f"- Application ID: {EXPECTED_PACKAGE}")
     print(f"- Permissions: {', '.join(sorted(all_permissions))}")
+    print("- AndroidX dynamic receiver permission: declared with signature protection")
 
 
 def main() -> int:
