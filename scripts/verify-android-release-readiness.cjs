@@ -68,6 +68,11 @@ assert.match(
   /- name: Detect production signing secrets\s+if: inputs\.build_signed_release == true/,
   'Signing secrets must remain behind explicit signed-release approval',
 );
+assert.match(
+  androidWorkflow,
+  /- name: Require signing secrets when signed release is explicitly requested\\s+if: inputs\\.build_signed_release == true && steps\\.signing\\.outputs\\.configured != 'true'[\\s\\S]*?exit 1/,
+  'An explicitly requested signed release must fail closed when signing secrets are missing',
+);
 assert.match(manifest, /android:usesCleartextTraffic="false"/);
 assert.match(manifest, /android:allowBackup="false"/);
 assert.match(manifest, /android:fullBackupContent="@xml\/backup_rules"/);
