@@ -49,6 +49,7 @@ const legacyBackupRules = read('android/app/src/main/res/xml/backup_rules.xml');
 const extractionRules = read('android/app/src/main/res/xml/data_extraction_rules.xml');
 const ignore = read('android/.gitignore');
 const pubspec = read('pubspec.yaml');
+const androidWorkflow = read('.github/workflows/android-build.yml');
 
 assert.match(settings, /id\("com\.android\.application"\)\s+version\s+"[0-9.]+"/);
 assert.match(settings, /id\("org\.jetbrains\.kotlin\.android"\)\s+version\s+"[0-9.]+"/);
@@ -57,6 +58,16 @@ assert.match(appGradle, /applicationId = "com\.orvika\.app"/);
 assert.match(appGradle, /sourceCompatibility = JavaVersion\.VERSION_17/);
 assert.match(appGradle, /targetCompatibility = JavaVersion\.VERSION_17/);
 assert.match(appGradle, /throw GradleException\([\s\S]*?release signing is not configured/);
+assert.match(
+  androidWorkflow,
+  /android-validation:[\\s\\S]*?if: github\\.ref == 'refs\\/heads\\/main'/,
+  'Android validation and signing must run only from main',
+);
+assert.match(
+  androidWorkflow,
+  /- name: Detect production signing secrets\\s+if: inputs\\.build_signed_release == true/,
+  'Signing secrets must remain behind explicit signed-release approval',
+);
 assert.match(manifest, /android:usesCleartextTraffic="false"/);
 assert.match(manifest, /android:allowBackup="false"/);
 assert.match(manifest, /android:fullBackupContent="@xml\/backup_rules"/);
