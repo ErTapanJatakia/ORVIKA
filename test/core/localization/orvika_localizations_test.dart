@@ -512,6 +512,30 @@ void main() {
       }
     });
 
+    test('legal contact labels stay outside feature packs and resolve independently', () {
+      const legalKeys = [
+        'a11y.statement.contact.auditor',
+        'a11y.statement.contact.name',
+        'a11y.statement.contact.email',
+        'a11y.statement.contact.phone',
+        'a11y.statement.contact.website',
+      ];
+      for (final code in ['en', 'ru', 'es', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        final featurePack = OrvikaFeatureTranslations.forCode(code);
+        for (final key in legalKeys) {
+          expect(featurePack.containsKey(key), isFalse,
+              reason: '$code must keep legal labels out of feature translations');
+          expect(localization.text(key), isNot(key),
+              reason: '$code is missing its separate legal label $key');
+        }
+      }
+      for (final key in legalKeys) {
+        expect(OrvikaLocalizations.requiredTranslationKeys.contains(key), isFalse,
+            reason: '$key must not change the established feature baseline');
+      }
+    });
+
     test('missing translations use explicit English fallback', () {
       final localization = OrvikaLocalizations(OrvikaLanguage.fromCode('ce'));
       expect(localization.text('feature.title', 'Feature title'), 'Feature title');
