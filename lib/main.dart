@@ -1180,23 +1180,23 @@ class SentinelDashboard extends StatelessWidget {
   // from the dashboard until its dedicated destination and capabilities exist.
   // Re-enable by changing this flag to true after the feature is implemented.
   static const bool sentinelEnabled = false;
-  static const _SafetyModule sentinelModule = _SafetyModule(
+  static const SafetyModule sentinelModule = SafetyModule(
     'Sentinel',
     'Your safety overview and recent checks.',
     Icons.shield_moon_outlined,
-    _ModuleAccent.cyan,
+    ModuleAccent.cyan,
     'OVERVIEW',
   );
 
-  static const modules = <_SafetyModule>[
+  static const modules = <SafetyModule>[
     if (sentinelEnabled) sentinelModule,
-    _SafetyModule('Link Check', 'Inspect website addresses before you open them.', Icons.link_rounded, _ModuleAccent.cyan, 'AVAILABLE'),
-    _SafetyModule('QR Check', 'Review decoded QR content before taking action.', Icons.qr_code_scanner_rounded, _ModuleAccent.violet, 'AVAILABLE'),
-    _SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, _ModuleAccent.amber, 'AVAILABLE'),
-    _SafetyModule('Intelligence', 'Explore explainable digital-risk indicators and safer next steps.', Icons.radar_rounded, _ModuleAccent.violet, 'AVAILABLE'),
-    _SafetyModule('Privacy', 'Review practical privacy controls with a guided self-audit.', Icons.privacy_tip_outlined, _ModuleAccent.green, 'AVAILABLE'),
-    _SafetyModule('Academy', 'Build everyday cyber-safety knowledge with short lessons and knowledge checks.', Icons.school_outlined, _ModuleAccent.cyan, 'AVAILABLE'),
-    _SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, _ModuleAccent.amber, 'AVAILABLE'),
+    SafetyModule('Link Check', 'Inspect website addresses before you open them.', Icons.link_rounded, ModuleAccent.cyan, 'AVAILABLE'),
+    SafetyModule('QR Check', 'Review decoded QR content before taking action.', Icons.qr_code_scanner_rounded, ModuleAccent.violet, 'AVAILABLE'),
+    SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, ModuleAccent.amber, 'AVAILABLE'),
+    SafetyModule('Intelligence', 'Explore explainable digital-risk indicators and safer next steps.', Icons.radar_rounded, ModuleAccent.violet, 'AVAILABLE'),
+    SafetyModule('Privacy', 'Review practical privacy controls with a guided self-audit.', Icons.privacy_tip_outlined, ModuleAccent.green, 'AVAILABLE'),
+    SafetyModule('Academy', 'Build everyday cyber-safety knowledge with short lessons and knowledge checks.', Icons.school_outlined, ModuleAccent.cyan, 'AVAILABLE'),
+    SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, ModuleAccent.amber, 'AVAILABLE'),
   ];
 
   @override
@@ -2024,18 +2024,18 @@ class _OwlPainter extends CustomPainter {
   bool shouldRepaint(covariant _OwlPainter oldDelegate) => oldDelegate.palette != palette;
 }
 
-enum _ModuleAccent { cyan, violet, green, amber }
+enum ModuleAccent { cyan, violet, green, amber }
 
-class _SafetyModule {
-  const _SafetyModule(this.title, this.description, this.icon, this.accent, this.status);
+class SafetyModule {
+  const SafetyModule(this.title, this.description, this.icon, this.accent, this.status);
   final String title, description, status;
   final IconData icon;
-  final _ModuleAccent accent;
+  final ModuleAccent accent;
 }
 
 class _ModuleCard extends StatefulWidget {
   const _ModuleCard({required this.module, required this.palette, this.onTap});
-  final _SafetyModule module;
+  final SafetyModule module;
   final OrvikaPalette palette;
   final VoidCallback? onTap;
 
@@ -2047,10 +2047,10 @@ class _ModuleCardState extends State<_ModuleCard> {
   bool _hasKeyboardFocus = false;
 
   Color _accent() => switch (widget.module.accent) {
-    _ModuleAccent.cyan => widget.palette.primary,
-    _ModuleAccent.violet => widget.palette.secondary,
-    _ModuleAccent.green => widget.palette.success,
-    _ModuleAccent.amber => widget.palette.warning,
+    ModuleAccent.cyan => widget.palette.primary,
+    ModuleAccent.violet => widget.palette.secondary,
+    ModuleAccent.green => widget.palette.success,
+    ModuleAccent.amber => widget.palette.warning,
   };
 
   @override
@@ -2236,7 +2236,7 @@ class _TrustNote extends StatelessWidget {
 }
 
 
-_SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
+SafetyModule _localizedModule(SafetyModule module, OrvikaLanguage language) {
   final strings = OrvikaLocalizations(language);
   final key = switch (module.title) {
     'Sentinel' => 'sentinel',
@@ -2250,7 +2250,7 @@ _SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
     _ => '',
   };
   if (key.isEmpty || language.code == 'en') return module;
-  return _SafetyModule(
+  return SafetyModule(
     strings.text('module.$key', module.title),
     strings.text('module.$key.description', module.description),
     module.icon,
