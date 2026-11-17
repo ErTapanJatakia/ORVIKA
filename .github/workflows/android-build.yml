@@ -214,6 +214,14 @@ jobs:
             echo "Production signing secrets are not configured; signed store artifacts will be skipped."
           fi
 
+      - name: Require signing secrets when signed release is explicitly requested
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured != 'true'
+        shell: bash
+        run: |
+          echo "Signed release was explicitly requested, but one or more required signing secrets are missing." >&2
+          echo "Configure all four ORVIKA_UPLOAD_* signing secrets or rerun with build_signed_release=false." >&2
+          exit 1
+
       - name: Configure production signing without committing secrets
         if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
         shell: bash
