@@ -49,7 +49,8 @@ void main() {
     expect(MediaQuery.textScalerOf(dashboardContext).scale(10), 10.0,
         reason: 'A first launch should use the 100% default text size');
     final preferences = await SharedPreferences.getInstance();
-    expect(preferences.getString('appearance.language'), 'en');
+    expect(preferences.getString('appearance.language'), isNull,
+        reason: 'English is the fresh-install runtime default; no explicit choice is persisted until the user changes it.');
   });
 
   testWidgets('draft packs expose native-script text and provisional font fallbacks', (tester) async {
