@@ -2283,10 +2283,6 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
       'Questions and security reports',
       'For security concerns, use the repository Security tab and its private vulnerability reporting option when available. Do not publish exploit details or personal information in a public issue.',
     ),
-    (
-      'App developer and Data Protection Officer',
-      'Er. Tapan Jatakia (C.Eng.)\\nContact email: ertapanjatakia@yandex.com\\ntapan_ditu_17.20@outlook.com\\nContact number: +91 9664332984\\nWebsite: http://linktr.ee/ertapanjatakia',
-    ),
   ];
 
   @override
@@ -2319,6 +2315,21 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               Text(
                 'This notice describes the current implementation, not a guarantee that every platform or future feature has identical behaviour. Recheck this notice when ORVIKA adds network-connected services or changes analytics.',
                 style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'App developer and Data Protection Officer',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const SelectableText(
+                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
+                'Contact email: ertapanjatakia@yandex.com\\n'
+                'Additional email: tapan_ditu_17.20@outlook.com\\n'
+                'Contact number: +91 9664332984\\n'
+                'Website: http://linktr.ee/ertapanjatakia',
               ),
             ],
           ),
