@@ -59,9 +59,9 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
               const SizedBox(height: 6),
               const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\\n'
-                'Email: cyber.litigation.advisor@gmail.com\\n'
-                'Phone Number: +91 9664332984\\n'
+                'Name: Er. Tapan Jatakia (C.Eng.)\n'
+                'Email: cyber.litigation.advisor@gmail.com\n'
+                'Phone Number: +91 9664332984\n'
                 'Website: https://linktr.ee/ertapanjatakia',
               ),
               if (kIsWeb) ...[
