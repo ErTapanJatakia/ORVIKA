@@ -35,6 +35,19 @@ QR Check retains its existing manual paste-and-inspect workflow. Live camera sca
 - Image decoding still depends on the browser being able to decode the selected image format and expose canvas pixel data. Unsupported image formats, tainted canvas contexts and browser-specific decoder behaviour can prevent scanning; users receive a recoverable error and can choose another image.
 - Linux and Windows native app projects are not currently shipped. Browser-based ORVIKA Web may be used on those systems subject to browser support.
 
+## Android ML Kit processing and diagnostics
+
+The Android implementation uses the bundled ML Kit Barcode Scanning SDK through `mobile_scanner`; it does not use the unbundled Google Play Services model-download option. Barcode recognition and processing of camera/image input occur on-device. Google states that ML Kit does not send input images, video, decoded barcode content or resultant outputs to Google servers.
+
+ML Kit separately sends diagnostics and usage metrics to Google. Google's documented categories include device information (manufacturer, model, OS version/build and available hardware accelerators), app/package information and version, per-installation identifiers, performance/latency, API configuration (including image format and resolution), input/output size, feature version, event type and error codes. Google states that these metrics are encrypted in transit and are not transferred to third parties. ML Kit may contact Google servers for bug fixes, updated models and hardware-accelerator compatibility information. ORVIKA must disclose this SDK processing to users and account for it in applicable store privacy disclosures.
+
+This SDK telemetry is specific to Android's ML Kit scanner. Web camera scanning uses the browser's native `BarcodeDetector` where available or the documented jsDelivr-hosted ZXing WebAssembly fallback; Apple platforms use their native scanning implementation.
+
+References:
+- https://developers.google.com/ml-kit/terms
+- https://developers.google.com/ml-kit/android-data-disclosure
+- https://pub.dev/packages/mobile_scanner/versions/7.5.0
+
 ## Camera permission limitation
 
 Browsers and operating systems own camera permission prompts and persistence. Once a person grants access, a browser or OS may remember that grant and may not show another prompt on the next session. An application cannot universally force a fresh native/browser permission prompt or revoke a permission grant programmatically. Users can revoke access in their browser/site or operating-system privacy settings.

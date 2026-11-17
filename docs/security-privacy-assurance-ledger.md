@@ -17,6 +17,12 @@ Status: implementation-level review record; no live deployment or device validat
 | Privacy checklist review markers | Local stable practice identifiers | Privacy implementation and tests | Self-assessment answers remain session-only |
 | Web analytics | Aggregate page-view/basic technical metrics only; no custom security-analysis events | `docs/analytics.md`; source integration review | Host/CDN request metadata and provider retention are outside application-source control |
 
+## Android scanner SDK data boundary
+
+The Android barcode scanner uses the bundled Google ML Kit Barcode Scanning SDK through `mobile_scanner`. Google documents on-device processing of image/video inputs and decoded outputs, with separate diagnostics and usage metrics sent to Google. The documented metrics include device/app information, per-installation identifiers, performance, API configuration, input/output size, feature version, event type and error codes; they are encrypted in transit. Google states they are not transferred to third parties. ML Kit may contact Google for bug fixes, model updates and hardware compatibility information.
+
+Evidence: Android camera screen disclosure; `docs/privacy-notice.md`; `docs/qr-camera-privacy.md`; Google's ML Kit terms and Android disclosure guide. Remaining: verify the final resolved Android dependency graph and store-specific privacy declarations against the exact release build. No packet capture or physical-device validation is claimed by this source/documentation change.
+
 ## 2. Web response hardening
 
 The current `vercel.json` defines:

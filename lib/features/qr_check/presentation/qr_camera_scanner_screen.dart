@@ -261,6 +261,20 @@ class _QrCameraScannerScreenState extends State<QrCameraScannerScreen>
                     l10n.text('checker.camera.notice.body', 'ORVIKA processes the decoded value on this device. It does not save camera frames or automatically open links, join networks, save contacts or make payments. Camera permission prompts and persistence are controlled by your browser or operating system.'),
                     style: TextStyle(color: scheme.onSurfaceVariant, height: 1.4),
                   ),
+                  if (defaultTargetPlatform == TargetPlatform.android) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      l10n.text(
+                        'checker.camera.androidMlKit.disclosure',
+                        "On Android, barcode recognition uses Google's bundled ML Kit. Scan images and decoded barcode content are processed on this device and are not sent to Google. ML Kit may send Google diagnostics and usage metrics, including device and app details, installation identifiers, performance, configuration, event and error data. Details: developers.google.com/ml-kit/terms",
+                      ),
+                      style: TextStyle(
+                        color: scheme.onSurfaceVariant,
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
                   if (kIsWeb) ...[
                     const SizedBox(height: 6),
                     Text(
