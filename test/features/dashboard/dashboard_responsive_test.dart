@@ -47,6 +47,12 @@ void main() {
 
       expect(find.byType(SentinelDashboard), findsOneWidget);
       expect(find.byType(LanguageSelectionScreen), findsNothing);
+      expect(SentinelDashboard.sentinelEnabled, isFalse);
+      expect(
+        SentinelDashboard.modules.any((module) => module.title == 'Sentinel'),
+        isFalse,
+        reason: 'Sentinel remains defined behind its disabled feature flag but is not in the visible module list.',
+      );
       final dashboard = tester.widget<SentinelDashboard>(
         find.byType(SentinelDashboard),
       );
