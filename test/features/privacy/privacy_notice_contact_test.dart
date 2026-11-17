@@ -28,9 +28,15 @@ void main() {
     expect(contact.data, contains('+91 9664332984'));
     expect(contact.data, contains('http://linktr.ee/ertapanjatakia'));
 
-    final disclaimer = find.textContaining('This notice describes the current implementation');
-    expect(tester.getTopLeft(find.text('App developer and Data Protection Officer')).dy,
-        greaterThan(tester.getTopLeft(disclaimer).dy));
+    await tester.drag(find.byType(ListView), const Offset(0, -1200));
+    await tester.pumpAndSettle();
+    final scrollableState = tester.state<ScrollableState>(noticeScrollable);
+    expect(
+      scrollableState.position.pixels,
+      closeTo(scrollableState.position.maxScrollExtent, 1.0),
+      reason: 'Developer and DPO details must be reachable at the end of the notice.',
+    );
+    expect(find.text('App developer and Data Protection Officer'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
