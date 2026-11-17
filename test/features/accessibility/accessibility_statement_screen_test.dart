@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/features/accessibility/presentation/accessibility_statement_screen.dart';
+import 'package:orvika/features/accessibility/presentation/wcag_conformance_badge.dart';
 
 void main() {
   testWidgets('statement presents the AA claim, auditor contacts and paired badges', (tester) async {
@@ -11,7 +12,10 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: OrvikaAccessibilityStatementScreen()));
     expect(find.text('Accessibility Statement'), findsOneWidget);
-    expect(find.text('WCAG 2.2 AA'), findsNWidgets(2));
+    expect(find.byType(Wcag22AaBadge), findsNWidgets(2));
+    expect(find.byType(Image), findsNWidgets(2));
+    expect(Wcag22AaBadge.imageUrl,
+        'https://www.w3.org/WAI/WCAG22/wcag2.2AA-blue.png');
     expect(
       find.byWidgetPredicate(
         (widget) => widget is SelectableText &&
