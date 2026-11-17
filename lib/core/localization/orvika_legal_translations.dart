@@ -4,8 +4,8 @@ class OrvikaLegalTranslations {
   static const Map<String, Map<String, String>> _packs = {
     'en': {
       'privacy.notice.title': 'ORVIKA Privacy Notice',
-      'privacy.notice.developer.title': 'App Developer and Support Team',
-      'privacy.notice.dpo.title': 'Data Protection Officer',
+      'privacy.notice.developer.title': 'The Contact Information of the App Developer and the Support Team is:',
+      'privacy.notice.dpo.title': 'The Contact Information of the Data Protection Officer is:',
       'a11y.statement.badge.semantics': 'WCAG 2.2 Level AA conformance claim',
       'a11y.statement.contact.auditor': 'WCAG Auditor contact information:',
       'a11y.statement.contact.name': 'Name',
