@@ -42,7 +42,7 @@ void main() {
     await tester.tap(reviewLabel);
     await tester.pumpAndSettle();
 
-    node = tester.getSemantics(reviewSemantics);
+    node = tester.getSemantics(reviewControl);
     expect(node.flagsCollection.isChecked, CheckedState.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();
