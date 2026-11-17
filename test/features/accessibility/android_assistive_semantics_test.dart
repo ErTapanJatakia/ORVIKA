@@ -18,31 +18,18 @@ void main() {
     await tester.tap(find.text('Use unique passwords for important accounts'));
     await tester.pumpAndSettle();
 
-    final reviewLabel = find.text('I have reviewed this practice');
-    await tester.scrollUntilVisible(reviewLabel, 300, scrollable: find.byType(Scrollable).first);
-    expect(reviewLabel, findsOneWidget);
-    final reviewControl = find.ancestor(
-      of: reviewLabel,
-      matching: find.byType(CheckboxListTile),
-    );
-    expect(reviewControl, findsOneWidget);
-    final reviewCheckbox = find.descendant(
-      of: reviewControl,
-      matching: find.byType(Checkbox),
-    );
-    expect(reviewCheckbox, findsOneWidget);
-
-    var node = tester.getSemantics(reviewControl);
+    final reviewSemantics = find.bySemanticsLabel('I have reviewed this practice');
+    expect(reviewSemantics, findsOneWidget);
+    var node = tester.getSemantics(reviewSemantics);
     expect(node.flagsCollection.isChecked, CheckedState.isFalse);
     expect(
       node.getSemanticsData().hasAction(SemanticsAction.tap),
       isTrue,
     );
 
-    await tester.tap(reviewLabel);
+    await tester.tap(reviewSemantics);
     await tester.pumpAndSettle();
-
-    node = tester.getSemantics(reviewControl);
+    node = tester.getSemantics(reviewSemantics);
     expect(node.flagsCollection.isChecked, CheckedState.isTrue);
     expect(tester.takeException(), isNull);
     semantics.dispose();

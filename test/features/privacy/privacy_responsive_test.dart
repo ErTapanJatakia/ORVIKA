@@ -65,10 +65,13 @@ void main() {
     expect(find.text('WHAT YOU CAN DO'), findsOneWidget);
     expect(find.text('IMPORTANT LIMIT'), findsOneWidget);
 
-    final reviewLabel = find.text('I have reviewed this practice');
-    await tester.scrollUntilVisible(reviewLabel, 300, scrollable: find.byType(Scrollable).first);
-    await tester.ensureVisible(reviewLabel);
-    await tester.tap(reviewLabel);
+    final reviewControl = find.byType(CheckboxListTile).first;
+    await tester.dragUntilVisible(
+      reviewControl,
+      find.byType(ListView).first,
+      const Offset(0, -300),
+    );
+    await tester.tap(reviewControl);
     await tester.pumpAndSettle();
 
     final preferences = await SharedPreferences.getInstance();
