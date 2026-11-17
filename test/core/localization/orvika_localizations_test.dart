@@ -562,7 +562,21 @@ void main() {
       ];
       for (final code in ['ru', 'hi']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
-        for (final key in privacyKeys) {
+      const accessibilityKeys = [
+        'a11y.statement.commitment.title',
+        'a11y.statement.commitment.body',
+        'a11y.statement.conformance.title',
+        'a11y.statement.conformance.body',
+        'a11y.statement.platform.title',
+        'a11y.statement.platform.body',
+        'a11y.statement.report.title',
+        'a11y.statement.report.body',
+      ];
+      const legalContentKeys = [
+        ...privacyKeys,
+        ...accessibilityKeys,
+      ];
+        for (final key in legalContentKeys) {
           expect(localization.hasTranslation(key), isTrue,
               reason: '$code is missing privacy notice content $key');
           expect(localization.text(key), isNot(key),
