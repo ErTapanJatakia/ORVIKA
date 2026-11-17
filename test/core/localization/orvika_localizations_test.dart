@@ -520,6 +520,9 @@ void main() {
         'a11y.statement.contact.phone',
         'a11y.statement.contact.website',
         'a11y.statement.badge.semantics',
+        'privacy.notice.title',
+        'privacy.notice.developer.title',
+        'privacy.notice.dpo.title',
       ];
       for (final code in ['en', 'ru', 'pt', 'pt-PT', 'es', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa']) {
         final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
