@@ -547,7 +547,7 @@ void main() {
       }
     });
 
-    test('fifteen locales cover privacy and accessibility legal-content strings', () {
+    test('sixteen locales cover privacy and accessibility legal-content strings', () {
       const privacyKeys = [
         'privacy.notice.intro',
         'privacy.notice.reviewed',
