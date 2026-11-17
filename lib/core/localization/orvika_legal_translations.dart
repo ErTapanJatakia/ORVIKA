@@ -3,6 +3,7 @@
 class OrvikaLegalTranslations {
   static const Map<String, Map<String, String>> _packs = {
     'en': {
+      'a11y.statement.badge.semantics': 'WCAG 2.2 Level AA conformance claim',
       'a11y.statement.contact.auditor': 'WCAG Auditor contact information:',
       'a11y.statement.contact.name': 'Name',
       'a11y.statement.contact.email': 'Email',
@@ -10,6 +11,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Website',
     },
     'ru': {
+      'a11y.statement.badge.semantics': 'Заявление о соответствии WCAG 2.2 уровня AA',
       'a11y.statement.contact.auditor': 'Контактные данные аудитора WCAG:',
       'a11y.statement.contact.name': 'Имя',
       'a11y.statement.contact.email': 'Электронная почта',
@@ -17,6 +19,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Веб-сайт',
     },
     'pt': {
+      'a11y.statement.badge.semantics': 'Declaração de conformidade WCAG 2.2 nível AA',
       'a11y.statement.contact.auditor': 'Contacto do auditor WCAG:',
       'a11y.statement.contact.name': 'Nome',
       'a11y.statement.contact.email': 'E-mail',
@@ -24,6 +27,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Website',
     },
     'pt-PT': {
+      'a11y.statement.badge.semantics': 'Declaração de conformidade WCAG 2.2 nível AA',
       'a11y.statement.contact.auditor': 'Contacto do auditor WCAG:',
       'a11y.statement.contact.name': 'Nome',
       'a11y.statement.contact.email': 'E-mail',
@@ -31,6 +35,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Sítio Web',
     },
     'es': {
+      'a11y.statement.badge.semantics': 'Declaración de conformidad WCAG 2.2 nivel AA',
       'a11y.statement.contact.auditor': 'Contacto del auditor WCAG:',
       'a11y.statement.contact.name': 'Nombre',
       'a11y.statement.contact.email': 'Correo electrónico',
@@ -38,6 +43,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Sitio web',
     },
     'hi': {
+      'a11y.statement.badge.semantics': 'WCAG 2.2 स्तर AA अनुरूपता का दावा',
       'a11y.statement.contact.auditor': 'WCAG ऑडिटर संपर्क जानकारी:',
       'a11y.statement.contact.name': 'नाम',
       'a11y.statement.contact.email': 'ईमेल',
@@ -45,6 +51,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'वेबसाइट',
     },
     'de': {
+      'a11y.statement.badge.semantics': 'Konformitätsaussage nach WCAG 2.2, Stufe AA',
       'a11y.statement.contact.auditor': 'Kontakt zum WCAG-Auditor:',
       'a11y.statement.contact.name': 'Name',
       'a11y.statement.contact.email': 'E-Mail',
@@ -52,6 +59,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Website',
     },
     'fr': {
+      'a11y.statement.badge.semantics': 'Déclaration de conformité WCAG 2.2 niveau AA',
       'a11y.statement.contact.auditor': 'Coordonnées de l’auditeur WCAG :',
       'a11y.statement.contact.name': 'Nom',
       'a11y.statement.contact.email': 'E-mail',
@@ -59,6 +67,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Site web',
     },
     'it': {
+      'a11y.statement.badge.semantics': 'Dichiarazione di conformità WCAG 2.2 livello AA',
       'a11y.statement.contact.auditor': 'Contatti del revisore WCAG:',
       'a11y.statement.contact.name': 'Nome',
       'a11y.statement.contact.email': 'E-mail',
@@ -66,6 +75,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Sito web',
     },
     'pa': {
+      'a11y.statement.badge.semantics': 'WCAG 2.2 ਪੱਧਰ AA ਅਨੁਕੂਲਤਾ ਦਾ ਦਾਅਵਾ',
       'a11y.statement.contact.auditor': 'WCAG ਆਡੀਟਰ ਸੰਪਰਕ ਜਾਣਕਾਰੀ:',
       'a11y.statement.contact.name': 'ਨਾਮ',
       'a11y.statement.contact.email': 'ਈਮੇਲ',
@@ -73,6 +83,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'ਵੈੱਬਸਾਈਟ',
     },
     'ur': {
+      'a11y.statement.badge.semantics': 'WCAG 2.2 سطح AA کی مطابقت کا دعویٰ',
       'a11y.statement.contact.auditor': 'WCAG آڈیٹر کے رابطے کی معلومات:',
       'a11y.statement.contact.name': 'نام',
       'a11y.statement.contact.email': 'ای میل',
@@ -80,6 +91,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'ویب سائٹ',
     },
     'ar': {
+      'a11y.statement.badge.semantics': 'إعلان المطابقة للمستوى AA من WCAG 2.2',
       'a11y.statement.contact.auditor': 'معلومات الاتصال بمدقق WCAG:',
       'a11y.statement.contact.name': 'الاسم',
       'a11y.statement.contact.email': 'البريد الإلكتروني',
@@ -87,6 +99,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'الموقع الإلكتروني',
     },
     'mr': {
+      'a11y.statement.badge.semantics': 'WCAG 2.2 स्तर AA अनुरूपतेचा दावा',
       'a11y.statement.contact.auditor': 'WCAG लेखापरीक्षक संपर्क माहिती:',
       'a11y.statement.contact.name': 'नाव',
       'a11y.statement.contact.email': 'ईमेल',
@@ -94,6 +107,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'वेबसाइट',
     },
     'gu': {
+      'a11y.statement.badge.semantics': 'WCAG 2.2 સ્તર AA અનુરૂપતાનો દાવો',
       'a11y.statement.contact.auditor': 'WCAG ઓડિટર સંપર્ક માહિતી:',
       'a11y.statement.contact.name': 'નામ',
       'a11y.statement.contact.email': 'ઇમેઇલ',
@@ -101,6 +115,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'વેબસાઇટ',
     },
     'sa': {
+      'a11y.statement.badge.semantics': 'WCAG 2.2 स्तरस्य AA अनुरूपतायाः घोषणा',
       'a11y.statement.contact.auditor': 'WCAG परीक्षकस्य सम्पर्कसूचना:',
       'a11y.statement.contact.name': 'नाम',
       'a11y.statement.contact.email': 'विद्युत्पत्रम्',
