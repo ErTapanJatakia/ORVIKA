@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'features/accessibility/presentation/accessibility_statement_screen.dart';
+import 'features/accessibility/presentation/wcag_conformance_badge.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/localization/orvika_language.dart';
@@ -438,27 +439,6 @@ class _OrvikaAppState extends State<OrvikaApp> {
   }
 }
 
-class _Wcag22AaBadge extends StatelessWidget {
-  const _Wcag22AaBadge();
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: 'WCAG 2.2 Level AA conformance claim',
-    child: Container(
-      key: const ValueKey('wcag-22-aa-badge'),
-      width: 112, height: 36, alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFD166),
-        border: Border.all(color: const Color(0xFF111827), width: 1.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: const Text('WCAG 2.2 AA', textAlign: TextAlign.center,
-        style: TextStyle(color: Color(0xFF111827), fontSize: 13,
-          fontWeight: FontWeight.w900, letterSpacing: 0.25,
-          decoration: TextDecoration.none)),
-    ),
-  );
-}
-
 /// Displays the ORVIKA brand on every cold app launch, then fades away.
 class OrvikaLaunchOverlay extends StatefulWidget {
   const OrvikaLaunchOverlay({required this.child, super.key});
@@ -550,7 +530,7 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
                             ),
                           ),
                           Positioned(left: 0, right: 0, bottom: 18,
-                            child: Center(child: _Wcag22AaBadge())),
+                            child: Center(child: Wcag22AaBadge())),
                         ],
                       ),
                     ),
@@ -1406,7 +1386,7 @@ class SentinelDashboard extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 8),
-                                    const _Wcag22AaBadge(),
+                                    const Wcag22AaBadge(),
                                     const SizedBox(height: 8),
                                     ActionChip(
                                       key: const ValueKey('accessibility-statement-footer'),
