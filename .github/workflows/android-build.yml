@@ -35,6 +35,8 @@ concurrency:
 jobs:
   android-validation:
     name: Validate committed ORVIKA Android project
+    # Manual runs must use trusted main-branch source before any signing secrets are exposed.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout

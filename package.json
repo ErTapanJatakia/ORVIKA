@@ -5,7 +5,7 @@
     "test:edge": "node --test test/edge/*.test.js",
     "verify:security": "node scripts/verify-security-config.cjs",
     "verify:pwa": "node scripts/verify-pwa-readiness.cjs",
-    "verify:android": "node --check scripts/verify-android-apk-manifest.cjs && python3 -m py_compile scripts/verify-android-aab-manifest.py && node scripts/verify-android-release-readiness.cjs",
+    "verify:android": "node --check scripts/verify-android-apk-manifest.cjs && python3 -m py_compile scripts/verify-android-aab-manifest.py && python3 -c \"import xml.etree.ElementTree as ET; [ET.parse(p) for p in ('android/app/src/main/res/xml/backup_rules.xml', 'android/app/src/main/res/xml/data_extraction_rules.xml')]\" && node scripts/verify-android-release-readiness.cjs",
     "verify:privacy": "node scripts/verify-privacy-boundaries.cjs",
     "verify:source": "npm run verify:security && npm run verify:pwa && npm run verify:android && npm run verify:privacy"
   }
