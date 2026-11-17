@@ -34,7 +34,12 @@ class OrvikaLocalizations {
     'settings.appearance': 'Выберите оформление',
     'settings.saved': 'Выбор сохраняется на этом устройстве. ORVIKA не отправляет настройки оформления на сервер.',
     'settings.accessibility': 'Примечание о доступности: режим высокой контрастности использует более яркие сигнальные цвета и чёткое визуальное разделение. Предупреждения всегда сопровождаются текстом; цвет не является единственным индикатором.',
-    'a11y.statement.title': "Заявление ORVIKA о доступности",
+    'a11y.statement.title': "Заявление о доступности ORVIKA",
+    'a11y.statement.contact.auditor': "Контактные данные аудитора WCAG:",
+    'a11y.statement.contact.name': "Имя",
+    'a11y.statement.contact.email': "Электронная почта",
+    'a11y.statement.contact.phone': "Телефон",
+    'a11y.statement.contact.website': "Веб-сайт",
     'a11y.statement.badge': "Информация о доступности",
     'a11y.statement.reviewed': "Последняя проверка: 15 ноября 2026 г.",
     'a11y.statement.commitment.title': "Обязательства по обеспечению доступности",
@@ -1603,7 +1608,12 @@ class OrvikaLocalizations {
   /// English labels for the accessibility controls. Other English UI strings
   /// continue to use their call-site fallbacks.
   static const Map<String, String> _englishAccessibility = {
-    'a11y.statement.title': "ORVIKA Accessibility Statement",
+    'a11y.statement.title': "Accessibility Statement",
+    'a11y.statement.contact.auditor': "WCAG Auditor contact information:",
+    'a11y.statement.contact.name': "Name",
+    'a11y.statement.contact.email': "Email",
+    'a11y.statement.contact.phone': "Phone Number",
+    'a11y.statement.contact.website': "Website",
     'a11y.statement.badge': "Accessibility information",
     'a11y.statement.reviewed': "Last reviewed: 15 November 2026",
     'a11y.statement.commitment.title': "Accessibility commitment",
