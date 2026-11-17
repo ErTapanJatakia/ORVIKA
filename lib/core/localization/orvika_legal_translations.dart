@@ -3,6 +3,7 @@
 class OrvikaLegalTranslations {
   static const Map<String, Map<String, String>> _packs = {
     'en': {
+      'privacy.notice.title': 'ORVIKA Privacy Notice',
       'privacy.notice.developer.title': 'App Developer and Support Team',
       'privacy.notice.dpo.title': 'Data Protection Officer',
       'a11y.statement.badge.semantics': 'WCAG 2.2 Level AA conformance claim',
@@ -13,6 +14,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Website',
     },
     'ru': {
+      'privacy.notice.title': 'Уведомление о конфиденциальности ORVIKA',
       'privacy.notice.developer.title': 'Разработчик приложения и служба поддержки',
       'privacy.notice.dpo.title': 'Ответственный за защиту данных',
       'a11y.statement.badge.semantics': 'Заявление о соответствии WCAG 2.2 уровня AA',
@@ -23,6 +25,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Веб-сайт',
     },
     'pt': {
+      'privacy.notice.title': 'Aviso de privacidade da ORVIKA',
       'privacy.notice.developer.title': 'Programador da aplicação e equipa de apoio',
       'privacy.notice.dpo.title': 'Encarregado da proteção de dados',
       'a11y.statement.badge.semantics': 'Declaração de conformidade WCAG 2.2 nível AA',
@@ -33,6 +36,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Website',
     },
     'pt-PT': {
+      'privacy.notice.title': 'Aviso de privacidade da ORVIKA',
       'privacy.notice.developer.title': 'Programador da aplicação e equipa de apoio',
       'privacy.notice.dpo.title': 'Encarregado da proteção de dados',
       'a11y.statement.badge.semantics': 'Declaração de conformidade WCAG 2.2 nível AA',
@@ -43,6 +47,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Sítio Web',
     },
     'es': {
+      'privacy.notice.title': 'Aviso de privacidad de ORVIKA',
       'privacy.notice.developer.title': 'Desarrollador de la aplicación y equipo de soporte',
       'privacy.notice.dpo.title': 'Delegado de Protección de Datos',
       'a11y.statement.badge.semantics': 'Declaración de conformidad WCAG 2.2 nivel AA',
@@ -53,6 +58,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Sitio web',
     },
     'hi': {
+      'privacy.notice.title': 'ORVIKA गोपनीयता सूचना',
       'privacy.notice.developer.title': 'ऐप डेवलपर और सहायता टीम',
       'privacy.notice.dpo.title': 'डेटा संरक्षण अधिकारी',
       'a11y.statement.badge.semantics': 'WCAG 2.2 स्तर AA अनुरूपता का दावा',
@@ -63,6 +69,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'वेबसाइट',
     },
     'de': {
+      'privacy.notice.title': 'ORVIKA-Datenschutzhinweis',
       'privacy.notice.developer.title': 'App-Entwickler und Support-Team',
       'privacy.notice.dpo.title': 'Datenschutzbeauftragter',
       'a11y.statement.badge.semantics': 'Konformitätsaussage nach WCAG 2.2, Stufe AA',
@@ -73,6 +80,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Website',
     },
     'fr': {
+      'privacy.notice.title': 'Avis de confidentialité d’ORVIKA',
       'privacy.notice.developer.title': 'Développeur de l’application et équipe d’assistance',
       'privacy.notice.dpo.title': 'Délégué à la protection des données',
       'a11y.statement.badge.semantics': 'Déclaration de conformité WCAG 2.2 niveau AA',
@@ -83,6 +91,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Site web',
     },
     'it': {
+      'privacy.notice.title': 'Informativa sulla privacy di ORVIKA',
       'privacy.notice.developer.title': 'Sviluppatore dell’app e team di supporto',
       'privacy.notice.dpo.title': 'Responsabile della protezione dei dati',
       'a11y.statement.badge.semantics': 'Dichiarazione di conformità WCAG 2.2 livello AA',
@@ -93,6 +102,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'Sito web',
     },
     'pa': {
+      'privacy.notice.title': 'ORVIKA ਗੋਪਨੀਯਤਾ ਨੋਟਿਸ',
       'privacy.notice.developer.title': 'ਐਪ ਡਿਵੈਲਪਰ ਅਤੇ ਸਹਾਇਤਾ ਟੀਮ',
       'privacy.notice.dpo.title': 'ਡਾਟਾ ਸੁਰੱਖਿਆ ਅਧਿਕਾਰੀ',
       'a11y.statement.badge.semantics': 'WCAG 2.2 ਪੱਧਰ AA ਅਨੁਕੂਲਤਾ ਦਾ ਦਾਅਵਾ',
@@ -103,6 +113,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'ਵੈੱਬਸਾਈਟ',
     },
     'ur': {
+      'privacy.notice.title': 'ORVIKA رازداری کا نوٹس',
       'privacy.notice.developer.title': 'ایپ ڈویلپر اور معاونتی ٹیم',
       'privacy.notice.dpo.title': 'ڈیٹا پروٹیکشن افسر',
       'a11y.statement.badge.semantics': 'WCAG 2.2 سطح AA کی مطابقت کا دعویٰ',
@@ -113,6 +124,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'ویب سائٹ',
     },
     'ar': {
+      'privacy.notice.title': 'إشعار الخصوصية في ORVIKA',
       'privacy.notice.developer.title': 'مطوّر التطبيق وفريق الدعم',
       'privacy.notice.dpo.title': 'مسؤول حماية البيانات',
       'a11y.statement.badge.semantics': 'إعلان المطابقة للمستوى AA من WCAG 2.2',
@@ -123,6 +135,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'الموقع الإلكتروني',
     },
     'mr': {
+      'privacy.notice.title': 'ORVIKA गोपनीयता सूचना',
       'privacy.notice.developer.title': 'अॅप विकासक आणि सहाय्यक टीम',
       'privacy.notice.dpo.title': 'डेटा संरक्षण अधिकारी',
       'a11y.statement.badge.semantics': 'WCAG 2.2 स्तर AA अनुरूपतेचा दावा',
@@ -133,6 +146,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'वेबसाइट',
     },
     'gu': {
+      'privacy.notice.title': 'ORVIKA ગોપનીયતા સૂચના',
       'privacy.notice.developer.title': 'એપ ડેવલપર અને સપોર્ટ ટીમ',
       'privacy.notice.dpo.title': 'ડેટા પ્રોટેક્શન અધિકારી',
       'a11y.statement.badge.semantics': 'WCAG 2.2 સ્તર AA અનુરૂપતાનો દાવો',
@@ -143,6 +157,7 @@ class OrvikaLegalTranslations {
       'a11y.statement.contact.website': 'વેબસાઇટ',
     },
     'sa': {
+      'privacy.notice.title': 'ORVIKA गोपनीयतासूचना',
       'privacy.notice.developer.title': 'अनुप्रयोगनिर्माता साहाय्यदलञ्च',
       'privacy.notice.dpo.title': 'दत्तांशसंरक्षणाधिकारी',
       'a11y.statement.badge.semantics': 'WCAG 2.2 स्तरस्य AA अनुरूपतायाः घोषणा',
