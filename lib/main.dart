@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'features/accessibility/presentation/accessibility_statement_screen.dart';
+import 'features/accessibility/presentation/wcag_conformance_badge.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/localization/orvika_language.dart';
@@ -499,52 +500,38 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
                   child: const ColoredBox(
                     color: Color(0xE6081426),
                     child: SafeArea(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              OrvikaOwlMark(
-                                size: 116,
-                                palette: OrvikaPalette.obsidian,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  OrvikaOwlMark(size: 116, palette: OrvikaPalette.obsidian),
+                                  SizedBox(height: 22),
+                                  Text('ORVIKA', textAlign: TextAlign.center,
+                                    style: TextStyle(color: Color(0xFFF3F7FC), fontSize: 28,
+                                      fontWeight: FontWeight.w900, letterSpacing: 5,
+                                      decoration: TextDecoration.none)),
+                                  SizedBox(height: 12),
+                                  Text('CHECK BEFORE YOU TRUST.', textAlign: TextAlign.center,
+                                    style: TextStyle(color: Color(0xFF00D5FF), fontSize: 12,
+                                      fontWeight: FontWeight.w800, letterSpacing: 2,
+                                      decoration: TextDecoration.none)),
+                                  SizedBox(height: 8),
+                                  Text('See the Risk. Verify the Signal. Stay in Control.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Color(0xFFD5E2F0), fontSize: 12,
+                                      height: 1.5, fontWeight: FontWeight.w500,
+                                      decoration: TextDecoration.none)),
+                                ],
                               ),
-                              SizedBox(height: 22),
-                              Text(
-                                'ORVIKA',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFFF3F7FC),
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 5,
-                                ),
-                              ),
-                              SizedBox(height: 12),
-                              Text(
-                                'CHECK BEFORE YOU TRUST.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF00D5FF),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                'See the Risk. Verify the Signal. Stay in Control.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFFD5E2F0),
-                                  fontSize: 12,
-                                  height: 1.5,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          Positioned(left: 0, right: 0, bottom: 18,
+                            child: Center(child: Wcag22AaBadge())),
+                        ],
                       ),
                     ),
                   ),
@@ -1232,7 +1219,7 @@ class SentinelDashboard extends StatelessWidget {
                 ),
                 slivers: [
                   SliverPadding(
-                    padding: EdgeInsets.fromLTRB(pagePadding, 18, pagePadding, 40),
+                    padding: EdgeInsets.fromLTRB(pagePadding, 14, pagePadding, 28),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         _TopBar(
@@ -1247,22 +1234,9 @@ class SentinelDashboard extends StatelessWidget {
                           boldText: boldText, onBoldTextChanged: onBoldTextChanged,
                           reduceMotion: reduceMotion, onReduceMotionChanged: onReduceMotionChanged,
                         ),
-                        Align(
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: ActionChip(
-                            key: const ValueKey('accessibility-statement-top'),
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const OrvikaAccessibilityStatementScreen(),
-                              ),
-                            ),
-                            avatar: const Icon(Icons.accessibility_new_rounded, size: 18),
-                            label: const Text('Accessibility statement'),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
+
                         _HeroPanel(palette: palette, language: selectedLanguage),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 22),
                         LayoutBuilder(
                           builder: (context, constraints) {
                             final compact = constraints.maxWidth < 620;
@@ -1373,9 +1347,9 @@ class SentinelDashboard extends StatelessWidget {
                             label: const Text('How ORVIKA handles data'),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         Padding(
-                          padding: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.only(top: 2),
                           child: Center(
                             child: ConstrainedBox(
                               constraints: const BoxConstraints(maxWidth: 760),
@@ -1383,8 +1357,8 @@ class SentinelDashboard extends StatelessWidget {
                                 key: const ValueKey('dashboard-footer'),
                                 width: double.infinity,
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 18,
-                                  vertical: 17,
+                                  horizontal: 14,
+                                  vertical: 12,
                                 ),
                                 decoration: BoxDecoration(
                                   color: palette.surface.withValues(alpha: 0.58),
@@ -1412,6 +1386,8 @@ class SentinelDashboard extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 8),
+                                    const Wcag22AaBadge(),
+                                    const SizedBox(height: 8),
                                     ActionChip(
                                       key: const ValueKey('accessibility-statement-footer'),
                                       onPressed: () => Navigator.of(context).push(
@@ -1420,7 +1396,7 @@ class SentinelDashboard extends StatelessWidget {
                                         ),
                                       ),
                                       avatar: const Icon(Icons.accessibility_new_rounded, size: 17),
-                                      label: const Text('Accessibility statement'),
+                                      label: const Text('Accessibility Statement'),
                                     ),
                                   ],
                                 ),
@@ -2267,42 +2243,29 @@ SafetyModule _localizedModule(SafetyModule module, OrvikaLanguage language) {
 class OrvikaPrivacyNoticeScreen extends StatelessWidget {
   const OrvikaPrivacyNoticeScreen({super.key});
 
-  static const _sections = <(String, String)>[
-    (
-      'What ORVIKA analyses',
-      'Link Check, Message Check and QR Check perform their documented checks on the device. ORVIKA does not intentionally upload submitted URLs, message text, decoded QR payloads, selected images or camera frames to an ORVIKA analysis server. Findings are presented as indicators, not proof that a destination or message is safe or malicious.',
-    ),
-    (
-      'Web analytics',
-      'The hosted Web version uses Vercel Web Analytics for basic page-view measurement. ORVIKA does not add submitted analysis content, account identifiers or custom security-analysis events to analytics. Vercel processes technical request information under its own privacy documentation: https://vercel.com/docs/analytics/privacy-policy.',
-    ),
-    (
-      'Camera and selected images',
-      'Camera access starts only after you explicitly start a scan. A selected image is read for the active scan and is not intentionally uploaded by ORVIKA. Browser and operating-system permissions are controlled by your platform; revoke them in your browser or device settings when needed.',
-    ),
-    (
-      'External runtime dependency',
-      'In some Web browsers, the QR camera scanner can download a ZXing WebAssembly decoder from jsDelivr. This downloads decoder code to the browser; it is not an upload of camera frames, selected images or decoded QR content.',
-    ),
-    (
-      'Information stored on your device',
-      'ORVIKA stores interface preferences such as language, theme and accessibility settings, plus Privacy checklist review progress, using local application/browser preference storage. These values are not submitted as security-analysis inputs. They may remain until you clear ORVIKA application data or the browser site data.',
-    ),
-    (
-      'Accounts, cloud services and limitations',
-      'The current application does not require an ORVIKA account and does not provide cloud synchronisation of analysis history. Some features may require an internet connection to load the Web application, analytics or a browser decoder dependency. Do not treat an ORVIKA result as a guarantee or as a substitute for independent verification.',
-    ),
-    (
-      'Questions and security reports',
-      'For security concerns, use the repository Security tab and its private vulnerability reporting option when available. Do not publish exploit details or personal information in a public issue.',
-    ),
+  static const _sections = <(String, String, String, String)>[
+    ('privacy.notice.analysis.title', 'What ORVIKA analyses', 'privacy.notice.analysis.body',
+      'Link Check, Message Check and QR Check perform their documented checks on the device. ORVIKA does not intentionally upload submitted URLs, message text, decoded QR payloads, selected images or camera frames to an ORVIKA analysis server. Findings are presented as indicators, not proof that a destination or message is safe or malicious.'),
+    ('privacy.notice.analytics.title', 'Web analytics', 'privacy.notice.analytics.body',
+      'The hosted Web version uses Vercel Web Analytics for basic page-view measurement. ORVIKA does not add submitted analysis content, account identifiers or custom security-analysis events to analytics. Vercel processes technical request information under its own privacy documentation: https://vercel.com/docs/analytics/privacy-policy.'),
+    ('privacy.notice.camera.title', 'Camera and selected images', 'privacy.notice.camera.body',
+      'Camera access starts only after you explicitly start a scan. A selected image is read for the active scan and is not intentionally uploaded by ORVIKA. Browser and operating-system permissions are controlled by your platform; revoke them in your browser or device settings when needed.'),
+    ('privacy.notice.runtime.title', 'External runtime dependencies', 'privacy.notice.runtime.body',
+      'In some Web browsers, the QR camera scanner can download a ZXing WebAssembly decoder from jsDelivr. This downloads decoder code to the browser; it is not an upload of camera frames, selected images or decoded QR content. The WCAG 2.2 Level AA badge is also loaded directly from W3C at https://www.w3.org/WAI/WCAG22/wcag2.2AA-blue.png when displayed. This makes a request to W3C, which may receive standard connection metadata such as the IP address and browser or app network details. If the image cannot be reached, no substitute badge artwork is shown.'),
+    ('privacy.notice.storage.title', 'Information stored on your device', 'privacy.notice.storage.body',
+      'ORVIKA stores interface preferences such as language, theme and accessibility settings, plus Privacy checklist review progress, using local application/browser preference storage. These values are not submitted as security-analysis inputs. They may remain until you clear ORVIKA application data or the browser site data.'),
+    ('privacy.notice.cloud.title', 'Accounts, cloud services and limitations', 'privacy.notice.cloud.body',
+      'The current application does not require an ORVIKA account and does not provide cloud synchronisation of analysis history. Some features may require an internet connection to load the Web application, analytics or a browser decoder dependency. Do not treat an ORVIKA result as a guarantee or as a substitute for independent verification.'),
+    ('privacy.notice.reports.title', 'Questions and security reports', 'privacy.notice.reports.body',
+      'For security concerns, use the repository Security tab and its private vulnerability reporting option when available. Do not publish exploit details or personal information in a public issue.'),
   ];
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('ORVIKA Privacy Notice')),
+      appBar: AppBar(title: Text(l10n.text('privacy.notice.title', 'ORVIKA Privacy Notice'))),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 820),
@@ -2310,39 +2273,49 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
             children: [
               Text(
-                'Your analysis stays on your device by design. This notice explains the product’s current data practices and the limited external services used by the Web version.',
+                l10n.text('privacy.notice.intro', 'Your analysis stays on your device by design. This notice explains the product’s current data practices and the limited external services used by the Web version.'),
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
               ),
               const SizedBox(height: 8),
               Text(
-                'Last reviewed: 17 November 2026 · Applies to the current ORVIKA prototype',
+                l10n.text('privacy.notice.reviewed', 'Last reviewed: 17 November 2026 · Applies to the current ORVIKA prototype'),
                 style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
               ),
               const SizedBox(height: 16),
               for (final section in _sections) ...[
-                Text(section.$1, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+                Text(l10n.text(section.$1, section.$2), style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
                 const SizedBox(height: 6),
-                SelectableText(section.$2, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.55)),
+                SelectableText(l10n.text(section.$3, section.$4), style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.55)),
                 const SizedBox(height: 18),
               ],
               Text(
-                'This notice describes the current implementation, not a guarantee that every platform or future feature has identical behaviour. Recheck this notice when ORVIKA adds network-connected services or changes analytics.',
+                l10n.text('privacy.notice.closing', 'This notice describes the current implementation, not a guarantee that every platform or future feature has identical behaviour. Recheck this notice when ORVIKA adds network-connected services or changes analytics.'),
                 style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
               ),
               const SizedBox(height: 24),
               Text(
-                'App developer and Data Protection Officer',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                l10n.text('privacy.notice.developer.title', 'The Contact Information of the App Developer and the Support Team is:'),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
-              const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\n'
-                'Contact email: ertapanjatakia@yandex.com\n'
-                'Additional email: tapan_ditu_17.20@outlook.com\n'
-                'Contact number: +91 9664332984\n'
-                'Website: http://linktr.ee/ertapanjatakia',
+              SelectableText(
+                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\n'
+                '${l10n.text('a11y.statement.contact.email', 'Email')}: ertapanjatakia@yandex.com (for Russia)\n'
+                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\n'
+                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\n'
+                '${l10n.text('a11y.statement.contact.website', 'Website')}: https://linktr.ee/ertapanjatakia',
+              ),
+              const SizedBox(height: 18),
+              Text(
+                l10n.text('privacy.notice.dpo.title', 'The Contact Information of the Data Protection Officer is:'),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 8),
+              SelectableText(
+                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\n'
+                '${l10n.text('a11y.statement.contact.email', 'Email')}: cyber.litigation.advisor@gmail.com\n'
+                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\n'
+                '${l10n.text('a11y.statement.contact.website', 'Website')}: https://linktr.ee/ertapanjatakia',
               ),
             ],
           ),

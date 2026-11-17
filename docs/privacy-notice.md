@@ -45,9 +45,11 @@ ML Kit does, however, send diagnostics and usage metrics to Google. The document
 
 ORVIKA does not send camera frames, selected QR images or decoded barcode payloads to Google as part of barcode recognition. This SDK-level diagnostics and usage-metrics processing is separate from ORVIKA's own page-view analytics. Google's documentation: https://developers.google.com/ml-kit/terms and https://developers.google.com/ml-kit/android-data-disclosure
 
-## External runtime dependency
+## External runtime dependencies
 
 In browsers where the QR camera scanner uses the ZXing WebAssembly fallback, the browser downloads decoder code from jsDelivr. This is a code download, not an upload of camera frames, selected images or decoded QR payloads.
+
+The WCAG 2.2 Level AA badge shown in the Web application and its accessibility statement is loaded directly from W3C at https://www.w3.org/WAI/WCAG22/wcag2.2AA-blue.png. Displaying it makes a request to W3C, which may receive standard connection metadata such as the IP address and browser or app network details. If the image cannot be reached, ORVIKA does not draw substitute badge artwork.
 
 Web camera access requires a secure context and browser/OS permission. Browser and operating-system permission persistence is controlled by the platform; users can revoke access in site or device settings.
 
@@ -65,10 +67,20 @@ For a suspected vulnerability, use the repository's Security tab and private vul
 
 This notice should be updated when the application adds network-connected analysis, accounts, synchronisation, new analytics, new data storage or materially different third-party dependencies.
 
-## App developer and Data Protection Officer
+## App developer and Support Team
+
+**The Contact Information of the App Developer and the Support Team is:**
 
 **Name:** Er. Tapan Jatakia (C.Eng.)  
-**Contact email:** ertapanjatakia@yandex.com  
-**Additional contact email:** tapan_ditu_17.20@outlook.com  
-**Contact number:** +91 9664332984  
-**Website:** http://linktr.ee/ertapanjatakia
+**Email:** ertapanjatakia@yandex.com (for Russia), tapan_ditu_17.20@outlook.com (for regions except Russia)  
+**Phone Number:** +91 9664332984  
+**Website:** https://linktr.ee/ertapanjatakia
+
+## Data Protection Officer
+
+**The Contact Information of the Data Protection Officer is:**
+
+**Name:** Er. Tapan Jatakia (C.Eng.)  
+**Email:** cyber.litigation.advisor@gmail.com  
+**Phone Number:** +91 9664332984  
+**Website:** https://linktr.ee/ertapanjatakia

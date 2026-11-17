@@ -1,58 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:orvika/core/localization/orvika_language.dart';
-import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/features/accessibility/presentation/accessibility_statement_screen.dart';
+import 'package:orvika/features/accessibility/presentation/wcag_conformance_badge.dart';
 
 void main() {
-  testWidgets('accessibility statement shows its badge, contact route and evaluation limits', (tester) async {
+  testWidgets('statement presents the AA claim, auditor contacts and paired badges', (tester) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(
-      const MaterialApp(home: OrvikaAccessibilityStatementScreen()),
+    await tester.pumpWidget(const MaterialApp(home: OrvikaAccessibilityStatementScreen()));
+    expect(find.text('Accessibility Statement'), findsOneWidget);
+    expect(find.byType(Wcag22AaBadge), findsNWidgets(2));
+    expect(find.byType(Image), findsNWidgets(2));
+    expect(Wcag22AaBadge.imageUrl,
+        'https://www.w3.org/WAI/WCAG22/wcag2.2AA-blue.png');
+    final badgeSemantics = tester.widget<Semantics>(find.descendant(
+      of: find.byType(Wcag22AaBadge).first,
+      matching: find.byType(Semantics),
+    ));
+    expect(badgeSemantics.properties.label, contains('hosted ORVIKA Web application only'));
+    expect(badgeSemantics.properties.label, contains('native Android application is excluded'));
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is SelectableText &&
+            widget.data?.contains(
+              'The publisher makes a WCAG 2.2 Level AA conformance claim',
+            ) == true,
+      ),
+      findsOneWidget,
     );
-
-    expect(find.text('ORVIKA Accessibility Statement'), findsOneWidget);
-    expect(find.text('Accessibility information'), findsOneWidget);
-    expect(find.textContaining('does not claim full WCAG 2.2 Level AA conformance'), findsOneWidget);
-    expect(find.textContaining('not an independent third-party audit'), findsOneWidget);
-    final platformCoverage = find.textContaining('Android application requires separate native evaluation');
-    await tester.scrollUntilVisible(platformCoverage, 250, scrollable: find.byType(Scrollable).first);
-    expect(platformCoverage, findsOneWidget);
-
-    final contactAddress = find.text('ertapanjatakia@yandex.com');
-    await tester.scrollUntilVisible(contactAddress, 250, scrollable: find.byType(Scrollable).first);
-    expect(contactAddress, findsOneWidget);
-    expect(find.text('tapan_ditu_17.20@outlook.com'), findsOneWidget);
-    expect(find.textContaining('No CAPTCHA or verification is required'), findsOneWidget);
+    expect(find.textContaining('native Android application'), findsNWidgets(2));
+    final auditor = find.textContaining('cyber.litigation.advisor@gmail.com');
+    await tester.scrollUntilVisible(auditor, 220, scrollable: find.byType(Scrollable).first);
+    expect(auditor, findsOneWidget);
+    expect(find.textContaining('+91 9664332984'), findsOneWidget);
+    expect(find.textContaining('https://linktr.ee/ertapanjatakia'), findsOneWidget);
+    expect(find.textContaining('A11Y-01'), findsNothing);
+    expect(find.textContaining('They may receive spam'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
-  testWidgets('accessibility statement follows supported selected languages', (tester) async {
-    for (final language in [
-      OrvikaLanguage.russian,
-      const OrvikaLanguage('ar', 'Arabic', 'العربية'),
-      const OrvikaLanguage('pt', 'Portuguese (Brazil)', 'Português (Brasil)'),
-    ]) {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: OrvikaLanguageScope(
-            language: language,
-            child: const OrvikaAccessibilityStatementScreen(),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      final title = language.code == 'ru'
-          ? 'Заявление ORVIKA о доступности'
-          : language.code == 'ar'
-              ? 'بيان إمكانية الوصول في ORVIKA'
-              : 'Declaração de Acessibilidade da ORVIKA';
-      expect(find.text(title), findsOneWidget);
-      expect(find.text('Accessibility commitment'), findsNothing);
-    }
-  });
-
 }

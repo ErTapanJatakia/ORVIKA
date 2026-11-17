@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'orvika_language.dart';
 import 'orvika_feature_translations.dart';
+import 'orvika_legal_translations.dart';
 import 'portuguese_portugal_text.dart';
 import 'mandarin_chinese_draft.dart';
 
@@ -34,13 +35,11 @@ class OrvikaLocalizations {
     'settings.appearance': 'Выберите оформление',
     'settings.saved': 'Выбор сохраняется на этом устройстве. ORVIKA не отправляет настройки оформления на сервер.',
     'settings.accessibility': 'Примечание о доступности: режим высокой контрастности использует более яркие сигнальные цвета и чёткое визуальное разделение. Предупреждения всегда сопровождаются текстом; цвет не является единственным индикатором.',
-    'a11y.statement.title': "Заявление ORVIKA о доступности",
+    'a11y.statement.title': "Заявление о доступности ORVIKA",
     'a11y.statement.badge': "Информация о доступности",
     'a11y.statement.reviewed': "Последняя проверка: 15 ноября 2026 г.",
     'a11y.statement.commitment.title': "Обязательства по обеспечению доступности",
     'a11y.statement.commitment.body': "В качестве цели проектирования и тестирования доступности веб-версии ORVIKA использует WCAG 2.2 уровня AA. Реализованные меры включают навигацию с клавиатуры и видимый фокус, семантические подписи и заголовки, семантику элементов форм, масштабирование текста, адаптивные макеты, поддержку уменьшения анимации и темы с учётом контрастности.",
-    'a11y.statement.evaluation.title': "Текущий статус оценки",
-    'a11y.statement.evaluation.body': "Владелец проекта сообщает о ручной проверке набора реализаций A11Y-01–A11Y-10. Автоматизированные тесты Flutter охватывают отдельные аспекты семантики, заголовки, подписи полей форм, навигацию с клавиатуры, адаптивные макеты и масштабирование текста. Эта проверка проекта не является независимым аудитом третьей стороны.",
     'a11y.statement.conformance.title': "Соответствие стандартам и ограничения",
     'a11y.statement.conformance.body': "ORVIKA не заявляет о полном соответствии WCAG 2.2 уровня AA. Автоматизированные тесты и проверка владельцем проекта не подтверждают выполнение всех применимых критериев на каждой странице, во всех состояниях, браузерах, вспомогательных технологиях и пользовательских настройках. Значок доступности обозначает только это заявление и канал обратной связи; он не является знаком соответствия или сертификации.",
     'a11y.statement.platform.title': "Поддерживаемые платформы",
@@ -50,7 +49,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': "Обратная связь и контакты по вопросам доступности",
     'a11y.statement.contact.body': "CAPTCHA или проверка не требуются. Свяжитесь с нами напрямую:",
     'a11y.statement.contact.action': "Открыть веб-заявление о доступности и контакты",
-    'a11y.statement.contact.disclosure': "Адреса электронной почты опубликованы, чтобы обратная связь по вопросам доступности была доступна без CAPTCHA. На них может поступать спам.",
     'settings.accessibility.title': 'Доступность',
     'settings.accessibility.help': 'Эти настройки сохраняются на устройстве. Системные настройки специальных возможностей продолжают действовать.',
     'settings.textSize': 'Размер текста',
@@ -210,8 +208,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': "Última revisão: 15 de novembro de 2026",
     'a11y.statement.commitment.title': "Compromisso com a acessibilidade",
     'a11y.statement.commitment.body': "A ORVIKA utiliza as WCAG 2.2, nível AA, como objetivo de conceção e teste da acessibilidade na Web. O trabalho implementado inclui navegação por teclado e foco visível, etiquetas e títulos semânticos, semântica dos controlos de formulários, ampliação do texto, layouts adaptáveis, suporte para redução de movimento e temas que têm em conta o contraste.",
-    'a11y.statement.evaluation.title': "Estado atual da avaliação",
-    'a11y.statement.evaluation.body': "O responsável pelo projeto informa que validou manualmente o conjunto de implementações A11Y-01 a A11Y-10. Os testes automatizados do Flutter abrangem aspetos selecionados da semântica, títulos, etiquetas de formulários, navegação por teclado, layouts adaptáveis e ampliação do texto. Esta validação do projeto não constitui uma auditoria independente de terceiros.",
     'a11y.statement.conformance.title': "Estado de conformidade e limitações",
     'a11y.statement.conformance.body': "A ORVIKA não declara conformidade integral com as WCAG 2.2, nível AA. Os testes automatizados e a validação pelo responsável do projeto não demonstram que todos os critérios de sucesso aplicáveis sejam cumpridos em todas as páginas, estados, navegadores, tecnologias de apoio e configurações dos utilizadores. O selo de acessibilidade identifica apenas esta declaração e o canal de contacto; não é um selo de conformidade nem de certificação.",
     'a11y.statement.platform.title': "Cobertura de plataformas",
@@ -221,7 +217,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': "Comentários e contacto sobre acessibilidade",
     'a11y.statement.contact.body': "Não é necessário CAPTCHA nem verificação. Contacte-nos diretamente:",
     'a11y.statement.contact.action': "Abrir declaração de acessibilidade Web e contacto",
-    'a11y.statement.contact.disclosure': "Os endereços de e-mail são públicos para permitir o envio de comentários sobre acessibilidade sem CAPTCHA. Podem receber mensagens não solicitadas.",
     'settings.accessibility.title': 'Acessibilidade',
     'settings.accessibility.help': 'Estas preferências são armazenadas neste dispositivo. As configurações de acessibilidade do sistema operacional continuam sendo respeitadas.',
     'settings.textSize': 'Tamanho do texto',
@@ -502,8 +497,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'Última revisión: 15 de noviembre de 2026',
     'a11y.statement.commitment.title': 'Compromiso de accesibilidad',
     'a11y.statement.commitment.body': 'ORVIKA utiliza WCAG 2.2 nivel AA como objetivo de diseño y pruebas de accesibilidad web. El trabajo implementado incluye navegación por teclado y foco visible, etiquetas y encabezados semánticos, semántica de controles de formulario, ampliación de texto, diseños adaptables, compatibilidad con la reducción de movimiento y temas sensibles al contraste.',
-    'a11y.statement.evaluation.title': 'Estado actual de la evaluación',
-    'a11y.statement.evaluation.body': 'El responsable del proyecto informa de una validación manual de las implementaciones A11Y-01 a A11Y-10. Las pruebas automatizadas de Flutter cubren aspectos seleccionados de semántica, encabezados, etiquetas de formularios, navegación por teclado, diseños adaptables y ampliación de texto. Esta validación del proyecto no es una auditoría independiente de terceros.',
     'a11y.statement.conformance.title': 'Estado de conformidad y limitaciones',
     'a11y.statement.conformance.body': 'ORVIKA no afirma cumplir plenamente WCAG 2.2 nivel AA. Las pruebas automatizadas y la validación del responsable del proyecto no demuestran que se cumplan todos los criterios aplicables en cada página, estado, navegador, tecnología de asistencia y configuración de usuario. El distintivo de accesibilidad identifica únicamente esta declaración y el canal de comentarios; no es un sello de conformidad ni de certificación.',
     'a11y.statement.platform.title': 'Cobertura de plataformas',
@@ -513,7 +506,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Comentarios y contacto sobre accesibilidad',
     'a11y.statement.contact.body': 'No se requiere CAPTCHA ni verificación. Puedes contactar directamente:',
     'a11y.statement.contact.action': 'Abrir la declaración de accesibilidad web y el contacto',
-    'a11y.statement.contact.disclosure': 'Las direcciones de correo son públicas para que los comentarios sobre accesibilidad estén disponibles sin CAPTCHA. Pueden recibir correo no deseado.',
   };
 
   static const Map<String, String> _hindiDraft = {
@@ -673,8 +665,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'अंतिम समीक्षा: 15 नवंबर 2026',
     'a11y.statement.commitment.title': 'सुलभता के प्रति प्रतिबद्धता',
     'a11y.statement.commitment.body': 'ORVIKA वेब सुलभता के डिज़ाइन और परीक्षण लक्ष्य के रूप में WCAG 2.2 स्तर AA का उपयोग करता है। लागू किए गए कार्यों में कीबोर्ड नेविगेशन और स्पष्ट फ़ोकस, अर्थपूर्ण लेबल और शीर्षक, फ़ॉर्म नियंत्रण की सिमेंटिक्स, टेक्स्ट स्केलिंग, उत्तरदायी लेआउट, कम गति समर्थन और कंट्रास्ट-अनुकूल थीम शामिल हैं।',
-    'a11y.statement.evaluation.title': 'वर्तमान मूल्यांकन स्थिति',
-    'a11y.statement.evaluation.body': 'परियोजना स्वामी A11Y-01 से A11Y-10 तक के कार्यान्वयन की मैन्युअल जाँच की सूचना देता है। स्वचालित Flutter परीक्षण सिमेंटिक्स, शीर्षकों, फ़ॉर्म लेबल, कीबोर्ड नेविगेशन, उत्तरदायी लेआउट और टेक्स्ट स्केलिंग के चुने हुए पहलुओं को कवर करते हैं। यह परियोजना सत्यापन स्वतंत्र तृतीय-पक्ष ऑडिट नहीं है।',
     'a11y.statement.conformance.title': 'अनुरूपता की स्थिति और सीमाएँ',
     'a11y.statement.conformance.body': 'ORVIKA पूर्ण WCAG 2.2 स्तर AA अनुरूपता का दावा नहीं करता। स्वचालित परीक्षण और परियोजना स्वामी का सत्यापन यह साबित नहीं करते कि हर पृष्ठ, स्थिति, ब्राउज़र, सहायक तकनीक और उपयोगकर्ता कॉन्फ़िगरेशन में सभी लागू सफलता मानदंड पूरे होते हैं। सुलभता बैज केवल इस वक्तव्य और प्रतिक्रिया मार्ग की पहचान करता है; यह अनुरूपता या प्रमाणन बैज नहीं है।',
     'a11y.statement.platform.title': 'प्लेटफ़ॉर्म कवरेज',
@@ -684,7 +674,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'सुलभता प्रतिक्रिया और संपर्क',
     'a11y.statement.contact.body': 'CAPTCHA या सत्यापन की आवश्यकता नहीं है। सीधे संपर्क करें:',
     'a11y.statement.contact.action': 'वेब सुलभता वक्तव्य और संपर्क खोलें',
-    'a11y.statement.contact.disclosure': 'सुलभता प्रतिक्रिया बिना CAPTCHA उपलब्ध रहे, इसलिए ईमेल पते सार्वजनिक हैं। उन्हें स्पैम मिल सकता है।',
   };
 
   // Draft UI packs for the nine additional requested languages. These cover
@@ -829,8 +818,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'Zuletzt überprüft: 15. November 2026',
     'a11y.statement.commitment.title': 'Verpflichtung zur Barrierefreiheit',
     'a11y.statement.commitment.body': 'ORVIKA verwendet WCAG 2.2 Level AA als Ziel für das Design und die Tests der Web-Barrierefreiheit. Umgesetzte Maßnahmen umfassen Tastaturnavigation und sichtbaren Fokus, semantische Beschriftungen und Überschriften, Formularsemantik, Textskalierung, responsive Layouts, Unterstützung reduzierter Bewegung und kontrastbewusste Designs.',
-    'a11y.statement.evaluation.title': 'Aktueller Bewertungsstand',
-    'a11y.statement.evaluation.body': 'Der Projektverantwortliche berichtet von einer manuellen Prüfung der Implementierungen A11Y-01 bis A11Y-10. Automatisierte Flutter-Tests decken ausgewählte Aspekte von Semantik, Überschriften, Formularbeschriftungen, Tastaturnavigation, responsiven Layouts und Textskalierung ab. Diese Projektprüfung ist kein unabhängiges Audit durch Dritte.',
     'a11y.statement.conformance.title': 'Konformitätsstatus und Einschränkungen',
     'a11y.statement.conformance.body': 'ORVIKA behauptet keine vollständige Konformität mit WCAG 2.2 Level AA. Automatisierte Tests und die Prüfung durch den Projektverantwortlichen belegen nicht, dass alle anwendbaren Erfolgskriterien auf jeder Seite, in jedem Zustand, Browser, jeder assistiven Technologie und Benutzerkonfiguration erfüllt sind. Das Barrierefreiheitskennzeichen verweist nur auf diese Erklärung und den Feedbackweg; es ist kein Konformitäts- oder Zertifizierungszeichen.',
     'a11y.statement.platform.title': 'Plattformabdeckung',
@@ -840,7 +827,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Feedback und Kontakt zur Barrierefreiheit',
     'a11y.statement.contact.body': 'CAPTCHA oder Verifizierung sind nicht erforderlich. Kontaktieren Sie uns direkt:',
     'a11y.statement.contact.action': 'Web-Erklärung zur Barrierefreiheit und Kontakt öffnen',
-    'a11y.statement.contact.disclosure': 'E-Mail-Adressen sind öffentlich, damit Feedback zur Barrierefreiheit ohne CAPTCHA möglich ist. Sie können Spam erhalten.',
   };
 
   static const Map<String, String> _frenchDraft = {
@@ -981,8 +967,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'Dernière révision : 15 novembre 2026',
     'a11y.statement.commitment.title': 'Engagement en matière d’accessibilité',
     'a11y.statement.commitment.body': 'ORVIKA utilise WCAG 2.2 niveau AA comme objectif de conception et de test de l’accessibilité web. Les travaux réalisés comprennent la navigation au clavier et le focus visible, les libellés et titres sémantiques, la sémantique des formulaires, le redimensionnement du texte, les mises en page adaptatives, la réduction des animations et des thèmes tenant compte du contraste.',
-    'a11y.statement.evaluation.title': 'État actuel de l’évaluation',
-    'a11y.statement.evaluation.body': 'Le responsable du projet indique avoir vérifié manuellement les implémentations A11Y-01 à A11Y-10. Les tests Flutter automatisés couvrent certains aspects de la sémantique, des titres, des libellés de formulaires, de la navigation au clavier, des mises en page adaptatives et du redimensionnement du texte. Cette validation du projet ne constitue pas un audit indépendant par un tiers.',
     'a11y.statement.conformance.title': 'État de conformité et limites',
     'a11y.statement.conformance.body': 'ORVIKA ne revendique pas une conformité complète à WCAG 2.2 niveau AA. Les tests automatisés et la validation du responsable du projet ne démontrent pas que tous les critères applicables sont respectés sur chaque page, état, navigateur, technologie d’assistance et configuration utilisateur. Le badge Accessibilité identifie uniquement cette déclaration et le canal de retour ; ce n’est ni un label de conformité ni une certification.',
     'a11y.statement.platform.title': 'Couverture des plateformes',
@@ -992,7 +976,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Commentaires et contact sur l’accessibilité',
     'a11y.statement.contact.body': 'Aucun CAPTCHA ni contrôle de vérification n’est requis. Contactez-nous directement :',
     'a11y.statement.contact.action': 'Ouvrir la déclaration d’accessibilité web et les contacts',
-    'a11y.statement.contact.disclosure': 'Les adresses e-mail sont publiques afin que les retours sur l’accessibilité restent possibles sans CAPTCHA. Elles peuvent recevoir du spam.',
   };
 
   static const Map<String, String> _italianDraft = {
@@ -1132,8 +1115,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'Ultima revisione: 15 novembre 2026',
     'a11y.statement.commitment.title': 'Impegno per l’accessibilità',
     'a11y.statement.commitment.body': 'ORVIKA utilizza WCAG 2.2 livello AA come obiettivo di progettazione e test per l’accessibilità web. Le attività implementate includono navigazione da tastiera e focus visibile, etichette e intestazioni semantiche, semantica dei moduli, ridimensionamento del testo, layout adattivi, supporto alla riduzione del movimento e temi attenti al contrasto.',
-    'a11y.statement.evaluation.title': 'Stato attuale della valutazione',
-    'a11y.statement.evaluation.body': 'Il responsabile del progetto riferisce di aver verificato manualmente le implementazioni A11Y-01–A11Y-10. I test Flutter automatizzati coprono aspetti selezionati di semantica, intestazioni, etichette dei moduli, navigazione da tastiera, layout adattivi e ridimensionamento del testo. Questa verifica del progetto non è un audit indipendente di terze parti.',
     'a11y.statement.conformance.title': 'Stato di conformità e limitazioni',
     'a11y.statement.conformance.body': 'ORVIKA non dichiara la piena conformità a WCAG 2.2 livello AA. I test automatizzati e la verifica del responsabile del progetto non dimostrano che tutti i criteri applicabili siano soddisfatti in ogni pagina, stato, browser, tecnologia assistiva e configurazione utente. Il badge Accessibilità identifica soltanto questa dichiarazione e il canale di feedback; non è un marchio di conformità o certificazione.',
     'a11y.statement.platform.title': 'Copertura delle piattaforme',
@@ -1143,7 +1124,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'Feedback e contatti sull’accessibilità',
     'a11y.statement.contact.body': 'Non è richiesto alcun CAPTCHA o verifica. Contattaci direttamente:',
     'a11y.statement.contact.action': 'Apri la dichiarazione di accessibilità web e i contatti',
-    'a11y.statement.contact.disclosure': 'Gli indirizzi e-mail sono pubblici affinché il feedback sull’accessibilità sia possibile senza CAPTCHA. Potrebbero ricevere spam.',
   };
 
   static const Map<String, String> _punjabiDraft = {
@@ -1241,8 +1221,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'آخری جائزہ: 15 نومبر 2026',
     'a11y.statement.commitment.title': 'رسائی کے لیے عزم',
     'a11y.statement.commitment.body': 'ORVIKA ویب رسائی کے ڈیزائن اور جانچ کے ہدف کے طور پر WCAG 2.2 سطح AA استعمال کرتا ہے۔ نافذ کردہ کام میں کی بورڈ نیویگیشن اور نمایاں فوکس، معنوی لیبل اور عنوانات، فارم کنٹرول کی معنویت، متن کا سائز بدلنا، موافق لے آؤٹ، حرکت کم کرنے کی معاونت اور کنٹراسٹ سے آگاہ تھیم شامل ہیں۔',
-    'a11y.statement.evaluation.title': 'موجودہ جائزے کی حیثیت',
-    'a11y.statement.evaluation.body': 'پروجیکٹ کا ذمہ دار A11Y-01 سے A11Y-10 تک کے نفاذ کی دستی جانچ کی اطلاع دیتا ہے۔ خودکار Flutter ٹیسٹ معنویت، عنوانات، فارم لیبل، کی بورڈ نیویگیشن، موافق لے آؤٹ اور متن کے سائز کے منتخب پہلوؤں کا احاطہ کرتے ہیں۔ یہ پروجیکٹ کی توثیق آزاد تیسرے فریق کا آڈٹ نہیں ہے۔',
     'a11y.statement.conformance.title': 'مطابقت کی حیثیت اور حدود',
     'a11y.statement.conformance.body': 'ORVIKA مکمل WCAG 2.2 سطح AA مطابقت کا دعویٰ نہیں کرتا۔ خودکار ٹیسٹ اور پروجیکٹ کے ذمہ دار کی جانچ یہ ثابت نہیں کرتے کہ ہر صفحے، حالت، براؤزر، معاون ٹیکنالوجی اور صارف کی ترتیب میں تمام قابلِ اطلاق کامیابی کے معیار پورے ہوتے ہیں۔ رسائی کا بیج صرف اس بیان اور رائے دینے کے راستے کی نشاندہی کرتا ہے؛ یہ مطابقت یا سرٹیفکیشن کا نشان نہیں۔',
     'a11y.statement.platform.title': 'پلیٹ فارم کا احاطہ',
@@ -1252,7 +1230,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'رسائی کے بارے میں رائے اور رابطہ',
     'a11y.statement.contact.body': 'CAPTCHA یا تصدیق درکار نہیں۔ براہِ راست رابطہ کریں:',
     'a11y.statement.contact.action': 'ویب رسائی کا بیان اور رابطہ کھولیں',
-    'a11y.statement.contact.disclosure': 'رسائی کے بارے میں رائے CAPTCHA کے بغیر دستیاب رکھنے کے لیے ای میل پتے عوامی ہیں۔ انہیں اسپیم موصول ہو سکتا ہے۔',
   };
 
   static const Map<String, String> _arabicDraft = {
@@ -1278,8 +1255,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': "آخر مراجعة: 15 نوفمبر 2026",
     'a11y.statement.commitment.title': "الالتزام بإمكانية الوصول",
     'a11y.statement.commitment.body': "تعتمد ORVIKA إرشادات WCAG 2.2 بالمستوى AA هدفاً لتصميم إمكانية الوصول إلى الويب واختبارها. تشمل الأعمال المنفذة التنقل بلوحة المفاتيح وإظهار موضع التركيز، والتسميات والعناوين الدلالية، ودلالات عناصر النماذج، وتكبير النص، والتخطيطات المتجاوبة، ودعم تقليل الحركة، والسمات التي تراعي التباين.",
-    'a11y.statement.evaluation.title': "حالة التقييم الحالية",
-    'a11y.statement.evaluation.body': "يفيد مالك المشروع بأنه أجرى تحققاً يدوياً من مجموعة التطبيقات A11Y-01 إلى A11Y-10. تغطي اختبارات Flutter الآلية جوانب محددة من الدلالات والعناوين وتسميات النماذج والتنقل بلوحة المفاتيح والتخطيطات المتجاوبة وتكبير النص. ولا يُعد هذا التحقق الذي أجراه المشروع تدقيقاً مستقلاً من جهة خارجية.",
     'a11y.statement.conformance.title': "حالة المطابقة والقيود",
     'a11y.statement.conformance.body': "لا تدّعي ORVIKA المطابقة الكاملة للمستوى AA من WCAG 2.2. فالاختبارات الآلية والتحقق الذي يجريه مالك المشروع لا يثبتان استيفاء جميع معايير النجاح المنطبقة في كل صفحة وحالة ومتصفح وتقنية مساعدة وإعداد للمستخدم. وتشير شارة إمكانية الوصول إلى هذا البيان وقناة الملاحظات فقط، وليست شارة مطابقة أو اعتماد.",
     'a11y.statement.platform.title': "نطاق المنصات",
@@ -1289,7 +1264,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': "ملاحظات إمكانية الوصول ووسائل الاتصال",
     'a11y.statement.contact.body': "لا يلزم CAPTCHA أو تحقق. يمكنك التواصل معنا مباشرةً:",
     'a11y.statement.contact.action': "فتح بيان إمكانية الوصول للويب وبيانات الاتصال",
-    'a11y.statement.contact.disclosure': "عناوين البريد الإلكتروني عامة لإتاحة إرسال ملاحظات إمكانية الوصول دون CAPTCHA، وقد تتلقى رسائل غير مرغوب فيها.",
     'settings.accessibility.title': 'إمكانية الوصول',
     'settings.accessibility.help': 'تُحفظ هذه التفضيلات على هذا الجهاز. ويستمر احترام إعدادات إمكانية الوصول في نظام التشغيل.',
     'settings.textSize': 'حجم النص',
@@ -1456,8 +1430,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'शेवटचे पुनरावलोकन: १५ नोव्हेंबर २०२६',
     'a11y.statement.commitment.title': 'सुलभतेबाबतची बांधिलकी',
     'a11y.statement.commitment.body': 'ORVIKA वेब सुलभतेच्या रचना आणि चाचणीसाठी WCAG 2.2 स्तर AA हे उद्दिष्ट वापरते. अंमलात आणलेल्या उपायांमध्ये कीबोर्ड नेव्हिगेशन व स्पष्ट फोकस, अर्थपूर्ण लेबले व शीर्षके, फॉर्म नियंत्रणांची सिमेंटिक्स, मजकूर आकार बदल, प्रतिसादक्षम मांडणी, कमी हालचालीसाठी समर्थन आणि कॉन्ट्रास्ट-जाणिवेच्या थीम यांचा समावेश आहे.',
-    'a11y.statement.evaluation.title': 'सध्याची मूल्यांकन स्थिती',
-    'a11y.statement.evaluation.body': 'प्रकल्प मालक A11Y-01 ते A11Y-10 अंमलबजावणी संचाची हाताने तपासणी केल्याचे सांगतो. स्वयंचलित Flutter चाचण्या सिमेंटिक्स, शीर्षके, फॉर्म लेबले, कीबोर्ड नेव्हिगेशन, प्रतिसादक्षम मांडणी आणि मजकूर आकार बदल यांतील निवडक बाबी तपासतात. ही प्रकल्प तपासणी स्वतंत्र तृतीय-पक्ष ऑडिट नाही.',
     'a11y.statement.conformance.title': 'अनुरूपता स्थिती आणि मर्यादा',
     'a11y.statement.conformance.body': 'ORVIKA पूर्ण WCAG 2.2 स्तर AA अनुरूपतेचा दावा करत नाही. स्वयंचलित चाचण्या आणि प्रकल्प मालकाची तपासणी प्रत्येक पृष्ठ, स्थिती, ब्राउझर, सहाय्यक तंत्रज्ञान आणि वापरकर्ता सेटिंगमध्ये सर्व लागू निकष पूर्ण होतात हे सिद्ध करत नाहीत. सुलभता बॅज फक्त हे निवेदन आणि अभिप्राय मार्ग दर्शवतो; तो अनुरूपता किंवा प्रमाणन बॅज नाही.',
     'a11y.statement.platform.title': 'प्लॅटफॉर्म व्याप्ती',
@@ -1467,7 +1439,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'सुलभता अभिप्राय आणि संपर्क',
     'a11y.statement.contact.body': 'CAPTCHA किंवा पडताळणी आवश्यक नाही. थेट संपर्क साधा:',
     'a11y.statement.contact.action': 'वेब सुलभता निवेदन आणि संपर्क उघडा',
-    'a11y.statement.contact.disclosure': 'CAPTCHA शिवाय सुलभता अभिप्राय उपलब्ध राहावा म्हणून ईमेल पत्ते सार्वजनिक आहेत. त्यांना स्पॅम येऊ शकतो.',
   };
 
   static const Map<String, String> _gujaratiDraft = {
@@ -1519,8 +1490,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'છેલ્લી સમીક્ષા: ૧૫ નવેમ્બર ૨૦૨૬',
     'a11y.statement.commitment.title': 'સુલભતા માટેની પ્રતિબદ્ધતા',
     'a11y.statement.commitment.body': 'ORVIKA વેબ સુલભતાની રચના અને પરીક્ષણ માટે WCAG 2.2 સ્તર AA ને લક્ષ્ય તરીકે અપનાવે છે. અમલમાં મૂકાયેલા કાર્યમાં કીબોર્ડ નેવિગેશન અને સ્પષ્ટ ફોકસ, અર્થપૂર્ણ લેબલ અને શીર્ષકો, ફોર્મ નિયંત્રણોની સિમેન્ટિક્સ, લખાણનું કદ બદલવું, પ્રતિસાદી લેઆઉટ, ઓછી ગતિ માટેનું સમર્થન અને કોન્ટ્રાસ્ટ-જાગૃત થીમનો સમાવેશ થાય છે.',
-    'a11y.statement.evaluation.title': 'વર્તમાન મૂલ્યાંકન સ્થિતિ',
-    'a11y.statement.evaluation.body': 'પ્રોજેક્ટ માલિક A11Y-01 થી A11Y-10 અમલીકરણ સમૂહની મેન્યુઅલ ચકાસણીની જાણ કરે છે. સ્વચાલિત Flutter પરીક્ષણો સિમેન્ટિક્સ, શીર્ષકો, ફોર્મ લેબલ, કીબોર્ડ નેવિગેશન, પ્રતિસાદી લેઆઉટ અને લખાણના કદના પસંદ કરેલા પાસાઓ આવરે છે. આ પ્રોજેક્ટ ચકાસણી સ્વતંત્ર તૃતીય-પક્ષ ઓડિટ નથી.',
     'a11y.statement.conformance.title': 'અનુરૂપતા સ્થિતિ અને મર્યાદાઓ',
     'a11y.statement.conformance.body': 'ORVIKA સંપૂર્ણ WCAG 2.2 સ્તર AA અનુરૂપતાનો દાવો કરતું નથી. સ્વચાલિત પરીક્ષણો અને પ્રોજેક્ટ માલિકની ચકાસણી દરેક પૃષ્ઠ, સ્થિતિ, બ્રાઉઝર, સહાયક ટેકનોલોજી અને વપરાશકર્તા ગોઠવણીમાં બધા લાગુ માપદંડો પૂર્ણ થાય છે તે સાબિત કરતા નથી. સુલભતા બેજ માત્ર આ નિવેદન અને પ્રતિસાદ માર્ગ દર્શાવે છે; તે અનુરૂપતા અથવા પ્રમાણપત્ર બેજ નથી.',
     'a11y.statement.platform.title': 'પ્લેટફોર્મ આવરણ',
@@ -1530,7 +1499,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'સુલભતા પ્રતિસાદ અને સંપર્ક',
     'a11y.statement.contact.body': 'CAPTCHA અથવા ચકાસણી જરૂરી નથી. સીધો સંપર્ક કરો:',
     'a11y.statement.contact.action': 'વેબ સુલભતા નિવેદન અને સંપર્ક ખોલો',
-    'a11y.statement.contact.disclosure': 'CAPTCHA વિના સુલભતા પ્રતિસાદ ઉપલબ્ધ રહે તે માટે ઇમેઇલ સરનામાં જાહેર છે. તેમને સ્પામ મળી શકે છે.',
   };
 
   static const Map<String, String> _sanskritDraft = {
@@ -1582,8 +1550,6 @@ class OrvikaLocalizations {
     'a11y.statement.reviewed': 'अन्तिमं पुनरीक्षणम्: १५ नवम्बर २०२६',
     'a11y.statement.commitment.title': 'सुलभतायै प्रतिबद्धता',
     'a11y.statement.commitment.body': 'ORVIKA जालसुलभतायाः रचनायां परीक्षणे च WCAG 2.2 AA स्तरं लक्ष्यरूपेण स्वीकरोति। कार्यान्वितेषु उपायेषु कीबोर्ड-नेविगेशनम्, दृश्यः फोकसः, अर्थपूर्णानि लेबलानि शीर्षकानि च, प्रपत्र-नियन्त्रणानां सिमेन्टिक्स्, पाठस्य आकारपरिवर्तनम्, अनुकूल-विन्यासाः, न्यून-गतिसमर्थनं तथा वर्णविपर्यास-सचेताः विषयाः अन्तर्भवन्ति।',
-    'a11y.statement.evaluation.title': 'वर्तमानमूल्याङ्कनस्थितिः',
-    'a11y.statement.evaluation.body': 'परियोजनास्वामी A11Y-01 तः A11Y-10 पर्यन्तानां कार्यान्वयनानां हस्तचालितं परीक्षणं कृतवान् इति निवेदयति। स्वचालितानि Flutter परीक्षणानि सिमेन्टिक्स्, शीर्षकानि, प्रपत्रलेबलानि, कीबोर्ड-नेविगेशनम्, अनुकूलविन्यासान्, पाठाकारपरिवर्तनं च चयनितरूपेण परीक्षन्ते। एतत् परियोजनापरीक्षणं स्वतन्त्रं तृतीयपक्षीयं परीक्षणं नास्ति।',
     'a11y.statement.conformance.title': 'अनुरूपतास्थितिः सीमाश्च',
     'a11y.statement.conformance.body': 'ORVIKA पूर्णां WCAG 2.2 AA अनुरूपतां न प्रतिजानीते। स्वचालितपरीक्षणानि परियोजनास्वामिनः परीक्षणं च प्रत्येकस्मिन् पृष्ठे अवस्थायां ब्राउज़रे सहाय्यतन्त्रे उपयोक्तृविन्यासे च सर्वान् प्रयोज्यान् मानदण्डान् पूरयन्ति इति न प्रमाणयतः। सुलभताचिह्नं केवलम् एतां घोषणां प्रतिक्रियामार्गं च सूचयति; न तु अनुरूपतामुद्रा प्रमाणपत्रं वा।',
     'a11y.statement.platform.title': 'मञ्चव्याप्तिः',
@@ -1593,7 +1559,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': 'सुलभताप्रतिक्रिया सम्पर्कश्च',
     'a11y.statement.contact.body': 'CAPTCHA अथवा सत्यापनं न आवश्यकम्। प्रत्यक्षं सम्पर्कं कुरुत:',
     'a11y.statement.contact.action': 'जालसुलभताघोषणां सम्पर्कं च उद्घाटयतु',
-    'a11y.statement.contact.disclosure': 'CAPTCHA विना सुलभताप्रतिक्रिया उपलब्धा भवेत् इति ईमेल-सङ्केताः सार्वजनिकाः सन्ति। तेषु अवाञ्छितपत्राणि आगन्तुं शक्नुवन्ति।',
   };
 
   /// European Portuguese adaptation of the complete Portuguese UI source pack.
@@ -1603,13 +1568,18 @@ class OrvikaLocalizations {
   /// English labels for the accessibility controls. Other English UI strings
   /// continue to use their call-site fallbacks.
   static const Map<String, String> _englishAccessibility = {
-    'a11y.statement.title': "ORVIKA Accessibility Statement",
+    'module.link': 'Link Check',
+    'module.qr': 'QR Check',
+    'module.message': 'Message Check',
+    'module.intelligence': 'Intelligence',
+    'module.privacy': 'Privacy',
+    'module.academy': 'Academy',
+    'module.response': 'Response',
+    'a11y.statement.title': "Accessibility Statement",
     'a11y.statement.badge': "Accessibility information",
     'a11y.statement.reviewed': "Last reviewed: 15 November 2026",
     'a11y.statement.commitment.title': "Accessibility commitment",
     'a11y.statement.commitment.body': "ORVIKA uses WCAG 2.2 Level AA as its web accessibility design and testing target. Implemented work includes keyboard navigation and visible focus, semantic labels and headings, form-control semantics, text scaling, responsive layouts, reduced-motion support, and contrast-aware themes.",
-    'a11y.statement.evaluation.title': "Current evaluation status",
-    'a11y.statement.evaluation.body': "The project owner reports manually validating the A11Y-01 to A11Y-10 implementation set. Automated Flutter tests cover selected semantics, headings, form labels, keyboard navigation, responsive layouts, and text scaling. This project validation is not an independent third-party audit.",
     'a11y.statement.conformance.title': "Conformance status and limitations",
     'a11y.statement.conformance.body': "ORVIKA does not claim full WCAG 2.2 Level AA conformance. Automated tests and project-owner validation do not establish that every applicable success criterion is met across every page, state, browser, assistive technology, and user configuration. The Accessibility badge identifies this statement and feedback route only; it is not a conformance or certification badge.",
     'a11y.statement.platform.title': "Platform coverage",
@@ -1619,7 +1589,6 @@ class OrvikaLocalizations {
     'a11y.statement.contact.title': "Accessibility feedback and contact",
     'a11y.statement.contact.body': "No CAPTCHA or verification is required. Contact us directly:",
     'a11y.statement.contact.action': "Open web accessibility statement and contact",
-    'a11y.statement.contact.disclosure': "Email addresses are public so that accessibility feedback remains available without a CAPTCHA. They may receive spam.",
     'settings.accessibility.title': 'Accessibility',
     'settings.accessibility.help': 'These preferences are stored on this device. Operating-system accessibility settings remain respected.',
     'settings.textSize': 'Text size',
@@ -1633,7 +1602,7 @@ class OrvikaLocalizations {
   /// Language packs currently containing authored ORVIKA strings.
   /// A picker entry alone is never evidence of translation coverage.
   static const Set<String> translatedLanguageCodes = {
-    'ru', 'es', 'hi', 'de', 'fr', 'it', 'pt', 'pt-PT', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
+    'en', 'ru', 'es', 'hi', 'de', 'fr', 'it', 'pt', 'pt-PT', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa',
   };
 
   static const Set<String> rightToLeftLanguageCodes = {'ar', 'ur', 'he', 'fa', 'ps'};
@@ -1650,15 +1619,16 @@ class OrvikaLocalizations {
   /// Phase-two checker strings override or extend the initial language packs.
   Map<String, String> get _translations => {
         ..._baseTranslations,
+        ...OrvikaLegalTranslations.forCode(language.code),
         ...OrvikaFeatureTranslations.forCode(language.code),
         if (language.code == 'pt-PT') ...PortuguesePortugalText.fallbacks,
       };
 
   /// True only when the selected language contains an authored value for [key].
   bool hasTranslation(String key) =>
-      translatedLanguageCodes.contains(language.code) &&
-      language.code != 'en' &&
-      _translations.containsKey(key);
+      _translations.containsKey(key) &&
+      (translatedLanguageCodes.contains(language.code) ||
+          OrvikaLegalTranslations.forCode(language.code).containsKey(key));
 
   /// Resolves a key using the existing positional-fallback API.
   String text(String key, [String? fallback]) =>

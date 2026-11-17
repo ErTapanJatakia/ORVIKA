@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:orvika/core/localization/orvika_language.dart';
 import 'package:orvika/core/localization/orvika_localizations.dart';
 import 'package:orvika/core/localization/orvika_feature_translations.dart';
+import 'package:orvika/core/localization/orvika_legal_translations.dart';
 
 void main() {
   group('ORVIKA language catalogue', () {
@@ -39,8 +40,11 @@ void main() {
       // Audit every reviewed Russian baseline key, not just representative samples.
       // Draft text must resolve for development without counting as reviewed coverage.
       for (final key in OrvikaLocalizations.requiredTranslationKeys) {
-        expect(localization.hasTranslation(key), isFalse,
-            reason: 'Simplified Chinese draft must not claim reviewed coverage for $key');
+        expect(
+          localization.hasTranslation(key),
+          OrvikaLegalTranslations.forCode('zh').containsKey(key),
+          reason: 'Simplified Chinese may claim authored legal coverage only for $key',
+        );
         expect(localization.text(key), isNot(key),
             reason: 'Simplified Chinese draft is missing authored UI text for $key');
       }
@@ -78,8 +82,11 @@ void main() {
             reason: 'Simplified Chinese draft is missing shared UI key $key');
         expect(localization.text(key), isNotEmpty,
             reason: 'Simplified Chinese shared UI key $key is empty');
-        expect(localization.hasTranslation(key), isFalse,
-            reason: 'Draft Chinese key $key must not count as reviewed coverage');
+        expect(
+          localization.hasTranslation(key),
+          OrvikaLegalTranslations.forCode('zh').containsKey(key),
+          reason: 'Chinese legal-only coverage must remain distinct from full UI coverage for $key',
+        );
       }
     });
 
@@ -247,7 +254,7 @@ void main() {
         'checker.severity.caution',
         'checker.severity.warning',
       ];
-      for (final code in ['ru', 'hi']) {
+      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es']) {
         final localization =
             OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in checkerKeys) {
@@ -508,6 +515,82 @@ void main() {
             placeholders(source.text(key)),
             reason: '$code must preserve placeholders for $key',
           );
+        }
+      }
+    });
+
+    test('legal contact labels stay outside feature packs and resolve independently', () {
+      const legalKeys = [
+        'a11y.statement.contact.auditor',
+        'a11y.statement.contact.name',
+        'a11y.statement.contact.email',
+        'a11y.statement.contact.phone',
+        'a11y.statement.contact.website',
+        'a11y.statement.badge.semantics',
+        'privacy.notice.title',
+        'privacy.notice.developer.title',
+        'privacy.notice.dpo.title',
+      ];
+      for (final code in ['en', 'ru', 'pt', 'pt-PT', 'es', 'hi', 'de', 'fr', 'it', 'pa', 'ur', 'ar', 'mr', 'gu', 'sa', 'bn', 'ta', 'te', 'ja']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        final featurePack = OrvikaFeatureTranslations.forCode(code);
+        for (final key in legalKeys) {
+          expect(featurePack.containsKey(key), isFalse,
+              reason: '$code must keep legal labels out of feature translations');
+          expect(localization.text(key), isNot(key),
+              reason: '$code is missing its separate legal label $key');
+        }
+      }
+      for (final key in legalKeys) {
+        expect(OrvikaLocalizations.requiredTranslationKeys.contains(key), isFalse,
+            reason: '$key must not change the established feature baseline');
+      }
+    });
+
+    test('twenty locales cover privacy and accessibility legal-content strings', () {
+      const privacyKeys = [
+        'privacy.notice.intro',
+        'privacy.notice.reviewed',
+        'privacy.notice.closing',
+        'privacy.notice.analysis.title',
+        'privacy.notice.analysis.body',
+        'privacy.notice.analytics.title',
+        'privacy.notice.analytics.body',
+        'privacy.notice.camera.title',
+        'privacy.notice.camera.body',
+        'privacy.notice.runtime.title',
+        'privacy.notice.runtime.body',
+        'privacy.notice.storage.title',
+        'privacy.notice.storage.body',
+        'privacy.notice.cloud.title',
+        'privacy.notice.cloud.body',
+        'privacy.notice.reports.title',
+        'privacy.notice.reports.body',
+      ];
+      const accessibilityKeys = [
+        'a11y.statement.title',
+        'a11y.statement.reviewed.current',
+        'a11y.statement.contact.action',
+        'a11y.statement.commitment.title',
+        'a11y.statement.commitment.body',
+        'a11y.statement.conformance.title',
+        'a11y.statement.conformance.body',
+        'a11y.statement.platform.title',
+        'a11y.statement.platform.body',
+        'a11y.statement.report.title',
+        'a11y.statement.report.body',
+      ];
+      const legalContentKeys = [
+        ...privacyKeys,
+        ...accessibilityKeys,
+      ];
+      for (final code in ['en', 'ru', 'hi', 'pt', 'pt-PT', 'es', 'de', 'fr', 'it', 'ar', 'ur', 'pa', 'mr', 'gu', 'sa', 'zh', 'bn', 'ta', 'te', 'ja']) {
+        final localization = OrvikaLocalizations(OrvikaLanguage.fromCode(code));
+        for (final key in legalContentKeys) {
+          expect(localization.hasTranslation(key), isTrue,
+              reason: '$code is missing legal content $key');
+          expect(localization.text(key), isNot(key),
+              reason: '$code must not fall back to an untranslated key for $key');
         }
       }
     });
