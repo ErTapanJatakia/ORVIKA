@@ -242,12 +242,12 @@ jobs:
 
       - name: Publish deployment summary
         env:
-          CLOUDFLARE_PAGES_PROJECT: \${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
         run: |
           {
             printf '%s\n' '## ORVIKA Cloudflare Pages deployment' ''
             printf '%s\n' "- Project: \`$CLOUDFLARE_PAGES_PROJECT\`"
-            printf '%s\n' '- Production branch: \`main\`'
+            printf '%s\n' '- Production branch: `main`'
             printf '%s\n' "- URL: https://$CLOUDFLARE_PAGES_PROJECT.pages.dev"
             printf '%s\n' '- Deployment was explicitly requested through workflow_dispatch.'
             printf '%s\n' '- Security headers were generated from the verified repository policy.'
