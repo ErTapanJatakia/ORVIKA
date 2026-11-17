@@ -60,12 +60,12 @@ assert.match(appGradle, /targetCompatibility = JavaVersion\.VERSION_17/);
 assert.match(appGradle, /throw GradleException\([\s\S]*?release signing is not configured/);
 assert.match(
   androidWorkflow,
-  /android-validation:[\\s\\S]*?if: github\\.ref == 'refs\\/heads\\/main'/,
+  /android-validation:[\s\S]*?if: github\.ref == 'refs\/heads\/main'/,
   'Android validation and signing must run only from main',
 );
 assert.match(
   androidWorkflow,
-  /- name: Detect production signing secrets\\s+if: inputs\\.build_signed_release == true/,
+  /- name: Detect production signing secrets\s+if: inputs\.build_signed_release == true/,
   'Signing secrets must remain behind explicit signed-release approval',
 );
 assert.match(manifest, /android:usesCleartextTraffic="false"/);
