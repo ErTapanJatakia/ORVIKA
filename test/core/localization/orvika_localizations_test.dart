@@ -247,7 +247,7 @@ void main() {
         'checker.severity.caution',
         'checker.severity.warning',
       ];
-      for (final code in ['ru', 'hi']) {
+      for (final code in ['ru', 'hi', 'pt', 'pt-PT', 'es']) {
         final localization =
             OrvikaLocalizations(OrvikaLanguage.fromCode(code));
         for (final key in checkerKeys) {
