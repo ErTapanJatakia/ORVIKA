@@ -12,17 +12,47 @@ const applicationId = badging.match(/^package: name='([^']+)'/m)?.[1];
 assert.equal(applicationId, 'com.orvika.app', 'Built APK application ID must be com.orvika.app');
 
 const permissionsOutput = execFileSync(aapt, ['dump', 'permissions', apk], { encoding: 'utf8' });
-const permissions = [...permissionsOutput.matchAll(/^uses-permission(?:-sdk-\d+)?: name='([^']+)'/gm)]
+const permissions = [...permissionsOutput.matchAll(/^uses-permission(?:-sdk-\\d+)?: name='([^']+)'/gm)]
   .map((match) => match[1]);
 const actual = [...new Set(permissions)].sort();
-const expected = ['android.permission.CAMERA', 'android.permission.INTERNET'].sort();
+const dynamicReceiverPermission = `${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`;
+const expected = [
+  'android.permission.ACCESS_NETWORK_STATE',
+  'android.permission.CAMERA',
+  'android.permission.INTERNET',
+  dynamicReceiverPermission,
+].sort();
 
 assert.deepEqual(
   actual,
   expected,
-  'Merged APK manifest permission set differs from the reviewed CAMERA + INTERNET allowlist',
+  'Merged APK manifest permission set differs from the reviewed Android + AndroidX allowlist',
+);
+
+// AndroidX Core contributes this app-scoped permission to protect dynamic
+// receivers on Android versions before API 33. Do not merely allowlist its
+// uses-permission: the declaration must be signature-protected as well.
+const manifestTree = execFileSync(
+  aapt,
+  ['dump', 'xmltree', apk, 'AndroidManifest.xml'],
+  { encoding: 'utf8' },
+);
+const manifestElements = manifestTree.split(/(?=^\\s*E: )/m);
+const dynamicPermissionDeclaration = manifestElements.find((element) =>
+  /^\\s*E: permission(?:\\s|$)/.test(element) &&
+  element.includes(dynamicReceiverPermission),
+);
+assert.ok(
+  dynamicPermissionDeclaration,
+  `Merged APK manifest must declare ${dynamicReceiverPermission}`,
+);
+assert.match(
+  dynamicPermissionDeclaration,
+  /android:protectionLevel\\([^)]*\\)=(?:0x2|"signature")/,
+  'AndroidX dynamic receiver permission must use signature-level protection',
 );
 
 console.log('Built APK identity and merged-manifest permissions verified.');
 console.log(`- Application ID: ${applicationId}`);
 console.log(`- Permissions: ${actual.join(', ')}`);
+console.log('- AndroidX dynamic receiver permission: declared with signature protection');
