@@ -12,8 +12,15 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: OrvikaAccessibilityStatementScreen()));
     expect(find.text('Accessibility Statement'), findsOneWidget);
     expect(find.text('WCAG 2.2 AA'), findsNWidgets(2));
-    expect(find.textContaining('WCAG 2.2 Level AA conformance claim'), findsNothing);
-    expect(find.textContaining('publisher makes a WCAG 2.2 Level AA conformance claim'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is SelectableText &&
+            widget.data?.contains(
+              'The publisher makes a WCAG 2.2 Level AA conformance claim',
+            ) == true,
+      ),
+      findsOneWidget,
+    );
     expect(find.textContaining('native Android application'), findsNWidgets(2));
     final auditor = find.textContaining('cyber.litigation.advisor@gmail.com');
     await tester.scrollUntilVisible(auditor, 220, scrollable: find.byType(Scrollable).first);
