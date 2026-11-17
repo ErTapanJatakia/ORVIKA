@@ -70,6 +70,19 @@ void main() {
       expect(result.normalizedUrl, 'https://localhost:8080/path');
     });
 
+    test('accepts URLs up to 8,192 characters and rejects longer input', () {
+      const prefix = 'https://example.com/';
+      final accepted = prefix + List.filled(8192 - prefix.length, 'a').join();
+      final rejected = prefix + List.filled(8193 - prefix.length, 'a').join();
+
+      expect(accepted.length, 8192);
+      expect(analyzer.analyze(accepted).isValid, isTrue);
+      expect(rejected.length, 8193);
+      final result = analyzer.analyze(rejected);
+      expect(result.isValid, isFalse);
+      expect(result.findings.single.detail, contains('8,192'));
+    });
+
     test('rejects whitespace and control characters', () {
       expect(analyzer.analyze('https://exa mple.com').isValid, isFalse);
       expect(analyzer.analyze('https://example.com\n').isValid, isFalse);
