@@ -540,7 +540,7 @@ void main() {
       }
     });
 
-    test('fifteen locales cover the first complete privacy and accessibility legal-content batch', () {
+    test('fifteen locales cover privacy and accessibility legal-content strings', () {
       const privacyKeys = [
         'privacy.notice.intro',
         'privacy.notice.reviewed',
@@ -561,6 +561,9 @@ void main() {
         'privacy.notice.reports.body',
       ];
       const accessibilityKeys = [
+        'a11y.statement.title',
+        'a11y.statement.reviewed.current',
+        'a11y.statement.contact.action',
         'a11y.statement.commitment.title',
         'a11y.statement.commitment.body',
         'a11y.statement.conformance.title',
