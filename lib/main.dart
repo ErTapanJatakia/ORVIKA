@@ -2297,8 +2297,9 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = OrvikaLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('ORVIKA Privacy Notice')),
+      appBar: AppBar(title: Text(l10n.text('privacy.notice.title', 'ORVIKA Privacy Notice'))),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 820),
@@ -2327,28 +2328,27 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'The Contact Information of the App Developer and the Support Team is:',
+                l10n.text('privacy.notice.developer.title', 'The Contact Information of the App Developer and the Support Team is:'),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
-              const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\n'
-                'Email: ertapanjatakia@yandex.com (for Russia)\n'
-                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\n'
-                'Phone Number: +91 9664332984\n'
-                'Website: https://linktr.ee/ertapanjatakia',
+              SelectableText(
+                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\\n'
+                '${l10n.text('a11y.statement.contact.email', 'Email')}: ertapanjatakia@yandex.com (for Russia)\\n'\n                '       tapan_ditu_17.20@outlook.com (for regions except Russia)\\n'
+                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\\n'
+                '${l10n.text('a11y.statement.contact.website', 'Website')}: https://linktr.ee/ertapanjatakia',
               ),
               const SizedBox(height: 18),
               Text(
-                'The Contact Information of the Data Protection Officer is:',
+                l10n.text('privacy.notice.dpo.title', 'The Contact Information of the Data Protection Officer is:'),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
-              const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\n'
-                'Email: cyber.litigation.advisor@gmail.com\n'
-                'Phone Number: +91 9664332984\n'
-                'Website: https://linktr.ee/ertapanjatakia',
+              SelectableText(
+                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\\n'
+                '${l10n.text('a11y.statement.contact.email', 'Email')}: cyber.litigation.advisor@gmail.com\\n'
+                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\\n'
+                '${l10n.text('a11y.statement.contact.website', 'Website')}: https://linktr.ee/ertapanjatakia',
               ),
             ],
           ),
