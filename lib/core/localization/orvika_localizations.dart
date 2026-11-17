@@ -1568,6 +1568,13 @@ class OrvikaLocalizations {
   /// English labels for the accessibility controls. Other English UI strings
   /// continue to use their call-site fallbacks.
   static const Map<String, String> _englishAccessibility = {
+    'module.link': 'Link Check',
+    'module.qr': 'QR Check',
+    'module.message': 'Message Check',
+    'module.intelligence': 'Intelligence',
+    'module.privacy': 'Privacy',
+    'module.academy': 'Academy',
+    'module.response': 'Response',
     'a11y.statement.title': "Accessibility Statement",
     'a11y.statement.badge': "Accessibility information",
     'a11y.statement.reviewed': "Last reviewed: 15 November 2026",
