@@ -125,7 +125,7 @@ void main() {
       );
       expect(
         tester.widget<TextField>(find.byType(TextField)).maxLength,
-        2048,
+        8192,
         reason: 'the input should enforce the analyzer length limit',
       );
       expect(tester.takeException(), isNull,

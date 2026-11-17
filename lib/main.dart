@@ -120,7 +120,6 @@ class _OrvikaAppState extends State<OrvikaApp> {
   bool _boldText = false;
   bool _reduceMotion = false;
   bool _preferencesLoaded = false;
-  bool _showLanguageSelection = true;
 
   @override
   void initState() {
@@ -144,10 +143,8 @@ class _OrvikaAppState extends State<OrvikaApp> {
       setState(() {
         _selectedCatalogue = savedCatalogue;
         _preferencesLoaded = true;
-        // A reviewed saved language can enter the dashboard directly.
-        // First-time installs and incomplete/unknown saved locales must choose
-        // a reviewed language before the application opens.
-        _showLanguageSelection = !hasReviewedSavedLanguage;
+        // Fresh installs default to English. A previously selected reviewed
+        // language is preserved, but language selection is never an onboarding gate.
         _selectedLanguage = hasReviewedSavedLanguage
             ? restoredLanguage
             : OrvikaLanguage.english;
@@ -164,14 +161,13 @@ class _OrvikaAppState extends State<OrvikaApp> {
         _reduceMotion = reduceMotion;
       });
     } catch (_) {
-      // If local preferences are unavailable, keep the first-run language
-      // choice visible rather than silently bypassing the selection screen.
+      // If local preferences are unavailable, use the English default and
+      // continue directly to the dashboard.
       if (!mounted) return;
       setState(() {
         _selectedLanguage = OrvikaLanguage.english;
         _selectedCatalogue = 'russia';
         _preferencesLoaded = true;
-        _showLanguageSelection = true;
       });
     }
   }
@@ -419,33 +415,25 @@ class _OrvikaAppState extends State<OrvikaApp> {
           ),
         ),
       ),
-      // Wait for local preferences before choosing the initial route. New
-      // installs must select a reviewed language; returning users with a
-      // reviewed saved language proceed directly to the dashboard.
+      // Wait for local preferences, then enter the dashboard directly.
+      // English is the first-install default; users can change language from
+      // the dashboard at any time.
       home: !_preferencesLoaded
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
-          : _showLanguageSelection
-              ? LanguageSelectionScreen(
-                  selectedLanguage: _selectedLanguage,
-                  selectedCatalogue: _selectedCatalogue,
-                  onLanguageChanged: _selectLanguage,
-                  onCatalogueChanged: _selectCatalogue,
-                  onContinue: () => setState(() => _showLanguageSelection = false),
-                )
-              : SentinelDashboard(
-                  selectedTheme: _selectedTheme,
-                  onThemeChanged: _selectTheme,
-                  selectedLanguage: _selectedLanguage,
-                  selectedCatalogue: _selectedCatalogue,
-                  onLanguageChanged: _selectLanguage,
-                  onCatalogueChanged: _selectCatalogue,
-                  textScale: _textScale,
-                  onTextScaleChanged: _setTextScale,
-                  boldText: _boldText,
-                  onBoldTextChanged: _setBoldText,
-                  reduceMotion: _reduceMotion,
-                  onReduceMotionChanged: _setReduceMotion,
-                ),
+          : SentinelDashboard(
+              selectedTheme: _selectedTheme,
+              onThemeChanged: _selectTheme,
+              selectedLanguage: _selectedLanguage,
+              selectedCatalogue: _selectedCatalogue,
+              onLanguageChanged: _selectLanguage,
+              onCatalogueChanged: _selectCatalogue,
+              textScale: _textScale,
+              onTextScaleChanged: _setTextScale,
+              boldText: _boldText,
+              onBoldTextChanged: _setBoldText,
+              reduceMotion: _reduceMotion,
+              onReduceMotionChanged: _setReduceMotion,
+            ),
     );
   }
 }
@@ -1188,15 +1176,27 @@ class SentinelDashboard extends StatelessWidget {
   final ValueChanged<OrvikaLanguage> onLanguageChanged;
   final ValueChanged<String> onCatalogueChanged;
 
-  static const modules = <_SafetyModule>[
-    _SafetyModule('Sentinel', 'Your safety overview and recent checks.', Icons.shield_moon_outlined, _ModuleAccent.cyan, 'OVERVIEW'),
-    _SafetyModule('Link Check', 'Inspect website addresses before you open them.', Icons.link_rounded, _ModuleAccent.cyan, 'AVAILABLE'),
-    _SafetyModule('QR Check', 'Review decoded QR content before taking action.', Icons.qr_code_scanner_rounded, _ModuleAccent.violet, 'AVAILABLE'),
-    _SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, _ModuleAccent.amber, 'AVAILABLE'),
-    _SafetyModule('Intelligence', 'Explore explainable digital-risk indicators and safer next steps.', Icons.radar_rounded, _ModuleAccent.violet, 'AVAILABLE'),
-    _SafetyModule('Privacy', 'Review practical privacy controls with a guided self-audit.', Icons.privacy_tip_outlined, _ModuleAccent.green, 'AVAILABLE'),
-    _SafetyModule('Academy', 'Build everyday cyber-safety knowledge with short lessons and knowledge checks.', Icons.school_outlined, _ModuleAccent.cyan, 'AVAILABLE'),
-    _SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, _ModuleAccent.amber, 'AVAILABLE'),
+  // Sentinel is intentionally retained for a future release, but hidden
+  // from the dashboard until its dedicated destination and capabilities exist.
+  // Re-enable by changing this flag to true after the feature is implemented.
+  static const bool sentinelEnabled = false;
+  static const SafetyModule sentinelModule = SafetyModule(
+    'Sentinel',
+    'Your safety overview and recent checks.',
+    Icons.shield_moon_outlined,
+    ModuleAccent.cyan,
+    'OVERVIEW',
+  );
+
+  static const modules = <SafetyModule>[
+    if (sentinelEnabled) sentinelModule,
+    SafetyModule('Link Check', 'Inspect website addresses before you open them.', Icons.link_rounded, ModuleAccent.cyan, 'AVAILABLE'),
+    SafetyModule('QR Check', 'Review decoded QR content before taking action.', Icons.qr_code_scanner_rounded, ModuleAccent.violet, 'AVAILABLE'),
+    SafetyModule('Message Check', 'Review suspicious texts, emails and messages.', Icons.mark_email_unread_outlined, ModuleAccent.amber, 'AVAILABLE'),
+    SafetyModule('Intelligence', 'Explore explainable digital-risk indicators and safer next steps.', Icons.radar_rounded, ModuleAccent.violet, 'AVAILABLE'),
+    SafetyModule('Privacy', 'Review practical privacy controls with a guided self-audit.', Icons.privacy_tip_outlined, ModuleAccent.green, 'AVAILABLE'),
+    SafetyModule('Academy', 'Build everyday cyber-safety knowledge with short lessons and knowledge checks.', Icons.school_outlined, ModuleAccent.cyan, 'AVAILABLE'),
+    SafetyModule('Response', 'Find clear next steps when something goes wrong.', Icons.health_and_safety_outlined, ModuleAccent.amber, 'AVAILABLE'),
   ];
 
   @override
@@ -1285,7 +1285,7 @@ class SentinelDashboard extends StatelessWidget {
                                 Text(
                                   OrvikaLocalizations(selectedLanguage).text(
                                     'dashboard.subtitle',
-                                    'Eight focused capabilities. One clearer view of digital risk.',
+                                    'Seven focused capabilities. One clearer view of digital risk.',
                                   ),
                                   style: TextStyle(
                                     color: scheme.onSurfaceVariant,
@@ -1331,37 +1331,31 @@ class SentinelDashboard extends StatelessWidget {
                                     : constraints.maxWidth >= 560
                                         ? 2
                                         : 1;
-                            final textScale = MediaQuery.textScalerOf(context).scale(11) / 11;
-                            // Reserve enough vertical room for the longest module summaries,
-                            // including narrower multi-column cards and larger text.
-                            final cardExtent = (260 + ((textScale - 1).clamp(0, 1.5) * 240))
-                                .clamp(260, 620)
-                                .toDouble();
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              primary: false,
-                              clipBehavior: Clip.none,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: modules.length,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: columns,
-                                crossAxisSpacing: 14,
-                                mainAxisSpacing: 14,
-                                mainAxisExtent: cardExtent,
-                              ),
-                              itemBuilder: (context, index) {
-                                final module = modules[index];
-                                final VoidCallback? onTap =
-                                    OrvikaNavigation.hasDestination(module.title)
-                                        ? () {
-                                            OrvikaNavigation.openModule(
-                                              context,
-                                              module.title,
-                                            );
-                                          }
-                                        : null;
-                                return _ModuleCard(module: _localizedModule(module, selectedLanguage), palette: palette, onTap: onTap);
-                              },
+                            const spacing = 14.0;
+                            final cardWidth =
+                                (constraints.maxWidth - spacing * (columns - 1)) /
+                                    columns;
+                            // Preserve the established responsive breakpoints,
+                            // while letting each card use its natural content height.
+                            return Wrap(
+                              spacing: spacing,
+                              runSpacing: spacing,
+                              children: [
+                                for (final module in modules)
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: _ModuleCard(
+                                      module: _localizedModule(module, selectedLanguage),
+                                      palette: palette,
+                                      onTap: OrvikaNavigation.hasDestination(module.title)
+                                          ? () => OrvikaNavigation.openModule(
+                                                context,
+                                                module.title,
+                                              )
+                                          : null,
+                                    ),
+                                  ),
+                              ],
                             );
                           },
                         ),
@@ -2030,18 +2024,18 @@ class _OwlPainter extends CustomPainter {
   bool shouldRepaint(covariant _OwlPainter oldDelegate) => oldDelegate.palette != palette;
 }
 
-enum _ModuleAccent { cyan, violet, green, amber }
+enum ModuleAccent { cyan, violet, green, amber }
 
-class _SafetyModule {
-  const _SafetyModule(this.title, this.description, this.icon, this.accent, this.status);
+class SafetyModule {
+  const SafetyModule(this.title, this.description, this.icon, this.accent, this.status);
   final String title, description, status;
   final IconData icon;
-  final _ModuleAccent accent;
+  final ModuleAccent accent;
 }
 
 class _ModuleCard extends StatefulWidget {
   const _ModuleCard({required this.module, required this.palette, this.onTap});
-  final _SafetyModule module;
+  final SafetyModule module;
   final OrvikaPalette palette;
   final VoidCallback? onTap;
 
@@ -2053,10 +2047,10 @@ class _ModuleCardState extends State<_ModuleCard> {
   bool _hasKeyboardFocus = false;
 
   Color _accent() => switch (widget.module.accent) {
-    _ModuleAccent.cyan => widget.palette.primary,
-    _ModuleAccent.violet => widget.palette.secondary,
-    _ModuleAccent.green => widget.palette.success,
-    _ModuleAccent.amber => widget.palette.warning,
+    ModuleAccent.cyan => widget.palette.primary,
+    ModuleAccent.violet => widget.palette.secondary,
+    ModuleAccent.green => widget.palette.success,
+    ModuleAccent.amber => widget.palette.warning,
   };
 
   @override
@@ -2143,18 +2137,13 @@ class _ModuleCardState extends State<_ModuleCard> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        widget.module.description,
-                        softWrap: true,
-                        style: TextStyle(
-                          color: scheme.onSurfaceVariant,
-                          fontSize: 13,
-                          height: 1.45,
-                        ),
-                      ),
+                  Text(
+                    widget.module.description,
+                    softWrap: true,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 13,
+                      height: 1.45,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -2247,7 +2236,7 @@ class _TrustNote extends StatelessWidget {
 }
 
 
-_SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
+SafetyModule _localizedModule(SafetyModule module, OrvikaLanguage language) {
   final strings = OrvikaLocalizations(language);
   final key = switch (module.title) {
     'Sentinel' => 'sentinel',
@@ -2261,7 +2250,7 @@ _SafetyModule _localizedModule(_SafetyModule module, OrvikaLanguage language) {
     _ => '',
   };
   if (key.isEmpty || language.code == 'en') return module;
-  return _SafetyModule(
+  return SafetyModule(
     strings.text('module.$key', module.title),
     strings.text('module.$key.description', module.description),
     module.icon,
@@ -2326,7 +2315,7 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Last reviewed: 9 November 2026 · Applies to the current ORVIKA prototype',
+                'Last reviewed: 17 November 2026 · Applies to the current ORVIKA prototype',
                 style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
               ),
               const SizedBox(height: 16),
@@ -2339,6 +2328,21 @@ class OrvikaPrivacyNoticeScreen extends StatelessWidget {
               Text(
                 'This notice describes the current implementation, not a guarantee that every platform or future feature has identical behaviour. Recheck this notice when ORVIKA adds network-connected services or changes analytics.',
                 style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.5),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'App developer and Data Protection Officer',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const SelectableText(
+                'Name: Er. Tapan Jatakia (C.Eng.)\n'
+                'Contact email: ertapanjatakia@yandex.com\n'
+                'Additional email: tapan_ditu_17.20@outlook.com\n'
+                'Contact number: +91 9664332984\n'
+                'Website: http://linktr.ee/ertapanjatakia',
               ),
             ],
           ),

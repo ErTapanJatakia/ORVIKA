@@ -34,6 +34,35 @@ void main() {
   ];
 
   testWidgets(
+    'fresh installs open the English dashboard without a language-selection gate',
+    (tester) async {
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      SharedPreferences.setMockInitialValues({});
+
+      await tester.pumpWidget(const OrvikaApp());
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SentinelDashboard), findsOneWidget);
+      expect(find.byType(LanguageSelectionScreen), findsNothing);
+      expect(SentinelDashboard.sentinelEnabled, isFalse);
+      expect(
+        SentinelDashboard.modules.any((module) => module.title == 'Sentinel'),
+        isFalse,
+        reason: 'Sentinel remains defined behind its disabled feature flag but is not in the visible module list.',
+      );
+      final dashboard = tester.widget<SentinelDashboard>(
+        find.byType(SentinelDashboard),
+      );
+      expect(dashboard.selectedLanguage.code, 'en');
+      expect(find.byKey(const ValueKey('dashboard-module-card-Sentinel')), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'dashboard content remains reachable across responsive viewports',
     (tester) async {
       addTearDown(tester.view.resetPhysicalSize);

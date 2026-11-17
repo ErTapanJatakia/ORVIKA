@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   const descriptions = <String>[
-    'Your safety overview and recent checks.',
     'Inspect website addresses before you open them.',
     'Review decoded QR content before taking action.',
     'Review suspicious texts, emails and messages.',
@@ -86,6 +85,17 @@ void main() {
             reason:
                 'Module card layout exception at ${viewport.size.width}px '
                 'with text scale ${viewport.textScale}',
+          );
+        }
+
+        if (viewport.size.width == 1280) {
+          final linkCard = find.byKey(
+            const ValueKey('dashboard-module-card-Link Check'),
+          );
+          expect(
+            tester.getSize(linkCard).height,
+            lessThan(260),
+            reason: 'Desktop module cards should not retain the old fixed 260px height.',
           );
         }
 

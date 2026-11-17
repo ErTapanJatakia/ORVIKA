@@ -54,7 +54,7 @@ void main() {
 
     expect(find.textContaining('Check before'), findsOneWidget);
     expect(find.text('Your safety toolkit'), findsOneWidget);
-    expect(find.textContaining('Eight focused capabilities'), findsOneWidget);
+    expect(find.textContaining('Seven focused capabilities'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

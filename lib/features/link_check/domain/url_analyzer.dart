@@ -25,7 +25,7 @@ class UrlAnalyzer {
   LinkAnalysisResult analyze(String rawInput) {
     final input = rawInput.trim();
     if (input.isEmpty) return _invalid(rawInput, 'Enter a web address to inspect.');
-    if (input.length > 2048) return _invalid(rawInput, 'The address is longer than the supported 2,048 characters.');
+    if (input.length > 8192) return _invalid(rawInput, 'The address is longer than the supported 8,192 characters.');
     if (RegExp(r'[\s\u0000-\u001F\u007F]').hasMatch(rawInput)) {
       return _invalid(rawInput, 'The address contains whitespace or control characters. Check it before continuing.');
     }
