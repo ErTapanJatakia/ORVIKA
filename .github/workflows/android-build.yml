@@ -2,7 +2,19 @@ name: ORVIKA Android Build Validation
 
 on:
   workflow_dispatch:
+    inputs:
+      build_signed_release:
+        description: "Build signed release APK/AAB with the configured upload key (requires explicit approval)"
+        type: boolean
+        required: false
+        default: false
   workflow_call:
+    inputs:
+      build_signed_release:
+        description: "Build signed release APK/AAB with the configured upload key"
+        type: boolean
+        required: false
+        default: false
     secrets:
       ORVIKA_UPLOAD_KEYSTORE_BASE64:
         required: false
@@ -167,7 +179,23 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+      - name: Record signed-release approval gate
+        shell: bash
+        env:
+          BUILD_SIGNED_RELEASE: ${{ inputs.build_signed_release }}
+        run: |
+          if [ "$BUILD_SIGNED_RELEASE" = "true" ]; then
+            echo "Signed release artifact generation was explicitly requested."
+          else
+            {
+              echo "### Signed release artifacts"
+              echo
+              echo "Skipped: signed APK/AAB generation requires the explicit build_signed_release input."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Detect production signing secrets
+        if: inputs.build_signed_release == true
         id: signing
         shell: bash
         env:
@@ -185,7 +213,7 @@ jobs:
           fi
 
       - name: Configure production signing without committing secrets
-        if: steps.signing.outputs.configured == 'true'
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
         shell: bash
         env:
           KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
@@ -206,13 +234,13 @@ jobs:
           chmod 600 android/key.properties
 
       - name: Build signed release APK and AAB
-        if: steps.signing.outputs.configured == 'true'
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
         run: |
           flutter build apk --release --no-pub
           flutter build appbundle --release --no-pub
 
       - name: Download and verify pinned bundletool
-        if: steps.signing.outputs.configured == 'true'
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
         shell: bash
         run: |
           BUNDLETOOL="$RUNNER_TEMP/bundletool-all-1.18.3.jar"
@@ -224,7 +252,7 @@ jobs:
           echo "Pinned bundletool 1.18.3 downloaded and SHA-256 verified."
 
       - name: Verify signed store artifacts
-        if: steps.signing.outputs.configured == 'true'
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
         shell: bash
         run: |
           APK="build/app/outputs/flutter-apk/app-release.apk"
@@ -270,7 +298,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload signed store artifacts
-        if: steps.signing.outputs.configured == 'true'
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: orvika-android-signed-release
