@@ -58,11 +58,11 @@ class OrvikaAccessibilityStatementScreen extends StatelessWidget {
                 l10n.text('a11y.statement.contact.auditor', 'WCAG Auditor contact information:'),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
               const SizedBox(height: 6),
-              const SelectableText(
-                'Name: Er. Tapan Jatakia (C.Eng.)\n'
-                'Email: cyber.litigation.advisor@gmail.com\n'
-                'Phone Number: +91 9664332984\n'
-                'Website: https://linktr.ee/ertapanjatakia',
+              SelectableText(
+                '${l10n.text('a11y.statement.contact.name', 'Name')}: Er. Tapan Jatakia (C.Eng.)\\n'
+                '${l10n.text('a11y.statement.contact.email', 'Email')}: cyber.litigation.advisor@gmail.com\\n'
+                '${l10n.text('a11y.statement.contact.phone', 'Phone Number')}: +91 9664332984\\n'
+                '${l10n.text('a11y.statement.contact.website', 'Website')}: https://linktr.ee/ertapanjatakia',
               ),
               if (kIsWeb) ...[
                 const SizedBox(height: 10),
@@ -87,7 +87,7 @@ class _Wcag22AaBadge extends StatelessWidget {
   const _Wcag22AaBadge();
   @override
   Widget build(BuildContext context) => Semantics(
-    label: 'WCAG 2.2 Level AA conformance claim',
+    label: OrvikaLocalizations.of(context).text(\n      'a11y.statement.badge.semantics', 'WCAG 2.2 Level AA conformance claim'),
     child: Container(
       key: const ValueKey('wcag-22-aa-statement-badge'),
       width: 112, height: 36, alignment: Alignment.center,
