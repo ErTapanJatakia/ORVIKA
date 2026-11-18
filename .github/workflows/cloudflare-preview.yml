@@ -1,0 +1,177 @@
+name: ORVIKA Cloudflare Pages Preview Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_preview:
+        description: "Build and deploy a non-production Cloudflare Pages preview"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orvika-cloudflare-preview-validation
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    name: Build and validate isolated Cloudflare preview
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_preview == true
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Validate edge middleware and source
+        run: |
+          node --check functions/_middleware.js
+          npm run test:edge
+          npm run verify:source
+          npx --yes wrangler@4.163.0 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          test -s "$RUNNER_TEMP/orvika-pages-worker.js"
+
+      - name: Validate Cloudflare configuration
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_PAGES_PROJECT; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Repository secret/variable $name is not configured."
+              exit 1
+            fi
+          done
+          if [[ ! "$CLOUDFLARE_ACCOUNT_ID" =~ ^[a-f0-9]{32}$ ]]; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID must be the 32-character Cloudflare account ID."
+            exit 1
+          fi
+          if [[ ! "$CLOUDFLARE_PAGES_PROJECT" =~ ^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$ ]]; then
+            echo "::error::CLOUDFLARE_PAGES_PROJECT must be a valid lowercase Pages project name."
+            exit 1
+          fi
+
+      - name: Install pinned Flutter SDK
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
+          git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+
+      - name: Install dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Test
+        run: flutter test --reporter expanded
+
+      - name: Build Web
+        run: |
+          flutter build web --release --csp --no-web-resources-cdn
+          test -s build/web/canvaskit/canvaskit.js
+          test -s build/web/canvaskit/canvaskit.wasm
+
+      - name: Remove Vercel-only Analytics marker from preview artifact
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'build/web/index.html';
+          let html = fs.readFileSync(path, 'utf8');
+          const marker = /\\s*<meta\\s+name=["']vercel-analytics-script["'][^>]*>\\s*/i;
+          if (!marker.test(html)) throw new Error('Expected Vercel Analytics marker was not found.');
+          html = html.replace(marker, '\\n');
+          if (/vercel-analytics-script|\\/_vercel\\/insights\\/script\\.js/i.test(html)) {
+            throw new Error('Vercel Analytics reference remains in Cloudflare preview output.');
+          }
+          fs.writeFileSync(path, html);
+          NODE
+
+      - name: Generate Cloudflare Pages security headers
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
+          const required = [
+            'strict-transport-security', 'x-content-type-options', 'x-frame-options',
+            'referrer-policy', 'permissions-policy', 'content-security-policy',
+            'cross-origin-embedder-policy', 'cross-origin-opener-policy',
+          ];
+          const headers = new Map();
+          for (const route of config.headers ?? []) {
+            for (const header of route.headers ?? []) headers.set(header.key.toLowerCase(), header.value);
+          }
+          for (const name of required) if (!headers.has(name)) throw new Error('Missing required header: ' + name);
+          const csp = headers.get('content-security-policy');
+          if (!/default-src 'none'/.test(csp) ||
+              !/script-src[^;]*'wasm-unsafe-eval'/.test(csp) ||
+              /script-src[^;]*'unsafe-eval'/.test(csp)) throw new Error('Unsafe or incomplete CSP.');
+          if (headers.get('cross-origin-embedder-policy') !== 'credentialless') throw new Error('Unexpected COEP.');
+          if (headers.get('cross-origin-opener-policy') !== 'same-origin-allow-popups') throw new Error('Unexpected COOP.');
+          const output = ['/*'];
+          for (const name of required) {
+            const original = [...(config.headers ?? [])].flatMap(route => route.headers ?? [])
+              .find(header => header.key.toLowerCase() === name);
+            output.push('  ' + original.key + ': ' + original.value);
+          }
+          fs.writeFileSync('build/web/_headers', output.join('\\n') + '\\n');
+          NODE
+
+      - name: Verify preview artifact
+        run: |
+          test -s build/web/index.html
+          test -s build/web/flutter_bootstrap.js
+          test -s build/web/main.dart.js
+          test -s build/web/_headers
+          grep -q "Content-Security-Policy:" build/web/_headers
+          ! grep -Eiq 'vercel-analytics-script|/_vercel/insights/script.js' build/web/index.html
+          ! grep -E "Content-Security-Policy:.*script-src[^\\n]*'unsafe-eval'" build/web/_headers
+
+      - name: Install Wrangler and Playwright
+        run: |
+          npm install --global wrangler@4.163.0
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Deploy isolated Cloudflare Pages preview only
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          npx wrangler pages deploy build/web --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=orvika-validation
+
+      - name: Browser smoke test preview deployment
+        env:
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          ORVIKA_BASE_URL: https://orvika-validation.${{ vars.CLOUDFLARE_PAGES_PROJECT }}.pages.dev
+        run: node .github/scripts/orvika-browser-smoke.cjs
+
+      - name: Publish preview summary
+        env:
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          {
+            echo '## ORVIKA Cloudflare preview validation'
+            echo
+            echo "- Preview URL: https://orvika-validation.$CLOUDFLARE_PAGES_PROJECT.pages.dev"
+            echo '- Target branch: orvika-validation (not main)'
+            echo '- Production branch and production deployment were not targeted.'
+            echo '- Vercel deployment and Analytics were not modified.'
+            echo '- This workflow is preview-only; it contains no production deploy command.'
+          } >> "$GITHUB_STEP_SUMMARY"
