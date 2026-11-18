@@ -28,6 +28,7 @@ flutter:
   assets:
     - assets/fonts/OFL-NotoSansGujarati.txt
     - assets/fonts/OFL-NotoNastaliqUrdu.txt
+    - assets/images/wcag2.2AA-blue.png
   fonts:
     - family: SpaceGrotesk
       fonts:
