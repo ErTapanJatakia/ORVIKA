@@ -39,6 +39,13 @@ jobs:
           docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
             --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
             --ignore-unfixed --exit-code 1 /repo
+      - name: Semgrep Community Edition SAST (including experimental Dart rules)
+        shell: bash
+        run: |
+          docker run --rm -v "$PWD:/src" semgrep/semgrep:1.180.0 \
+            semgrep scan --config p/security-audit --config p/secrets \
+            --json --output /src/security-evidence/semgrep.json /src
+
       - name: Gitleaks full-history secret scan
         shell: bash
         run: |
