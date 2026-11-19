@@ -164,21 +164,58 @@ jobs:
 
           path = Path(sys.argv[1])
           content = path.read_text()
-          if "pluginManagement {" not in content:
-              content = """pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
 
-          """ + content
-              path.write_text(content)
+          def block_bounds(source: str, marker: str):
+              start = source.find(marker)
+              if start < 0:
+                  return None
+              opening = source.find("{", start)
+              if opening < 0:
+                  raise SystemExit(f"Malformed {marker} block")
+              depth = 0
+              for index in range(opening, len(source)):
+                  if source[index] == "{":
+                      depth += 1
+                  elif source[index] == "}":
+                      depth -= 1
+                      if depth == 0:
+                          return start, opening, index
+              raise SystemExit(f"Unclosed {marker} block")
+
+          plugin = block_bounds(content, "pluginManagement")
+          if plugin is None:
+              content = "pluginManagement {\\n    repositories {\\n        google()\\n        mavenCentral()\\n        gradlePluginPortal()\\n    }\\n}\\n\\n" + content
+              plugin = block_bounds(content, "pluginManagement")
+
+          _, plugin_open, plugin_close = plugin
+          plugin_body = content[plugin_open + 1:plugin_close]
+          repositories = block_bounds(plugin_body, "repositories")
+          if repositories is None:
+              insertion = "\\n    repositories {\\n        google()\\n        mavenCentral()\\n        gradlePluginPortal()\\n    }\\n"
+              content = content[:plugin_close] + insertion + content[plugin_close:]
+          else:
+              _, repo_open, repo_close = repositories
+              repo_body = plugin_body[repo_open + 1:repo_close]
+              missing = [name for name in ("google()", "mavenCentral()", "gradlePluginPortal()") if name not in repo_body]
+              if missing:
+                  addition = "".join(f"\\n        {name}" for name in missing)
+                  absolute_close = plugin_open + 1 + repo_close
+                  content = content[:absolute_close] + addition + "\\n    " + content[absolute_close:]
+
+          path.write_text(content)
+          verified = block_bounds(content, "pluginManagement")
+          _, verified_open, verified_close = verified
+          plugin_body = content[verified_open + 1:verified_close]
+          repositories = block_bounds(plugin_body, "repositories")
+          if repositories is None:
+              raise SystemExit("Flutter included build has no pluginManagement.repositories block")
+          _, repo_open, repo_close = repositories
+          repo_body = plugin_body[repo_open + 1:repo_close]
           required = ("google()", "mavenCentral()", "gradlePluginPortal()")
-          if not all(item in content for item in required):
+          if not all(item in repo_body for item in required):
               raise SystemExit("Flutter included-build plugin repositories are incomplete")
-          print("Verified Google, Maven Central and Gradle Plugin Portal for Flutter's included build.")
+          print("Verified Google, Maven Central and Gradle Plugin Portal inside pluginManagement.repositories.")
+          print(repo_body.strip())
           PY
       - name: Verify committed Gradle wrapper and distribution checksum
         shell: bash
