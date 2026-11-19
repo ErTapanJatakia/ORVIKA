@@ -1,0 +1,195 @@
+name: ORVIKA Free Security Assurance
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 2 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orvika-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-security:
+    name: Repository, dependency, secret and configuration scans
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare evidence directory
+        run: mkdir -p security-evidence
+      - name: Trivy filesystem scan (vulnerabilities, misconfiguration, secrets and licences)
+        shell: bash
+        run: |
+          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
+            --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
+            --ignore-unfixed --format json --output /repo/security-evidence/trivy-fs.json /repo
+          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
+            --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
+            --ignore-unfixed --exit-code 1 /repo
+      - name: Gitleaks full-history secret scan
+        shell: bash
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.24.3 \
+            detect --source=/repo --redact --report-format=json \
+            --report-path=/repo/security-evidence/gitleaks.json --exit-code 1
+      - name: Upload repository scan evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: orvika-repository-security-evidence
+          path: security-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
+  repository-posture:
+    name: OpenSSF Scorecard repository posture
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Run OpenSSF Scorecard
+        uses: ossf/scorecard-action@0864cf19026789058feabb7e87baa5f140b6c7b5
+        with:
+          results_file: scorecard.sarif
+          results_format: sarif
+          publish_results: true
+      - name: Upload Scorecard results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: scorecard.sarif
+
+  android-apk-static-analysis:
+    name: Build isolated Android APK and scan with MobSF
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Select JDK 17
+        shell: bash
+        run: |
+          if [ -z "${JAVA_HOME_17_X64:-}" ]; then
+            echo "JDK 17 is not available on this runner." >&2
+            exit 1
+          fi
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+      - name: Install pinned Flutter SDK
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
+          git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+      - name: Materialize pinned Gradle wrapper from Flutter template
+        shell: bash
+        run: |
+          TEMPLATE="$RUNNER_TEMP/orvika-wrapper-template"
+          mkdir -p "$TEMPLATE"
+          flutter create --platforms=android --org com.orvika --project-name app --no-pub "$TEMPLATE"
+          mkdir -p android/gradle/wrapper
+          cp "$TEMPLATE/android/gradlew" android/gradlew
+          cp "$TEMPLATE/android/gradlew.bat" android/gradlew.bat
+          cp "$TEMPLATE/android/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
+          chmod +x android/gradlew
+          test -s android/gradlew
+          test -s android/gradle/wrapper/gradle-wrapper.jar
+          grep -F 'gradle-9.3.1-all.zip' android/gradle/wrapper/gradle-wrapper.properties
+      - name: Resolve locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+      - name: Build isolated debug APK (never a store release)
+        run: flutter build apk --debug --no-pub
+      - name: Verify APK identity, signature and digest
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-debug.apk"
+          test -s "$APK"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
+          test -n "$AAPT" && test -n "$APKSIGNER"
+          mkdir -p security-evidence
+          "$APKSIGNER" verify --verbose --print-certs "$APK" > security-evidence/apk-signature.txt 2>&1
+          "$AAPT" dump badging "$APK" > security-evidence/apk-identity.txt
+          sha256sum "$APK" > security-evidence/apk-sha256.txt
+      - name: Start isolated MobSF static-analysis service
+        shell: bash
+        run: |
+          MOBSF_API_KEY="orvika-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          echo "::add-mask::$MOBSF_API_KEY"
+          echo "MOBSF_API_KEY=$MOBSF_API_KEY" >> "$GITHUB_ENV"
+          docker run -d --name orvika-mobsf -p 8000:8000 \
+            -e MOBSF_API_KEY="$MOBSF_API_KEY" -e MOBSF_DISABLE_AUTHENTICATION=1 \
+            opensecurity/mobile-security-framework-mobsf:v4.6.2
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:8000/ >/dev/null; then exit 0; fi
+            sleep 5
+          done
+          docker logs orvika-mobsf
+          exit 1
+      - name: Upload APK to MobSF and run static analysis
+        shell: bash
+        run: |
+          mkdir -p security-evidence
+          APK="build/app/outputs/flutter-apk/app-debug.apk"
+          UPLOAD="$(curl --fail --silent --show-error -X POST \
+            http://127.0.0.1:8000/api/v1/upload \
+            -H "Authorization: $MOBSF_API_KEY" -F "file=@$APK")"
+          HASH="$(printf '%s' "$UPLOAD" | jq -er '.hash')"
+          printf '%s\n' "$UPLOAD" > security-evidence/mobsf-upload.json
+          curl --fail --silent --show-error -X POST \
+            http://127.0.0.1:8000/api/v1/scan \
+            -H "Authorization: $MOBSF_API_KEY" -d "hash=$HASH" \
+            > security-evidence/mobsf-scan-start.json
+          for attempt in $(seq 1 60); do
+            curl --silent --show-error -X POST \
+              http://127.0.0.1:8000/api/v1/report_json \
+              -H "Authorization: $MOBSF_API_KEY" -d "hash=$HASH" \
+              -o security-evidence/mobsf-report.json || true
+            if jq -e 'has("security_score") or has("average_cvss")' \
+              security-evidence/mobsf-report.json >/dev/null 2>&1; then break; fi
+            sleep 10
+          done
+          jq -e 'has("security_score") or has("average_cvss")' \
+            security-evidence/mobsf-report.json >/dev/null
+          {
+            echo "APK SHA-256: $(sha256sum "$APK" | cut -d ' ' -f 1)"
+            echo "MobSF scan hash: $HASH"
+            echo "Artifact type: debug-only CI assessment APK; not for RuStore submission."
+          } > security-evidence/apk-assessment-metadata.txt
+      - name: Upload APK and MobSF report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: orvika-apk-mobsf-assessment
+          path: |
+            build/app/outputs/flutter-apk/app-debug.apk
+            security-evidence/
+          if-no-files-found: warn
+          retention-days: 14
