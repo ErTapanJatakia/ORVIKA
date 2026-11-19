@@ -7,12 +7,20 @@ const SECURITY_HEADERS = Object.freeze({
   "Content-Security-Policy":
     "default-src 'none'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob:",
   "Cross-Origin-Embedder-Policy": "credentialless",
-  "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+  "Cross-Origin-Opener-Policy": "same-origin",
 });
 const ALLOWED_METHODS = new Set(["GET", "HEAD"]);
 function withSecurityHeaders(response) {
   const secured = new Response(response.body, response);
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) secured.headers.set(name, value);
+  for (const name of [
+    "Access-Control-Allow-Origin",
+    "Access-Control-Allow-Credentials",
+    "Access-Control-Allow-Methods",
+    "Access-Control-Allow-Headers",
+  ]) {
+    secured.headers.delete(name);
+  }
   return secured;
 }
 export async function onRequest(context) {
