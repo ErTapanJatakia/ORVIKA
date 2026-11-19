@@ -27,6 +27,7 @@ assert.match(values.get('strict-transport-security'), /max-age=31536000/);
 assert.match(values.get('strict-transport-security'), /includeSubDomains/i, 'HSTS must cover subdomains');
 assert.equal(values.get('x-content-type-options'), 'nosniff');
 assert.equal(values.get('x-frame-options'), 'DENY');
+assert.equal(values.get('cross-origin-opener-policy'), 'same-origin', 'COOP must use strict same-origin isolation');
 assert.match(values.get('permissions-policy'), /camera=\(self\)/);
 assert.match(values.get('permissions-policy'), /microphone=\(\)/);
 assert.match(values.get('permissions-policy'), /geolocation=\(\)/);

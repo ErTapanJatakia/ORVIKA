@@ -29,7 +29,7 @@ const required = {
     && /form-action 'self'/i.test(value)
     && !/script-src[^;]*'unsafe-eval'/i.test(value),
   'cross-origin-embedder-policy': /^credentialless$/i,
-  'cross-origin-opener-policy': /^same-origin-allow-popups$/i,
+  'cross-origin-opener-policy': /^same-origin$/i,
 };
 
 function matchesPath(route, pathname) {
@@ -58,6 +58,8 @@ for (const pathname of ['/', '/index.html']) {
   });
 
   assert(completeHeaderRoute, `No single generated Vercel response-header route applies all required security headers to ${pathname}`);
+  const appliedHeaders = normalizeHeaders(completeHeaderRoute.headers);
+  assert.equal(appliedHeaders['access-control-allow-origin'], undefined, 'Static pages must not expose a permissive CORS origin');
 }
 
 console.log('Generated Vercel output applies the complete required security-header set to / and /index.html.');

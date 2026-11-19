@@ -122,7 +122,7 @@ jobs:
               !/script-src[^;]*'wasm-unsafe-eval'/.test(csp) ||
               /script-src[^;]*'unsafe-eval'/.test(csp)) throw new Error('Unsafe or incomplete CSP.');
           if (headers.get('cross-origin-embedder-policy') !== 'credentialless') throw new Error('Unexpected COEP.');
-          if (headers.get('cross-origin-opener-policy') !== 'same-origin-allow-popups') throw new Error('Unexpected COOP.');
+          if (headers.get('cross-origin-opener-policy') !== 'same-origin') throw new Error('Unexpected COOP.');
           const output = ['/*'];
           for (const name of required) {
             const original = [...(config.headers ?? [])].flatMap(route => route.headers ?? [])

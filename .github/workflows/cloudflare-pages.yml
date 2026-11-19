@@ -138,7 +138,7 @@ jobs:
           if (headers.get('cross-origin-embedder-policy') !== 'credentialless') {
             throw new Error('Unexpected COEP policy.');
           }
-          if (headers.get('cross-origin-opener-policy') !== 'same-origin-allow-popups') {
+          if (headers.get('cross-origin-opener-policy') !== 'same-origin') {
             throw new Error('Unexpected COOP policy.');
           }
           const output = ['/*'];
