@@ -6,6 +6,7 @@ import subprocess
 import sys
 import zipfile
 from pathlib import Path
+from typing import Any
 
 from defusedxml import ElementTree as ET
 from defusedxml.common import DefusedXmlException
@@ -23,7 +24,7 @@ EXPECTED_PERMISSIONS = {
 }
 
 
-def parse_manifest_xml(xml_text: str, module: str) -> ET.Element:
+def parse_manifest_xml(xml_text: str, module: str) -> Any:
     """Parse bundletool output while rejecting DTDs and entity declarations."""
     try:
         return ET.fromstring(xml_text)
