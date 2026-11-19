@@ -260,12 +260,8 @@ jobs:
           "$APKSIGNER" verify --verbose --print-certs "$APK" > security-evidence/apk-signature.txt 2>&1
           "$AAPT" dump badging "$APK" > security-evidence/apk-identity.txt
           sha256sum "$APK" > security-evidence/apk-sha256.txt
-      - name: Generate APK CycloneDX SBOM
-        shell: bash
-        run: |
-          APK="build/app/outputs/flutter-apk/app-release.apk"
-          docker run --rm -v "$PWD:/src" anchore/syft:v1.18.1 \
-            scan file:/src/"$APK" -o cyclonedx-json=/src/security-evidence/apk-sbom.cdx.json
+      - name: Reserve APK CycloneDX output for MobSF inventory
+        run: echo "CycloneDX generation follows MobSF so embedded Android dependency coordinates are included."
       - name: Start isolated MobSF static-analysis service
         shell: bash
         run: |
@@ -311,6 +307,83 @@ jobs:
             echo "MobSF scan hash: $HASH"
             echo "Artifact type: release-mode assessment APK signed with an ephemeral CI-only key; not for RuStore submission."
           } > security-evidence/apk-assessment-metadata.txt
+      - name: Generate APK CycloneDX SBOM from MobSF dependency inventory
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import uuid
+          from pathlib import Path
+
+          report_path = Path("security-evidence/mobsf-report.json")
+          apk_path = Path("build/app/outputs/flutter-apk/app-release.apk")
+          report = json.loads(report_path.read_text())
+          coordinates = report.get("sbom", {}).get("sbom_versioned", [])
+          if not isinstance(coordinates, list) or not coordinates:
+              raise SystemExit("MobSF returned no versioned dependency inventory; refusing to publish an empty APK SBOM.")
+
+          components = []
+          seen = set()
+          for coordinate in coordinates:
+              if not isinstance(coordinate, str) or ":" not in coordinate or "@" not in coordinate:
+                  raise SystemExit(f"Unsupported MobSF dependency coordinate: {coordinate!r}")
+              package, version = coordinate.rsplit("@", 1)
+              group, name = package.rsplit(":", 1)
+              if not group or not name or not version:
+                  raise SystemExit(f"Incomplete MobSF dependency coordinate: {coordinate!r}")
+              purl = f"pkg:maven/{group}/{name}@{version}"
+              if purl in seen:
+                  continue
+              seen.add(purl)
+              components.append({
+                  "type": "library",
+                  "bom-ref": purl,
+                  "group": group,
+                  "name": name,
+                  "version": version,
+                  "purl": purl,
+                  "scope": "required",
+                  "properties": [
+                      {"name": "orvika:inventory-source", "value": "MobSF v4.6.2 APK static-analysis SBOM"},
+                      {"name": "orvika:original-coordinate", "value": coordinate}
+                  ]
+              })
+
+          if not components:
+              raise SystemExit("No usable dependency components were produced.")
+          digest = hashlib.sha256(apk_path.read_bytes()).hexdigest()
+          bom = {
+              "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+              "bomFormat": "CycloneDX",
+              "specVersion": "1.6",
+              "serialNumber": f"urn:uuid:{uuid.uuid4()}",
+              "version": 1,
+              "metadata": {
+                  "timestamp": report.get("timestamp"),
+                  "tools": {"components": [
+                      {"type": "application", "name": "MobSF", "version": report.get("version", "unknown")},
+                      {"type": "application", "name": "ORVIKA MobSF-to-CycloneDX adapter", "version": "1.0.0"}
+                  ]},
+                  "component": {
+                      "type": "application",
+                      "bom-ref": f"urn:sha256:{digest}",
+                      "name": report.get("app_name") or "ORVIKA",
+                      "version": report.get("version_name") or "unknown",
+                      "purl": f"pkg:generic/orvika@{report.get('version_name') or 'unknown'}",
+                      "hashes": [{"alg": "SHA-256", "content": digest}]
+                  }
+              },
+              "components": components
+          }
+          output = Path("security-evidence/apk-sbom.cdx.json")
+          output.write_text(json.dumps(bom, indent=2) + "\\n")
+          parsed = json.loads(output.read_text())
+          if len(parsed.get("components", [])) != len(components):
+              raise SystemExit("CycloneDX component count validation failed.")
+          print(f"Generated APK CycloneDX SBOM with {len(components)} versioned dependency components.")
+          print(f"APK SHA-256: {digest}")
+          PY
       - name: Upload APK and MobSF report
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
