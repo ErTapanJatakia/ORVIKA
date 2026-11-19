@@ -66,3 +66,32 @@ The MobSF report contained 3 high, 2 warning and 1 informational items. Two high
 4. Re-run MobSF against that release-mode artifact.
 5. Review the minSdk policy and third-party manifest/logging findings.
 6. Keep the eventual RuStore-signed artifact assessment separate and verify its actual certificate fingerprint.
+
+
+## First web passive DAST baseline
+
+**Target:** dedicated Cloudflare preview only — `https://orvika-validation.orvika.pages.dev`  
+**Tool:** OWASP ZAP 2.16.1 (initial run; updated workflow now pins 2.17.0)  
+**Run:** [GitHub Actions run 44467474216](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44467474216)  
+**Mode:** passive baseline scan; no active attack scan  
+**Result:** 0 FAIL alerts; 8 WARN groups in the console output. The JSON report grouped 6 alert types.
+
+| Alert | ZAP risk | Initial disposition |
+|---|---|---|
+| CSP `style-src 'unsafe-inline'` | Medium | Flutter Web compatibility exception; investigate alternatives, do not remove blindly. |
+| Cross-Domain Misconfiguration (`Access-Control-Allow-Origin: *`) | Medium | Unnecessary for the static-only app; remove permissive CORS response headers at the edge and verify on a refreshed preview. |
+| COOP `same-origin-allow-popups` | Low | No opener relationship is required by the accessibility contact launcher (`noopener` is used); tighten to `same-origin`. |
+| Cache-Control review | Informational | Responses showed `public, max-age=0, must-revalidate`; review as public static content, not sensitive authenticated data. |
+| Storable but Non-Cacheable Content | Informational | Consistent with revalidation policy; review with Cloudflare cache rules. |
+| Modern Web Application | Informational | No remediation required. |
+| Suspicious comments / site-isolation heuristic | Warning | Inspect the refreshed 2.17.0 report; do not assume exploitable behaviour from a passive heuristic. |
+| ZAP version warning | Warning | Update scanner image from 2.16.1 to 2.17.0. |
+
+The next workflow revision removes permissive CORS headers in Cloudflare middleware, changes COOP to `same-origin` across Vercel and Cloudflare header policy, adds regression tests, and upgrades the ZAP image to 2.17.0. These code changes are not production-deployed; the next passive scan must verify the refreshed dedicated preview before closing the findings.
+
+## Remediation status
+
+- **AAB XML parser:** hardened with `defusedxml`; parser regression suite is being validated. Do not close until the tests pass.
+- **CORS / COOP:** source and policy changes implemented in the current security-assurance PR; pending CI and preview verification.
+- **CSP inline styles:** retained pending compatibility analysis; not silently waived.
+- **Cache policy:** review only; no sensitive user content was observed in the static preview scan.
