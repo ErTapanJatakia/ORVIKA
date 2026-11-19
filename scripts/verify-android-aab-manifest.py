@@ -46,7 +46,7 @@ def module_names(bundle_path: Path) -> list[str]:
     return modules
 
 
-def read_module_manifest(bundletool: Path, bundle_path: Path, module: str) -> ET.Element:
+def read_module_manifest(bundletool: Path, bundle_path: Path, module: str) -> Any:
     result = subprocess.run(
         [
             "java", "-jar", str(bundletool), "dump", "manifest",
