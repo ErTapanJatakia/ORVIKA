@@ -258,8 +258,10 @@ jobs:
             https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar \
             --output "$BUNDLETOOL"
           echo "a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29  $BUNDLETOOL" | sha256sum --check --status
-          python3 -m py_compile scripts/verify-android-aab-manifest.py
-          echo "Pinned bundletool 1.18.3 downloaded and SHA-256 verified."
+          python3 -m venv "$RUNNER_TEMP/aab-verifier-venv"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps defusedxml==0.7.1
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" -m unittest discover -s scripts/tests -p "test_*.py"
+          echo "Pinned bundletool 1.18.3 and hardened XML parser verified."
 
       - name: Verify signed store artifacts
         if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
@@ -281,7 +283,7 @@ jobs:
             exit 1
           fi
           keytool -printcert -jarfile "$AAB" > "$AAB_SIGNATURE" 2>&1
-          python3 scripts/verify-android-aab-manifest.py --bundle "$AAB" --bundletool "$BUNDLETOOL"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" scripts/verify-android-aab-manifest.py --bundle "$AAB" --bundletool "$BUNDLETOOL"
 
           APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
           AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
