@@ -196,7 +196,7 @@ jobs:
           KEYSTORE="$RUNNER_TEMP/orvika-assessment-only.jks"
           STORE_PASSWORD="$(openssl rand -hex 24)"
           KEY_PASSWORD="$(openssl rand -hex 24)"
-          keytool -genkeypair -noprompt -keystore "$KEYSTORE" \
+          keytool -genkeypair -noprompt -storetype JKS -keystore "$KEYSTORE" \
             -storepass "$STORE_PASSWORD" -keypass "$KEY_PASSWORD" \
             -alias orvika-assessment -keyalg RSA -keysize 3072 -validity 7 \
             -dname "CN=ORVIKA Temporary Security Assessment, OU=CI, O=ORVIKA"
