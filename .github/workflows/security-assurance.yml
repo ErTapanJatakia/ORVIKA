@@ -98,6 +98,31 @@ jobs:
         with:
           sarif_file: scorecard.sarif
 
+  web-passive-dast:
+    name: Passive DAST of dedicated Cloudflare preview
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Verify dedicated preview is reachable
+        run: curl --fail --silent --show-error --head https://orvika-validation.orvika.pages.dev
+      - name: Prepare ZAP evidence directory
+        run: mkdir -p security-evidence
+      - name: Run OWASP ZAP passive baseline scan
+        shell: bash
+        run: |
+          docker run --rm -v "$PWD/security-evidence:/zap/wrk/:rw" ghcr.io/zaproxy/zaproxy:2.16.1 \
+            zap-baseline.py -t https://orvika-validation.orvika.pages.dev \
+            -m 3 -I -J zap-baseline.json -r zap-baseline.html
+      - name: Upload ZAP passive scan evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-web-zap-passive-evidence
+          path: security-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+
   android-apk-static-analysis:
     name: Build isolated Android APK and scan with MobSF
     runs-on: ubuntu-24.04
