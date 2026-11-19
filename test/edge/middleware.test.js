@@ -15,7 +15,7 @@ const expectedHeaders = {
   "referrer-policy": "strict-origin-when-cross-origin",
   "permissions-policy": "camera=(self), microphone=(), geolocation=()",
   "cross-origin-embedder-policy": "credentialless",
-  "cross-origin-opener-policy": "same-origin-allow-popups",
+  "cross-origin-opener-policy": "same-origin",
 };
 async function invoke(method, url = "https://orvika.pages.dev/") {
   let nextCalled = false;
@@ -70,6 +70,24 @@ test("allows the .well-known namespace", async () => {
   const { response, nextCalled } = await invoke("GET", "https://orvika.pages.dev/.well-known/assetlinks.json");
   assert.equal(nextCalled, true); assert.equal(response.status, 200);
 });
+test("strips permissive CORS headers from public static responses", async () => {
+  const response = await onRequest({
+    request: { method: "GET", url: "https://orvika.pages.dev/" },
+    next: async () => new Response("public asset", { status: 200, headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Authorization, Content-Type",
+    }}),
+  });
+  for (const name of [
+    "access-control-allow-origin",
+    "access-control-allow-credentials",
+    "access-control-allow-methods",
+    "access-control-allow-headers",
+  ]) assert.equal(response.headers.get(name), null, name);
+});
+
 test("adds security headers and no third-party CAPTCHA directives", async () => {
   const { response } = await invoke("GET");
   for (const [name, value] of Object.entries(expectedHeaders)) assert.equal(response.headers.get(name), value);
