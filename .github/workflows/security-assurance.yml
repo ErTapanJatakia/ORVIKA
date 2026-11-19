@@ -34,17 +34,30 @@ jobs:
         shell: bash
         run: |
           docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
-            --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
-            --ignore-unfixed --format json --output /repo/security-evidence/trivy-fs.json /repo
+            --scanners vuln,misconfig,secret,license \
+            --format json --output /repo/security-evidence/trivy-fs.json /repo
           docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
             --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
-            --ignore-unfixed --exit-code 1 /repo
+            --exit-code 1 /repo
       - name: Semgrep Community Edition SAST (including experimental Dart rules)
         shell: bash
         run: |
           docker run --rm -v "$PWD:/src" semgrep/semgrep:1.180.0 \
             semgrep scan --config p/security-audit --config p/secrets \
             --json --output /src/security-evidence/semgrep.json /src
+
+      - name: Generate repository CycloneDX SBOM
+        shell: bash
+        run: |
+          docker run --rm -v "$PWD:/src" anchore/syft:v1.18.1 \
+            scan dir:/src -o cyclonedx-json=/src/security-evidence/repository-sbom.cdx.json
+
+      - name: Run AAB manifest parser security regression tests
+        shell: bash
+        run: |
+          python3 -m venv "$RUNNER_TEMP/aab-verifier-venv"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps defusedxml==0.7.1
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" -m unittest discover -s scripts/tests -p "test_*.py"
 
       - name: Gitleaks full-history secret scan
         shell: bash
@@ -131,12 +144,31 @@ jobs:
           grep -F 'gradle-9.3.1-all.zip' android/gradle/wrapper/gradle-wrapper.properties
       - name: Resolve locked Flutter dependencies
         run: flutter pub get --enforce-lockfile
-      - name: Build isolated debug APK (never a store release)
-        run: flutter build apk --debug --no-pub
+      - name: Create ephemeral assessment signing identity
+        shell: bash
+        run: |
+          KEYSTORE="$RUNNER_TEMP/orvika-assessment-only.jks"
+          STORE_PASSWORD="$(openssl rand -hex 24)"
+          KEY_PASSWORD="$(openssl rand -hex 24)"
+          keytool -genkeypair -noprompt -keystore "$KEYSTORE" \
+            -storepass "$STORE_PASSWORD" -keypass "$KEY_PASSWORD" \
+            -alias orvika-assessment -keyalg RSA -keysize 3072 -validity 7 \
+            -dname "CN=ORVIKA Temporary Security Assessment, OU=CI, O=ORVIKA"
+          chmod 600 "$KEYSTORE"
+          echo "::add-mask::$STORE_PASSWORD"
+          echo "::add-mask::$KEY_PASSWORD"
+          {
+            echo "ORVIKA_UPLOAD_STORE_FILE=$KEYSTORE"
+            echo "ORVIKA_UPLOAD_STORE_PASSWORD=$STORE_PASSWORD"
+            echo "ORVIKA_UPLOAD_KEY_ALIAS=orvika-assessment"
+            echo "ORVIKA_UPLOAD_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+      - name: Build isolated release-mode assessment APK (never a store release)
+        run: flutter build apk --release --no-pub
       - name: Verify APK identity, signature and digest
         shell: bash
         run: |
-          APK="build/app/outputs/flutter-apk/app-debug.apk"
+          APK="build/app/outputs/flutter-apk/app-release.apk"
           test -s "$APK"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
@@ -145,6 +177,12 @@ jobs:
           "$APKSIGNER" verify --verbose --print-certs "$APK" > security-evidence/apk-signature.txt 2>&1
           "$AAPT" dump badging "$APK" > security-evidence/apk-identity.txt
           sha256sum "$APK" > security-evidence/apk-sha256.txt
+      - name: Generate APK CycloneDX SBOM
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          docker run --rm -v "$PWD:/src" anchore/syft:v1.18.1 \
+            scan file:/src/"$APK" -o cyclonedx-json=/src/security-evidence/apk-sbom.cdx.json
       - name: Start isolated MobSF static-analysis service
         shell: bash
         run: |
@@ -164,7 +202,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p security-evidence
-          APK="build/app/outputs/flutter-apk/app-debug.apk"
+          APK="build/app/outputs/flutter-apk/app-release.apk"
           UPLOAD="$(curl --fail --silent --show-error -X POST \
             http://127.0.0.1:8000/api/v1/upload \
             -H "Authorization: $MOBSF_API_KEY" -F "file=@$APK")"
@@ -188,7 +226,7 @@ jobs:
           {
             echo "APK SHA-256: $(sha256sum "$APK" | cut -d ' ' -f 1)"
             echo "MobSF scan hash: $HASH"
-            echo "Artifact type: debug-only CI assessment APK; not for RuStore submission."
+            echo "Artifact type: release-mode assessment APK signed with an ephemeral CI-only key; not for RuStore submission."
           } > security-evidence/apk-assessment-metadata.txt
       - name: Upload APK and MobSF report
         if: always()
@@ -196,7 +234,7 @@ jobs:
         with:
           name: orvika-apk-mobsf-assessment
           path: |
-            build/app/outputs/flutter-apk/app-debug.apk
+            build/app/outputs/flutter-apk/app-release.apk
             security-evidence/
           if-no-files-found: warn
           retention-days: 14
