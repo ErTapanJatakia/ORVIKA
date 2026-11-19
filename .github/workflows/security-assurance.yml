@@ -111,7 +111,8 @@ jobs:
       - name: Run OWASP ZAP passive baseline scan
         shell: bash
         run: |
-          docker run --rm -v "$PWD/security-evidence:/zap/wrk/:rw" ghcr.io/zaproxy/zaproxy:2.16.1 \
+          chmod 777 security-evidence
+          docker run --rm -v "$PWD/security-evidence:/zap/wrk/:rw" ghcr.io/zaproxy/zaproxy:2.17.0 \
             zap-baseline.py -t https://orvika-validation.orvika.pages.dev \
             -m 3 -I -J zap-baseline.json -r zap-baseline.html
       - name: Upload ZAP passive scan evidence
