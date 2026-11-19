@@ -184,23 +184,23 @@ jobs:
 
           plugin = block_bounds(content, "pluginManagement")
           if plugin is None:
-              content = "pluginManagement {\\n    repositories {\\n        google()\\n        mavenCentral()\\n        gradlePluginPortal()\\n    }\\n}\\n\\n" + content
+              content = "pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\n\n" + content
               plugin = block_bounds(content, "pluginManagement")
 
           _, plugin_open, plugin_close = plugin
           plugin_body = content[plugin_open + 1:plugin_close]
           repositories = block_bounds(plugin_body, "repositories")
           if repositories is None:
-              insertion = "\\n    repositories {\\n        google()\\n        mavenCentral()\\n        gradlePluginPortal()\\n    }\\n"
+              insertion = "\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n"
               content = content[:plugin_close] + insertion + content[plugin_close:]
           else:
               _, repo_open, repo_close = repositories
               repo_body = plugin_body[repo_open + 1:repo_close]
               missing = [name for name in ("google()", "mavenCentral()", "gradlePluginPortal()") if name not in repo_body]
               if missing:
-                  addition = "".join(f"\\n        {name}" for name in missing)
+                  addition = "".join(f"\n        {name}" for name in missing)
                   absolute_close = plugin_open + 1 + repo_close
-                  content = content[:absolute_close] + addition + "\\n    " + content[absolute_close:]
+                  content = content[:absolute_close] + addition + "\n    " + content[absolute_close:]
 
           path.write_text(content)
           verified = block_bounds(content, "pluginManagement")
