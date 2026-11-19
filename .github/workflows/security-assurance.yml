@@ -54,7 +54,7 @@ jobs:
             --report-path=/repo/security-evidence/gitleaks.json --exit-code 1
       - name: Upload repository scan evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: orvika-repository-security-evidence
           path: security-evidence/
@@ -192,7 +192,7 @@ jobs:
           } > security-evidence/apk-assessment-metadata.txt
       - name: Upload APK and MobSF report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: orvika-apk-mobsf-assessment
           path: |
