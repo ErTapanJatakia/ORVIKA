@@ -154,6 +154,32 @@ jobs:
           git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
+      - name: Configure plugin repositories for the pinned Flutter included build
+        shell: bash
+        run: |
+          SETTINGS="$RUNNER_TEMP/flutter/packages/flutter_tools/gradle/settings.gradle.kts"
+          python3 - "$SETTINGS" <<'PY'
+          from pathlib import Path
+          import sys
+
+          path = Path(sys.argv[1])
+          content = path.read_text()
+          if "pluginManagement {" not in content:
+              content = """pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+
+          """ + content
+              path.write_text(content)
+          required = ("google()", "mavenCentral()", "gradlePluginPortal()")
+          if not all(item in content for item in required):
+              raise SystemExit("Flutter included-build plugin repositories are incomplete")
+          print("Verified Google, Maven Central and Gradle Plugin Portal for Flutter's included build.")
+          PY
       - name: Verify committed Gradle wrapper and distribution checksum
         shell: bash
         run: |
