@@ -377,7 +377,7 @@ jobs:
               "components": components
           }
           output = Path("security-evidence/apk-sbom.cdx.json")
-          output.write_text(json.dumps(bom, indent=2) + "\\n")
+          output.write_text(json.dumps(bom, indent=2) + "\n")
           parsed = json.loads(output.read_text())
           if len(parsed.get("components", [])) != len(components):
               raise SystemExit("CycloneDX component count validation failed.")
