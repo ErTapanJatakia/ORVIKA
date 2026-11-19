@@ -126,20 +126,369 @@ jobs:
           print("Android identity, permission set, network defaults and branding resources verified.")
           PY
 
-      - name: Materialize Gradle wrapper from pinned Flutter template
+      - name: Verify committed Gradle wrapper and distribution checksum
         shell: bash
         run: |
-          TEMPLATE="$RUNNER_TEMP/orvika-wrapper-template"
-          mkdir -p "$TEMPLATE"
-          flutter create --platforms=android --org com.orvika --project-name app --no-pub "$TEMPLATE"
-          mkdir -p android/gradle/wrapper
-          cp "$TEMPLATE/android/gradlew" android/gradlew
-          cp "$TEMPLATE/android/gradlew.bat" android/gradlew.bat
-          cp "$TEMPLATE/android/gradle/wrapper/gradle-wrapper.jar" android/gradle/wrapper/gradle-wrapper.jar
-          chmod +x android/gradlew
-          test -s android/gradlew
+          test -x android/gradlew
           test -s android/gradle/wrapper/gradle-wrapper.jar
-          grep -F 'gradle-9.3.1-all.zip' android/gradle/wrapper/gradle-wrapper.properties
+          grep -Eq '^distributionUrl=https\\://services.gradle.org/distributions/gradle-[0-9.]+-all.zip
+      - name: Resolve locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build Android debug APK
+        run: flutter build apk --debug --no-pub
+
+      - name: Verify debug APK identity and signature
+        id: debug-apk
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-debug.apk"
+          test -s "$APK"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
+          test -n "$AAPT"
+          test -n "$APKSIGNER"
+          node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          "$APKSIGNER" verify --verbose "$APK"
+          SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
+          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          {
+            echo "### ORVIKA Android debug validation"
+            echo
+            echo "- APK: $APK"
+            echo "- Size: $(du -h "$APK" | cut -f 1)"
+            echo "- SHA-256: $SHA256"
+            echo "- Application ID: $APP_ID"
+            echo "- Signing: development/debug certificate; not for store submission."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload debug validation APK
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-android-debug-validation
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Record signed-release approval gate
+        shell: bash
+        env:
+          BUILD_SIGNED_RELEASE: ${{ inputs.build_signed_release }}
+        run: |
+          if [ "$BUILD_SIGNED_RELEASE" = "true" ]; then
+            echo "Signed release artifact generation was explicitly requested."
+          else
+            {
+              echo "### Signed release artifacts"
+              echo
+              echo "Skipped: signed APK/AAB generation requires the explicit build_signed_release input."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Detect production signing secrets
+        if: inputs.build_signed_release == true
+        id: signing
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$STORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "Production signing secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Production signing secrets are not configured; signed store artifacts will be skipped."
+          fi
+
+      - name: Require signing secrets when signed release is explicitly requested
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured != 'true'
+        shell: bash
+        run: |
+          echo "Signed release was explicitly requested, but one or more required signing secrets are missing." >&2
+          echo "Configure all four ORVIKA_UPLOAD_* signing secrets or rerun with build_signed_release=false." >&2
+          exit 1
+
+      - name: Configure production signing without committing secrets
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+        run: |
+          KEYSTORE="$RUNNER_TEMP/orvika-upload-key.jks"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
+          test -s "$KEYSTORE"
+          chmod 600 "$KEYSTORE"
+          {
+            printf 'storeFile=%s\n' "$KEYSTORE"
+            printf 'storePassword=%s\n' "$STORE_PASSWORD"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+            printf 'keyPassword=%s\n' "$KEY_PASSWORD"
+          } > android/key.properties
+          chmod 600 android/key.properties
+
+      - name: Build signed release APK and AAB
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        run: |
+          flutter build apk --release --no-pub
+          flutter build appbundle --release --no-pub
+
+      - name: Download and verify pinned bundletool
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        shell: bash
+        run: |
+          BUNDLETOOL="$RUNNER_TEMP/bundletool-all-1.18.3.jar"
+          curl --fail --silent --show-error --location \
+            https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar \
+            --output "$BUNDLETOOL"
+          echo "a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29  $BUNDLETOOL" | sha256sum --check --status
+          python3 -m venv "$RUNNER_TEMP/aab-verifier-venv"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps defusedxml==0.7.1
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" -m unittest discover -s scripts/tests -p "test_*.py"
+          echo "Pinned bundletool 1.18.3 and hardened XML parser verified."
+
+      - name: Verify signed store artifacts
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          AAB="build/app/outputs/bundle/release/app-release.aab"
+          BUNDLETOOL="$RUNNER_TEMP/bundletool-all-1.18.3.jar"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
+          test -s "$APK"
+          test -s "$AAB"
+          APK_SIGNATURE="$RUNNER_TEMP/orvika-apk-signature.txt"
+          AAB_SIGNATURE="$RUNNER_TEMP/orvika-aab-signature.txt"
+          "$APKSIGNER" verify --verbose --print-certs "$APK" > "$APK_SIGNATURE" 2>&1
+          AAB_VERIFY="$(jarsigner -verify -verbose -certs "$AAB" 2>&1)"
+          if ! grep -qi 'jar verified' <<< "$AAB_VERIFY"; then
+            echo "The Android App Bundle signature could not be verified." >&2
+            printf '%s\n' "$AAB_VERIFY" >&2
+            exit 1
+          fi
+          keytool -printcert -jarfile "$AAB" > "$AAB_SIGNATURE" 2>&1
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" scripts/verify-android-aab-manifest.py --bundle "$AAB" --bundletool "$BUNDLETOOL"
+
+          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
+          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
+          if [ -z "$APK_SIGNERS" ] || [ -z "$AAB_SIGNERS" ]; then
+            echo "Unable to extract signer certificate fingerprints from both release artifacts." >&2
+            exit 1
+          fi
+          if [ "$APK_SIGNERS" != "$AAB_SIGNERS" ]; then
+            echo "APK and AAB were not signed by the same certificate set." >&2
+            exit 1
+          fi
+
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
+          node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          {
+            echo "### ORVIKA signed Android release artifacts"
+            echo
+            echo "- APK: $APK"
+            echo "- AAB: $AAB"
+            echo "- Application ID: $APP_ID"
+            echo "- APK/AAB signer certificate sets: match"
+            echo "- Signing: configured upload key; verify store-specific requirements before submission."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload signed store artifacts
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-android-signed-release
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 7
+ android/gradle/wrapper/gradle-wrapper.properties
+          grep -Eq '^distributionSha256Sum=[a-f0-9]{64}
+      - name: Resolve locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build Android debug APK
+        run: flutter build apk --debug --no-pub
+
+      - name: Verify debug APK identity and signature
+        id: debug-apk
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-debug.apk"
+          test -s "$APK"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
+          test -n "$AAPT"
+          test -n "$APKSIGNER"
+          node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          "$APKSIGNER" verify --verbose "$APK"
+          SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
+          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          {
+            echo "### ORVIKA Android debug validation"
+            echo
+            echo "- APK: $APK"
+            echo "- Size: $(du -h "$APK" | cut -f 1)"
+            echo "- SHA-256: $SHA256"
+            echo "- Application ID: $APP_ID"
+            echo "- Signing: development/debug certificate; not for store submission."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload debug validation APK
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-android-debug-validation
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Record signed-release approval gate
+        shell: bash
+        env:
+          BUILD_SIGNED_RELEASE: ${{ inputs.build_signed_release }}
+        run: |
+          if [ "$BUILD_SIGNED_RELEASE" = "true" ]; then
+            echo "Signed release artifact generation was explicitly requested."
+          else
+            {
+              echo "### Signed release artifacts"
+              echo
+              echo "Skipped: signed APK/AAB generation requires the explicit build_signed_release input."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Detect production signing secrets
+        if: inputs.build_signed_release == true
+        id: signing
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$STORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "Production signing secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Production signing secrets are not configured; signed store artifacts will be skipped."
+          fi
+
+      - name: Require signing secrets when signed release is explicitly requested
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured != 'true'
+        shell: bash
+        run: |
+          echo "Signed release was explicitly requested, but one or more required signing secrets are missing." >&2
+          echo "Configure all four ORVIKA_UPLOAD_* signing secrets or rerun with build_signed_release=false." >&2
+          exit 1
+
+      - name: Configure production signing without committing secrets
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+        run: |
+          KEYSTORE="$RUNNER_TEMP/orvika-upload-key.jks"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
+          test -s "$KEYSTORE"
+          chmod 600 "$KEYSTORE"
+          {
+            printf 'storeFile=%s\n' "$KEYSTORE"
+            printf 'storePassword=%s\n' "$STORE_PASSWORD"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+            printf 'keyPassword=%s\n' "$KEY_PASSWORD"
+          } > android/key.properties
+          chmod 600 android/key.properties
+
+      - name: Build signed release APK and AAB
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        run: |
+          flutter build apk --release --no-pub
+          flutter build appbundle --release --no-pub
+
+      - name: Download and verify pinned bundletool
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        shell: bash
+        run: |
+          BUNDLETOOL="$RUNNER_TEMP/bundletool-all-1.18.3.jar"
+          curl --fail --silent --show-error --location \
+            https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar \
+            --output "$BUNDLETOOL"
+          echo "a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29  $BUNDLETOOL" | sha256sum --check --status
+          python3 -m venv "$RUNNER_TEMP/aab-verifier-venv"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps defusedxml==0.7.1
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" -m unittest discover -s scripts/tests -p "test_*.py"
+          echo "Pinned bundletool 1.18.3 and hardened XML parser verified."
+
+      - name: Verify signed store artifacts
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          AAB="build/app/outputs/bundle/release/app-release.aab"
+          BUNDLETOOL="$RUNNER_TEMP/bundletool-all-1.18.3.jar"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort | tail -n 1)"
+          test -s "$APK"
+          test -s "$AAB"
+          APK_SIGNATURE="$RUNNER_TEMP/orvika-apk-signature.txt"
+          AAB_SIGNATURE="$RUNNER_TEMP/orvika-aab-signature.txt"
+          "$APKSIGNER" verify --verbose --print-certs "$APK" > "$APK_SIGNATURE" 2>&1
+          AAB_VERIFY="$(jarsigner -verify -verbose -certs "$AAB" 2>&1)"
+          if ! grep -qi 'jar verified' <<< "$AAB_VERIFY"; then
+            echo "The Android App Bundle signature could not be verified." >&2
+            printf '%s\n' "$AAB_VERIFY" >&2
+            exit 1
+          fi
+          keytool -printcert -jarfile "$AAB" > "$AAB_SIGNATURE" 2>&1
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" scripts/verify-android-aab-manifest.py --bundle "$AAB" --bundletool "$BUNDLETOOL"
+
+          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
+          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
+          if [ -z "$APK_SIGNERS" ] || [ -z "$AAB_SIGNERS" ]; then
+            echo "Unable to extract signer certificate fingerprints from both release artifacts." >&2
+            exit 1
+          fi
+          if [ "$APK_SIGNERS" != "$AAB_SIGNERS" ]; then
+            echo "APK and AAB were not signed by the same certificate set." >&2
+            exit 1
+          fi
+
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
+          node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          {
+            echo "### ORVIKA signed Android release artifacts"
+            echo
+            echo "- APK: $APK"
+            echo "- AAB: $AAB"
+            echo "- Application ID: $APP_ID"
+            echo "- APK/AAB signer certificate sets: match"
+            echo "- Signing: configured upload key; verify store-specific requirements before submission."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload signed store artifacts
+        if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-android-signed-release
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 7
+ android/gradle/wrapper/gradle-wrapper.properties
           android/gradlew --version
 
       - name: Resolve locked Flutter dependencies
