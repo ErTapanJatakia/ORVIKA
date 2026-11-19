@@ -232,9 +232,6 @@ jobs:
             security-evidence/
           if-no-files-found: warn
           retention-days: 14
- android/gradle/wrapper/gradle-wrapper.properties
-          grep -Eq '^distributionSha256Sum=[a-f0-9]{64}      - name: Resolve locked Flutter dependencies
-        run: flutter pub get --enforce-lockfile
       - name: Create ephemeral assessment signing identity
         shell: bash
         run: |
