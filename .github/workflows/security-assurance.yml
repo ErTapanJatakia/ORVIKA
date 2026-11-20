@@ -125,7 +125,7 @@ jobs:
           retention-days: 14
 
   android-apk-static-analysis:
-    name: Build isolated Android APK and scan with MobSF
+    name: Build and publish isolated Android assessment APK
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -260,64 +260,26 @@ jobs:
           "$APKSIGNER" verify --verbose --print-certs "$APK" > security-evidence/apk-signature.txt 2>&1
           "$AAPT" dump badging "$APK" > security-evidence/apk-identity.txt
           sha256sum "$APK" > security-evidence/apk-sha256.txt
-      - name: Generate APK CycloneDX SBOM
+      - name: Record assessment APK metadata
         shell: bash
         run: |
           APK="build/app/outputs/flutter-apk/app-release.apk"
-          docker run --rm -v "$PWD:/src" anchore/syft:v1.18.1 \
-            scan file:/src/"$APK" -o cyclonedx-json=/src/security-evidence/apk-sbom.cdx.json
-      - name: Start isolated MobSF static-analysis service
-        shell: bash
-        run: |
-          MOBSF_API_KEY="orvika-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          echo "::add-mask::$MOBSF_API_KEY"
-          echo "MOBSF_API_KEY=$MOBSF_API_KEY" >> "$GITHUB_ENV"
-          docker run -d --name orvika-mobsf -p 8000:8000 \
-            -e MOBSF_API_KEY="$MOBSF_API_KEY" -e MOBSF_DISABLE_AUTHENTICATION=1 \
-            opensecurity/mobile-security-framework-mobsf:v4.6.2
-          for attempt in $(seq 1 60); do
-            if curl --silent --fail http://127.0.0.1:8000/ >/dev/null; then exit 0; fi
-            sleep 5
-          done
-          docker logs orvika-mobsf
-          exit 1
-      - name: Upload APK to MobSF and run static analysis
-        shell: bash
-        run: |
-          mkdir -p security-evidence
-          APK="build/app/outputs/flutter-apk/app-release.apk"
-          UPLOAD="$(curl --fail --silent --show-error -X POST \
-            http://127.0.0.1:8000/api/v1/upload \
-            -H "Authorization: $MOBSF_API_KEY" -F "file=@$APK")"
-          HASH="$(printf '%s' "$UPLOAD" | jq -er '.hash')"
-          printf '%s\n' "$UPLOAD" > security-evidence/mobsf-upload.json
-          curl --fail --silent --show-error -X POST \
-            http://127.0.0.1:8000/api/v1/scan \
-            -H "Authorization: $MOBSF_API_KEY" -d "hash=$HASH" \
-            > security-evidence/mobsf-scan-start.json
-          for attempt in $(seq 1 60); do
-            curl --silent --show-error -X POST \
-              http://127.0.0.1:8000/api/v1/report_json \
-              -H "Authorization: $MOBSF_API_KEY" -d "hash=$HASH" \
-              -o security-evidence/mobsf-report.json || true
-            if jq -e 'has("security_score") or has("average_cvss")' \
-              security-evidence/mobsf-report.json >/dev/null 2>&1; then break; fi
-            sleep 10
-          done
-          jq -e 'has("security_score") or has("average_cvss")' \
-            security-evidence/mobsf-report.json >/dev/null
           {
+            grep -E '^(package:|application-label:|sdkVersion:|targetSdkVersion:)' security-evidence/apk-identity.txt || true
             echo "APK SHA-256: $(sha256sum "$APK" | cut -d ' ' -f 1)"
-            echo "MobSF scan hash: $HASH"
-            echo "Artifact type: release-mode assessment APK signed with an ephemeral CI-only key; not for RuStore submission."
+            echo "Signing: ephemeral CI-only RSA-3072 certificate; not a store signing identity."
+            echo "Purpose: external security assessment only; not for RuStore submission."
           } > security-evidence/apk-assessment-metadata.txt
-      - name: Upload APK and MobSF report
+      - name: Upload assessment APK and verification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: orvika-apk-mobsf-assessment
+          name: orvika-android-assessment-apk
           path: |
             build/app/outputs/flutter-apk/app-release.apk
-            security-evidence/
-          if-no-files-found: warn
+            security-evidence/apk-identity.txt
+            security-evidence/apk-signature.txt
+            security-evidence/apk-sha256.txt
+            security-evidence/apk-assessment-metadata.txt
+          if-no-files-found: error
           retention-days: 14
