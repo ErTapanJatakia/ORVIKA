@@ -16,6 +16,7 @@ const expectedHeaders = {
   "permissions-policy": "camera=(self), microphone=(), geolocation=()",
   "cross-origin-embedder-policy": "credentialless",
   "cross-origin-opener-policy": "same-origin",
+  "cross-origin-resource-policy": "same-origin",
 };
 async function invoke(method, url = "https://orvika.pages.dev/") {
   let nextCalled = false;
