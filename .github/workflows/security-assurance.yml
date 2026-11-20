@@ -88,7 +88,7 @@ jobs:
           python3 scripts/merge_pub_deps_into_cyclonedx.py \
             --sbom security-evidence/repository-sbom.cdx.json \
             --pub-deps security-evidence/pub-deps.json \
-            --output security-evidence/repository-sbom.cdx.json
+            --output security-evidence/repository-sbom-with-deps.cdx.json
 
       - name: Run security regression tests (AAB manifest and SBOM dependency graph)
         shell: bash
