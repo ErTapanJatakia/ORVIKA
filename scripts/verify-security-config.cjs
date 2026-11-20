@@ -17,6 +17,7 @@ const required = [
   'content-security-policy',
   'cross-origin-embedder-policy',
   'cross-origin-opener-policy',
+  'cross-origin-resource-policy',
 ];
 
 for (const name of required) {
