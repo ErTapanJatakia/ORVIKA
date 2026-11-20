@@ -67,7 +67,7 @@ async function main() {
           headers: Object.fromEntries(
             ['strict-transport-security', 'x-content-type-options', 'x-frame-options',
               'referrer-policy', 'permissions-policy', 'content-security-policy',
-              'cross-origin-embedder-policy', 'cross-origin-opener-policy', 'server', 'x-vercel-id',
+              'cross-origin-embedder-policy', 'cross-origin-opener-policy', 'cross-origin-resource-policy', 'server', 'x-vercel-id',
               'cache-control', 'age', 'via'].map((name) => [name, headers[name] || null]),
           ),
         };
@@ -91,6 +91,7 @@ async function main() {
         assert.match(csp, /connect-src 'self'/, `${label}: connect-src must remain same-origin`);
         assert.equal(headers['cross-origin-embedder-policy'], 'credentialless', `${label}: COEP missing`);
         assert.equal(headers['cross-origin-opener-policy'], 'same-origin', `${label}: COOP must enforce same-origin; response diagnostics logged above`);
+        assert.equal(headers['cross-origin-resource-policy'], 'same-origin', `${label}: CORP must enforce same-origin; response diagnostics logged above`);
         assert.match(headers['permissions-policy'] || '', /camera=\(self\)/, `${label}: camera permission policy missing`);
 
         // Flutter Web renderer internals vary by engine version. Inspect light DOM
