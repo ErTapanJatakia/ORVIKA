@@ -8,7 +8,7 @@ Security fixes are currently developed against the latest code on the `main` bra
 
 Please do not disclose suspected vulnerabilities, exploit steps, credentials, personal data or proof-of-concept payloads in a public issue or discussion.
 
-Use the **Report a vulnerability** / private vulnerability reporting option in this repository's GitHub Security tab when it is enabled. If that option is unavailable, contact the repository owner through the GitHub profile and request a private reporting channel before sending technical details.
+Use GitHub's [Report a vulnerability form](https://github.com/ErTapanJatakia/ORVIKA/security/advisories/new) when private vulnerability reporting is enabled for this repository. If GitHub does not offer the private form, contact the repository owner through the [GitHub profile](https://github.com/ErTapanJatakia) and request a private reporting channel before sending technical details. Do not put technical details in a public issue, discussion, pull request, or commit.
 
 Include, where safe:
 - affected commit, version, platform and browser/OS;
