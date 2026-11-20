@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+      security-events: write
     steps:
       - name: Checkout full history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -30,6 +31,25 @@ jobs:
           persist-credentials: false
       - name: Prepare evidence directory
         run: mkdir -p security-evidence
+
+      - name: Install pinned Flutter SDK for authoritative Pub dependency graph
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
+          git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+
+      - name: Resolve locked Pub dependencies and export authoritative graph
+        shell: bash
+        run: |
+          flutter pub get --enforce-lockfile
+          dart pub deps --json > security-evidence/pub-deps.json
+          python3 -m json.tool security-evidence/pub-deps.json > /dev/null
       - name: Trivy filesystem scan (vulnerabilities, misconfiguration, secrets and licences)
         shell: bash
         run: |
@@ -45,14 +65,31 @@ jobs:
           docker run --rm -v "$PWD:/src" semgrep/semgrep:1.180.0 \
             semgrep scan --config p/security-audit --config p/secrets \
             --json --output /src/security-evidence/semgrep.json /src
+          docker run --rm -v "$PWD:/src" semgrep/semgrep:1.180.0 \
+            semgrep scan --config p/security-audit --config p/secrets \
+            --sarif --output /src/security-evidence/semgrep.sarif /src
 
-      - name: Generate repository CycloneDX SBOM
+      - name: Upload Semgrep SARIF to GitHub code scanning
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        with:
+          sarif_file: security-evidence/semgrep.sarif
+
+      - name: Generate repository CycloneDX SBOM inventory
         shell: bash
         run: |
           docker run --rm -v "$PWD:/src" anchore/syft:v1.18.1 \
             scan dir:/src -o cyclonedx-json=/src/security-evidence/repository-sbom.cdx.json
 
-      - name: Run AAB manifest parser security regression tests
+      - name: Add and verify authoritative Pub dependency relationships
+        shell: bash
+        run: |
+          python3 scripts/merge_pub_deps_into_cyclonedx.py \
+            --sbom security-evidence/repository-sbom.cdx.json \
+            --pub-deps security-evidence/pub-deps.json \
+            --output security-evidence/repository-sbom.cdx.json
+
+      - name: Run security regression tests (AAB manifest and SBOM dependency graph)
         shell: bash
         run: |
           python3 -m venv "$RUNNER_TEMP/aab-verifier-venv"
@@ -94,7 +131,7 @@ jobs:
           results_format: sarif
           publish_results: true
       - name: Upload Scorecard results
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
         with:
           sarif_file: scorecard.sarif
 
