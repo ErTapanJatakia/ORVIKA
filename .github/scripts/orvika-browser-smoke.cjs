@@ -49,7 +49,9 @@ async function main() {
           });
         });
 
-        const response = await page.goto(baseUrl, {
+        const smokeUrl = new URL(baseUrl);
+        smokeUrl.searchParams.set('orvika-smoke', `${label.toLowerCase()}-${Date.now()}`);
+        const response = await page.goto(smokeUrl.toString(), {
           waitUntil: 'domcontentloaded',
           timeout: 90000,
         });
@@ -88,7 +90,7 @@ async function main() {
         assert.doesNotMatch(csp, /script-src[^;]*'unsafe-eval'/, `${label}: unsafe-eval must remain blocked`);
         assert.match(csp, /connect-src 'self'/, `${label}: connect-src must remain same-origin`);
         assert.equal(headers['cross-origin-embedder-policy'], 'credentialless', `${label}: COEP missing`);
-        assert.equal(headers['cross-origin-opener-policy'], 'same-origin-allow-popups', `${label}: COOP missing`);
+        assert.equal(headers['cross-origin-opener-policy'], 'same-origin', `${label}: COOP must enforce same-origin; response diagnostics logged above`);
         assert.match(headers['permissions-policy'] || '', /camera=\(self\)/, `${label}: camera permission policy missing`);
 
         // Flutter Web renderer internals vary by engine version. Inspect light DOM
