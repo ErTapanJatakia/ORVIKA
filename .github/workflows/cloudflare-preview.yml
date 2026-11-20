@@ -111,6 +111,7 @@ jobs:
             'strict-transport-security', 'x-content-type-options', 'x-frame-options',
             'referrer-policy', 'permissions-policy', 'content-security-policy',
             'cross-origin-embedder-policy', 'cross-origin-opener-policy',
+            'cross-origin-resource-policy',
           ];
           const headers = new Map();
           for (const route of config.headers ?? []) {
