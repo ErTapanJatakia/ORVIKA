@@ -39,6 +39,20 @@ class ManifestParserSecurityTests(unittest.TestCase):
             )],
         )
 
+    def test_signature_protection_accepts_bundletool_hex_value(self):
+        self.assertTrue(MODULE.is_signature_protection_level("0x00000002"))
+
+    def test_signature_protection_accepts_decimal_numeric_value(self):
+        self.assertTrue(MODULE.is_signature_protection_level("2"))
+
+    def test_signature_protection_accepts_text_value(self):
+        self.assertTrue(MODULE.is_signature_protection_level("signature"))
+
+    def test_signature_protection_rejects_combined_or_stronger_levels(self):
+        for value in ("signature|privileged", "0x00000003", "0x0000000A", "dangerous"):
+            with self.subTest(value=value):
+                self.assertFalse(MODULE.is_signature_protection_level(value))
+
     def test_permission_declaration_diagnostic_preserves_unexpected_value(self):
         root = MODULE.parse_manifest_xml(
             '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
