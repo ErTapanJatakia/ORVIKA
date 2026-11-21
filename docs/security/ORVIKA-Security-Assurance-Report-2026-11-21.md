@@ -45,13 +45,16 @@ This is a bounded, tool-assisted assurance snapshot—not a penetration-test cer
 
 | Evidence area | Workflow run | Result / evidence |
 |---|---:|---|
-| Repository scans, Semgrep SARIF, SBOM graph, Gitleaks, ZAP, Scorecard and Android assessment APK | [44838303792](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44838303792) | Completed successfully; all four jobs reported success |
+| Repository scans, Semgrep SARIF, SBOM graph, Gitleaks, ZAP, Scorecard and Android assessment APK (PR-head validation) | [44838303792](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44838303792) | Completed successfully; all four jobs reported success |
+| Post-merge security assurance on main | [44839559744](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559744) | Completed successfully on merge commit; all four jobs reported success |
+| Post-merge application CI on main | [44839559659](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559659) | Web analyze/test/build/deploy job succeeded; Android validation skipped by design |
+| Post-merge workflow lint on main | [44839559701](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559701) | Completed successfully |
 | Isolated Cloudflare Pages preview validation | [44836293165](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44836293165) | Completed successfully; all 18 workflow steps passed |
 | Remediation PR validation | [PR #235](https://github.com/ErTapanJatakia/ORVIKA/pull/235) | Required PR checks passed before squash merge |
 
 The security assurance workflow ran against PR head `28b514fd61deff871206e2319052d784164ca3aa`. The Cloudflare preview run used `170d2ebdd286de159d5e0b2861faa7b29d736fda`. The PR #235 squash merge produced main commit `f1ce21a392b817d65c73793a2b6b38fe3039df96`.
 
-**Post-merge verification caveat:** the GitHub workflow-run lookup for merge commit `f1ce21a392b817d65c73793a2b6b38fe3039df96` returned no associated PR-triggered workflow runs. Therefore, this report records successful PR-head validation and the separately successful preview run; it does not claim a fresh post-merge workflow run was observed on the final merge commit.
+**Post-merge verification:** main-branch push workflows were subsequently verified on merge commit `f1ce21a392b817d65c73793a2b6b38fe3039df96`: security assurance run [44839559744](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559744), application CI run [44839559659](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559659), and workflow lint run [44839559701](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559701) all completed successfully, except that Android validation was skipped by design in the application CI. This confirms post-merge verification for those workflows. The separate GitVerse mirror run [44839559662](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559662) failed at `Configure GitVerse SSH authentication`; this is an ancillary mirror-sync failure, not an application security scan or application CI failure. If GitVerse mirroring is required operationally, investigate its SSH credential configuration separately.
 
 ## 4. Repository and source-analysis results
 
@@ -111,7 +114,7 @@ The ZAP baseline report for `https://orvika-validation.orvika.pages.dev` recorde
 | CSP: `style-src unsafe-inline` | Medium / High | 4 | **Open hardening item.** Investigate Flutter-generated inline-style requirements and nonce/hash alternatives. Do not remove the directive without compatibility testing. |
 | Modern Web Application | Informational / Medium | 4 | Informational observation; no vulnerability claim. |
 | Re-examine Cache-control Directives | Informational / Low | 5 | Review caching behavior against response sensitivity and intended cache policy; disposition required. |
-| Storable but Non-Cacheable Content | Informational / Medium | 2 | Contextual cache observation; verify whether affected responses contain sensitive or user-specific data before deciding remediation. |
+| Storable but Non-Cacheable Content | Informational / Medium | 5 | Contextual cache observation; verify whether affected responses contain sensitive or user-specific data before deciding remediation. |
 
 These are ZAP alert categories and scanner assessments, not four confirmed exploitable vulnerabilities. The CSP inline-style alert is the principal outstanding hardening concern. No CSP policy change was included in PR #235 because a change without isolated preview and browser compatibility evidence could break Flutter rendering.
 
@@ -137,18 +140,18 @@ The successful assessment artifact was produced by run [44838303792](https://git
 | Attribute | Recorded value |
 |---|---|
 | Artifact | `orvika-android-assessment-apk` |
-| Artifact ID | `14679687660` |
-| Artifact archive size | 36,692,216 bytes |
-| Artifact archive SHA-256 | `68abf23bc5ad91b9943dabf2a4e9fb4e5849f8a04c026cb6ee6c129d65b59a0` |
-| Created | 20 November 2026, 23:43:39 UTC |
-| Expires | 4 December 2026, 23:43:36 UTC |
+| Artifact ID | `14680376964` |
+| Artifact archive size | 36,692,205 bytes |
+| Artifact archive SHA-256 | `c9a6d10d38a5895fd2be81a9c82cb54507945b579bf1e4c7ecf0e7603644a218` |
+| Created | 20 November 2026, 23:56:20 UTC |
+| Expires | 4 December 2026, 23:56:16 UTC |
 | APK package | `com.orvika.app` |
 | Version | `0.1.0` (versionCode 1) |
 | Minimum SDK | 24 |
 | Target SDK | 36 |
-| APK file SHA-256 | `b1d8535c7ce126f3b0bee3c145c70154110e37a109109f61003f042ec507efc2` |
+| APK file SHA-256 | `e55000f322675e03798cfb68ec1ddb49ad801cab48a28a64597ca21033b1e4ff` |
 | Signing | Temporary CI-only RSA-3072 identity; APK v2 signature verification passed |
-| Signing certificate SHA-256 | `2591df9103186e69064242646eb5071ba9e9741dbb9429f13e226300d3a8e688` |
+| Signing certificate SHA-256 | `c6ae0316a19f5e64928e6e860435ed14943c9dada5c96991766baebd6535a930` |
 
 The archive SHA-256 and the APK file SHA-256 identify different byte streams and must not be interchanged. The signing certificate is ephemeral and is not the production/store signing identity. The workflow explicitly labels this artifact as security-assessment-only and not for RuStore submission.
 
@@ -189,12 +192,12 @@ The assurance snapshot should be considered **substantially complete with docume
 
 ## Appendix A — retained workflow artifacts
 
-All three artifacts below were reported as available when this report was assembled and have an expiry of 4 December 2026:
+The following artifacts were retrieved from the post-merge main-branch security assurance run [44839559744](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559744). They were available when this report was assembled and expire on 4 December 2026:
 
 | Artifact | Artifact ID | Archive SHA-256 |
 |---|---:|---|
-| Android assessment APK | `14679687660` | `68abf23bc5ad91b9943dabf2a4e9fb4e5849f8a04c026cb6ee6c129d65b59a0` |
-| ZAP passive evidence | `14679647163` | `84b761c6ba4ccc9757c069333dfcb600556e97af9e81f4ffe0040ea7162ea9e3` |
-| Repository security evidence | `14678838700` | `1a5188d8fd00d397aef06fe7b75b7bc998625a3ad541571290c1907a9cb467a3` |
+| Android assessment APK | `14680376964` | `c9a6d10d38a5895fd2be81a9c82cb54507945b579bf1e4c7ecf0e7603644a218` |
+| ZAP passive evidence | `14680480888` | `10a65a00194827d23e97f1228ef907731b977573aee96d26278620f3d1da41b6` |
+| Repository security evidence | `14680930219` | `b5b1e8591204127f548a783e582057b2da2950f7c0d34f0c9ffbdc23c4bc00b6` |
 
 Artifacts are accessible from the workflow run's Artifacts section while retained and authorized. This report records their identifiers and digests; it does not embed the APK or raw scanner output.
