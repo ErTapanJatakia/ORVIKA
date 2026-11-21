@@ -76,7 +76,6 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           import xml.etree.ElementTree as ET
 
           gradle = Path("android/app/build.gradle.kts").read_text()
@@ -275,10 +274,12 @@ jobs:
             exit 1
           fi
           keytool -printcert -jarfile "$AAB" > "$AAB_SIGNATURE" 2>&1
-          "$RUNNER_TEMP/aab-verifier-venv/bin/python" scripts/verify-android-aab-manifest.py --bundle "$AAB" --bundletool "$BUNDLETOOL"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/python" scripts/verify-android-aab-manifest.py \
+            --bundle "$AAB" --bundletool "$BUNDLETOOL" \
+            --diagnostics-dir "$RUNNER_TEMP/orvika-aab-manifest-diagnostics"
 
-          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
-          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
+          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
+          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
           if [ -z "$APK_SIGNERS" ] || [ -z "$AAB_SIGNERS" ]; then
             echo "Unable to extract signer certificate fingerprints from both release artifacts." >&2
             exit 1
@@ -309,6 +310,15 @@ jobs:
             echo "- APK/AAB signer certificate sets: match"
             echo "- Signing: configured upload key; verify store-specific requirements before submission."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload private AAB manifest diagnostics
+        if: always() && inputs.build_signed_release == true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-aab-module-manifest-diagnostics
+          path: ${{ runner.temp }}/orvika-aab-manifest-diagnostics/
+          if-no-files-found: ignore
+          retention-days: 3
 
       - name: Upload signed store artifacts
         if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
