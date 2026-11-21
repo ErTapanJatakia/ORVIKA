@@ -21,6 +21,33 @@ class ManifestParserSecurityTests(unittest.TestCase):
         )
         self.assertEqual(root.get("package"), "com.orvika.app")
 
+    def test_permission_declarations_capture_exact_protection_level(self):
+        root = MODULE.parse_manifest_xml(
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+            '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
+            'android:protectionLevel="signature"/></manifest>',
+            "base",
+        )
+        self.assertEqual(
+            MODULE.permission_declarations(root),
+            [(
+                "com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+                "signature",
+            )],
+        )
+
+    def test_permission_declaration_diagnostic_preserves_unexpected_value(self):
+        root = MODULE.parse_manifest_xml(
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+            '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
+            'android:protectionLevel="signature|privileged"/></manifest>',
+            "base",
+        )
+        self.assertEqual(
+            MODULE.permission_declarations(root)[0][1],
+            "signature|privileged",
+        )
+
     def test_rejects_external_entity_declaration(self):
         xml = (
             '<!DOCTYPE manifest [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>'
