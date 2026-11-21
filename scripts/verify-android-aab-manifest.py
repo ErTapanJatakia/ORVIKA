@@ -34,6 +34,17 @@ def parse_manifest_xml(xml_text: str, module: str) -> Any:
         ) from error
 
 
+def is_signature_protection_level(value: str) -> bool:
+    """Accept the exact Android signature level in text or bundletool numeric form."""
+    normalized = value.strip().lower()
+    if normalized == "signature":
+        return True
+    try:
+        return int(normalized, 0) == 0x00000002
+    except ValueError:
+        return False
+
+
 def permission_declarations(manifest: Any) -> list[tuple[str, str]]:
     """Return declared permission names and protection levels for diagnostics."""
     declarations = []
@@ -165,7 +176,7 @@ def verify(
             )
             if (
                 name == DYNAMIC_RECEIVER_PERMISSION
-                and protection_level.lower() == "signature"
+                and is_signature_protection_level(protection_level)
             ):
                 has_signature_protected_dynamic_receiver_permission = True
 
