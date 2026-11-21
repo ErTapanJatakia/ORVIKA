@@ -150,7 +150,7 @@ jobs:
           test -n "$AAPT"
           test -n "$APKSIGNER"
           node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
-          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\1/p")"
           "$APKSIGNER" verify --verbose "$APK"
           SHA256="$(sha256sum "$APK" | cut -d ' ' -f 1)"
           echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
@@ -278,8 +278,8 @@ jobs:
             --bundle "$AAB" --bundletool "$BUNDLETOOL" \
             --diagnostics-dir "$RUNNER_TEMP/orvika-aab-manifest-diagnostics"
 
-          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
-          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
+          APK_SIGNERS="$(sed -nE 's/.*certificate SHA-256 digest: ([[:xdigit:]]+).*/\1/p' "$APK_SIGNATURE" | tr '[:upper:]' '[:lower:]' | sort -u)"
+          AAB_SIGNERS="$(sed -nE 's/^[[:space:]]*SHA256: ([[:xdigit:]:]+).*$/\1/p' "$AAB_SIGNATURE" | tr -d ':' | tr '[:upper:]' '[:lower:]' | sort -u)"
           if [ -z "$APK_SIGNERS" ] || [ -z "$AAB_SIGNERS" ]; then
             echo "Unable to extract signer certificate fingerprints from both release artifacts." >&2
             exit 1
@@ -300,7 +300,7 @@ jobs:
 
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort | tail -n 1)"
           node scripts/verify-android-apk-manifest.cjs "$AAPT" "$APK"
-          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p")"
+          APP_ID="$("$AAPT" dump badging "$APK" | sed -n "s/^package: name='\\([^']*\\)'.*/\1/p")"
           {
             echo "### ORVIKA signed Android release artifacts"
             echo
