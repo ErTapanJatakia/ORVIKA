@@ -2,6 +2,7 @@
 """Verify every Android App Bundle module manifest using Google's bundletool."""
 
 import argparse
+import re
 import subprocess
 import sys
 import zipfile
@@ -58,27 +59,64 @@ def module_names(bundle_path: Path) -> list[str]:
     return modules
 
 
-def read_module_manifest(bundletool: Path, bundle_path: Path, module: str) -> Any:
+def read_module_manifest(
+    bundletool: Path,
+    bundle_path: Path,
+    module: str,
+    diagnostics_dir: Path | None = None,
+) -> Any:
+    """Render a module manifest and optionally preserve exact output for diagnosis."""
     result = subprocess.run(
         [
             "java", "-jar", str(bundletool), "dump", "manifest",
             f"--bundle={bundle_path}", f"--module={module}",
         ],
-        check=True,
+        check=False,
         capture_output=True,
         text=True,
     )
+
+    if diagnostics_dir is not None:
+        diagnostics_dir.mkdir(parents=True, exist_ok=True)
+        safe_module = re.sub(r"[^A-Za-z0-9_.-]", "_", module)
+        (diagnostics_dir / f"{safe_module}-AndroidManifest.xml").write_text(
+            result.stdout, encoding="utf-8"
+        )
+        if result.stderr:
+            (diagnostics_dir / f"{safe_module}-bundletool-stderr.txt").write_text(
+                result.stderr, encoding="utf-8"
+            )
+        with (diagnostics_dir / "bundletool-module-status.txt").open(
+            "a", encoding="utf-8"
+        ) as status:
+            status.write(
+                f"module={module}\nreturn_code={result.returncode}\n"
+                f"stdout_bytes={len(result.stdout.encode('utf-8'))}\n"
+                f"stderr_bytes={len(result.stderr.encode('utf-8'))}\n\n"
+            )
+
+    if result.returncode != 0:
+        raise ValueError(
+            f"bundletool manifest dump failed for module {module} "
+            f"(exit {result.returncode}); see captured diagnostics"
+        )
     return parse_manifest_xml(result.stdout, module)
 
 
-def verify(bundletool: Path, bundle_path: Path) -> None:
+def verify(
+    bundletool: Path,
+    bundle_path: Path,
+    diagnostics_dir: Path | None = None,
+) -> None:
     modules = module_names(bundle_path)
     all_permissions: set[str] = set()
     permission_diagnostics: list[str] = []
     has_signature_protected_dynamic_receiver_permission = False
 
     for module in modules:
-        manifest = read_module_manifest(bundletool, bundle_path, module)
+        manifest = read_module_manifest(
+            bundletool, bundle_path, module, diagnostics_dir
+        )
         package_name = manifest.get("package")
         if package_name != EXPECTED_PACKAGE:
             raise ValueError(
@@ -130,6 +168,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--bundle", required=True, type=Path)
     parser.add_argument("--bundletool", required=True, type=Path)
+    parser.add_argument(
+        "--diagnostics-dir",
+        type=Path,
+        help="Optionally preserve exact bundletool-rendered module manifests.",
+    )
     args = parser.parse_args()
 
     if not args.bundle.is_file():
@@ -138,7 +181,11 @@ def main() -> int:
         parser.error(f"bundletool JAR does not exist: {args.bundletool}")
 
     try:
-        verify(args.bundletool.resolve(), args.bundle.resolve())
+        verify(
+            args.bundletool.resolve(),
+            args.bundle.resolve(),
+            args.diagnostics_dir,
+        )
     except (OSError, ValueError, subprocess.CalledProcessError, zipfile.BadZipFile) as error:
         print(f"AAB manifest verification failed: {error}", file=sys.stderr)
         return 1
