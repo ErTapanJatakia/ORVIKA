@@ -10,7 +10,7 @@ import 'core/localization/orvika_localizations.dart';
 import 'core/navigation/orvika_navigation.dart';
 
 
-void main() => runApp(const OrvikaApp());
+void main() => runApp(const OrvikaApp(showLaunchOverlay: true));
 
 /// Composes ORVIKA's optional text-size preference with the platform scaler.
 /// This preserves nonlinear system text scaling instead of replacing it with
@@ -107,7 +107,11 @@ extension OrvikaThemeDetails on OrvikaTheme {
 }
 
 class OrvikaApp extends StatefulWidget {
-  const OrvikaApp({super.key});
+  const OrvikaApp({super.key, this.showLaunchOverlay = false});
+
+  /// The branded launch overlay is enabled by the production entry point.
+  /// Embedded app instances (including widget tests) remain interaction-ready.
+  final bool showLaunchOverlay;
   @override
   State<OrvikaApp> createState() => _OrvikaAppState();
 }
@@ -334,7 +338,9 @@ class _OrvikaAppState extends State<OrvikaApp> {
                   : TextDirection.ltr,
               child: OrvikaLanguageScope(
                 language: _selectedLanguage,
-                child: OrvikaLaunchOverlay(child: child ?? const SizedBox.shrink()),
+                child: widget.showLaunchOverlay
+                    ? OrvikaLaunchOverlay(child: child ?? const SizedBox.shrink())
+                    : child ?? const SizedBox.shrink(),
               ),
             ),
           ),
