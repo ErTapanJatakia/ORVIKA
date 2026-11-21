@@ -163,7 +163,11 @@ test("isolated Cloudflare validation host receives a fresh nonce policy and matc
     assert.match(policy, /style-src 'self' 'nonce-[^']+'/);
     assert.match(policy, /style-src-attr 'none'/);
     assert.doesNotMatch(policy, /style-src 'self' 'unsafe-inline'/);
-    assert.match(policy, new RegExp("script-src[^;]*'nonce-" + nonce + "'"));
+    const scriptDirective = policy.split(";").find((directive) => directive.trim().startsWith("script-src "));
+    assert.ok(
+      scriptDirective?.includes("'nonce-" + nonce + "'"),
+      "script-src directive must authorize the generated nonce",
+    );
     const body = await response.text();
     assert.equal((body.match(new RegExp('nonce="' + nonce + '"', "g")) ?? []).length, 3);
     assert.match(body, /<style[^>]*nonce="/);
