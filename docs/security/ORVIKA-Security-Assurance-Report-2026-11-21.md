@@ -3,8 +3,8 @@
 **Assessment snapshot:** 21 November 2026  
 **Repository:** https://github.com/ErTapanJatakia/ORVIKA  
 **Assessed application:** ORVIKA prototype, web and Android build pipeline  
-**Report status:** Evidence-consolidation draft; subject to PR review and final disposition  
-**Main branch baseline:** `f1ce21a392b817d65c73793a2b6b38fe3039df96`  
+**Report status:** Final evidence snapshot for the 21 November 2026 main-branch baseline; residual risks remain open and formal sign-off is tracked separately  
+**Main branch baseline:** `f61328b900f528762aa28ed27b4a9085d2018099`  
 **Latest remediation PR:** [#235](https://github.com/ErTapanJatakia/ORVIKA/pull/235), merged 20 November 2026
 
 ## 1. Executive summary
@@ -46,16 +46,16 @@ This is a bounded, tool-assisted assurance snapshot—not a penetration-test cer
 | Evidence area | Workflow run | Result / evidence |
 |---|---:|---|
 | Repository scans, Semgrep SARIF, SBOM graph, Gitleaks, ZAP, Scorecard and Android assessment APK (PR-head validation) | [44838303792](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44838303792) | Completed successfully; all four jobs reported success |
-| Post-merge security assurance on main | [44839559744](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559744) | Completed successfully on merge commit; all four jobs reported success |
-| Post-merge application CI on main | [44839559659](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559659) | Web analyze/test/build/deploy job succeeded; Android validation skipped by design |
-| Post-merge workflow lint on main | [44839559701](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559701) | Completed successfully |
+| Latest post-merge security assurance on main | [44843587431](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587431) | Completed successfully on report merge commit; all four jobs reported success |
+| Latest post-merge application CI on main | [44843587487](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587487) | Web analyze/test/build passed; Vercel deployment and production smoke-test steps skipped; Android validation skipped by design |
+| Latest post-merge CodeQL on main | [44843586934](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843586934) | Python, Actions and JavaScript/TypeScript analyses all passed |
+| Latest post-merge workflow lint on main | [44843587384](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587384) | Completed successfully |
 | Isolated Cloudflare Pages preview validation | [44836293165](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44836293165) | Completed successfully; all 18 workflow steps passed |
 | Remediation PR validation | [PR #235](https://github.com/ErTapanJatakia/ORVIKA/pull/235) | Required PR checks passed before squash merge |
 
 The security assurance workflow ran against PR head `28b514fd61deff871206e2319052d784164ca3aa`. The Cloudflare preview run used `170d2ebdd286de159d5e0b2861faa7b29d736fda`. The PR #235 squash merge produced main commit `f1ce21a392b817d65c73793a2b6b38fe3039df96`.
 
-**Post-merge verification:** main-branch push workflows were subsequently verified on merge commit `f1ce21a392b817d65c73793a2b6b38fe3039df96`: security assurance run [44839559744](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559744), application CI run [44839559659](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559659), and workflow lint run [44839559701](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559701) all completed successfully, except that Android validation was skipped by design in the application CI. This confirms post-merge verification for those workflows. The separate GitVerse mirror run [44839559662](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559662) failed at `Configure GitVerse SSH authentication`; this is an ancillary mirror-sync failure, not an application security scan or application CI failure. If GitVerse mirroring is required operationally, investigate its SSH credential configuration separately.
-
+**Latest post-merge verification:** the report-only PR #236 was squash-merged as `f61328b900f528762aa28ed27b4a9085d2018099`. On that commit, security assurance run [44843587431](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587431), application CI run [44843587487](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587487), CodeQL run [44843586934](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843586934), and workflow lint run [44843587384](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587384) all completed successfully. The application CI web analysis, tests and build passed; Vercel deployment preparation/deployment and production browser smoke-test steps were skipped, and Android validation was skipped by design. The latest security assurance run completed all four jobs successfully and generated the current evidence artifacts listed in Appendix A. GitVerse mirroring is outside this application's security-assurance scope and is handled separately with the provider; it is not a Gate 1 criterion.
 ## 4. Repository and source-analysis results
 
 ### Trivy
@@ -135,27 +135,26 @@ The preview run also validated source/edge middleware, Cloudflare configuration,
 
 ## 7. Android assessment artifact
 
-The successful assessment artifact was produced by run [44838303792](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44838303792).
+The latest assessment artifact was produced by post-merge main-branch run [44843587431](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587431).
 
-| Attribute | Recorded value |
+| Attribute | Latest recorded value |
 |---|---|
 | Artifact | `orvika-android-assessment-apk` |
-| Artifact ID | `14680376964` |
-| Artifact archive size | 36,692,205 bytes |
-| Artifact archive SHA-256 | `c9a6d10d38a5895fd2be81a9c82cb54507945b579bf1e4c7ecf0e7603644a218` |
-| Created | 20 November 2026, 23:56:20 UTC |
-| Expires | 4 December 2026, 23:56:16 UTC |
+| Artifact ID | `14681762787` |
+| Artifact archive size | 36,692,212 bytes |
+| Artifact archive SHA-256 | `a5f10bac4e55fb81b252864985fd45a84f232c08bbf7386147afa910813b5ebc` |
+| Created | 21 November 2026, 00:31:04 UTC |
+| Expires | 5 December 2026, 00:31:00 UTC |
 | APK package | `com.orvika.app` |
 | Version | `0.1.0` (versionCode 1) |
 | Minimum SDK | 24 |
 | Target SDK | 36 |
-| APK file SHA-256 | `e55000f322675e03798cfb68ec1ddb49ad801cab48a28a64597ca21033b1e4ff` |
-| Signing | Temporary CI-only RSA-3072 identity; APK v2 signature verification passed |
-| Signing certificate SHA-256 | `c6ae0316a19f5e64928e6e860435ed14943c9dada5c96991766baebd6535a930` |
+| Signing | Temporary CI-only RSA-3072 identity; signature verification step passed |
+| Evidence files | APK identity, signature/certificate details, and APK SHA-256 are included in the artifact archive |
 
-The archive SHA-256 and the APK file SHA-256 identify different byte streams and must not be interchanged. The signing certificate is ephemeral and is not the production/store signing identity. The workflow explicitly labels this artifact as security-assessment-only and not for RuStore submission.
+The archive SHA-256 identifies the ZIP artifact, not the APK file inside it. The APK file digest and signing certificate fingerprint are recorded separately in the uploaded evidence files and must not be conflated with the archive digest. The signing identity is ephemeral and is not the production/store signing identity. This assessment artifact is not suitable for RuStore or any other store submission.
 
-The artifact expires on 4 December 2026. Preserve any required evidence and assessment copy before expiry, following the project's confidentiality and distribution requirements.
+The latest security-assurance workflow's APK build, identity/signature verification and artifact-upload steps all passed. Android build validation remains a separate workflow and was skipped by design. Preserve the artifact before its 5 December 2026 expiry, subject to the project's confidentiality and distribution requirements.
 
 ## 8. Remediation history
 
@@ -192,12 +191,12 @@ The assurance snapshot should be considered **substantially complete with docume
 
 ## Appendix A — retained workflow artifacts
 
-The following artifacts were retrieved from the post-merge main-branch security assurance run [44839559744](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44839559744). They were available when this report was assembled and expire on 4 December 2026:
+The following artifacts were generated by the latest post-merge main-branch security assurance run [44843587431](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44843587431). They were available when this evidence snapshot was reconciled and expire on 5 December 2026:
 
-| Artifact | Artifact ID | Archive SHA-256 |
-|---|---:|---|
-| Android assessment APK | `14680376964` | `c9a6d10d38a5895fd2be81a9c82cb54507945b579bf1e4c7ecf0e7603644a218` |
-| ZAP passive evidence | `14680480888` | `10a65a00194827d23e97f1228ef907731b977573aee96d26278620f3d1da41b6` |
-| Repository security evidence | `14680930219` | `b5b1e8591204127f548a783e582057b2da2950f7c0d34f0c9ffbdc23c4bc00b6` |
+| Artifact | Artifact ID | Archive size | Archive SHA-256 | Expires |
+|---|---:|---:|---|---|
+| Android assessment APK + verification files | `14681762787` | 36,692,212 bytes | `a5f10bac4e55fb81b252864985fd45a84f232c08bbf7386147afa910813b5ebc` | 5 Dec 2026, 00:31:00 UTC |
+| ZAP passive evidence | `14681434507` | 18,620 bytes | `b72cb5619170558069e9e9decea0004a67b31ee078502e0cde032a77f1fefd12` | 5 Dec 2026, 00:25:24 UTC |
+| Repository security evidence | `14681239807` | 76,914 bytes | `5d19dce941a1068023861e15e64033631c1eb6f8319a022d09269db954b960f8` | 5 Dec 2026, 00:26:12 UTC |
 
-Artifacts are accessible from the workflow run's Artifacts section while retained and authorized. This report records their identifiers and digests; it does not embed the APK or raw scanner output.
+Artifact archive digests identify the downloaded ZIP archives, not individual files within them. The APK archive includes separate identity, signature and APK SHA-256 evidence files. Artifacts are accessible from the workflow run's Artifacts section while retained and authorized. Preserve required evidence before expiry, following the project's confidentiality and distribution requirements.
