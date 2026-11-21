@@ -169,7 +169,7 @@ test("isolated Cloudflare validation host receives a fresh nonce policy and matc
       "script-src directive must authorize the generated nonce",
     );
     const body = await response.text();
-    assert.equal((body.match(new RegExp('nonce="' + nonce + '"', "g")) ?? []).length, 3);
+    assert.equal(body.split('nonce="' + nonce + '"').length - 1, 3);
     assert.match(body, /<style[^>]*nonce="/);
     assert.match(body, /<script[^>]*nonce="/);
     assert.equal(response.headers.get("content-length"), null);
