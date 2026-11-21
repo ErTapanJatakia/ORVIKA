@@ -49,7 +49,7 @@ This is a bounded, tool-assisted assurance snapshot—not a penetration-test cer
 | Isolated Cloudflare Pages preview validation | [44836293165](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44836293165) | Completed successfully; all 18 workflow steps passed |
 | Remediation PR validation | [PR #235](https://github.com/ErTapanJatakia/ORVIKA/pull/235) | Required PR checks passed before squash merge |
 
-The security assurance workflow ran against PR head `28b514fd61deff871206e2319052d784164ca3aa`. The Cloudflare preview run used `170d2ebdd286de159d5e0b286a3b19bc582f1faa5`? No: the verified preview run head was `170d2ebdd286de159d5e0b2861faa7b29d736fda`. The PR #235 squash merge produced main commit `f1ce21a392b817d65c73793a2b6b38fe3039df96`.
+The security assurance workflow ran against PR head `28b514fd61deff871206e2319052d784164ca3aa`. The Cloudflare preview run used `170d2ebdd286de159d5e0b2861faa7b29d736fda`. The PR #235 squash merge produced main commit `f1ce21a392b817d65c73793a2b6b38fe3039df96`.
 
 **Post-merge verification caveat:** the GitHub workflow-run lookup for merge commit `f1ce21a392b817d65c73793a2b6b38fe3039df96` returned no associated PR-triggered workflow runs. Therefore, this report records successful PR-head validation and the separately successful preview run; it does not claim a fresh post-merge workflow run was observed on the final merge commit.
 
