@@ -263,6 +263,95 @@ jobs:
           grep -F 'distributionUrl=https\://services.gradle.org/distributions/gradle-' android/gradle/wrapper/gradle-wrapper.properties
           grep -Eq '^distributionSha256Sum=[a-f0-9]{64}$' android/gradle/wrapper/gradle-wrapper.properties
           android/gradlew --version
+      - name: Diagnose Kotlin 2.2.21 Maven artifact availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p security-evidence
+          EVIDENCE="$GITHUB_WORKSPACE/security-evidence/kotlin-2.2.21-repository-diagnostics.txt"
+          BODY="$RUNNER_TEMP/kotlin-2.2.21-pom.xml"
+          : > "$EVIDENCE"
+          artifacts=(
+            "org/jetbrains/kotlin/kotlin-stdlib/2.2.21/kotlin-stdlib-2.2.21.pom"
+            "org/jetbrains/kotlin/kotlin-gradle-plugins-bom/2.2.21/kotlin-gradle-plugins-bom-2.2.21.pom"
+            "org/jetbrains/kotlin/kotlin-gradle-plugin-api/2.2.21/kotlin-gradle-plugin-api-2.2.21.pom"
+            "org/jetbrains/kotlin/kotlin-gradle-plugin/2.2.21/kotlin-gradle-plugin-2.2.21.pom"
+          )
+          failed=0
+          for path in "${artifacts[@]}"; do
+            url="https://repo.maven.apache.org/maven2/$path"
+            printf 'Checking %s\n' "$url" | tee -a "$EVIDENCE"
+            if ! metadata="$(curl --retry 2 --retry-all-errors --retry-delay 2 \
+              --connect-timeout 10 --max-time 30 --silent --show-error --location \
+              --output "$BODY" \
+              --write-out 'http_status=%{http_code} content_type=%{content_type} bytes=%{size_download} effective_url=%{url_effective}' \
+              "$url")"; then
+              printf 'transport_error=1 %s\n' "$metadata" | tee -a "$EVIDENCE"
+              failed=1
+              continue
+            fi
+            printf '%s\n' "$metadata" | tee -a "$EVIDENCE"
+            status="$(printf '%s' "$metadata" | sed -n 's/.*http_status=\([0-9][0-9][0-9]\).*/\1/p')"
+            if [ "$status" != "200" ]; then
+              echo "FAIL: expected HTTP 200 for $path" | tee -a "$EVIDENCE"
+              failed=1
+              continue
+            fi
+            if ! python3 - "$BODY" <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+          root = ET.parse(sys.argv[1]).getroot()
+          if root.tag.rsplit("}", 1)[-1] != "project":
+              raise SystemExit("POM root element is not <project>")
+          PY
+            then
+              echo "FAIL: response was not a valid Maven POM: $path" | tee -a "$EVIDENCE"
+              failed=1
+              continue
+            fi
+            echo "PASS: HTTP 200 and valid Maven POM" | tee -a "$EVIDENCE"
+          done
+
+          plugin_url="https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-gradle-plugin/2.2.21/kotlin-gradle-plugin-2.2.21.pom"
+          printf 'Checking %s\n' "$plugin_url" | tee -a "$EVIDENCE"
+          if metadata="$(curl --retry 2 --retry-all-errors --retry-delay 2 \
+            --connect-timeout 10 --max-time 30 --silent --show-error --location \
+            --output "$BODY" \
+            --write-out 'http_status=%{http_code} content_type=%{content_type} bytes=%{size_download} effective_url=%{url_effective}' \
+            "$plugin_url")"; then
+            printf '%s\n' "$metadata" | tee -a "$EVIDENCE"
+            status="$(printf '%s' "$metadata" | sed -n 's/.*http_status=\([0-9][0-9][0-9]\).*/\1/p')"
+            if [ "$status" != "200" ] || ! python3 - "$BODY" <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+          root = ET.parse(sys.argv[1]).getroot()
+          if root.tag.rsplit("}", 1)[-1] != "project":
+              raise SystemExit("POM root element is not <project>")
+          PY
+            then
+              echo "FAIL: Gradle Plugin Portal Kotlin plugin POM unavailable or invalid" | tee -a "$EVIDENCE"
+              failed=1
+            else
+              echo "PASS: HTTP 200 and valid Maven POM" | tee -a "$EVIDENCE"
+            fi
+          else
+            echo "FAIL: transport error querying Gradle Plugin Portal" | tee -a "$EVIDENCE"
+            failed=1
+          fi
+
+          cat "$EVIDENCE"
+          if [ "$failed" -ne 0 ]; then
+            echo "Kotlin dependency repository diagnostics failed; stopping before Gradle project configuration." >&2
+            exit 1
+          fi
+      - name: Upload Kotlin repository diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-kotlin-repository-diagnostics
+          path: security-evidence/kotlin-2.2.21-repository-diagnostics.txt
+          if-no-files-found: warn
+          retention-days: 7
       - name: Resolve locked Flutter dependencies
         run: flutter pub get --enforce-lockfile
       - name: Create ephemeral assessment signing identity
