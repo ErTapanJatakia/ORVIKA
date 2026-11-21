@@ -16,13 +16,13 @@ on:
         required: false
         default: false
     secrets:
-      ORVIKA_UPLOAD_KEYSTORE_BASE64:
+      ORVIKA_ANDROID_KEYSTORE_BASE64:
         required: false
-      ORVIKA_UPLOAD_STORE_PASSWORD:
+      ORVIKA_ANDROID_STORE_PASSWORD:
         required: false
-      ORVIKA_UPLOAD_KEY_ALIAS:
+      ORVIKA_ANDROID_APP_KEY:
         required: false
-      ORVIKA_UPLOAD_KEY_PASSWORD:
+      ORVIKA_ANDROID_KEY_PASSWORD:
         required: false
 
 permissions:
@@ -193,10 +193,10 @@ jobs:
         id: signing
         shell: bash
         env:
-          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_ANDROID_APP_KEY }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_ANDROID_KEY_PASSWORD }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ] && [ -n "$STORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
@@ -218,10 +218,10 @@ jobs:
         if: inputs.build_signed_release == true && steps.signing.outputs.configured == 'true'
         shell: bash
         env:
-          KEYSTORE_BASE64: ${{ secrets.ORVIKA_UPLOAD_KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ORVIKA_UPLOAD_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.ORVIKA_UPLOAD_KEY_PASSWORD }}
+          KEYSTORE_BASE64: ${{ secrets.ORVIKA_ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ORVIKA_ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ORVIKA_ANDROID_APP_KEY }}
+          KEY_PASSWORD: ${{ secrets.ORVIKA_ANDROID_KEY_PASSWORD }}
         run: |
           KEYSTORE="$RUNNER_TEMP/orvika-upload-key.jks"
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
