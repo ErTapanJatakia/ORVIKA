@@ -1,8 +1,11 @@
-"""Regression tests for safe Android App Bundle manifest parsing."""
+"""Regression tests for safe Android App Bundle manifest parsing and diagnostics."""
 
 import importlib.util
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+from subprocess import CompletedProcess
 
 SCRIPT = Path(__file__).resolve().parents[1] / "verify-android-aab-manifest.py"
 SPEC = importlib.util.spec_from_file_location("verify_android_aab_manifest", SCRIPT)
@@ -47,6 +50,33 @@ class ManifestParserSecurityTests(unittest.TestCase):
             MODULE.permission_declarations(root)[0][1],
             "signature|privileged",
         )
+
+    def test_read_module_manifest_preserves_exact_bundletool_xml(self):
+        xml = '<manifest package="com.orvika.app"/>'
+        completed = CompletedProcess(args=["java"], returncode=0, stdout=xml, stderr="")
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(MODULE.subprocess, "run", return_value=completed):
+                MODULE.read_module_manifest(
+                    Path("bundletool.jar"), Path("app.aab"), "base", Path(directory)
+                )
+            saved = Path(directory, "base-AndroidManifest.xml")
+            self.assertEqual(saved.read_text(encoding="utf-8"), xml)
+            status = Path(directory, "bundletool-module-status.txt").read_text()
+            self.assertIn("module=base", status)
+            self.assertIn("return_code=0", status)
+
+    def test_read_module_manifest_preserves_stderr_on_bundletool_failure(self):
+        completed = CompletedProcess(
+            args=["java"], returncode=2, stdout="", stderr="bundletool diagnostic"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(MODULE.subprocess, "run", return_value=completed):
+                with self.assertRaisesRegex(ValueError, "dump failed"):
+                    MODULE.read_module_manifest(
+                        Path("bundletool.jar"), Path("app.aab"), "base", Path(directory)
+                    )
+            saved = Path(directory, "base-bundletool-stderr.txt")
+            self.assertEqual(saved.read_text(encoding="utf-8"), "bundletool diagnostic")
 
     def test_rejects_external_entity_declaration(self):
         xml = (
