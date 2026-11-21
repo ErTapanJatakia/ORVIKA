@@ -106,3 +106,118 @@ test("adds security headers to middleware-generated errors", async () => {
   const { response } = await invoke("POST");
   for (const [name, value] of Object.entries(expectedHeaders)) assert.equal(response.headers.get(name), value);
 });
+
+
+class FakeHtmlRewriter {
+  constructor() {
+    this.handlers = new Map();
+  }
+  on(selector, handler) {
+    this.handlers.set(selector, handler);
+    return this;
+  }
+  transform(response) {
+    const handlers = this.handlers;
+    const body = new ReadableStream({
+      async start(controller) {
+        try {
+          const html = await response.text();
+          const transformed = html.replace(/<(script|style)\b([^>]*)>/gi, (match, tagName, rawAttributes) => {
+            const handler = handlers.get(tagName.toLowerCase());
+            if (!handler?.element) return match;
+            let attributes = rawAttributes;
+            handler.element({
+              setAttribute(name, value) {
+                attributes += " " + name + "=\"" + value + "\"";
+              },
+            });
+            return "<" + tagName + attributes + ">";
+          });
+          controller.enqueue(new TextEncoder().encode(transformed));
+          controller.close();
+        } catch (error) {
+          controller.error(error);
+        }
+      },
+    });
+    return new Response(body, { status: response.status, headers: response.headers });
+  }
+}
+
+test("isolated Cloudflare validation host receives a fresh nonce policy and matching HTML attributes", async () => {
+  const previous = globalThis.HTMLRewriter;
+  globalThis.HTMLRewriter = FakeHtmlRewriter;
+  try {
+    const html = '<!doctype html><html><head><style>.a{color:red}</style></head><body><script src="flutter_bootstrap.js" async></script><script>window.ready=true</script></body></html>';
+    const response = await onRequest({
+      request: { method: "GET", url: "https://orvika-validation.orvika.pages.dev/" },
+      next: async () => new Response(html, { status: 200, headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Content-Length": String(html.length),
+        ETag: '"static-shell"',
+      }}),
+    });
+    const policy = response.headers.get("content-security-policy");
+    const nonce = policy.match(/'nonce-([^']+)'/)?.[1];
+    assert.ok(nonce, "preview CSP must contain a generated nonce");
+    assert.match(policy, /style-src 'self' 'nonce-[^']+'/);
+    assert.match(policy, /style-src-attr 'none'/);
+    assert.doesNotMatch(policy, /style-src 'self' 'unsafe-inline'/);
+    assert.match(policy, new RegExp("script-src[^;]*'nonce-" + nonce + "'"));
+    const body = await response.text();
+    assert.equal((body.match(new RegExp('nonce="' + nonce + '"', "g")) ?? []).length, 3);
+    assert.match(body, /<style[^>]*nonce="/);
+    assert.match(body, /<script[^>]*nonce="/);
+    assert.equal(response.headers.get("content-length"), null);
+    assert.equal(response.headers.get("etag"), null);
+  } finally {
+    if (previous === undefined) delete globalThis.HTMLRewriter;
+    else globalThis.HTMLRewriter = previous;
+  }
+});
+
+test("isolated Cloudflare validation host generates a distinct nonce for each HTML response", async () => {
+  const previous = globalThis.HTMLRewriter;
+  globalThis.HTMLRewriter = FakeHtmlRewriter;
+  try {
+    const request = { method: "GET", url: "https://orvika-validation.orvika.pages.dev/" };
+    const next = async () => new Response('<html><head></head><body><script src="flutter_bootstrap.js"></script></body></html>', {
+      status: 200, headers: { "Content-Type": "text/html" },
+    });
+    const first = await onRequest({ request, next });
+    const second = await onRequest({ request, next });
+    const firstNonce = first.headers.get("content-security-policy").match(/'nonce-([^']+)'/)?.[1];
+    const secondNonce = second.headers.get("content-security-policy").match(/'nonce-([^']+)'/)?.[1];
+    assert.ok(firstNonce && secondNonce);
+    assert.notEqual(firstNonce, secondNonce, "nonce values must not be reused across responses");
+  } finally {
+    if (previous === undefined) delete globalThis.HTMLRewriter;
+    else globalThis.HTMLRewriter = previous;
+  }
+});
+
+test("nonce prototype is not activated on production Cloudflare or Vercel hosts", async () => {
+  for (const url of ["https://orvika.pages.dev/", "https://orvika-web.vercel.app/"]) {
+    const response = await onRequest({
+      request: { method: "GET", url },
+      next: async () => new Response("<html><body><script>window.ready=true</script></body></html>", {
+        status: 200, headers: { "Content-Type": "text/html" },
+      }),
+    });
+    const policy = response.headers.get("content-security-policy");
+    assert.equal(policy, vercelCsp);
+    assert.doesNotMatch(policy, /nonce-/);
+    assert.match(await response.text(), /<script>window.ready=true<\/script>/);
+  }
+});
+
+test("nonce prototype does not transform non-HTML resources on the validation host", async () => {
+  const response = await onRequest({
+    request: { method: "GET", url: "https://orvika-validation.orvika.pages.dev/main.dart.js" },
+    next: async () => new Response("console.log('asset')", {
+      status: 200, headers: { "Content-Type": "application/javascript" },
+    }),
+  });
+  assert.equal(response.headers.get("content-security-policy"), vercelCsp);
+  assert.equal(await response.text(), "console.log('asset')");
+});

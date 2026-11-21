@@ -6,6 +6,7 @@ const pageErrors = [];
 const consoleErrors = [];
 const failedRequests = [];
 const criticalAssetResponses = [];
+const cspViolations = [];
 
 function redirectChain(request) {
   const chain = [];
@@ -33,7 +34,12 @@ async function main() {
         const page = await context.newPage();
         page.on('pageerror', (error) => pageErrors.push(error.message));
         page.on('console', (message) => {
-          if (message.type() === 'error') consoleErrors.push(message.text());
+          if (message.type() === 'error') {
+            consoleErrors.push(message.text());
+            if (/content security policy|violates the following directive|refused to (apply|execute)/i.test(message.text())) {
+              cspViolations.push(message.text());
+            }
+          }
         });
         page.on('response', (response) => {
           const url = new URL(response.url());
@@ -71,7 +77,7 @@ async function main() {
               'cache-control', 'age', 'via'].map((name) => [name, headers[name] || null]),
           ),
         };
-        console.log(`${label} production response diagnostics: ${JSON.stringify(headerDiagnostics)}`);
+        console.log(`${label} validation preview response diagnostics: ${JSON.stringify(headerDiagnostics)}`);
 
         const hsts = headers['strict-transport-security'] || '';
         const hstsMaxAge = hsts.match(/(?:^|;)\s*max-age=(\d+)/i);
@@ -87,6 +93,8 @@ async function main() {
         const csp = headers['content-security-policy'] || '';
         assert.match(csp, /default-src 'none'/, `${label}: restrictive default-src policy missing`);
         assert.match(csp, /script-src[^;]*'wasm-unsafe-eval'/, `${label}: Flutter WebAssembly policy missing`);
+        assert.match(csp, /style-src 'self' 'nonce-[^']+'/, `${label}: nonce-based style element policy missing`);
+        assert.match(csp, /style-src-attr 'none'/, `${label}: inline style attributes must be blocked in the nonce prototype`);
         assert.doesNotMatch(csp, /script-src[^;]*'unsafe-eval'/, `${label}: unsafe-eval must remain blocked`);
         assert.match(csp, /connect-src 'self'/, `${label}: connect-src must remain same-origin`);
         assert.equal(headers['cross-origin-embedder-policy'], 'credentialless', `${label}: COEP missing`);
@@ -172,8 +180,9 @@ async function main() {
     // asserted directly, so do not require it in criticalAssetResponses.
     assert(criticalAssetResponses.every((item) => item.status === 200), `Critical asset returned an error: ${JSON.stringify(criticalAssetResponses)}`);
     assert.deepEqual(pageErrors, [], `Browser runtime errors: ${pageErrors.join(' | ')}`);
+    assert.deepEqual(cspViolations, [], `CSP violations: ${cspViolations.join(' | ')}`);
     console.log(`Browser console errors (diagnostic): ${JSON.stringify(consoleErrors)}`);
-    console.log('ORVIKA production browser smoke tests passed.');
+    console.log('ORVIKA validation preview browser smoke tests passed.');
     await desktopPage.context().close();
     await mobilePage.context().close();
   } finally {
