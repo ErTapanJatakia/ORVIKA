@@ -3,6 +3,13 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- AndroidX uses this signature permission to protect non-exported dynamic receivers
+         on Android versions below API 33. The matching uses-permission is contributed
+         by the AndroidX Core manifest during manifest merging. -->
+    <permission
+        android:name="${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:protectionLevel="signature" />
+
     <!-- Camera scanning is an optional capability; non-camera devices may still use other checks. -->
     <uses-feature
         android:name="android.hardware.camera"
