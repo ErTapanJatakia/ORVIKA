@@ -117,27 +117,30 @@ class FakeHtmlRewriter {
     return this;
   }
   transform(response) {
-    return response.text().then((html) => {
-      const transformed = html.replace(/<(script|style)\\b([^>]*)>/gi, (match, tagName, rawAttributes) => {
-        const handler = this.handlers.get(tagName.toLowerCase());
-        if (!handler?.element) return match;
-        let attributes = rawAttributes;
-        const element = {
-          setAttribute(name, value) {
-            const escapedName = name.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&");
-            const expression = new RegExp("\\s+" + escapedName + "=(?:\"[^\"]*\"|'[^']*'|[^\\s>]+)", "i");
-            if (expression.test(attributes)) {
-              attributes = attributes.replace(expression, " " + name + "=\"" + value + "\"");
-            } else {
-              attributes += " " + name + "=\"" + value + "\"";
-            }
-          },
-        };
-        handler.element(element);
-        return "<" + tagName + attributes + ">";
-      });
-      return new Response(transformed, { status: response.status, headers: response.headers });
+    const handlers = this.handlers;
+    const body = new ReadableStream({
+      async start(controller) {
+        try {
+          const html = await response.text();
+          const transformed = html.replace(/<(script|style)\b([^>]*)>/gi, (match, tagName, rawAttributes) => {
+            const handler = handlers.get(tagName.toLowerCase());
+            if (!handler?.element) return match;
+            let attributes = rawAttributes;
+            handler.element({
+              setAttribute(name, value) {
+                attributes += " " + name + "=\"" + value + "\"";
+              },
+            });
+            return "<" + tagName + attributes + ">";
+          });
+          controller.enqueue(new TextEncoder().encode(transformed));
+          controller.close();
+        } catch (error) {
+          controller.error(error);
+        }
+      },
     });
+    return new Response(body, { status: response.status, headers: response.headers });
   }
 }
 
@@ -178,7 +181,7 @@ test("isolated Cloudflare validation host generates a distinct nonce for each HT
   globalThis.HTMLRewriter = FakeHtmlRewriter;
   try {
     const request = { method: "GET", url: "https://orvika-validation.orvika.pages.dev/" };
-    const next = async () => new Response("<html><head></head><body><script src=\"flutter_bootstrap.js\"></script></body></html>", {
+    const next = async () => new Response('<html><head></head><body><script src="flutter_bootstrap.js"></script></body></html>', {
       status: 200, headers: { "Content-Type": "text/html" },
     });
     const first = await onRequest({ request, next });
@@ -204,7 +207,7 @@ test("nonce prototype is not activated on production Cloudflare or Vercel hosts"
     const policy = response.headers.get("content-security-policy");
     assert.equal(policy, vercelCsp);
     assert.doesNotMatch(policy, /nonce-/);
-    assert.match(await response.text(), /<script>window.ready=true<\\/script>/);
+    assert.match(await response.text(), /<script>window.ready=true<\/script>/);
   }
 });
 
