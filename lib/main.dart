@@ -450,7 +450,7 @@ class OrvikaLaunchOverlay extends StatefulWidget {
 }
 
 class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
-  static const _holdDuration = Duration(seconds: 3);
+  static const _holdDuration = Duration(seconds: 5);
   static const _fadeDuration = Duration(milliseconds: 650);
 
   bool _visible = true;
@@ -461,17 +461,16 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
   @override
   void initState() {
     super.initState();
-    _dismissAfterHold();
+    _holdTimer = Timer(_holdDuration, _beginDismissal);
   }
 
-  void _dismissAfterHold() {
-    _holdTimer = Timer(_holdDuration, () {
+  void _beginDismissal() {
+    if (!mounted || !_visible || _removed) return;
+    _holdTimer?.cancel();
+    setState(() => _visible = false);
+    _fadeTimer = Timer(_fadeDuration, () {
       if (!mounted) return;
-      setState(() => _visible = false);
-      _fadeTimer = Timer(_fadeDuration, () {
-        if (!mounted) return;
-        setState(() => _removed = true);
-      });
+      setState(() => _removed = true);
     });
   }
 
@@ -490,15 +489,15 @@ class _OrvikaLaunchOverlayState extends State<OrvikaLaunchOverlay> {
         widget.child,
         if (!_removed)
           Positioned.fill(
-            child: IgnorePointer(
-              ignoring: true,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _beginDismissal,
               child: ExcludeSemantics(
                 child: AnimatedOpacity(
                   opacity: _visible ? 1 : 0,
                   duration: _fadeDuration,
                   curve: Curves.easeInOut,
-                  child: const ColoredBox(
-                    color: Color(0xE6081426),
+                  child: const ColoredBox(                    color: Color(0xE6081426),
                     child: SafeArea(
                       child: Stack(
                         children: [
@@ -997,8 +996,7 @@ class _OrvikaOnboardingScreenState extends State<OrvikaOnboardingScreen> {
                                   child: Text(
                                     page.title,
                                     textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
+                                  style: Theme.of(context)                                      .textTheme
                                       .headlineMedium
                                       ?.copyWith(
                                         color: scheme.onSurface,
@@ -1497,8 +1495,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
                     onCatalogueChanged: (catalogue) {
                       setState(() => _selectedCatalogue = catalogue);
                       widget.onCatalogueChanged(catalogue);
-                    },
-                    onLanguageChanged: (language) {
+                    },                    onLanguageChanged: (language) {
                       setState(() => _selectedLanguage = language);
                       widget.onLanguageChanged(language);
                     },
@@ -1997,8 +1994,7 @@ class _OwlPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _OwlPainter oldDelegate) => oldDelegate.palette != palette;
-}
+  bool shouldRepaint(covariant _OwlPainter oldDelegate) => oldDelegate.palette != palette;}
 
 enum ModuleAccent { cyan, violet, green, amber }
 
