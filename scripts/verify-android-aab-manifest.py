@@ -34,6 +34,18 @@ def parse_manifest_xml(xml_text: str, module: str) -> Any:
         ) from error
 
 
+def permission_declarations(manifest: Any) -> list[tuple[str, str]]:
+    """Return declared permission names and protection levels for diagnostics."""
+    declarations = []
+    for element in manifest:
+        if element.tag.rsplit("}", 1)[-1] == "permission":
+            declarations.append((
+                element.get(ANDROID_NS + "name", "<missing-name>"),
+                element.get(ANDROID_NS + "protectionLevel", "<missing-protectionLevel>"),
+            ))
+    return declarations
+
+
 def module_names(bundle_path: Path) -> list[str]:
     with zipfile.ZipFile(bundle_path) as bundle:
         modules = sorted({
@@ -62,6 +74,7 @@ def read_module_manifest(bundletool: Path, bundle_path: Path, module: str) -> An
 def verify(bundletool: Path, bundle_path: Path) -> None:
     modules = module_names(bundle_path)
     all_permissions: set[str] = set()
+    permission_diagnostics: list[str] = []
     has_signature_protected_dynamic_receiver_permission = False
 
     for module in modules:
@@ -73,20 +86,22 @@ def verify(bundletool: Path, bundle_path: Path) -> None:
                 f"expected {EXPECTED_PACKAGE!r}"
             )
 
+        for name, protection_level in permission_declarations(manifest):
+            permission_diagnostics.append(
+                f"{module}: name={name!r}, protectionLevel={protection_level!r}"
+            )
+            if (
+                name == DYNAMIC_RECEIVER_PERMISSION
+                and protection_level.lower() == "signature"
+            ):
+                has_signature_protected_dynamic_receiver_permission = True
+
         for element in manifest:
             element_name = element.tag.rsplit("}", 1)[-1]
             if element_name.startswith("uses-permission"):
                 permission = element.get(ANDROID_NS + "name")
                 if permission:
                     all_permissions.add(permission)
-            elif element_name == "permission":
-                permission = element.get(ANDROID_NS + "name")
-                protection_level = element.get(ANDROID_NS + "protectionLevel", "")
-                if (
-                    permission == DYNAMIC_RECEIVER_PERMISSION
-                    and protection_level.lower() == "signature"
-                ):
-                    has_signature_protected_dynamic_receiver_permission = True
 
     if all_permissions != EXPECTED_PERMISSIONS:
         unexpected = sorted(all_permissions - EXPECTED_PERMISSIONS)
@@ -97,9 +112,11 @@ def verify(bundletool: Path, bundle_path: Path) -> None:
         )
 
     if not has_signature_protected_dynamic_receiver_permission:
+        observed = "; ".join(permission_diagnostics) or "<no permission declarations>"
         raise ValueError(
             "AAB must declare the AndroidX dynamic receiver permission "
-            f"{DYNAMIC_RECEIVER_PERMISSION!r} with signature protection"
+            f"{DYNAMIC_RECEIVER_PERMISSION!r} with signature protection. "
+            f"Observed <permission> declarations by module: {observed}"
         )
 
     print("Android App Bundle module manifests verified.")
