@@ -51,7 +51,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
             "signature|privileged",
         )
 
-    def test_read_module_manifest_preserves_exact_bundletool_xml(self):
+    def test_read_module_manifest_records_status_without_exporting_raw_xml(self):
         xml = '<manifest package="com.orvika.app"/>'
         completed = CompletedProcess(args=["java"], returncode=0, stdout=xml, stderr="")
         with tempfile.TemporaryDirectory() as directory:
@@ -59,11 +59,10 @@ class ManifestParserSecurityTests(unittest.TestCase):
                 MODULE.read_module_manifest(
                     Path("bundletool.jar"), Path("app.aab"), "base", Path(directory)
                 )
-            saved = Path(directory, "base-AndroidManifest.xml")
-            self.assertEqual(saved.read_text(encoding="utf-8"), xml)
             status = Path(directory, "bundletool-module-status.txt").read_text()
             self.assertIn("module=base", status)
             self.assertIn("return_code=0", status)
+            self.assertFalse(Path(directory, "base-AndroidManifest.xml").exists())
 
     def test_read_module_manifest_preserves_stderr_on_bundletool_failure(self):
         completed = CompletedProcess(
@@ -77,6 +76,23 @@ class ManifestParserSecurityTests(unittest.TestCase):
                     )
             saved = Path(directory, "base-bundletool-stderr.txt")
             self.assertEqual(saved.read_text(encoding="utf-8"), "bundletool diagnostic")
+
+    def test_module_summary_contains_only_package_and_permission_metadata(self):
+        root = MODULE.parse_manifest_xml(
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
+            'package="com.orvika.app"><permission android:name="com.orvika.app.TEST" '
+            'android:protectionLevel="signature"/><uses-permission '
+            'android:name="android.permission.INTERNET"/><application '
+            'android:label="ORVIKA"/></manifest>',
+            "base",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            MODULE.write_module_summary(Path(directory), "base", root)
+            report = Path(directory, "module-permission-summary.txt").read_text()
+            self.assertIn("protectionLevel='signature'", report)
+            self.assertIn("android.permission.INTERNET", report)
+            self.assertNotIn("application", report)
+            self.assertNotIn("ORVIKA", report)
 
     def test_rejects_external_entity_declaration(self):
         xml = (
