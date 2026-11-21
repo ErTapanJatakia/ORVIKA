@@ -2,7 +2,6 @@
 """Verify every Android App Bundle module manifest using Google's bundletool."""
 
 import argparse
-import re
 import subprocess
 import sys
 import zipfile
@@ -65,7 +64,7 @@ def read_module_manifest(
     module: str,
     diagnostics_dir: Path | None = None,
 ) -> Any:
-    """Render a module manifest and optionally preserve exact output for diagnosis."""
+    """Render and parse a module manifest; never export the raw manifest."""
     result = subprocess.run(
         [
             "java", "-jar", str(bundletool), "dump", "manifest",
@@ -78,14 +77,6 @@ def read_module_manifest(
 
     if diagnostics_dir is not None:
         diagnostics_dir.mkdir(parents=True, exist_ok=True)
-        safe_module = re.sub(r"[^A-Za-z0-9_.-]", "_", module)
-        (diagnostics_dir / f"{safe_module}-AndroidManifest.xml").write_text(
-            result.stdout, encoding="utf-8"
-        )
-        if result.stderr:
-            (diagnostics_dir / f"{safe_module}-bundletool-stderr.txt").write_text(
-                result.stderr, encoding="utf-8"
-            )
         with (diagnostics_dir / "bundletool-module-status.txt").open(
             "a", encoding="utf-8"
         ) as status:
@@ -94,6 +85,14 @@ def read_module_manifest(
                 f"stdout_bytes={len(result.stdout.encode('utf-8'))}\n"
                 f"stderr_bytes={len(result.stderr.encode('utf-8'))}\n\n"
             )
+        if result.stderr:
+            safe_module = "".join(
+                char if char.isalnum() or char in "._-" else "_"
+                for char in module
+            )
+            (diagnostics_dir / f"{safe_module}-bundletool-stderr.txt").write_text(
+                result.stderr, encoding="utf-8"
+            )
 
     if result.returncode != 0:
         raise ValueError(
@@ -101,6 +100,41 @@ def read_module_manifest(
             f"(exit {result.returncode}); see captured diagnostics"
         )
     return parse_manifest_xml(result.stdout, module)
+
+
+def write_module_summary(
+    diagnostics_dir: Path | None,
+    module: str,
+    manifest: Any,
+) -> None:
+    """Write only package and permission metadata, not the full app manifest."""
+    if diagnostics_dir is None:
+        return
+    declarations = permission_declarations(manifest)
+    uses_permissions = []
+    for element in manifest:
+        if element.tag.rsplit("}", 1)[-1].startswith("uses-permission"):
+            name = element.get(ANDROID_NS + "name")
+            if name:
+                uses_permissions.append(name)
+    report = diagnostics_dir / "module-permission-summary.txt"
+    with report.open("a", encoding="utf-8") as output:
+        output.write(f"module={module}\n")
+        output.write(f"package={manifest.get('package', '<missing>')}\n")
+        output.write("permission_declarations:\n")
+        if declarations:
+            for name, protection_level in declarations:
+                output.write(
+                    f"  name={name!r}; protectionLevel={protection_level!r}\n"
+                )
+        else:
+            output.write("  <none>\n")
+        output.write("uses_permissions:\n")
+        for name in sorted(uses_permissions):
+            output.write(f"  {name}\n")
+        if not uses_permissions:
+            output.write("  <none>\n")
+        output.write("\n")
 
 
 def verify(
@@ -117,6 +151,7 @@ def verify(
         manifest = read_module_manifest(
             bundletool, bundle_path, module, diagnostics_dir
         )
+        write_module_summary(diagnostics_dir, module, manifest)
         package_name = manifest.get("package")
         if package_name != EXPECTED_PACKAGE:
             raise ValueError(
@@ -171,7 +206,7 @@ def main() -> int:
     parser.add_argument(
         "--diagnostics-dir",
         type=Path,
-        help="Optionally preserve exact bundletool-rendered module manifests.",
+        help="Optionally write a sanitized package/permission diagnostic report.",
     )
     args = parser.parse_args()
 
