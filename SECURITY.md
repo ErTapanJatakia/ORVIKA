@@ -218,6 +218,23 @@ For the full evidence, findings and residual-risk reasoning, consult the [dated 
 
 The tablet regression tests exercise portrait and landscape layouts at defined viewport sizes. Automated viewport coverage is not equivalent to physical tablet testing, camera hardware validation, or a complete accessibility acceptance test.
 
+
+### 7.4 OpenSSF Scorecard triage — 22 November 2026
+
+**Evidence:** [PR #252 security assurance run #44986099020](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44986099020), OpenSSF Scorecard job. The job completed successfully and uploaded its SARIF report; a successful upload means the assessment ran, not that every posture observation was cleared.
+
+| Observation | Evidence and disposition |
+|---|---|
+| Pinned npm dependencies | Scorecard identified six npm install commands without integrity hashes: two in `.github/workflows/ci.yml`, two in `.github/workflows/cloudflare-pages.yml`, and two in `.github/workflows/cloudflare-preview.yml`. The packages are version-pinned, but version pinning is not equivalent to hash verification. **Open supply-chain hardening item**; assess and remediate in a dedicated workflow change with reproducible package integrity, preserving existing install behaviour and tests. |
+| Pinned Python test dependency | The prior `defusedxml==0.7.1` installation used a fixed version but no artifact hash. Corrected in PR #252 commit `6109bfb149f5e46fbe220e8093e1f86dd829c7f7` by requiring hashes, binary-only installation and the published wheel SHA-256. **Fixed in source; pending rerun verification**. |
+| SAST posture metric | Scorecard returned score 0 with the explanation that no pull requests had been merged into a branch named `dev`. ORVIKA's active integration uses `main`; CodeQL Default Setup, Semgrep, DevSkim and Bearer are configured. Treat this as a branch-detection/metric limitation, not proof that SAST is absent. Keep scanner run evidence as the authoritative record. |
+| Binary artifact | Scorecard identified `android/gradle/wrapper/gradle-wrapper.jar`. This is the committed Gradle Wrapper JAR required to bootstrap the pinned Android build tooling. Its presence is expected; retain it and verify it through the Gradle wrapper checksum controls rather than deleting a required build component. |
+| Fuzzing | Scorecard found no fuzzer integration. This is a genuine assurance-coverage gap, not a confirmed vulnerability. **Deferred maturity item**: plan targeted parser/input fuzzing for URL, message and QR processing with bounded, deterministic CI execution. Do not claim comprehensive fuzzing until such tests and reports exist. |
+
+The PR review annotations for `.github/workflows/codeql.yml` were attached to an outdated path and marked outdated/resolved in GitHub's review timeline. That custom advanced-configuration file is not part of PR #252's changed-file set; the repository's CodeQL Default Setup remains the selected configuration. The DevSkim token/key annotation on that same outdated path is not evidence of a current exposed secret. Do not dismiss any future alert on that basis: re-evaluate its current path, commit and source excerpt.
+
+The Scorecard run's npm findings and fuzzing observation remain open as documented above. No blanket suppression or scanner exclusion was applied. The updated Python dependency installation is not marked verified fixed until the post-change workflow rerun succeeds.
+
 ## 8. Finding Triage and Remediation Register
 
 A scanner alert is a lead for investigation, not automatically a confirmed vulnerability. Each material finding should be reviewed in context and tracked to a decision and verification result.
