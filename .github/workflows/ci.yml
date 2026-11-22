@@ -51,6 +51,7 @@ jobs:
           node --check .github/scripts/orvika-browser-smoke.cjs
           node --check .github/scripts/verify-vercel-output.cjs
           node --check functions/_middleware.js
+          node --test test/edge/middleware.test.js
           npm run test:edge
           npm run verify:source
           npx --yes wrangler@4.163.0 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
