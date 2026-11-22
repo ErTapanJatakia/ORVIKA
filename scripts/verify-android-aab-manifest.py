@@ -87,12 +87,21 @@ def read_module_manifest(
     java_executable = shutil.which("java")
     if java_executable is None:
         raise FileNotFoundError("Java executable was not found on PATH")
+    if re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", module) is None:
+        raise ValueError("Invalid Android App Bundle module identifier")
+    bundletool = bundletool.resolve(strict=True)
+    bundle_path = bundle_path.resolve(strict=True)
+    if not bundletool.is_file() or not bundle_path.is_file():
+        raise ValueError("bundletool and bundle inputs must resolve to regular files")
 
+    # shell=False and one argv element per value prevent shell interpretation;
+    # module identifiers are constrained above before entering the argument vector.
+    command = [
+        java_executable, "-jar", str(bundletool), "dump", "manifest",
+        f"--bundle={bundle_path}", f"--module={module}",
+    ]
     result = subprocess.run(
-        [
-            java_executable, "-jar", str(bundletool), "dump", "manifest",
-            f"--bundle={bundle_path}", f"--module={module}",
-        ],
+        command,
         shell=False,
         check=False,
         capture_output=True,
