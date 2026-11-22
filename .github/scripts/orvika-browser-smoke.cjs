@@ -73,20 +73,7 @@ async function main() {
         assert(response, `${label}: navigation returned no HTTP response`);
         assert.equal(response.status(), 200, `${label}: unexpected HTTP status`);
         const headers = response.headers();
-        const headerDiagnostics = {
-          requestedUrl: safeUrl(baseUrl),
-          finalResponseUrl: safeUrl(response.url()),
-          status: response.status(),
-          redirectChain: redirectChain(response.request()),
-          serviceWorkers: 'blocked',
-          headers: Object.fromEntries(
-            ['strict-transport-security', 'x-content-type-options', 'x-frame-options',
-              'referrer-policy', 'permissions-policy', 'content-security-policy',
-              'cross-origin-embedder-policy', 'cross-origin-opener-policy', 'cross-origin-resource-policy']
-              .map((name) => [name, headers[name] || null]),
-          ),
-        };
-        console.log(`${label} validation preview response diagnostics: ${JSON.stringify(headerDiagnostics)}`);
+        console.log('Browser response security-header assertions are running.');
 
         const hsts = headers['strict-transport-security'] || '';
         const hstsMaxAge = hsts.match(/(?:^|;)\s*max-age=(\d+)/i);
@@ -148,7 +135,7 @@ async function main() {
           };
         });
 
-        console.log(`${label} renderer diagnostics: ${JSON.stringify(renderer)}`);
+        console.log('Flutter renderer assertions are running.');
         assert(renderer.title.includes('ORVIKA'), `${label}: unexpected document title`);
         assert(
           renderer.hasFlutterView || renderer.hasGlassPane || renderer.hasSceneHost,
@@ -163,7 +150,7 @@ async function main() {
           `${label}: horizontal overflow (${renderer.documentWidth}px document / ${renderer.viewportWidth}px viewport)`,
         );
 
-        console.log(`${label} viewport passed.`);
+        console.log('Browser viewport assertions passed.');
         return page;
       } catch (error) {
         await context.close();
@@ -190,7 +177,7 @@ async function main() {
     assert(criticalAssetResponses.every((item) => item.status === 200), `Critical asset returned an error: ${JSON.stringify(criticalAssetResponses)}`);
     assert.deepEqual(pageErrors, [], `Browser runtime errors detected: ${pageErrors.length}`);
     assert.deepEqual(cspViolations, [], `CSP violations detected: ${cspViolations.length}`);
-    console.log(`Browser console errors (diagnostic): ${consoleErrors.length} observed.`);
+    console.log('Browser console diagnostics collected.');
     console.log('ORVIKA validation preview browser smoke tests passed.');
     await desktopPage.context().close();
     await mobilePage.context().close();
