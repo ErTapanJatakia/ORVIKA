@@ -34,7 +34,11 @@ function walk(directory) {
     if (safeName !== entry.name || safeName === '.' || safeName === '..' || safeName.includes('\\')) {
       throw new Error('Unexpected filesystem entry while scanning checker sources.');
     }
-    const absolute = path.join(directory, safeName);
+    const absolute = path.resolve(directory, safeName);
+    const relative = path.relative(directory, absolute);
+    if (!relative || relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) {
+      throw new Error('Source traversal attempted to escape its approved feature directory.');
+    }
     return entry.isDirectory() ? walk(absolute) : entry.name.endsWith('.dart') ? [absolute] : [];
   });
 }
