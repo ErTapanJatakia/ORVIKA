@@ -7,7 +7,7 @@ const manifest = JSON.parse(fs.readFileSync('.github/tooling/package.json', 'utf
 const lock = JSON.parse(fs.readFileSync('.github/tooling/package-lock.json', 'utf8'));
 const expectedDirectDependencies = {
   playwright: '1.56.1',
-  vercel: '65.2.0',
+  vercel: '65.17.0',
   wrangler: '4.163.0',
 };
 
