@@ -1,1 +1,1 @@
-Run non-forced npm audit fix against the .github/tooling lockfile.
+Run npm ci without lifecycle scripts, then non-forced audit fix on the tooling lockfile.
