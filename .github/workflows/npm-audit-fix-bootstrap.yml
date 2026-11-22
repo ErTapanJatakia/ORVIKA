@@ -43,4 +43,6 @@ jobs:
             exit 0
           fi
           git commit -m 'Regenerate lockfile for Vercel CLI security pin'
+          git fetch origin security/2026-11-23-npm-lock-bootstrap:refs/remotes/origin/security/2026-11-23-npm-lock-bootstrap
+          git rebase origin/security/2026-11-23-npm-lock-bootstrap
           git push origin HEAD:security/2026-11-23-npm-lock-bootstrap
