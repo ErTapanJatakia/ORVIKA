@@ -30,7 +30,11 @@ function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     // Never follow repository symlinks while walking source paths.
     if (entry.isSymbolicLink()) return [];
-    const absolute = path.join(directory, entry.name);
+    const safeName = path.basename(entry.name);
+    if (safeName !== entry.name || safeName === '.' || safeName === '..' || safeName.includes('\\')) {
+      throw new Error('Unexpected filesystem entry while scanning checker sources.');
+    }
+    const absolute = path.join(directory, safeName);
     return entry.isDirectory() ? walk(absolute) : entry.name.endsWith('.dart') ? [absolute] : [];
   });
 }
