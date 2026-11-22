@@ -94,7 +94,8 @@ jobs:
         shell: bash
         run: |
           python3 -m venv "$RUNNER_TEMP/aab-verifier-venv"
-          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps --require-hashes --only-binary=:all: "defusedxml==0.7.1" --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
+          printf '%s\n' "defusedxml==0.7.1 --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61" > "$RUNNER_TEMP/aab-verifier-requirements.txt"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps --require-hashes --only-binary=:all: -r "$RUNNER_TEMP/aab-verifier-requirements.txt"
           "$RUNNER_TEMP/aab-verifier-venv/bin/python" -m unittest discover -s scripts/tests -p "test_*.py"
 
       - name: Gitleaks full-history secret scan
