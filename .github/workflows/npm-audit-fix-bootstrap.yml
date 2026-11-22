@@ -24,9 +24,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm ci --prefix .github/tooling --ignore-scripts --no-fund
-          set +e
-          npm audit fix --prefix .github/tooling --ignore-scripts
+          npm install --package-lock-only --prefix .github/tooling --ignore-scripts --no-fund
           audit_fix_status=$?
           set -e
           echo "npm audit fix exit status: $audit_fix_status"
