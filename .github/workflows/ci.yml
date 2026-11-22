@@ -127,7 +127,7 @@ jobs:
           ]));
           fs.writeFileSync(
             'security-evidence/npm-platform-installation.json',
-            JSON.stringify({ platform: process.platform, arch: process.arch, installed }, null, 2) + '\\n',
+            JSON.stringify({ platform: process.platform, arch: process.arch, installed }, null, 2) + '\n',
           );
           console.log('Recorded the actual platform-specific npm installation set.');
           NODE
