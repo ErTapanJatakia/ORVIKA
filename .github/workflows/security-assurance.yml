@@ -478,3 +478,27 @@ jobs:
           targets: scripts
           severity: low
           confidence: low
+
+  bearer-sast:
+    name: Bearer open-source SAST and privacy analysis
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Run Bearer OSS against supported JavaScript and Python sources
+        uses: bearer/bearer-action@v2
+        with:
+          path: .
+          format: sarif
+          output: bearer-results.sarif
+          exit-code: 0
+      - name: Upload Bearer SARIF
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        with:
+          sarif_file: bearer-results.sarif
