@@ -52,6 +52,12 @@ jobs:
           npm ci --prefix .github/tooling --no-audit --no-fund
           echo "$GITHUB_WORKSPACE/.github/tooling/node_modules/.bin" >> "$GITHUB_PATH"
 
+      - name: Verify pinned npm CLI binaries
+        run: |
+          wrangler --version
+          vercel --version
+          playwright --version
+
       - name: Validate deployment verification scripts
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
