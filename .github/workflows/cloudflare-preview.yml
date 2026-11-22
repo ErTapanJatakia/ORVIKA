@@ -1,6 +1,8 @@
 name: ORVIKA Cloudflare Pages Preview Validation
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       deploy_preview:
@@ -19,7 +21,7 @@ concurrency:
 jobs:
   preview:
     name: Build and validate isolated Cloudflare preview
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_preview == true
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_preview == true)
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -224,6 +226,7 @@ jobs:
             echo '- Production branch and production deployment were not targeted.'
             echo '- Vercel deployment and Analytics were not modified.'
             echo '- This workflow is preview-only; it contains no production deploy command.'
+            echo '- Pushes to main refresh this isolated validation preview; production remains untouched.'
             echo '- CSP nonce prototype is host-gated to the dedicated validation preview hostname.'
             echo '- Browser smoke tests fail on CSP violations; style attributes are intentionally blocked for compatibility assessment.'
           } >> "$GITHUB_STEP_SUMMARY"
