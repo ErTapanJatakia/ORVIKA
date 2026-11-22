@@ -5,7 +5,7 @@
   "description": "Pinned command-line tooling used by ORVIKA CI and deployment workflows",
   "devDependencies": {
     "playwright": "1.56.1",
-    "vercel": "65.16.0",
+    "vercel": "65.2.0",
     "wrangler": "4.163.0"
   },
   "engines": {
