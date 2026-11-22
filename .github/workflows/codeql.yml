@@ -1,0 +1,81 @@
+name: ORVIKA CodeQL Analysis
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "41 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orvika-codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: java-kotlin
+            build-mode: autobuild
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Select JDK 17 for Android/Kotlin analysis
+        if: matrix.language == 'java-kotlin'
+        shell: bash
+        run: |
+          if [ -z "${JAVA_HOME_17_X64:-}" ]; then
+            echo "JDK 17 is not available on this runner." >&2
+            exit 1
+          fi
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+
+      - name: Install pinned Flutter SDK for Android/Kotlin analysis
+        if: matrix.language == 'java-kotlin'
+        shell: bash
+        run: |
+          git init "$RUNNER_TEMP/flutter"
+          git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
+          git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
+          git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
+          flutter pub get --enforce-lockfile
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Build Android app for Kotlin extraction
+        if: matrix.language == 'java-kotlin'
+        run: flutter build apk --debug
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
