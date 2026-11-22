@@ -436,3 +436,45 @@ jobs:
             security-evidence/apk-assessment-metadata.txt
           if-no-files-found: error
           retention-days: 14
+
+  devskim-sast:
+    name: DevSkim source security lint
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Prepare DevSkim evidence directory
+        run: mkdir -p security-evidence
+      - name: Run Microsoft DevSkim
+        uses: microsoft/DevSkim-Action@v1
+        with:
+          directory-to-scan: .
+          output-filename: devskim-results.sarif
+          output-directory: security-evidence
+      - name: Upload DevSkim SARIF
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        with:
+          sarif_file: security-evidence/devskim-results.sarif
+
+  bandit-python-sast:
+    name: Bandit Python security analysis
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Run official PyCQA Bandit action on repository Python tooling
+        uses: PyCQA/bandit-action@v1.0.1
+        with:
+          python-version: "3.12"
+          targets: scripts
+          severity: low
+          confidence: low
