@@ -60,4 +60,4 @@ assert.ok(!/document\.(?:body|forms)|querySelectorAll\s*\(.*(?:input|textarea)/i
 assert.ok(!/window\.va\s*\(\s*['"]event['"]/i.test(analytics),
   'Analytics bootstrap must not emit custom feature events');
 
-console.log('ORVIKA checker privacy source boundaries: PASS (' + scanned.length + ' Dart files scanned)');
+console.log('ORVIKA checker privacy source boundaries: PASS.');
