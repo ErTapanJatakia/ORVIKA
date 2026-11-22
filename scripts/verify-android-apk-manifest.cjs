@@ -57,5 +57,5 @@ assert.match(
 
 console.log('Built APK identity and merged-manifest permissions verified.');
 console.log(`- Application ID: ${applicationId}`);
-console.log(`- Permissions: ${actual.join(', ')}`);
-console.log('- AndroidX dynamic receiver permission: declared with signature protection');
+console.log('- Android manifest permissions match the reviewed allowlist.');
+console.log('- AndroidX dynamic receiver permission protection verified.');
