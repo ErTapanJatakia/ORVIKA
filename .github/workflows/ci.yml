@@ -46,6 +46,18 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install lockfile-backed CI tooling
+        run: |
+          node scripts/verify-npm-tooling-lock.cjs
+          npm ci --prefix .github/tooling --no-fund
+          echo "$GITHUB_WORKSPACE/.github/tooling/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - name: Verify pinned npm CLI binaries
+        run: |
+          wrangler --version
+          vercel --version
+          playwright --version
+
       - name: Validate deployment verification scripts
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
@@ -53,7 +65,7 @@ jobs:
           node --check functions/_middleware.js
           npm run test:edge
           npm run verify:source
-          npx --yes wrangler@4.163.0 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
           test -s "$RUNNER_TEMP/orvika-pages-worker.js"
 
       - name: Validate Vercel deployment and header configuration
@@ -89,9 +101,9 @@ jobs:
           test -s build/web/canvaskit/canvaskit.js
           test -s build/web/canvaskit/canvaskit.wasm
 
-      - name: Install Vercel CLI
+      - name: Verify lockfile-backed Vercel CLI
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        run: npm install --global vercel@65.16.0
+        run: vercel --version
 
       - name: Link Vercel project without Git integration
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
@@ -141,9 +153,7 @@ jobs:
 
       - name: Install Playwright Chromium
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
+        run: playwright install --with-deps chromium
 
       - name: Browser smoke test production deployment
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true

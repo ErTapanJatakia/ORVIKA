@@ -1,0 +1,48 @@
+name: Temporary ORVIKA npm transitive dependency refresh
+
+on:
+  push:
+    branches:
+      - security/2026-11-23-npm-lock-bootstrap
+    paths:
+      - .github/tooling/update.request
+
+permissions:
+  contents: write
+
+jobs:
+  update-lock:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout dedicated npm tooling branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: security/2026-11-23-npm-lock-bootstrap
+          persist-credentials: true
+
+      - name: Refresh transitive packages within declared semver ranges
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm update --prefix .github/tooling --ignore-scripts --no-fund
+          if ! git diff --quiet -- .github/tooling/package.json; then
+            echo "Unexpected package.json mutation; refusing to commit."
+            exit 1
+          fi
+          node scripts/verify-npm-tooling-lock.cjs
+
+      - name: Commit refreshed lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/tooling/package-lock.json
+          if git diff --cached --quiet; then
+            echo 'No transitive lockfile updates were needed.'
+            exit 0
+          fi
+          git commit -m 'Refresh npm tooling transitive dependency lockfile'
+          git fetch origin security/2026-11-23-npm-lock-bootstrap:refs/remotes/origin/security/2026-11-23-npm-lock-bootstrap
+          git rebase origin/security/2026-11-23-npm-lock-bootstrap
+          git push origin HEAD:security/2026-11-23-npm-lock-bootstrap
