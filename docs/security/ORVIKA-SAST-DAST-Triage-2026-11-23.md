@@ -31,6 +31,10 @@ Bearer still reports the subprocess, filesystem-path and dynamic-regex rules. Co
 
 Bandit now reports only B404 for intentional subprocess module use and B603 for the controlled bundletool invocation. These remain documented low-severity notes; they are not hidden or suppressed.
 
+Post-merge Bearer residual locations (17 results) are: `scripts/verify-android-aab-manifest.py:84`; `scripts/verify-privacy-boundaries.cjs:33`; `.github/scripts/verify-vercel-output.cjs:38,51`; `.github/scripts/orvika-browser-smoke.cjs:89,151,166,193`; `scripts/verify-android-apk-manifest.cjs:59,60`; `scripts/verify-android-release-readiness.cjs:179-182,186`; `scripts/verify-privacy-boundaries.cjs:63`; and `scripts/verify-pwa-readiness.cjs:87`. The four browser-smoke log findings now refer to sanitized URLs/headers, structural renderer metadata, a fixed viewport label and a count of console errors; the raw DOM, markup, script URLs, console text and exception stack are no longer logged.
+
+Post-merge Bandit residuals (3 results) are B404 at `scripts/tests/test_verify_android_aab_manifest.py:8` and `scripts/verify-android-aab-manifest.py:6`, plus B603 at `scripts/verify-android-aab-manifest.py:84`. The two B101 findings and B607 no longer appear.
+
 The post-merge ZAP artifact is **14769520647**. It still reports the same four categories, including Medium/High-confidence `style-src unsafe-inline` on the validation host. That finding remains open.
 
 ## Executive disposition
