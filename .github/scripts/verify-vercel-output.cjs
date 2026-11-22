@@ -48,7 +48,7 @@ function normalizeHeaders(headers) {
 for (const pathname of ['/', '/index.html']) {
   const matchingRoutes = config.routes.filter((route) => matchesPath(route, pathname));
   const headerRoutes = matchingRoutes.filter((route) => route.headers && typeof route.headers === 'object');
-  console.log(`Vercel output routes matching ${pathname}: ${JSON.stringify(matchingRoutes, null, 2)}`);
+  console.log(`Vercel output route matches for ${pathname}: ${matchingRoutes.length}; routes carrying headers: ${headerRoutes.length}.`);
 
   const completeHeaderRoute = headerRoutes.find((route) => {
     const headers = normalizeHeaders(route.headers);
