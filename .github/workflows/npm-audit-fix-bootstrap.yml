@@ -24,6 +24,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          npm ci --prefix .github/tooling --ignore-scripts --no-fund
           set +e
           npm audit fix --prefix .github/tooling --package-lock-only
           audit_fix_status=$?
