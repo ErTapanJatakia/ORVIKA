@@ -8,11 +8,20 @@ const failedRequests = [];
 const criticalAssetResponses = [];
 const cspViolations = [];
 
+function safeUrl(value) {
+  try {
+    const parsed = new URL(value);
+    return parsed.origin + parsed.pathname;
+  } catch {
+    return '[invalid-url]';
+  }
+}
+
 function redirectChain(request) {
   const chain = [];
   let current = request;
   while (current) {
-    chain.unshift(current.url());
+    chain.unshift(safeUrl(current.url()));
     current = current.redirectedFrom();
   }
   return chain;
@@ -32,12 +41,12 @@ async function main() {
       });
       try {
         const page = await context.newPage();
-        page.on('pageerror', (error) => pageErrors.push(error.message));
+        page.on('pageerror', (error) => pageErrors.push(error.name || 'Error'));
         page.on('console', (message) => {
           if (message.type() === 'error') {
-            consoleErrors.push(message.text());
+            consoleErrors.push('console-error');
             if (/content security policy|violates the following directive|refused to (apply|execute)/i.test(message.text())) {
-              cspViolations.push(message.text());
+              cspViolations.push('CSP violation');
             }
           }
         });
@@ -50,8 +59,8 @@ async function main() {
         });
         page.on('requestfailed', (request) => {
           failedRequests.push({
-            url: request.url(),
-            error: request.failure()?.errorText || 'unknown request failure',
+            url: safeUrl(request.url()),
+            error: request.failure()?.errorText?.match(/net::ERR_[A-Z_]+/)?.[0] || 'request-failed',
           });
         });
 
@@ -65,16 +74,16 @@ async function main() {
         assert.equal(response.status(), 200, `${label}: unexpected HTTP status`);
         const headers = response.headers();
         const headerDiagnostics = {
-          requestedUrl: baseUrl,
-          finalResponseUrl: response.url(),
+          requestedUrl: safeUrl(baseUrl),
+          finalResponseUrl: safeUrl(response.url()),
           status: response.status(),
           redirectChain: redirectChain(response.request()),
           serviceWorkers: 'blocked',
           headers: Object.fromEntries(
             ['strict-transport-security', 'x-content-type-options', 'x-frame-options',
               'referrer-policy', 'permissions-policy', 'content-security-policy',
-              'cross-origin-embedder-policy', 'cross-origin-opener-policy', 'cross-origin-resource-policy', 'server', 'x-vercel-id',
-              'cache-control', 'age', 'via'].map((name) => [name, headers[name] || null]),
+              'cross-origin-embedder-policy', 'cross-origin-opener-policy', 'cross-origin-resource-policy']
+              .map((name) => [name, headers[name] || null]),
           ),
         };
         console.log(`${label} validation preview response diagnostics: ${JSON.stringify(headerDiagnostics)}`);
@@ -133,9 +142,9 @@ async function main() {
             hasCanvasContainer: deepExists('flt-canvas-container'),
             hasCanvas: deepExists('canvas'),
             flutterTags: [...new Set(flutterTags)],
-            bodyText: document.body.innerText.slice(0, 500),
-            bodyMarkup: document.body.innerHTML.slice(0, 1800),
-            scriptSources: Array.from(document.scripts).map((script) => script.src).filter(Boolean),
+            bodyTextLength: document.body.innerText.length,
+            bodyMarkupLength: document.body.innerHTML.length,
+            scriptCount: document.scripts.length,
           };
         });
 
@@ -143,7 +152,7 @@ async function main() {
         assert(renderer.title.includes('ORVIKA'), `${label}: unexpected document title`);
         assert(
           renderer.hasFlutterView || renderer.hasGlassPane || renderer.hasSceneHost,
-          `${label}: Flutter Web root was not detected; page errors: ${pageErrors.join(' | ')}; failed requests: ${JSON.stringify(failedRequests)}`,
+          `${label}: Flutter Web root was not detected; page error count: ${pageErrors.length}; failed request count: ${failedRequests.length}`,
         );
         assert(
           renderer.hasCanvas || renderer.hasCanvasContainer || renderer.hasSceneHost,
@@ -179,9 +188,9 @@ async function main() {
     // the page response event stream. Its HTTP status and parsed branding are
     // asserted directly, so do not require it in criticalAssetResponses.
     assert(criticalAssetResponses.every((item) => item.status === 200), `Critical asset returned an error: ${JSON.stringify(criticalAssetResponses)}`);
-    assert.deepEqual(pageErrors, [], `Browser runtime errors: ${pageErrors.join(' | ')}`);
-    assert.deepEqual(cspViolations, [], `CSP violations: ${cspViolations.join(' | ')}`);
-    console.log(`Browser console errors (diagnostic): ${JSON.stringify(consoleErrors)}`);
+    assert.deepEqual(pageErrors, [], `Browser runtime errors detected: ${pageErrors.length}`);
+    assert.deepEqual(cspViolations, [], `CSP violations detected: ${cspViolations.length}`);
+    console.log(`Browser console errors (diagnostic): ${consoleErrors.length} observed.`);
     console.log('ORVIKA validation preview browser smoke tests passed.');
     await desktopPage.context().close();
     await mobilePage.context().close();
@@ -191,6 +200,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error);
+  console.error(`ORVIKA browser smoke test failed (${error?.name || 'Error'}).`);
   process.exitCode = 1;
 });
