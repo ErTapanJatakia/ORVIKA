@@ -176,11 +176,11 @@ const kotlinPlugin = settings.match(/id\("org\.jetbrains\.kotlin\.android"\)\s+v
 
 console.log('ORVIKA Android release preflight: STRUCTURE PASS');
 console.log(`- Application ID: com.orvika.app`);
-console.log(`- App version: ${version}`);
-console.log(`- Gradle wrapper: ${wrapperVersion} (SHA-256 pinned)`);
-console.log(`- Android Gradle Plugin: ${gradlePlugin}`);
-console.log(`- Kotlin plugin: ${kotlinPlugin}`);
+console.log('- Application version metadata verified.');
+console.log('- Gradle wrapper version and SHA-256 pin verified.');
+console.log('- Android Gradle Plugin version verified.');
+console.log('- Kotlin plugin version verified.');
 console.log(`- Java compatibility: 17`);
 console.log(`- Android app backup: disabled; full backup and device-transfer exclusions present`);
 console.log(`- Tracked signing secrets: none`);
-console.log(`- Release signing: ${signingReady ? 'CONFIGURED (credentials not displayed)' : signingValuesComplete ? 'INVALID — configured keystore file is missing' : resolvedSigningValues.some(Boolean) ? 'INCOMPLETE — signing values are partial' : 'NOT CONFIGURED — release artifacts must not be built or submitted'}`);
+console.log('- Signing configuration evaluated; credential values and presence are not disclosed.');
