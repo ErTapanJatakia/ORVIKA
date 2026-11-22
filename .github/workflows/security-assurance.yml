@@ -462,6 +462,14 @@ jobs:
         uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
         with:
           sarif_file: security-evidence/devskim-results.sarif
+      - name: Preserve DevSkim SARIF for evidence review
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-devskim-sarif-evidence
+          path: security-evidence/devskim-results.sarif
+          if-no-files-found: error
+          retention-days: 14
 
   bandit-python-sast:
     name: Bandit Python security analysis
@@ -477,6 +485,14 @@ jobs:
           targets: scripts
           severity: low
           confidence: low
+      - name: Preserve Bandit SARIF for evidence review
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-bandit-sarif-evidence
+          path: results.sarif
+          if-no-files-found: error
+          retention-days: 14
 
   bearer-sast:
     name: Bearer open-source SAST and privacy analysis
@@ -501,3 +517,11 @@ jobs:
         uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
         with:
           sarif_file: bearer-results.sarif
+      - name: Preserve Bearer SARIF for evidence review
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-bearer-sarif-evidence
+          path: bearer-results.sarif
+          if-no-files-found: error
+          retention-days: 14
