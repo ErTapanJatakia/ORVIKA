@@ -2,6 +2,7 @@
 """Verify every Android App Bundle module manifest using Google's bundletool."""
 
 import argparse
+import re
 import shutil
 import subprocess
 import sys
@@ -67,6 +68,12 @@ def module_names(bundle_path: Path) -> list[str]:
         })
     if "base" not in modules:
         raise ValueError("AAB does not contain the required base module manifest")
+    invalid_modules = [
+        module for module in modules
+        if re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", module) is None
+    ]
+    if invalid_modules:
+        raise ValueError(f"AAB contains invalid module names: {invalid_modules}")
     return modules
 
 
