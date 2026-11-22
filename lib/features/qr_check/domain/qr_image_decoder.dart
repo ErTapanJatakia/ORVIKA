@@ -3,6 +3,9 @@ import 'dart:typed_data';
 import 'qr_image_decoder_native.dart'
     if (dart.library.js_interop) 'qr_image_decoder_web.dart' as platform;
 
+/// Maximum compressed image size accepted by the QR image scanner (50 MiB).
+const int maxQrImageBytes = 50 * 1024 * 1024;
+
 typedef QrImageCode = ({String value, String format});
 
 Future<List<QrImageCode>> decodeQrImage({
