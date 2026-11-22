@@ -26,7 +26,7 @@ jobs:
           set -euo pipefail
           npm ci --prefix .github/tooling --ignore-scripts --no-fund
           set +e
-          npm audit fix --prefix .github/tooling --package-lock-only
+          npm audit fix --prefix .github/tooling --ignore-scripts
           audit_fix_status=$?
           set -e
           echo "npm audit fix exit status: $audit_fix_status"
