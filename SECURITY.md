@@ -340,3 +340,35 @@ For a failed or cancelled run, describe what actually executed and what did not.
 ---
 
 **Document status:** maintained project security policy and assessment index. The linked assessment reports remain the authoritative detailed evidence for their respective dates and commits.
+
+
+## 7.5 Current evidence reconciliation — 22 November 2026
+
+**Baseline:** main commit `8b07c87ce9d5cede2ed9fed9c620e2b16779077d`. **Evidence run:** [ORVIKA Free Security Assurance #44989972247](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/44989972247).
+
+The run completed successfully. Review of its retained artifacts establishes the following bounded results:
+
+| Control | Observed result | Scope / limitation |
+|---|---|---|
+| Trivy filesystem | 0 vulnerabilities, 0 misconfigurations, 0 secrets and 0 licence findings | The exported result contains `pubspec.lock` as its scanned target; do not generalise this to all repository assets. |
+| Semgrep | 0 results; 0 scanner errors in exported JSON | Configured rules and scan context only. |
+| Gitleaks | 0 findings in exported full-history JSON | This is the run's repository history scan. |
+| Bandit | SARIF generated and uploaded successfully | The action invokes Bandit with `|| true`; the successful job is not proof of zero findings. Alert/SARIF contents require separate review. |
+| Bearer | Scan completed and SARIF uploaded | The action sets `exit-code: 0`; its SARIF upload emitted inconsistent fingerprint warnings for existing script findings. These warnings are identity/tracking evidence, not proof that the underlying findings are false positives. |
+| DevSkim | SARIF upload completed | Individual findings require alert-level review. |
+| OWASP ZAP passive | 4 alert categories in JSON | One Medium/High-confidence CSP `style-src 'unsafe-inline'` alert (4 instances); three informational categories: Modern Web Application (4), Re-examine Cache-control Directives (5), and Storable but Non-Cacheable Content (5). These are not automatically exploitable vulnerabilities. |
+| OpenSSF Scorecard | Job completed and SARIF uploaded | Previously documented npm integrity and fuzzing gaps remain open; branch-name SAST metric is a metric limitation. |
+
+The artifact archive for repository evidence is retained under run #44989972247 (artifact `orvika-repository-security-evidence`, ID `14741611968`). The ZAP evidence is retained as `orvika-web-zap-passive-evidence` (artifact ID `14741282867`).
+
+### Current remediation status
+
+- The Python `defusedxml==0.7.1` installation now uses a requirements file with a verified SHA-256 hash and `pip install --require-hashes --only-binary=:all:`; the security regression job passed on this baseline.
+- Six npm install commands previously identified by Scorecard remain a supply-chain hardening item. They are version-pinned, but integrity-lockfile verification has not yet been implemented and verified. Do not describe this item as fixed.
+- Targeted bounded fuzzing for URL, message and QR input parsing remains deferred and is not claimed as complete.
+- No confirmed exploitable vulnerability is established by the Trivy, Semgrep or Gitleaks artifact results above. This does not disposition the separate GitHub Code Scanning alerts, Bearer/Bandit/DevSkim SARIF findings, or the ZAP observations.
+- GitHub's Code Scanning alert inventory could not be retrieved through the connected repository integration during this reconciliation. Therefore the reported 57 open alerts have not been individually inspected, classified, remediated or dismissed in this report. Their status must remain open until alert-level evidence is reviewed.
+
+### Required next step for the alert inventory
+
+For every open Code Scanning alert, record its alert number, tool/rule, severity, file and line, first-seen commit, latest affected commit, evidence, validation decision, remediation or dismissal rationale, and verification result. Close an alert only after the relevant fix is present and verified, or after a documented false-positive/duplicate/out-of-scope decision supported by the actual code path. Do not bulk-dismiss alerts or infer closure from successful workflow status.
