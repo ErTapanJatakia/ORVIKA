@@ -22,7 +22,7 @@ The connected GitHub integration did not expose the repository's Code Scanning a
 | Bearer | Scan and SARIF upload completed; invocation sets `exit-code: 0` | Not a zero-finding assertion; SARIF processing emitted inconsistent fingerprint warnings |
 | DevSkim | SARIF upload completed | Individual findings require review |
 | OWASP ZAP passive | JSON report contains four alert categories | One Medium risk / High confidence CSP alert; three informational categories |
-| OpenSSF Scorecard | Job and SARIF upload completed | Previously recorded npm integrity and fuzzing observations remain open |
+| OpenSSF Scorecard | Job and SARIF upload completed | npm install integrity observation remains open; parser fuzzing is present in the repository test suite |
 
 ### ZAP observations
 
@@ -39,7 +39,7 @@ These categories are scanner observations, not automatically confirmed exploitab
 |---|---|---|
 | Python dependency hash pinning for `defusedxml==0.7.1` | Implemented; regression job passed | Retain requirements-file hash verification |
 | Six Scorecard-identified npm install commands | Open | Move installs to committed lockfile-backed `npm ci` or equivalent integrity-verified installation; preserve versions and behaviour |
-| Bounded fuzzing for URL, message and QR parsers | Deferred / open | Add deterministic, resource-bounded tests with regression corpus and CI execution |
+| Bounded fuzzing for URL, message and QR parsers | Implemented in `test/security_parser_bounded_fuzz_test.dart`; deterministic seed, 192 generated inputs, 1,024-character generated-input ceiling, explicit oversized-input rejection; Flutter test step passed in PR #253 CI | Retain the bounded test and extend the regression corpus when new parser edge cases are confirmed |
 | Bearer/Bandit/DevSkim findings | Untriaged at alert level | Retrieve SARIF/Code Scanning alert details and classify individually |
 | 57 GitHub Code Scanning alerts | Untriaged | Inspect every alert; remediate confirmed issues; dismiss only with documented evidence |
 | ZAP CSP/cache observations | Open for contextual review | Verify routes, headers, caching semantics and Flutter compatibility |
@@ -73,4 +73,4 @@ No blanket dismissal, mass suppression, severity downgrading or test weakening i
 - ZAP artifact: run #44989972247, artifact `orvika-web-zap-passive-evidence`, ID `14741282867`.
 - Main baseline SHA: `8b07c87ce9d5cede2ed9fed9c620e2b16779077d`.
 
-**Conclusion:** automated checks completed and several artifact-level results are clean within their stated scope. The security findings programme remains open pending individual SARIF/Code Scanning alert triage, npm integrity hardening, targeted fuzzing and evidence-backed remediation.
+**Conclusion:** automated checks completed and several artifact-level results are clean within their stated scope. The security findings programme remains open pending individual SARIF/Code Scanning alert triage, npm integrity hardening, contextual ZAP review and evidence-backed remediation. The existing bounded parser fuzz test passed in the validated Flutter test suite; this is not a substitute for alert triage.
