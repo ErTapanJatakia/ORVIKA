@@ -9,7 +9,8 @@ from subprocess import CompletedProcess
 
 SCRIPT = Path(__file__).resolve().parents[1] / "verify-android-aab-manifest.py"
 SPEC = importlib.util.spec_from_file_location("verify_android_aab_manifest", SCRIPT)
-assert SPEC is not None and SPEC.loader is not None
+if SPEC is None or SPEC.loader is None:
+    raise RuntimeError("Unable to load the module under test")
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
