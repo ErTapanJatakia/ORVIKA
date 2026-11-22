@@ -47,11 +47,11 @@ jobs:
       - name: Trivy npm tooling lockfile scan
         shell: bash
         run: |
-          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \\
-            --scanners vuln,misconfig,secret,license \\
+          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
+            --scanners vuln,misconfig,secret,license \
             --format json --output /repo/security-evidence/trivy-npm-tooling.json /repo/.github/tooling
-          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \\
-            --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \\
+          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
+            --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
             --exit-code 1 /repo/.github/tooling
 
       - name: Semgrep Community Edition SAST (including experimental Dart rules)
