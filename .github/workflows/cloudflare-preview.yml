@@ -27,12 +27,22 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.23.5
+
+      - name: Install integrity-pinned npm tools
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          echo "$GITHUB_WORKSPACE/node_modules/.bin" >> "$GITHUB_PATH"
+
       - name: Validate edge middleware and source
         run: |
           node --check functions/_middleware.js
           npm run test:edge
           npm run verify:source
-          npx --yes wrangler@4.163.0 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
           test -s "$RUNNER_TEMP/orvika-pages-worker.js"
 
       - name: Validate Cloudflare configuration
@@ -145,11 +155,8 @@ jobs:
           ! grep -Eiq 'vercel-analytics-script|/_vercel/insights/script.js' build/web/index.html
           ! grep -E "Content-Security-Policy:.*script-src[^\n]*'unsafe-eval'" build/web/_headers
 
-      - name: Install Wrangler and Playwright
-        run: |
-          npm install --global wrangler@4.163.0
-          npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
+      - name: Install Playwright Chromium
+        run: playwright install --with-deps chromium
 
       - name: Deploy isolated Cloudflare Pages preview only
         env:
@@ -157,7 +164,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
         run: |
-          npx wrangler pages deploy build/web --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=orvika-validation
+          wrangler pages deploy build/web --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=orvika-validation
 
       - name: Browser smoke test preview deployment
         env:

@@ -46,6 +46,72 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.23.5
+
+      - name: Install integrity-pinned npm tools
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          echo "$GITHUB_WORKSPACE/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - name: Collect npm dependency advisory evidence
+        shell: bash
+        run: |
+          mkdir -p security-evidence
+          full_status=0
+          npm audit --json > security-evidence/npm-audit-full.json || full_status=$?
+          optional_status=0
+          npm audit --omit=optional --json > security-evidence/npm-audit-nonoptional.json || optional_status=$?
+          echo "npm audit (full lockfile) process exit code: $full_status"
+          echo "npm audit (non-optional dependencies) process exit code: $optional_status"
+          node -e "const fs=require('node:fs'); for (const file of ['security-evidence/npm-audit-full.json','security-evidence/npm-audit-nonoptional.json']) { const report=JSON.parse(fs.readFileSync(file,'utf8')); if (report.error) { console.log(file+': audit service reported an error.'); continue; } const v=report.vulnerabilities || {}; const counts=Object.values(v).reduce((a,x)=>(a[x.severity]=(a[x.severity]||0)+1,a),{}); console.log(file+': '+JSON.stringify(counts)); }"
+
+      - name: Enforce zero advisories in non-optional npm dependencies
+        run: npm audit --omit=optional --audit-level=moderate
+
+      - name: Record platform-specific Vercel CLI dependency selection
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const names = [
+            '@vercel/vc-native-linux-x64',
+            '@vercel/cli-support',
+            '@vercel/container',
+            '@vercel/node',
+            'tar',
+            'undici',
+            'js-yaml',
+            'minimatch',
+            'path-to-regexp',
+            'smol-toml',
+          ];
+          const installed = Object.fromEntries(names.map((name) => [
+            name,
+            fs.existsSync(path.join('node_modules', ...name.split('/'))),
+          ]));
+          fs.writeFileSync(
+            'security-evidence/npm-platform-installation.json',
+            JSON.stringify({ platform: process.platform, arch: process.arch, installed }, null, 2) + '\n',
+          );
+          console.log('Recorded the actual platform-specific npm installation set.');
+          NODE
+
+      - name: Upload npm dependency advisory evidence
+        if: always() && hashFiles('security-evidence/npm-audit-full.json') != ''
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-npm-audit-evidence
+          path: security-evidence/npm-*
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Run edge middleware regression and property tests
+        run: npm run test:edge
+
       - name: Validate deployment verification scripts
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
@@ -53,7 +119,7 @@ jobs:
           node --check functions/_middleware.js
           npm run test:edge
           npm run verify:source
-          npx --yes wrangler@4.163.0 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
           test -s "$RUNNER_TEMP/orvika-pages-worker.js"
 
       - name: Validate Vercel deployment and header configuration
@@ -88,10 +154,6 @@ jobs:
           flutter build web --release --csp --no-web-resources-cdn
           test -s build/web/canvaskit/canvaskit.js
           test -s build/web/canvaskit/canvaskit.wasm
-
-      - name: Install Vercel CLI
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        run: npm install --global vercel@65.16.0
 
       - name: Link Vercel project without Git integration
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
@@ -142,8 +204,7 @@ jobs:
       - name: Install Playwright Chromium
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
         run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
+          playwright install --with-deps chromium
 
       - name: Browser smoke test production deployment
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
