@@ -48,6 +48,7 @@ jobs:
 
       - name: Install lockfile-backed CI tooling
         run: |
+          node scripts/verify-npm-tooling-lock.cjs
           npm ci --prefix .github/tooling --no-audit --no-fund
           echo "$GITHUB_WORKSPACE/.github/tooling/node_modules/.bin" >> "$GITHUB_PATH"
 
