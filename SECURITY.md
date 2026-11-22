@@ -376,4 +376,4 @@ For every open Code Scanning alert, record its alert number, tool/rule, severity
 
 ## 7.6 SAST and DAST findings triage — 23 November 2026
 
-The evidence-backed, location-level triage register for the 22 November Bearer, Bandit, DevSkim and OWASP ZAP outputs is maintained in [`docs/security/ORVIKA-SAST-DAST-Triage-2026-11-23.md`](docs/security/ORVIKA-SAST-DAST-Triage-2026-11-23.md). It records 45 SARIF results, their code context, dispositions, proposed remediations and outstanding validation. The separate 57 GitHub Code Scanning alerts remain open pending retrieval and individual review; this register does not claim those alerts are closed.
+The evidence-backed, location-level triage register for the 22 November Bearer, Bandit, DevSkim and OWASP ZAP outputs is maintained in [`docs/security/ORVIKA-SAST-DAST-Triage-2026-11-23.md`](docs/security/ORVIKA-SAST-DAST-Triage-2026-11-23.md). It records 45 SARIF results, their code context, dispositions, merged remediation changes and outstanding validation. The separate 57 GitHub Code Scanning alerts remain open pending retrieval and individual review; this register does not claim those alerts are closed.
