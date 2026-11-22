@@ -42,7 +42,7 @@ jobs:
           node --check functions/_middleware.js
           npm run test:edge
           npm run verify:source
-          npx --yes wrangler@4.163.0 pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
+          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
           test -s "$RUNNER_TEMP/orvika-pages-worker.js"
 
       - name: Validate Cloudflare configuration
