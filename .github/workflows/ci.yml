@@ -109,6 +109,38 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      - name: Enforce zero advisories in non-optional npm dependencies
+        run: npm audit --omit=optional --audit-level=moderate
+
+      - name: Record platform-specific Vercel CLI dependency selection
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const names = [
+            '@vercel/vc-native-linux-x64',
+            '@vercel/cli-support',
+            '@vercel/container',
+            '@vercel/node',
+            'tar',
+            'undici',
+            'js-yaml',
+            'minimatch',
+            'path-to-regexp',
+            'smol-toml',
+          ];
+          const installed = Object.fromEntries(names.map((name) => [
+            name,
+            fs.existsSync(path.join('node_modules', ...name.split('/'))),
+          ]));
+          fs.writeFileSync(
+            'security-evidence/npm-platform-installation.json',
+            JSON.stringify({ platform: process.platform, arch: process.arch, installed }, null, 2) + '\\n',
+          );
+          console.log('Recorded the actual platform-specific npm installation set.');
+          NODE
+
       - name: Validate deployment verification scripts
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
