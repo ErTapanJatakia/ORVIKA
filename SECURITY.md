@@ -372,3 +372,8 @@ The artifact archive for repository evidence is retained under run #44989972247 
 ### Required next step for the alert inventory
 
 For every open Code Scanning alert, record its alert number, tool/rule, severity, file and line, first-seen commit, latest affected commit, evidence, validation decision, remediation or dismissal rationale, and verification result. Close an alert only after the relevant fix is present and verified, or after a documented false-positive/duplicate/out-of-scope decision supported by the actual code path. Do not bulk-dismiss alerts or infer closure from successful workflow status.
+
+
+## 7.6 SAST and DAST findings triage — 23 November 2026
+
+The evidence-backed, location-level triage register for the 22 November Bearer, Bandit, DevSkim and OWASP ZAP outputs is maintained in [`docs/security/ORVIKA-SAST-DAST-Triage-2026-11-23.md`](docs/security/ORVIKA-SAST-DAST-Triage-2026-11-23.md). It records 45 pre-merge SARIF results, 41 post-merge SARIF results, their code context, dispositions, merged remediation changes and outstanding validation. The separate 57 GitHub Code Scanning alerts remain open pending retrieval and individual review; this register does not claim those alerts are closed.
