@@ -1,11 +1,16 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:orvika/features/qr_check/domain/qr_image_decoder.dart';
 import 'package:orvika/features/qr_check/domain/qr_image_pixel_decoder.dart';
 import 'package:zxing_lib/common.dart';
 import 'package:zxing_lib/zxing.dart';
 
 void main() {
+  test('QR image upload limit is 50 MiB', () {
+    expect(maxQrImageBytes, 50 * 1024 * 1024);
+  });
+
   group('bundled Web image decoder', () {
     test('decodes QR codes without browser BarcodeDetector support', () {
       const payload = 'https://orvika.example/check';
