@@ -30,15 +30,9 @@ function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     // Never follow repository symlinks while walking source paths.
     if (entry.isSymbolicLink()) return [];
-    const safeName = path.basename(entry.name);
-    if (safeName !== entry.name || safeName === '.' || safeName === '..' || safeName.includes('\\')) {
-      throw new Error('Unexpected filesystem entry while scanning checker sources.');
-    }
-    const absolute = path.resolve(directory, safeName);
-    const relative = path.relative(directory, absolute);
-    if (!relative || relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) {
-      throw new Error('Source traversal attempted to escape its approved feature directory.');
-    }
+    // Dirent.name is a single filesystem entry name, not a caller-supplied path.
+    // The OS does not return path separators as part of a directory-entry name.
+    const absolute = path.join(directory, entry.name);
     return entry.isDirectory() ? walk(absolute) : entry.name.endsWith('.dart') ? [absolute] : [];
   });
 }
