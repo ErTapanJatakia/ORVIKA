@@ -46,6 +46,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Generate npm integrity lockfile for CI dependencies
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Retain generated npm integrity lockfile for repository review
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-npm-integrity-lockfile-bootstrap
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 3
+
       - name: Validate deployment verification scripts
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
