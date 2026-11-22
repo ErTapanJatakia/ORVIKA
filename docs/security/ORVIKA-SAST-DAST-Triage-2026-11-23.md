@@ -139,7 +139,7 @@ The current source policy in `vercel.json` and the default Cloudflare middleware
 
 PR #255 was merged to `main` at commit `fe49325700c211ed3a802d9d1a1f4f508a10bc04`. The deterministic URL, message and QR fuzz test passed the full Flutter CI test suite and the Free Security Assurance workflow. The first generator design failed three consecutive CI attempts (two analyzer lint issues and one character-bound violation); in accordance with the three-failure rule, the generator was redesigned to enforce a character-level ceiling before the final successful run. No test was weakened or removed. The corpus is deterministic, seeded, capped at 1,024 characters and 192 cases, with explicit oversized-input checks.
 
-## 5. Outstanding items and acceptance criteria
+## 6. Outstanding items and acceptance criteria
 
 1. **PR #256:** merged after all three required workflows passed. Post-merge SARIF shows the Bandit B101 and B607 records have cleared; remaining Bearer results are contextually reviewed and documented.
 2. **PR #255:** merged after Workflow Lint, CI and Security Assurance passed. Deterministic bounded fuzz coverage is now in `main`.
@@ -148,7 +148,7 @@ PR #255 was merged to `main` at commit `fe49325700c211ed3a802d9d1a1f4f508a10bc04
 5. **GitHub Code Scanning:** obtain the 57-alert inventory from GitHub UI or a supported alert endpoint. For each alert, capture rule/tool, severity, file/line, state, code context and fix/dismissal evidence. No bulk dismissal is authorised.
 6. **Final assurance:** publish a final report only after all findings have an evidence-backed disposition and all fixes have passed the relevant regression/scanner checks.
 
-## 6. Guardrails
+## 7. Guardrails
 
 - No alert was dismissed, suppressed or bulk-closed as part of this triage.
 - No scanner, test or CI gate was weakened.
