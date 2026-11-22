@@ -44,6 +44,7 @@ The post-merge ZAP artifact is **14769520647**. It still reports the same four c
 - Bandit produced six low-severity notes. Two test-only import guards are being replaced; subprocess usage remains intentional and is constrained to an argv list with `shell=False`.
 - All 21 DevSkim results are explainable false positives in this repository: Android XML namespace URIs or public integrity identifiers (pinned Flutter commit SHAs and a public certificate fingerprint). No credential or secret value was identified in these results.
 - ZAP's Medium/High-confidence CSP observation is real for the scanned validation host at scan time: its response used `style-src 'self' 'unsafe-inline'`. This remains open pending a fresh preview deployment/compatibility validation. The other three ZAP categories are informational observations.
+- The first npm lockfile-backed install reported 38 dependency advisories (16 moderate, 21 high, 1 critical). The individual advisory inventory is being captured in PR #258; npm dependency remediation is open and blocks completion.
 
 ## 1. Bearer — 18 results
 
