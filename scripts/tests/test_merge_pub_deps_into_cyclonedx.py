@@ -6,7 +6,8 @@ from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[1] / "merge_pub_deps_into_cyclonedx.py"
 SPEC = importlib.util.spec_from_file_location("merge_pub_deps_into_cyclonedx", SCRIPT)
-assert SPEC is not None and SPEC.loader is not None
+if SPEC is None or SPEC.loader is None:
+    raise RuntimeError("Unable to load the module under test")
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
