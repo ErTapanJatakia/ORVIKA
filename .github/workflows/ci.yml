@@ -109,6 +109,9 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      - name: Run edge middleware regression and property tests
+        run: npm run test:edge
+
       - name: Validate deployment verification scripts
         run: |
           node --check .github/scripts/orvika-browser-smoke.cjs
