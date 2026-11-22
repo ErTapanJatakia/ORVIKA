@@ -1,4 +1,4 @@
-name: Temporary ORVIKA npm audit lockfile remediation
+name: Temporary ORVIKA npm lockfile regeneration
 
 on:
   push:
@@ -20,14 +20,11 @@ jobs:
           ref: security/2026-11-23-npm-lock-bootstrap
           persist-credentials: true
 
-      - name: Apply non-forced, lockfile-only npm security updates
+      - name: Regenerate lockfile for pinned Vercel CLI version
         shell: bash
         run: |
           set -euo pipefail
           npm install --package-lock-only --prefix .github/tooling --ignore-scripts --no-fund
-          audit_fix_status=$?
-          set -e
-          echo "npm audit fix exit status: $audit_fix_status"
           if ! git diff --quiet -- .github/tooling/package.json; then
             echo "Unexpected package.json mutation; refusing to commit."
             exit 1
@@ -42,8 +39,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .github/tooling/package-lock.json
           if git diff --cached --quiet; then
-            echo 'npm audit fix made no lockfile changes.'
+            echo 'Lockfile regeneration made no changes.'
             exit 0
           fi
-          git commit -m 'Apply non-forced npm audit lockfile fixes'
+          git commit -m 'Regenerate lockfile for Vercel CLI security pin'
           git push origin HEAD:security/2026-11-23-npm-lock-bootstrap
