@@ -15,10 +15,28 @@ This is a finding-level review of the scanner artifacts produced by **ORVIKA Fre
 
 The separately reported **57 open GitHub Code Scanning alerts are not yet reconciled**. The connected GitHub integration does not expose the Code Scanning alerts endpoint. This report must not be interpreted as a disposition of all 57 alerts.
 
+## Post-merge scanner verification
+
+PR #256 was merged to `main` at commit `15690e01a18e5bdefe2a0f49f27af61c6f038265`. The post-merge **ORVIKA Free Security Assurance** run is [45060046869](https://github.com/ErTapanJatakia/ORVIKA/actions/runs/45060046869). Its SAST artifacts were downloaded and compared with the pre-merge outputs above.
+
+| Scanner | Pre-merge results | Post-merge results | Change |
+|---|---:|---:|---|
+| Bearer | 18 | 17 | 1 fewer result |
+| Bandit | 6 | 3 | 3 fewer results; both B101 import-guard notes and B607 PATH executable note disappeared |
+| DevSkim | 21 | 21 | No change; all remain explained false positives |
+
+Post-merge artifact IDs: Bearer **14769266563**, Bandit **14768906833**, DevSkim **14768677669**. The combined post-merge total is **41 SARIF results**, down from 45. This is not equivalent to closing 57 GitHub Code Scanning alerts.
+
+Bearer still reports the subprocess, filesystem-path and dynamic-regex rules. Code review confirms the subprocess uses separate argv elements with `shell=False`; the privacy walker now skips symlinks and receives filenames from `readdirSync`; and the regex is loaded from the local generated Vercel route configuration and applied to fixed paths. The remaining logger rules still flag dynamic but sanitized diagnostic values, public build metadata, or counts; no credential or user-submitted content is included in the reviewed log statements after PR #256.
+
+Bandit now reports only B404 for intentional subprocess module use and B603 for the controlled bundletool invocation. These remain documented low-severity notes; they are not hidden or suppressed.
+
+The post-merge ZAP artifact is **14769520647**. It still reports the same four categories, including Medium/High-confidence `style-src unsafe-inline` on the validation host. That finding remains open.
+
 ## Executive disposition
 
-- No confirmed remotely exploitable vulnerability was established from these 45 SARIF records alone.
-- Bearer identified code paths that warranted hardening, especially verbose browser-smoke diagnostics, symlink traversal during source walking, and subprocess invocation. The hardening changes were merged in PR #256 after Workflow Lint, CI and Security Assurance passed. A fresh post-merge scan is now running; findings remain pending verification until its SARIF is reviewed.
+- No confirmed remotely exploitable vulnerability was established from the 41 post-merge SARIF results alone; context-dependent scanner findings remain documented.
+- Bearer identified code paths that warranted hardening, especially verbose browser-smoke diagnostics, symlink traversal during source walking, and subprocess invocation. The hardening changes were merged in PR #256 after Workflow Lint, CI and Security Assurance passed. Post-merge SARIF confirms the Bandit B101 and B607 records disappeared; several context-dependent Bearer logger/path/subprocess rules remain and are documented below.
 - Bandit produced six low-severity notes. Two test-only import guards are being replaced; subprocess usage remains intentional and is constrained to an argv list with `shell=False`.
 - All 21 DevSkim results are explainable false positives in this repository: Android XML namespace URIs or public integrity identifiers (pinned Flutter commit SHAs and a public certificate fingerprint). No credential or secret value was identified in these results.
 - ZAP's Medium/High-confidence CSP observation is real for the scanned validation host at scan time: its response used `style-src 'self' 'unsafe-inline'`. This remains open pending a fresh preview deployment/compatibility validation. The other three ZAP categories are informational observations.
@@ -27,15 +45,15 @@ The separately reported **57 open GitHub Code Scanning alerts are not yet reconc
 
 | # | Rule | Location | Triage and disposition |
 |---:|---|---|---|
-| 1 | `python_lang_os_command_injection` | `scripts/verify-android-aab-manifest.py:79` | **Mitigated design; hardening implemented, retest pending.** The code calls `subprocess.run` with a list of separate arguments and does not use a shell or construct a command string. The AAB and bundletool paths are explicit workflow inputs. PR #256 now resolves Java to an executable path and explicitly sets `shell=False`. Fresh post-merge Bandit/Bearer SARIF must confirm the change before final closure. |
-| 2 | `javascript_lang_path_traversal` | `scripts/verify-privacy-boundaries.cjs:31` | **Hardening implemented; retest pending.** The path segment is a filename returned by `readdirSync`, not an arbitrary user-supplied path. The previous walker could follow a repository symlink when reading a `.dart` file. PR #256 now skips symbolic links. The PR CI verified the privacy checker still scans 15 Dart files. |
+| 1 | `python_lang_os_command_injection` | `scripts/verify-android-aab-manifest.py:79` | **Contextual/accepted residual.** The code calls `subprocess.run` with a list of separate arguments and does not use a shell or construct a command string. The AAB and bundletool paths are explicit workflow inputs. PR #256 resolves Java to an executable path and explicitly sets `shell=False`. The post-merge Bearer rule remains, but code review found no shell interpolation; Bandit B603 remains as a low-severity note. |
+| 2 | `javascript_lang_path_traversal` | `scripts/verify-privacy-boundaries.cjs:31` | **Mitigated design; scanner rule remains.** The path segment is a filename returned by `readdirSync`, not an arbitrary user-supplied path. PR #256 now skips symbolic links, and its CI verified that the privacy checker still scans 15 Dart files. Bearer still flags the dynamic `path.join`; no attacker-controlled path component is present in this walk. |
 | 3 | `javascript_lang_dynamic_regex` | `.github/scripts/verify-vercel-output.cjs:38` | **Contextual/low risk; monitor.** `route.src` is read from the locally generated Vercel Build Output configuration and evaluated only against the fixed paths `/` and `/index.html`. It is not a runtime user-controlled regex. Retain the finding in the register; consider a bounded-pattern check if generated route configuration becomes externally influenced. |
-| 4 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:80` | **Hardening implemented; retest pending.** The prior diagnostic logged full response URLs, redirect information and response headers. PR #256 now strips URL query/fragment/user-info by logging origin/path only and narrows the header allowlist. Confirm the post-merge Bearer result. |
-| 5 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:142` | **Hardening implemented; retest pending.** The renderer diagnostic previously included body text, body markup and script URLs. PR #256 now replaces content with lengths/counts, avoiding page-content disclosure in CI logs. Confirm the post-merge Bearer result. |
+| 4 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:80` | **Reviewed residual; no sensitive data observed.** The prior diagnostic logged full response URLs, redirect information and response headers. PR #256 now strips URL query/fragment/user-info by logging origin/path only and narrows the header allowlist. The remaining rule flags the sanitized diagnostics; reviewed fields are limited to origin/path and security response headers. |
+| 5 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:142` | **Hardening implemented; retest pending.** The renderer diagnostic previously included body text, body markup and script URLs. PR #256 now replaces content with lengths/counts, avoiding page-content disclosure in CI logs. The remaining rule flags structural renderer metadata only; body content, markup and script URLs are no longer logged. |
 | 6 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:157` | **False positive.** The logged value is a fixed viewport label followed by the static text “viewport passed”; it does not contain user input, credentials or page content. |
-| 7 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:184` | **Hardening implemented; retest pending.** Raw browser console messages were logged. PR #256 now logs only the count of observed console errors; CSP detection remains active. Confirm the post-merge Bearer result. |
-| 8 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:194` | **Hardening implemented; retest pending.** The catch handler previously printed the complete error object/stack. PR #256 now reports only the error class and preserves a failing exit code. Confirm the post-merge Bearer result. |
-| 9 | `javascript_lang_logger_leak` | `.github/scripts/verify-vercel-output.cjs:51` | **Hardening implemented; retest pending.** The prior logger printed complete generated route objects. PR #256 now logs only route-match and header-route counts. Confirm the post-merge Bearer result. |
+| 7 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:184` | **Hardening implemented; retest pending.** Raw browser console messages were logged. PR #256 now logs only the count of observed console errors; CSP detection remains active. The remaining rule flags the numeric count, not console message contents. |
+| 8 | `javascript_lang_logger_leak` | `.github/scripts/orvika-browser-smoke.cjs:194` | **Hardening implemented; retest pending.** The catch handler previously printed the complete error object/stack. PR #256 now reports only the error class and preserves a failing exit code; the raw exception object and stack are no longer logged. |
+| 9 | `javascript_lang_logger_leak` | `.github/scripts/verify-vercel-output.cjs:51` | **Hardening implemented; retest pending.** The prior logger printed complete generated route objects. PR #256 now logs only route-match and header-route counts; the full generated route objects are no longer logged. |
 | 10 | `javascript_lang_logger_leak` | `scripts/verify-android-apk-manifest.cjs:59` | **False positive.** Logs the public Android application ID, `com.orvika.app`; no signing material or credentials are printed. |
 | 11 | `javascript_lang_logger_leak` | `scripts/verify-android-apk-manifest.cjs:60` | **False positive.** Logs the reviewed Android permission names; these are manifest metadata, not secrets. |
 | 12 | `javascript_lang_logger_leak` | `scripts/verify-android-release-readiness.cjs:179` | **False positive.** Logs the public app version only. |
@@ -54,11 +72,11 @@ PR #256 has passed its PR checks and is merged. Review the fresh post-merge Bear
 
 | # | Rule | Location | Triage and disposition |
 |---:|---|---|---|
-| 1 | B101 | `scripts/tests/test_merge_pub_deps_into_cyclonedx.py:9` | **Test guard hardening implemented; retest pending.** A module-import precondition used Python `assert`, which can be removed under optimized execution. PR #256 replaced it with an explicit runtime exception; confirm the post-merge Bandit result. |
+| 1 | B101 | `scripts/tests/test_merge_pub_deps_into_cyclonedx.py:9` | **Resolved in PR #256.** A module-import precondition used Python `assert`, which can be removed under optimized execution. PR #256 replaced it with an explicit runtime exception; B101 no longer appears in post-merge Bandit SARIF. |
 | 2 | B404 | `scripts/tests/test_verify_android_aab_manifest.py:8` | **Informational/accepted.** The test imports `subprocess` to mock the production verifier's intentional external-tool invocation. It does not execute an untrusted shell command. |
-| 3 | B101 | `scripts/tests/test_verify_android_aab_manifest.py:12` | **Test guard hardening implemented; retest pending.** Same import-loader precondition as finding #1; PR #256 replaced the assertion with an explicit runtime check; confirm the post-merge Bandit result. |
+| 3 | B101 | `scripts/tests/test_verify_android_aab_manifest.py:12` | **Test guard hardening implemented; retest pending.** Same import-loader precondition as finding #1; PR #256 replaced the assertion with an explicit runtime check; B101 no longer appears in post-merge Bandit SARIF. |
 | 4 | B404 | `scripts/verify-android-aab-manifest.py:5` | **Informational/accepted.** The verifier intentionally invokes the pinned bundletool JAR through Java to inspect AAB manifests. |
-| 5 | B607 | `scripts/verify-android-aab-manifest.py:79` | **Hardening implemented; retest pending.** Previously invoked the `java` executable by its PATH name. PR #256 now resolves it with `shutil.which` and passes the resulting executable path. Confirm the post-merge Bandit SARIF result. |
+| 5 | B607 | `scripts/verify-android-aab-manifest.py:79` | **Hardening implemented; retest pending.** Previously invoked the `java` executable by its PATH name. PR #256 now resolves it with `shutil.which` and passes the resulting executable path; B607 no longer appears in post-merge Bandit SARIF. |
 | 6 | B603 | `scripts/verify-android-aab-manifest.py:79` | **Mitigated design; accepted residual.** The subprocess call uses an argv list, not shell interpolation; PR #256 explicitly sets `shell=False`. The executable and artifact paths are controlled by the CI workflow; retain the low-severity residual in the next SARIF review. Keep this low-severity note documented rather than hiding the rule. |
 
 Bandit marked these records as low severity and low confidence in its SARIF properties. The successful job status is not treated as proof of zero findings.
@@ -119,9 +137,9 @@ The current source policy in `vercel.json` and the default Cloudflare middleware
 
 ## 5. Outstanding items and acceptance criteria
 
-1. **PR #256:** merged after all three required workflows passed. Review the fresh post-merge SARIF from main workflow run #118 before closing the remediated Bearer/Bandit records.
+1. **PR #256:** merged after all three required workflows passed. Post-merge SARIF shows the Bandit B101 and B607 records have cleared; remaining Bearer results are contextually reviewed and documented.
 2. **PR #255:** require analyzer, full Flutter tests, Workflow Lint and Security Assurance to pass; fix actual test failures without weakening checks.
-3. **npm integrity:** six pinned npm install invocations remain without a committed npm lockfile-backed integrity workflow. Root `package-lock.json` does not exist. Build a dedicated tooling manifest and lockfile; replace installs with `npm ci` only after a real lockfile with registry integrity metadata is committed and verified.
+3. **npm integrity:** **PR #258** now contains a dedicated tooling manifest and npm v3 lockfile (480 package entries; zero registry entries missing integrity metadata) and replaces the six npm install invocations plus ephemeral Wrangler execution with lockfile-backed `npm ci` and local CLI binaries. Required PR checks are still pending; do not call this complete until they pass.
 4. **CSP:** run the dedicated preview-only Cloudflare workflow and confirm nonce-based response headers and application compatibility; re-run ZAP. Production remains untouched.
 5. **GitHub Code Scanning:** obtain the 57-alert inventory from GitHub UI or a supported alert endpoint. For each alert, capture rule/tool, severity, file/line, state, code context and fix/dismissal evidence. No bulk dismissal is authorised.
 6. **Final assurance:** publish a final report only after all findings have an evidence-backed disposition and all fixes have passed the relevant regression/scanner checks.
