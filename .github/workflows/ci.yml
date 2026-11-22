@@ -60,17 +60,20 @@ jobs:
         shell: bash
         run: |
           mkdir -p security-evidence
-          audit_status=0
-          npm audit --json > security-evidence/npm-audit.json || audit_status=$?
-          echo "npm audit process exit code: $audit_status"
-          node -e "const fs=require('node:fs'); const report=JSON.parse(fs.readFileSync('security-evidence/npm-audit.json','utf8')); if (report.error) { console.log('npm audit service reported an error; inspect the retained JSON evidence.'); process.exit(0); } const v=report.vulnerabilities || {}; const counts=Object.values(v).reduce((a,x)=>(a[x.severity]=(a[x.severity]||0)+1,a),{}); console.log('npm audit advisory counts: '+JSON.stringify(counts));"
+          full_status=0
+          npm audit --json > security-evidence/npm-audit-full.json || full_status=$?
+          optional_status=0
+          npm audit --omit=optional --json > security-evidence/npm-audit-nonoptional.json || optional_status=$?
+          echo "npm audit (full lockfile) process exit code: $full_status"
+          echo "npm audit (non-optional dependencies) process exit code: $optional_status"
+          node -e "const fs=require('node:fs'); for (const file of ['security-evidence/npm-audit-full.json','security-evidence/npm-audit-nonoptional.json']) { const report=JSON.parse(fs.readFileSync(file,'utf8')); if (report.error) { console.log(file+': audit service reported an error.'); continue; } const v=report.vulnerabilities || {}; const counts=Object.values(v).reduce((a,x)=>(a[x.severity]=(a[x.severity]||0)+1,a),{}); console.log(file+': '+JSON.stringify(counts)); }"
 
       - name: Upload npm dependency advisory evidence
-        if: always() && hashFiles('security-evidence/npm-audit.json') != ''
+        if: always() && hashFiles('security-evidence/npm-audit-full.json') != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: orvika-npm-audit-evidence
-          path: security-evidence/npm-audit.json
+          path: security-evidence/npm-audit-*.json
           if-no-files-found: warn
           retention-days: 14
 
