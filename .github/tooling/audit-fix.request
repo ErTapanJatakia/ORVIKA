@@ -1,1 +1,1 @@
-Run npm audit fix --package-lock-only without --force.
+Run non-forced npm audit fix against the .github/tooling lockfile.
