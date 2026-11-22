@@ -22,7 +22,7 @@ The connected GitHub integration did not expose the repository's Code Scanning a
 | Bearer | Scan and SARIF upload completed; invocation sets `exit-code: 0` | Not a zero-finding assertion; SARIF processing emitted inconsistent fingerprint warnings |
 | DevSkim | SARIF upload completed | Individual findings require review |
 | OWASP ZAP passive | JSON report contains four alert categories | One Medium risk / High confidence CSP alert; three informational categories |
-| OpenSSF Scorecard | Job and SARIF upload completed | Previously recorded npm integrity and fuzzing observations remain open |
+| OpenSSF Scorecard | Job log contains the full v5.6.0 result: overall 6.2; Pinned-Dependencies 5 (0/6 npm commands pinned by hash); Fuzzing 0 (no supported fuzzer integration detected) | Six npm-command observations and the Scorecard Fuzzing result remain open; deterministic parser property tests exist separately |
 
 ### ZAP observations
 
@@ -38,11 +38,17 @@ These categories are scanner observations, not automatically confirmed exploitab
 | Item | Status | Next action |
 |---|---|---|
 | Python dependency hash pinning for `defusedxml==0.7.1` | Implemented; regression job passed | Retain requirements-file hash verification |
-| Six Scorecard-identified npm install commands | Open | Move installs to committed lockfile-backed `npm ci` or equivalent integrity-verified installation; preserve versions and behaviour |
-| Bounded fuzzing for URL, message and QR parsers | Deferred / open | Add deterministic, resource-bounded tests with regression corpus and CI execution |
+| Six Scorecard-identified npm commands | Open; Scorecard reports 0/6 pinned by hash and Pinned-Dependencies score 5. Locations: `ci.yml:95,145`; `cloudflare-pages.yml:169,177`; `cloudflare-preview.yml:150,151` | Replace transient installs with committed integrity-verified dependency manifests/lockfiles and `npm ci` or an equivalent reproducible install; preserve exact package versions and runtime behaviour |
+| Bounded parser property testing | Present in `test/security_parser_bounded_fuzz_test.dart`; deterministic seed, 192 generated inputs, 1,024-character generated-input ceiling, explicit oversized-input rejection; Flutter test step passed in PR #253 CI. This is not an integrated coverage-guided fuzzer, and Scorecard Fuzzing remains open | Retain the bounded test; assess a compatible, resource-limited fuzzing integration separately rather than claiming the Scorecard check is resolved |
 | Bearer/Bandit/DevSkim findings | Untriaged at alert level | Retrieve SARIF/Code Scanning alert details and classify individually |
 | 57 GitHub Code Scanning alerts | Untriaged | Inspect every alert; remediate confirmed issues; dismiss only with documented evidence |
 | ZAP CSP/cache observations | Open for contextual review | Verify routes, headers, caching semantics and Flutter compatibility |
+
+## OpenSSF Scorecard detail
+
+The retained Scorecard job log records version `v5.6.0`, overall score `6.2`, `Pinned-Dependencies` score `5` with `0/6` npm command dependencies pinned by hash, and `Fuzzing` score `0` because no supported fuzzer integration was detected. The six npm-command locations are `.github/workflows/ci.yml:95,145`, `.github/workflows/cloudflare-pages.yml:169,177`, and `.github/workflows/cloudflare-preview.yml:150,151`. The commands use explicit package versions, but Scorecard's finding is specifically about hash/integrity pinning; exact version strings alone do not close it.
+
+The repository also contains deterministic property-style parser tests. Those tests and a coverage-guided fuzzing integration are different controls and must not be conflated.
 
 ## Alert disposition protocol
 
@@ -73,4 +79,4 @@ No blanket dismissal, mass suppression, severity downgrading or test weakening i
 - ZAP artifact: run #44989972247, artifact `orvika-web-zap-passive-evidence`, ID `14741282867`.
 - Main baseline SHA: `8b07c87ce9d5cede2ed9fed9c620e2b16779077d`.
 
-**Conclusion:** automated checks completed and several artifact-level results are clean within their stated scope. The security findings programme remains open pending individual SARIF/Code Scanning alert triage, npm integrity hardening, targeted fuzzing and evidence-backed remediation.
+**Conclusion:** automated checks completed and several artifact-level results are clean within their stated scope. The security findings programme remains open pending individual SARIF/Code Scanning alert triage, npm integrity hardening, contextual ZAP review and evidence-backed remediation. The existing bounded parser property test passed in the validated Flutter test suite, but Scorecard still reports no supported fuzzer integration; this is not a substitute for alert triage.
