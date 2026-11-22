@@ -1,2 +1,1 @@
-Run npm ci without scripts, then non-forced npm audit fix without lifecycle scripts.
-Regenerate lockfile for Vercel CLI 65.2.0.
+Regenerate lockfile for pinned Vercel CLI 65.2.0 with package-lock-only.
