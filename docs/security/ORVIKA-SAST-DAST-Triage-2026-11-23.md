@@ -135,10 +135,14 @@ The scan target was `https://orvika-validation.orvika.pages.dev`.
 
 The current source policy in `vercel.json` and the default Cloudflare middleware policy still include `style-src 'unsafe-inline'`. The validation-host nonce branch in `functions/_middleware.js` is intended to replace that policy only on the dedicated preview hostname. The ZAP evidence demonstrates that this replacement was not present in the scanned response. The dedicated Cloudflare preview workflow is manually dispatched and was not available through the connected GitHub action controls in this session. Do not alter production CSP or deploy to production as a shortcut. Re-run the preview-only validation workflow, then re-scan and test the Flutter UI before making a policy change.
 
+## 5. Bounded parser fuzzing verification
+
+PR #255 was merged to `main` at commit `fe49325700c211ed3a802d9d1a1f4f508a10bc04`. The deterministic URL, message and QR fuzz test passed the full Flutter CI test suite and the Free Security Assurance workflow. The first generator design failed three consecutive CI attempts (two analyzer lint issues and one character-bound violation); in accordance with the three-failure rule, the generator was redesigned to enforce a character-level ceiling before the final successful run. No test was weakened or removed. The corpus is deterministic, seeded, capped at 1,024 characters and 192 cases, with explicit oversized-input checks.
+
 ## 5. Outstanding items and acceptance criteria
 
 1. **PR #256:** merged after all three required workflows passed. Post-merge SARIF shows the Bandit B101 and B607 records have cleared; remaining Bearer results are contextually reviewed and documented.
-2. **PR #255:** require analyzer, full Flutter tests, Workflow Lint and Security Assurance to pass; fix actual test failures without weakening checks.
+2. **PR #255:** merged after Workflow Lint, CI and Security Assurance passed. Deterministic bounded fuzz coverage is now in `main`.
 3. **npm integrity:** **PR #258** now contains a dedicated tooling manifest and npm v3 lockfile (480 package entries; zero registry entries missing integrity metadata). It replaces the six npm install invocations and ephemeral Wrangler execution with lockfile-backed `npm ci` and local CLI binaries in the CI, Cloudflare Pages and Cloudflare preview workflows. A new verifier checks exact direct versions and requires registry integrity metadata for every locked package before installation. Required PR checks are still pending; do not call this complete until they pass.
 4. **CSP:** run the dedicated preview-only Cloudflare workflow and confirm nonce-based response headers and application compatibility; re-run ZAP. Production remains untouched.
 5. **GitHub Code Scanning:** obtain the 57-alert inventory from GitHub UI or a supported alert endpoint. For each alert, capture rule/tool, severity, file/line, state, code context and fix/dismissal evidence. No bulk dismissal is authorised.
