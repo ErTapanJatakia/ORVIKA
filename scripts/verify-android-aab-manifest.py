@@ -2,6 +2,7 @@
 """Verify every Android App Bundle module manifest using Google's bundletool."""
 
 import argparse
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -76,11 +77,16 @@ def read_module_manifest(
     diagnostics_dir: Path | None = None,
 ) -> Any:
     """Render and parse a module manifest; never export the raw manifest."""
+    java_executable = shutil.which("java")
+    if java_executable is None:
+        raise FileNotFoundError("Java executable was not found on PATH")
+
     result = subprocess.run(
         [
-            "java", "-jar", str(bundletool), "dump", "manifest",
+            java_executable, "-jar", str(bundletool), "dump", "manifest",
             f"--bundle={bundle_path}", f"--module={module}",
         ],
+        shell=False,
         check=False,
         capture_output=True,
         text=True,

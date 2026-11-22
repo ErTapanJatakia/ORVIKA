@@ -28,6 +28,8 @@ const forbidden = [
 function walk(directory) {
   if (!fs.existsSync(directory)) return [];
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    // Never follow repository symlinks while walking source paths.
+    if (entry.isSymbolicLink()) return [];
     const absolute = path.join(directory, entry.name);
     return entry.isDirectory() ? walk(absolute) : entry.name.endsWith('.dart') ? [absolute] : [];
   });
