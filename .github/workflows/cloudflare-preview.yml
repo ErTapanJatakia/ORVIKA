@@ -171,7 +171,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
         run: |
-          wrangler pages deploy build/web --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=orvika-validation
+          wrangler pages deploy build/web --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=orvika-validation --no-bundle
 
       - name: Verify deployed nonce CSP and non-HTML policy
         env:
