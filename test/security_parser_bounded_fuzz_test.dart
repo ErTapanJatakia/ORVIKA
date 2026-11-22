@@ -23,8 +23,12 @@ void main() {
   String generate(Random random, int maxLength) {
     final length = random.nextInt(maxLength + 1);
     final output = StringBuffer();
-    for (var i = 0; i < length; i++) {
-      output.write(alphabet[random.nextInt(alphabet.length)]);
+    var remaining = length;
+    while (remaining > 0) {
+      final token = alphabet[random.nextInt(alphabet.length)];
+      final chunk = token.length <= remaining ? token : token.substring(0, remaining);
+      output.write(chunk);
+      remaining -= chunk.length;
     }
     return output.toString();
   }
