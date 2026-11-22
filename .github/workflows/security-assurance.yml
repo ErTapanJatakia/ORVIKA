@@ -94,7 +94,8 @@ jobs:
         shell: bash
         run: |
           python3 -m venv "$RUNNER_TEMP/aab-verifier-venv"
-          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps defusedxml==0.7.1
+          printf '%s\n' "defusedxml==0.7.1 --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61" > "$RUNNER_TEMP/aab-verifier-requirements.txt"
+          "$RUNNER_TEMP/aab-verifier-venv/bin/pip" install --disable-pip-version-check --no-deps --require-hashes --only-binary=:all: -r "$RUNNER_TEMP/aab-verifier-requirements.txt"
           "$RUNNER_TEMP/aab-verifier-venv/bin/python" -m unittest discover -s scripts/tests -p "test_*.py"
 
       - name: Gitleaks full-history secret scan
@@ -436,3 +437,67 @@ jobs:
             security-evidence/apk-assessment-metadata.txt
           if-no-files-found: error
           retention-days: 14
+
+  devskim-sast:
+    name: DevSkim source security lint
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Prepare DevSkim evidence directory
+        run: mkdir -p security-evidence
+      - name: Run Microsoft DevSkim
+        uses: microsoft/DevSkim-Action@734c6ed89671b1c7a5211ed334c79db261e3f221
+        with:
+          directory-to-scan: .
+          output-filename: devskim-results.sarif
+          output-directory: security-evidence
+      - name: Upload DevSkim SARIF
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        with:
+          sarif_file: security-evidence/devskim-results.sarif
+
+  bandit-python-sast:
+    name: Bandit Python security analysis
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Run PyCQA Bandit on repository Python tooling
+        uses: PyCQA/bandit-action@67a458d90fa11fb1463e91e7f4c8f068b5863c7f
+        with:
+          targets: scripts
+          severity: low
+          confidence: low
+
+  bearer-sast:
+    name: Bearer open-source SAST and privacy analysis
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Run Bearer OSS against supported JavaScript and Python sources
+        uses: bearer/bearer-action@828eeb928ce2f4a7ca5ed57fb8b59508cb8c79bc
+        with:
+          path: .
+          format: sarif
+          output: bearer-results.sarif
+          exit-code: 0
+      - name: Upload Bearer SARIF
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        with:
+          sarif_file: bearer-results.sarif
