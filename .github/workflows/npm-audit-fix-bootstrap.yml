@@ -1,0 +1,50 @@
+name: Temporary ORVIKA npm audit lockfile remediation
+
+on:
+  push:
+    branches:
+      - security/2026-11-23-npm-lock-bootstrap
+    paths:
+      - .github/tooling/audit-fix.request
+
+permissions:
+  contents: write
+
+jobs:
+  update-lock:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout dedicated npm tooling branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: security/2026-11-23-npm-lock-bootstrap
+          persist-credentials: true
+
+      - name: Apply non-forced, lockfile-only npm security updates
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          npm audit fix --package-lock-only
+          audit_fix_status=$?
+          set -e
+          echo "npm audit fix exit status: $audit_fix_status"
+          if ! git diff --quiet -- .github/tooling/package.json; then
+            echo "Unexpected package.json mutation; refusing to commit."
+            exit 1
+          fi
+          node scripts/verify-npm-tooling-lock.cjs
+
+      - name: Commit updated lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/tooling/package-lock.json
+          if git diff --cached --quiet; then
+            echo 'npm audit fix made no lockfile changes.'
+            exit 0
+          fi
+          git commit -m 'Apply non-forced npm audit lockfile fixes'
+          git push origin HEAD:security/2026-11-23-npm-lock-bootstrap
