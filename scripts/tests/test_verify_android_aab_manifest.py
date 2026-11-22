@@ -88,10 +88,12 @@ class ManifestParserSecurityTests(unittest.TestCase):
         xml = '<manifest package="com.orvika.app"/>'
         completed = CompletedProcess(args=["java"], returncode=0, stdout=xml, stderr="")
         with tempfile.TemporaryDirectory() as directory:
+            bundletool = Path(directory, "bundletool.jar")
+            bundle_path = Path(directory, "app.aab")
+            bundletool.write_bytes(b"test placeholder")
+            bundle_path.write_bytes(b"test bundle placeholder")
             with patch.object(MODULE.subprocess, "run", return_value=completed):
-                MODULE.read_module_manifest(
-                    Path("bundletool.jar"), Path("app.aab"), "base", Path(directory)
-                )
+                MODULE.read_module_manifest(bundletool, bundle_path, "base", Path(directory))
             status = Path(directory, "bundletool-module-status.txt").read_text()
             self.assertIn("module=base", status)
             self.assertIn("return_code=0", status)
@@ -102,11 +104,13 @@ class ManifestParserSecurityTests(unittest.TestCase):
             args=["java"], returncode=2, stdout="", stderr="bundletool diagnostic"
         )
         with tempfile.TemporaryDirectory() as directory:
+            bundletool = Path(directory, "bundletool.jar")
+            bundle_path = Path(directory, "app.aab")
+            bundletool.write_bytes(b"test placeholder")
+            bundle_path.write_bytes(b"test bundle placeholder")
             with patch.object(MODULE.subprocess, "run", return_value=completed):
                 with self.assertRaisesRegex(ValueError, "dump failed"):
-                    MODULE.read_module_manifest(
-                        Path("bundletool.jar"), Path("app.aab"), "base", Path(directory)
-                    )
+                    MODULE.read_module_manifest(bundletool, bundle_path, "base", Path(directory))
             saved = Path(directory, "base-bundletool-stderr.txt")
             self.assertEqual(saved.read_text(encoding="utf-8"), "bundletool diagnostic")
 
