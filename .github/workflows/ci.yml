@@ -29,38 +29,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  bootstrap-npm-lockfile:
-    name: Refresh npm integrity lockfile on trusted PR branch
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout the pull request branch
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ github.head_ref }}
-          persist-credentials: true
-      - name: Install Node.js 22
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version: 22
-      - name: Refresh lockfile with registry integrity metadata
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Commit refreshed lockfile
-        env:
-          PR_BRANCH: ${{ github.head_ref }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
-          if git diff --cached --quiet; then
-            echo "Committed npm lockfile is already current."
-          else
-            git commit -m "chore: refresh integrity-verified npm lockfile"
-            git push origin "HEAD:${PR_BRANCH}"
-          fi
-
   android-validation:
     name: Android build validation
     # Android work is deliberately excluded from automatic PR/push validation.
