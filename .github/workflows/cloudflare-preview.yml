@@ -145,6 +145,11 @@ jobs:
           ! grep -Eiq 'vercel-analytics-script|/_vercel/insights/script.js' build/web/index.html
           ! grep -E "Content-Security-Policy:.*script-src[^\n]*'unsafe-eval'" build/web/_headers
 
+      - name: Attach compiled Pages middleware to preview output
+        run: |
+          cp "$RUNNER_TEMP/orvika-pages-worker.js" build/web/_worker.js
+          test -s build/web/_worker.js
+
       - name: Install Wrangler and Playwright
         run: |
           npm install --global wrangler@4.163.0
