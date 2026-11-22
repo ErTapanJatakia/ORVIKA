@@ -164,11 +164,53 @@ jobs:
         run: |
           npx wrangler pages deploy build/web --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=orvika-validation
 
+      - name: Verify deployed nonce CSP and non-HTML policy
+        env:
+          ORVIKA_BASE_URL: https://orvika-validation.${{ vars.CLOUDFLARE_PAGES_PROJECT }}.pages.dev
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --dump-header "$RUNNER_TEMP/orvika-html.headers" --output /dev/null "$ORVIKA_BASE_URL/"
+          grep -Eiq "^content-security-policy:.*style-src 'self' 'nonce-[^']+'" "$RUNNER_TEMP/orvika-html.headers"
+          grep -Eiq "^content-security-policy:.*style-src-attr 'none'" "$RUNNER_TEMP/orvika-html.headers"
+          if grep -Eiq "^content-security-policy:.*unsafe-inline" "$RUNNER_TEMP/orvika-html.headers"; then
+            echo "::error::Preview HTML CSP still contains unsafe-inline."
+            exit 1
+          fi
+          for resource in robots.txt sitemap.xml; do
+            curl --fail --silent --show-error --dump-header "$RUNNER_TEMP/orvika-${resource}.headers" --output /dev/null "$ORVIKA_BASE_URL/$resource"
+            if grep -Eiq "^content-security-policy:.*unsafe-inline" "$RUNNER_TEMP/orvika-${resource}.headers"; then
+              echo "::error::$resource CSP still contains unsafe-inline."
+              exit 1
+            fi
+          done
+
       - name: Browser smoke test preview deployment
         env:
           CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
           ORVIKA_BASE_URL: https://orvika-validation.${{ vars.CLOUDFLARE_PAGES_PROJECT }}.pages.dev
         run: node .github/scripts/orvika-browser-smoke.cjs
+
+      - name: Prepare preview DAST evidence directory
+        run: mkdir -p security-evidence
+
+      - name: Run OWASP ZAP passive baseline against freshly deployed preview
+        shell: bash
+        env:
+          ORVIKA_BASE_URL: https://orvika-validation.${{ vars.CLOUDFLARE_PAGES_PROJECT }}.pages.dev
+        run: |
+          chmod 777 security-evidence
+          docker run --rm -v "$PWD/security-evidence:/zap/wrk/:rw" ghcr.io/zaproxy/zaproxy:2.17.0 \
+            zap-baseline.py -t "$ORVIKA_BASE_URL" -m 3 -I -J zap-baseline.json -r zap-baseline.html
+
+      - name: Upload fresh preview ZAP evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: orvika-cloudflare-preview-zap-evidence
+          path: security-evidence/
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Publish preview summary
         env:
