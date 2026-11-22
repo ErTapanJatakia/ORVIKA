@@ -30,6 +30,8 @@ function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     // Never follow repository symlinks while walking source paths.
     if (entry.isSymbolicLink()) return [];
+    // Dirent.name is a single filesystem entry name, not a caller-supplied path.
+    // The OS does not return path separators as part of a directory-entry name.
     const absolute = path.join(directory, entry.name);
     return entry.isDirectory() ? walk(absolute) : entry.name.endsWith('.dart') ? [absolute] : [];
   });
@@ -60,4 +62,4 @@ assert.ok(!/document\.(?:body|forms)|querySelectorAll\s*\(.*(?:input|textarea)/i
 assert.ok(!/window\.va\s*\(\s*['"]event['"]/i.test(analytics),
   'Analytics bootstrap must not emit custom feature events');
 
-console.log('ORVIKA checker privacy source boundaries: PASS (' + scanned.length + ' Dart files scanned)');
+console.log('ORVIKA checker privacy source boundaries: PASS.');

@@ -3,6 +3,7 @@
 import importlib.util
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from unittest.mock import patch
 from subprocess import CompletedProcess
@@ -16,6 +17,23 @@ SPEC.loader.exec_module(MODULE)
 
 
 class ManifestParserSecurityTests(unittest.TestCase):
+    def test_module_names_accepts_expected_module_identifiers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundle_path = Path(directory, "valid.aab")
+            with zipfile.ZipFile(bundle_path, "w") as bundle:
+                bundle.writestr("base/manifest/AndroidManifest.xml", "<manifest/>")
+                bundle.writestr("feature_one/manifest/AndroidManifest.xml", "<manifest/>")
+            self.assertEqual(MODULE.module_names(bundle_path), ["base", "feature_one"])
+
+    def test_module_names_rejects_path_like_module_identifiers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundle_path = Path(directory, "invalid.aab")
+            with zipfile.ZipFile(bundle_path, "w") as bundle:
+                bundle.writestr("base/manifest/AndroidManifest.xml", "<manifest/>")
+                bundle.writestr("../escape/manifest/AndroidManifest.xml", "<manifest/>")
+            with self.assertRaisesRegex(ValueError, "invalid module names"):
+                MODULE.module_names(bundle_path)
+
     def test_accepts_well_formed_manifest(self):
         root = MODULE.parse_manifest_xml(
             '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
@@ -70,10 +88,12 @@ class ManifestParserSecurityTests(unittest.TestCase):
         xml = '<manifest package="com.orvika.app"/>'
         completed = CompletedProcess(args=["java"], returncode=0, stdout=xml, stderr="")
         with tempfile.TemporaryDirectory() as directory:
+            bundletool = Path(directory, "bundletool.jar")
+            bundle_path = Path(directory, "app.aab")
+            bundletool.write_bytes(b"test placeholder")
+            bundle_path.write_bytes(b"test bundle placeholder")
             with patch.object(MODULE.subprocess, "run", return_value=completed):
-                MODULE.read_module_manifest(
-                    Path("bundletool.jar"), Path("app.aab"), "base", Path(directory)
-                )
+                MODULE.read_module_manifest(bundletool, bundle_path, "base", Path(directory))
             status = Path(directory, "bundletool-module-status.txt").read_text()
             self.assertIn("module=base", status)
             self.assertIn("return_code=0", status)
@@ -84,11 +104,13 @@ class ManifestParserSecurityTests(unittest.TestCase):
             args=["java"], returncode=2, stdout="", stderr="bundletool diagnostic"
         )
         with tempfile.TemporaryDirectory() as directory:
+            bundletool = Path(directory, "bundletool.jar")
+            bundle_path = Path(directory, "app.aab")
+            bundletool.write_bytes(b"test placeholder")
+            bundle_path.write_bytes(b"test bundle placeholder")
             with patch.object(MODULE.subprocess, "run", return_value=completed):
                 with self.assertRaisesRegex(ValueError, "dump failed"):
-                    MODULE.read_module_manifest(
-                        Path("bundletool.jar"), Path("app.aab"), "base", Path(directory)
-                    )
+                    MODULE.read_module_manifest(bundletool, bundle_path, "base", Path(directory))
             saved = Path(directory, "base-bundletool-stderr.txt")
             self.assertEqual(saved.read_text(encoding="utf-8"), "bundletool diagnostic")
 

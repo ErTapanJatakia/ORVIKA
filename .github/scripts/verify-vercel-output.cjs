@@ -32,12 +32,20 @@ const required = {
   'cross-origin-opener-policy': /^same-origin$/i,
 };
 
+const MAX_ROUTE_SOURCE_LENGTH = 256;
+const UNSAFE_ROUTE_REGEX_FEATURES = /(?:\([^)]*[+*][^)]*\)[+*{]|\\[1-9]|\(\?[=!<])/;
+
 function matchesPath(route, pathname) {
   if (typeof route.src !== 'string') return false;
+  if (!['/', '/index.html'].includes(pathname)) return false;
+  if (route.src.length > MAX_ROUTE_SOURCE_LENGTH || UNSAFE_ROUTE_REGEX_FEATURES.test(route.src)) {
+    throw new Error('Vercel route source exceeds the bounded verification pattern policy.');
+  }
   try {
+    // Vercel-generated route expressions are checked against only two fixed, short local paths.
     return new RegExp(route.src).test(pathname);
   } catch (error) {
-    throw new Error(`Invalid Vercel route regex "${route.src}": ${error.message}`);
+    throw new Error(`Invalid Vercel route regex: ${error.message}`);
   }
 }
 
@@ -48,7 +56,7 @@ function normalizeHeaders(headers) {
 for (const pathname of ['/', '/index.html']) {
   const matchingRoutes = config.routes.filter((route) => matchesPath(route, pathname));
   const headerRoutes = matchingRoutes.filter((route) => route.headers && typeof route.headers === 'object');
-  console.log(`Vercel output route matches for ${pathname}: ${matchingRoutes.length}; routes carrying headers: ${headerRoutes.length}.`);
+  console.log('Vercel response-header route evaluation in progress.');
 
   const completeHeaderRoute = headerRoutes.find((route) => {
     const headers = normalizeHeaders(route.headers);

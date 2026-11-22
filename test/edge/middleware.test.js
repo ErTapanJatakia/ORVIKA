@@ -9,6 +9,10 @@ const vercelConfig = JSON.parse(
 const vercelCsp = vercelConfig.headers
   .flatMap((route) => route.headers ?? [])
   .find((header) => header.key.toLowerCase() === "content-security-policy")?.value;
+const strictNonHtmlCsp = vercelCsp?.replace(
+  "style-src 'self' 'unsafe-inline'",
+  "style-src 'self'",
+);
 const expectedHeaders = {
   "strict-transport-security": "max-age=31536000; includeSubDomains",
   "x-content-type-options": "nosniff", "x-frame-options": "DENY",
@@ -94,7 +98,7 @@ test("adds security headers and no third-party CAPTCHA directives", async () => 
   for (const [name, value] of Object.entries(expectedHeaders)) assert.equal(response.headers.get(name), value);
   const csp = response.headers.get("content-security-policy");
   assert.ok(vercelCsp, "Vercel security policy must define a Content-Security-Policy header");
-  assert.equal(csp, vercelCsp, "Cloudflare middleware CSP must remain aligned with Vercel CSP");
+  assert.equal(csp, strictNonHtmlCsp, "Non-HTML responses must not permit inline styles");
   assert.match(csp, /default-src 'none'/); assert.match(csp, /'wasm-unsafe-eval'/);
   assert.match(csp, /script-src[^;]*https:\/\/cdn\.jsdelivr\.net/, "Web QR decoder script origin must be allowed");
   assert.match(csp, /connect-src[^;]*https:\/\/cdn\.jsdelivr\.net/, "Web QR decoder fetch origin must be allowed");
@@ -200,6 +204,17 @@ test("isolated Cloudflare validation host generates a distinct nonce for each HT
   }
 });
 
+test("keeps the existing CSP on production HTML responses", async () => {
+  const response = await onRequest({
+    request: { method: "GET", url: "https://orvika-web.vercel.app/" },
+    next: async () => new Response("<html><body>production shell</body></html>", {
+      status: 200, headers: { "Content-Type": "text/html; charset=utf-8" },
+    }),
+  });
+  assert.equal(response.headers.get("content-security-policy"), vercelCsp);
+  assert.doesNotMatch(vercelCsp, /nonce-/);
+});
+
 test("nonce prototype is not activated on production Cloudflare or Vercel hosts", async () => {
   for (const url of ["https://orvika.pages.dev/", "https://orvika-web.vercel.app/"]) {
     const response = await onRequest({
@@ -222,6 +237,6 @@ test("nonce prototype does not transform non-HTML resources on the validation ho
       status: 200, headers: { "Content-Type": "application/javascript" },
     }),
   });
-  assert.equal(response.headers.get("content-security-policy"), vercelCsp);
+  assert.equal(response.headers.get("content-security-policy"), strictNonHtmlCsp);
   assert.equal(await response.text(), "console.log('asset')");
 });
