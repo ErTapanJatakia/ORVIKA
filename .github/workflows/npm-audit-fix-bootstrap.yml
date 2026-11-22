@@ -25,7 +25,7 @@ jobs:
         run: |
           set -euo pipefail
           set +e
-          npm audit fix --package-lock-only
+          npm audit fix --prefix .github/tooling --package-lock-only
           audit_fix_status=$?
           set -e
           echo "npm audit fix exit status: $audit_fix_status"
