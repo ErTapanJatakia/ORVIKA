@@ -3,6 +3,7 @@
 import importlib.util
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from unittest.mock import patch
 from subprocess import CompletedProcess
@@ -16,6 +17,23 @@ SPEC.loader.exec_module(MODULE)
 
 
 class ManifestParserSecurityTests(unittest.TestCase):
+    def test_module_names_accepts_expected_module_identifiers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundle_path = Path(directory, "valid.aab")
+            with zipfile.ZipFile(bundle_path, "w") as bundle:
+                bundle.writestr("base/manifest/AndroidManifest.xml", "<manifest/>")
+                bundle.writestr("feature_one/manifest/AndroidManifest.xml", "<manifest/>")
+            self.assertEqual(MODULE.module_names(bundle_path), ["base", "feature_one"])
+
+    def test_module_names_rejects_path_like_module_identifiers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundle_path = Path(directory, "invalid.aab")
+            with zipfile.ZipFile(bundle_path, "w") as bundle:
+                bundle.writestr("base/manifest/AndroidManifest.xml", "<manifest/>")
+                bundle.writestr("../escape/manifest/AndroidManifest.xml", "<manifest/>")
+            with self.assertRaisesRegex(ValueError, "invalid module names"):
+                MODULE.module_names(bundle_path)
+
     def test_accepts_well_formed_manifest(self):
         root = MODULE.parse_manifest_xml(
             '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
