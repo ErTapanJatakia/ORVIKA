@@ -1,1 +1,1 @@
-Run npm ci without lifecycle scripts, then non-forced audit fix on the tooling lockfile.
+Run npm ci without scripts, then non-forced npm audit fix without lifecycle scripts.
