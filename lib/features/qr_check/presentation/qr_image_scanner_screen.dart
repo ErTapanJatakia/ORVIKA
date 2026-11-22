@@ -17,7 +17,6 @@ class QrImageScannerScreen extends StatefulWidget {
 }
 
 class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
-  static const int _maxImageBytes = 20 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
 
   XFile? _selectedFile;
@@ -89,11 +88,11 @@ class _QrImageScannerScreenState extends State<QrImageScannerScreen> {
         });
         return;
       }
-      if (length > _maxImageBytes) {
+      if (length > maxQrImageBytes) {
         if (!kIsWeb) await deleteTemporaryQrImage(selected.path);
         if (!mounted) return;
         setState(() {
-          _message = l10n.text('checker.image.error.tooLarge', 'Please choose an image smaller than 20 MB.');
+          _message = l10n.text('checker.image.error.tooLarge', 'Please choose an image no larger than 50 MB.');
           _loading = false;
         });
         return;
