@@ -41,18 +41,21 @@ jobs:
           docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
             --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
             --exit-code 1 /repo
-      - name: npm audit locked CI tooling
-        run: npm audit --prefix .github/tooling --audit-level=high
+      - name: Capture npm audit evidence for locked CI tooling
+        id: npm-audit-evidence
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p security-evidence
+          npm audit --prefix .github/tooling --json > security-evidence/npm-audit.json
 
-      - name: Trivy npm tooling lockfile scan
+      - name: Capture Trivy evidence for npm tooling lockfile
+        continue-on-error: true
         shell: bash
         run: |
           docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
             --scanners vuln,misconfig,secret,license \
             --format json --output /repo/security-evidence/trivy-npm-tooling.json /repo/.github/tooling
-          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
-            --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
-            --exit-code 1 /repo/.github/tooling
 
       - name: Semgrep Community Edition SAST (including experimental Dart rules)
         shell: bash
@@ -125,6 +128,17 @@ jobs:
           path: security-evidence/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Enforce npm audit high and critical threshold
+        if: always()
+        run: npm audit --prefix .github/tooling --audit-level=high
+
+      - name: Enforce Trivy high and critical npm tooling threshold
+        if: always()
+        run: |
+          docker run --rm -v "$PWD:/repo" aquasec/trivy:0.76.2 fs \
+            --scanners vuln,misconfig,secret,license --severity HIGH,CRITICAL \
+            --exit-code 1 /repo/.github/tooling
 
   repository-posture:
     name: OpenSSF Scorecard repository posture
