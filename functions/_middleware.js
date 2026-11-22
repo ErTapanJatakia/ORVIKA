@@ -16,6 +16,16 @@ const CSP_NONCE_PREVIEW_HOST = "orvika-validation.orvika.pages.dev";
 function withSecurityHeaders(response) {
   const secured = new Response(response.body, response);
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) secured.headers.set(name, value);
+  const contentType = (secured.headers.get("content-type") ?? "").toLowerCase();
+  if (!contentType.includes("text/html")) {
+    secured.headers.set(
+      "Content-Security-Policy",
+      SECURITY_HEADERS["Content-Security-Policy"].replace(
+        "style-src 'self' 'unsafe-inline'",
+        "style-src 'self'",
+      ),
+    );
+  }
   for (const name of [
     "Access-Control-Allow-Origin",
     "Access-Control-Allow-Credentials",
