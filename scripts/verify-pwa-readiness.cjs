@@ -83,8 +83,8 @@ const buildWeb = path.join(root, 'build', 'web');
 if (fs.existsSync(buildWeb)) {
   assert.ok(fs.existsSync(path.join(buildWeb, 'flutter_bootstrap.js')), 'Built Web output is missing Flutter bootstrap');
   assert.ok(fs.existsSync(path.join(buildWeb, 'manifest.json')), 'Built Web output is missing its PWA manifest');
-  console.log('ORVIKA built Web output: present; browser install/offline validation is still required');
-  console.log(`Flutter service-worker artifact: ${fs.existsSync(path.join(buildWeb, 'flutter_service_worker.js')) ? 'present' : 'not emitted by this Flutter build/strategy'}`);
+  console.log('ORVIKA built Web output is present; browser install/offline validation remains separate.');
+  console.log('Flutter service-worker emission state inspected; offline acceptance remains separate.');
 } else {
   console.log('ORVIKA built Web output: not present; run this preflight after an authorised Flutter Web build');
 }
