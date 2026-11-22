@@ -69,9 +69,9 @@ void main() {
   });
 
   test('hard input ceilings reject oversized content before parsing', () {
-    final oversizedUrl = 'https://example.test/' + 'a' * 8193;
-    final oversizedQr = 'a' * 8193;
-    final oversizedMessage = 'a' * 10001;
+    final oversizedUrl = 'https://example.test/${'a' * 8193}';
+    final oversizedQr = '${'a' * 8193}';
+    final oversizedMessage = '${'a' * 10001}';
 
     expect(urlAnalyzer.analyze(oversizedUrl).isValid, isFalse);
     expect(qrAnalyzer.analyze(oversizedQr).isValid, isFalse);
