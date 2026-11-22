@@ -33,7 +33,7 @@ const required = {
 };
 
 const MAX_ROUTE_SOURCE_LENGTH = 256;
-const UNSAFE_ROUTE_REGEX_FEATURES = /(?:\\([^)]*[+*][^)]*\\)[+*{]|\\\\[1-9]|\\(\\?[=!<])/;
+const UNSAFE_ROUTE_REGEX_FEATURES = /(?:\([^)]*[+*][^)]*\)[+*{]|\\[1-9]|\(\?[=!<])/;
 
 function matchesPath(route, pathname) {
   if (typeof route.src !== 'string') return false;
