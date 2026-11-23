@@ -64,7 +64,7 @@ jobs:
           git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
           git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
           git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
-          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c" # DevSkim: ignore DS173237 -- public immutable Flutter source commit pin, not a credential.
           git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
@@ -189,7 +189,7 @@ jobs:
           git -C "$RUNNER_TEMP/flutter" remote add origin https://github.com/flutter/flutter.git
           git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin c197ca5199e9ee5661e865596c9c07294dfab51c
           git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
-          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c" # DevSkim: ignore DS173237 -- public immutable Flutter source commit pin, not a credential.
           git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
@@ -512,6 +512,27 @@ jobs:
           format: sarif
           output: bearer-results.sarif
           exit-code: 0
+      - name: Normalize empty Bearer SARIF results for GitHub schema compatibility
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("bearer-results.sarif")
+          report = json.loads(path.read_text(encoding="utf-8"))
+          runs = report.get("runs")
+          if not isinstance(runs, list) or not runs:
+              raise SystemExit("Bearer SARIF must contain at least one run")
+          for run in runs:
+              if not isinstance(run, dict):
+                  raise SystemExit("Bearer SARIF contains an invalid run")
+              if run.get("results") is None:
+                  run["results"] = []
+              elif not isinstance(run["results"], list):
+                  raise SystemExit("Bearer SARIF results must be an array")
+          path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+          PY
       - name: Upload Bearer SARIF
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea

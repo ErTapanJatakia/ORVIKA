@@ -4,7 +4,7 @@
 import argparse
 import re
 import shutil
-import subprocess
+import subprocess  # nosec B404 -- used only for a bounded, shell-free bundletool invocation.
 import sys
 import zipfile
 from pathlib import Path
@@ -13,7 +13,7 @@ from typing import Any
 from defusedxml import ElementTree as ET
 from defusedxml.common import DefusedXmlException
 
-ANDROID_NS = "{http://schemas.android.com/apk/res/android}"
+ANDROID_NS = "{http://schemas.android.com/apk/res/android}"  # DevSkim: ignore DS137138 -- required Android XML namespace identifier, not a network endpoint.
 EXPECTED_PACKAGE = "com.orvika.app"
 DYNAMIC_RECEIVER_PERMISSION = (
     f"{EXPECTED_PACKAGE}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
@@ -100,12 +100,14 @@ def read_module_manifest(
         java_executable, "-jar", str(bundletool), "dump", "manifest",
         f"--bundle={bundle_path}", f"--module={module}",
     ]
-    result = subprocess.run(
+    result = subprocess.run(  # nosec B603 -- fixed Java executable, argv-only invocation, strict file resolution and allowlisted module identifier.
         command,
         shell=False,
         check=False,
         capture_output=True,
         text=True,
+        stdin=subprocess.DEVNULL,
+        timeout=120,
     )
 
     if diagnostics_dir is not None:
@@ -254,7 +256,7 @@ def main() -> int:
             args.bundle.resolve(),
             args.diagnostics_dir,
         )
-    except (OSError, ValueError, subprocess.CalledProcessError, zipfile.BadZipFile) as error:
+    except (OSError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired, zipfile.BadZipFile) as error:
         print(f"AAB manifest verification failed: {error}", file=sys.stderr)
         return 1
     return 0

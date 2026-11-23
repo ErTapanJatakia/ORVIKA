@@ -66,7 +66,7 @@ jobs:
           # Fetch the matching release tag so Flutter can resolve its SDK version.
           # The tag is verified against the already-pinned immutable commit.
           git -C "$RUNNER_TEMP/flutter" fetch --depth 1 origin refs/tags/3.47.9:refs/tags/3.47.9
-          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c"
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse 3.47.9^{commit})" = "c197ca5199e9ee5661e865596c9c07294dfab51c" # DevSkim: ignore DS173237 -- public immutable Flutter source commit pin, not a credential.
           git -C "$RUNNER_TEMP/flutter" checkout --detach c197ca5199e9ee5661e865596c9c07294dfab51c
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/flutter/bin/flutter" --version
@@ -80,7 +80,7 @@ jobs:
 
           gradle = Path("android/app/build.gradle.kts").read_text()
           manifest = ET.parse("android/app/src/main/AndroidManifest.xml").getroot()
-          android_ns = "{http://schemas.android.com/apk/res/android}"
+          android_ns = "{http://schemas.android.com/apk/res/android}"  # DevSkim: ignore DS137138 -- required Android XML namespace identifier, not a network endpoint.
           app = manifest.find("application")
           if 'namespace = "com.orvika.app"' not in gradle:
               raise SystemExit("Android namespace is not com.orvika.app")
@@ -289,7 +289,7 @@ jobs:
             exit 1
           fi
 
-          EXPECTED_SIGNER_SHA256="b859b30cd703e7592fa169618fe934f47533a95338f5e1b1a11b6bf985b822b5"
+          EXPECTED_SIGNER_SHA256="b859b30cd703e7592fa169618fe934f47533a95338f5e1b1a11b6bf985b822b5" # DevSkim: ignore DS173237 -- public signing-certificate fingerprint used for identity verification, not a private key.
           if [ "$APK_SIGNERS" != "$EXPECTED_SIGNER_SHA256" ] || [ "$AAB_SIGNERS" != "$EXPECTED_SIGNER_SHA256" ]; then
             echo "Release artifacts do not match the approved ORVIKA upload certificate fingerprint." >&2
             echo "Expected SHA-256: $EXPECTED_SIGNER_SHA256" >&2

@@ -6,7 +6,7 @@ import unittest
 import zipfile
 from pathlib import Path
 from unittest.mock import patch
-from subprocess import CompletedProcess
+from subprocess import CompletedProcess  # nosec B404 -- test-only result fixture; process execution is mocked.
 
 SCRIPT = Path(__file__).resolve().parents[1] / "verify-android-aab-manifest.py"
 SPEC = importlib.util.spec_from_file_location("verify_android_aab_manifest", SCRIPT)
@@ -36,7 +36,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_accepts_well_formed_manifest(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             'package="com.orvika.app"><uses-permission '
             'android:name="android.permission.INTERNET"/></manifest>',
             "base",
@@ -45,7 +45,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_permission_declarations_capture_exact_protection_level(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
             'android:protectionLevel="signature"/></manifest>',
             "base",
@@ -74,7 +74,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_permission_declaration_diagnostic_preserves_unexpected_value(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
             'android:protectionLevel="signature|privileged"/></manifest>',
             "base",
@@ -92,12 +92,29 @@ class ManifestParserSecurityTests(unittest.TestCase):
             bundle_path = Path(directory, "app.aab")
             bundletool.write_bytes(b"test placeholder")
             bundle_path.write_bytes(b"test bundle placeholder")
-            with patch.object(MODULE.subprocess, "run", return_value=completed):
+            with patch.object(MODULE.subprocess, "run", return_value=completed) as run:
                 MODULE.read_module_manifest(bundletool, bundle_path, "base", Path(directory))
+            self.assertIs(run.call_args.kwargs["shell"], False)
+            self.assertIs(run.call_args.kwargs["stdin"], MODULE.subprocess.DEVNULL)
+            self.assertEqual(run.call_args.kwargs["timeout"], 120)
             status = Path(directory, "bundletool-module-status.txt").read_text()
             self.assertIn("module=base", status)
             self.assertIn("return_code=0", status)
             self.assertFalse(Path(directory, "base-AndroidManifest.xml").exists())
+
+    def test_read_module_manifest_rejects_invalid_module_before_execution(self):
+        with tempfile.TemporaryDirectory() as directory:
+            bundletool = Path(directory, "bundletool.jar")
+            bundle_path = Path(directory, "app.aab")
+            bundletool.write_bytes(b"test placeholder")
+            bundle_path.write_bytes(b"test bundle placeholder")
+            with patch.object(MODULE.shutil, "which", return_value="/usr/bin/java"):
+                with patch.object(MODULE.subprocess, "run") as run:
+                    with self.assertRaisesRegex(ValueError, "Invalid Android App Bundle module"):
+                        MODULE.read_module_manifest(
+                            bundletool, bundle_path, "../escape", Path(directory)
+                        )
+                    run.assert_not_called()
 
     def test_read_module_manifest_preserves_stderr_on_bundletool_failure(self):
         completed = CompletedProcess(
@@ -116,7 +133,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_module_summary_contains_only_package_and_permission_metadata(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             'package="com.orvika.app"><permission android:name="com.orvika.app.TEST" '
             'android:protectionLevel="signature"/><uses-permission '
             'android:name="android.permission.INTERNET"/><application '
