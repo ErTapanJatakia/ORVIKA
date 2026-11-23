@@ -39,7 +39,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
           persist-credentials: false
 
       - name: Install Node.js 22
