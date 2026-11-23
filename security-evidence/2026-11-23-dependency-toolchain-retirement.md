@@ -13,7 +13,7 @@ Remove the Vercel CLI and Cloudflare Wrangler from the root npm development tool
 
 ## Lockfile and audit
 
-The PR's lockfile-refresh job runs `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` under the pinned Node 22 runtime, commits the regenerated root lockfile to this branch, and only then allows the main CI job to run `npm ci`. The full dependency tree, including optional packages, is subject to `npm audit --audit-level=low`.
+The root lockfile was regenerated under the pinned Node 22/npm toolchain after removing the deployment CLIs. The committed lockfile is then validated by a clean `npm ci` in CI; no workflow token is granted write access to regenerate or push dependency changes. The full dependency tree, including optional packages, is subject to `npm audit --audit-level=low`.
 
 ## Product and release boundaries
 
