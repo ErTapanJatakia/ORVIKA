@@ -9,11 +9,6 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      deploy_production:
-        description: "Deploy the validated main-branch build to Vercel production"
-        required: true
-        type: boolean
-        default: false
       validate_android:
         description: "Run the deferred Android validation batch (only when explicitly ready)"
         required: true
@@ -38,7 +33,7 @@ jobs:
     # No repository secrets are inherited by the reusable build.
     
   flutter:
-    name: Analyze, test, build and deploy Web
+    name: Analyze, test and build Web
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -68,37 +63,8 @@ jobs:
           echo "npm audit (non-optional dependencies) process exit code: $optional_status"
           node -e "const fs=require('node:fs'); for (const file of ['security-evidence/npm-audit-full.json','security-evidence/npm-audit-nonoptional.json']) { const report=JSON.parse(fs.readFileSync(file,'utf8')); if (report.error) { console.log(file+': audit service reported an error.'); continue; } const v=report.vulnerabilities || {}; const counts=Object.values(v).reduce((a,x)=>(a[x.severity]=(a[x.severity]||0)+1,a),{}); console.log(file+': '+JSON.stringify(counts)); }"
 
-      - name: Enforce zero advisories in non-optional npm dependencies
-        run: npm audit --omit=optional --audit-level=moderate
-
-      - name: Record platform-specific Vercel CLI dependency selection
-        shell: bash
-        run: |
-          node <<'NODE'
-          const fs = require('node:fs');
-          const path = require('node:path');
-          const names = [
-            '@vercel/vc-native-linux-x64',
-            '@vercel/cli-support',
-            '@vercel/container',
-            '@vercel/node',
-            'tar',
-            'undici',
-            'js-yaml',
-            'minimatch',
-            'path-to-regexp',
-            'smol-toml',
-          ];
-          const installed = Object.fromEntries(names.map((name) => [
-            name,
-            fs.existsSync(path.join('node_modules', ...name.split('/'))),
-          ]));
-          fs.writeFileSync(
-            'security-evidence/npm-platform-installation.json',
-            JSON.stringify({ platform: process.platform, arch: process.arch, installed }, null, 2) + '\n',
-          );
-          console.log('Recorded the actual platform-specific npm installation set.');
-          NODE
+      - name: Enforce zero advisories across the complete npm dependency tree
+        run: npm audit --audit-level=low
 
       - name: Upload npm dependency advisory evidence
         if: always() && hashFiles('security-evidence/npm-audit-full.json') != ''
@@ -112,19 +78,11 @@ jobs:
       - name: Run edge middleware regression and property tests
         run: npm run test:edge
 
-      - name: Validate deployment verification scripts
+      - name: Validate edge middleware and application source
         run: |
-          node --check .github/scripts/orvika-browser-smoke.cjs
-          node --check .github/scripts/verify-vercel-output.cjs
           node --check functions/_middleware.js
           npm run test:edge
           npm run verify:source
-          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
-          test -s "$RUNNER_TEMP/orvika-pages-worker.js"
-
-      - name: Validate Vercel deployment and header configuration
-        run: |
-          node -e "const c=require('./vercel.json'); const h=Object.fromEntries((c.headers||[]).flatMap(x=>x.headers||[]).map(x=>[x.key.toLowerCase(),x.value])); const required=['strict-transport-security','x-content-type-options','x-frame-options','referrer-policy','permissions-policy','content-security-policy','cross-origin-embedder-policy','cross-origin-opener-policy']; for (const k of required) if (!h[k]) throw new Error('Missing Vercel response header: '+k); if (!/default-src 'none'/.test(h['content-security-policy']) || !/script-src[^;]*'wasm-unsafe-eval'/.test(h['content-security-policy']) || /script-src[^;]*'unsafe-eval'/.test(h['content-security-policy'])) throw new Error('CSP is missing required Flutter-safe directives or permits unsafe-eval.'); if (h['cross-origin-embedder-policy'] !== 'credentialless') throw new Error('Unexpected COEP policy.'); if (h['cross-origin-opener-policy'] !== 'same-origin') throw new Error('Unexpected COOP policy.'); if (c.git?.deploymentEnabled !== false) throw new Error('Vercel Git auto-deployments must remain disabled; GitHub Actions is the deployment authority.'); if (c.outputDirectory !== 'build/web') throw new Error('Vercel outputDirectory must remain build/web for the prebuilt Flutter Web artifact.');"
 
       - name: Install Flutter SDK
         shell: bash
@@ -155,59 +113,3 @@ jobs:
           test -s build/web/canvaskit/canvaskit.js
           test -s build/web/canvaskit/canvaskit.wasm
 
-      - name: Link Vercel project without Git integration
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        shell: bash
-        env:
-          VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
-          VERCEL_PROJECT_ID: prj_bHaSgv8y0tcFEGDJaEppYx8I0ZV0
-        run: |
-          mkdir -p .vercel
-          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
-
-      - name: Configure Vercel project build settings
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
-          VERCEL_PROJECT_ID: prj_bHaSgv8y0tcFEGDJaEppYx8I0ZV0
-        run: vercel project update orvika-web --yes --framework other --build-command "echo 'Using prebuilt Flutter Web output'" --output-directory "build/web" --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
-
-      - name: Pull Vercel production configuration
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
-          VERCEL_PROJECT_ID: prj_bHaSgv8y0tcFEGDJaEppYx8I0ZV0
-        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
-
-      - name: Prepare Vercel deployment
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
-          VERCEL_PROJECT_ID: prj_bHaSgv8y0tcFEGDJaEppYx8I0ZV0
-        run: vercel build --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
-
-      - name: Verify generated Vercel security-header routes
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        run: node .github/scripts/verify-vercel-output.cjs
-
-      - name: Deploy prebuilt Web output to Vercel
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_02VuKyXLkw0xooJjMMKvYUK3
-          VERCEL_PROJECT_ID: prj_bHaSgv8y0tcFEGDJaEppYx8I0ZV0
-        run: vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID"
-
-      - name: Install Playwright Chromium
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        run: |
-          playwright install --with-deps chromium
-
-      - name: Browser smoke test production deployment
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_production == true
-        env:
-          ORVIKA_BASE_URL: https://orvika-web.vercel.app
-        run: node .github/scripts/orvika-browser-smoke.cjs
