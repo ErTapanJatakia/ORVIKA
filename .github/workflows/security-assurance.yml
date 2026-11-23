@@ -527,8 +527,9 @@ jobs:
           for run in runs:
               if not isinstance(run, dict):
                   raise SystemExit("Bearer SARIF contains an invalid run")
-              run.setdefault("results", [])
-              if not isinstance(run["results"], list):
+              if run.get("results") is None:
+                  run["results"] = []
+              elif not isinstance(run["results"], list):
                   raise SystemExit("Bearer SARIF results must be an array")
           path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
           PY
