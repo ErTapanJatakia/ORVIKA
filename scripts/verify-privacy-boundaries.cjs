@@ -25,14 +25,28 @@ const forbidden = [
   [/FirebaseAnalytics|VercelAnalytics|window\.va\s*\(/, 'Analytics instrumentation'],
 ];
 
+function resolveDirectoryEntry(directory, name) {
+  // readdir supplies a basename, but enforce that contract before path resolution.
+  if (typeof name !== 'string' || name.length === 0 || name === '.' || name === '..'
+      || name.includes('/') || name.includes('\\')) {
+    throw new Error('Directory entry is not a safe single path segment');
+  }
+
+  const parent = path.resolve(directory);
+  const absolute = path.resolve(parent, name);
+  const relative = path.relative(parent, absolute);
+  if (!relative || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    throw new Error('Resolved directory entry escapes its parent directory');
+  }
+  return absolute;
+}
+
 function walk(directory) {
   if (!fs.existsSync(directory)) return [];
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     // Never follow repository symlinks while walking source paths.
     if (entry.isSymbolicLink()) return [];
-    // Dirent.name is a single filesystem entry name, not a caller-supplied path.
-    // The OS does not return path separators as part of a directory-entry name.
-    const absolute = path.join(directory, entry.name);
+    const absolute = resolveDirectoryEntry(directory, entry.name);
     return entry.isDirectory() ? walk(absolute) : entry.name.endsWith('.dart') ? [absolute] : [];
   });
 }
