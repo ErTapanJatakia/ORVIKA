@@ -10,7 +10,7 @@
     "verify:source": "npm run verify:security && npm run verify:pwa && npm run verify:android && npm run verify:privacy"
   },
   "devDependencies": {
-    "playwright": "1.56.1",
+    "playwright": "1.65.1",
     "fast-check": "4.10.3"
   },
   "packageManager": "npm@10.9.9"
