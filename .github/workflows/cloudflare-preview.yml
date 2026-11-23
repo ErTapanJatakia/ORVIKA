@@ -44,8 +44,9 @@ jobs:
           node --check functions/_middleware.js
           npm run test:edge
           npm run verify:source
-          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.js"
-          test -s "$RUNNER_TEMP/orvika-pages-worker.js"
+          wrangler pages functions build functions --outfile "$RUNNER_TEMP/orvika-pages-worker.bundle"
+          test -s "$RUNNER_TEMP/orvika-pages-worker.bundle"
+          grep -q '^Content-Disposition: form-data; name="metadata"' "$RUNNER_TEMP/orvika-pages-worker.bundle"
 
       - name: Validate Cloudflare configuration
         shell: bash
@@ -159,8 +160,9 @@ jobs:
 
       - name: Attach compiled Pages middleware to preview output
         run: |
-          cp "$RUNNER_TEMP/orvika-pages-worker.js" build/web/_worker.js
-          test -s build/web/_worker.js
+          cp "$RUNNER_TEMP/orvika-pages-worker.bundle" build/web/_worker.bundle
+          test -s build/web/_worker.bundle
+          grep -q '^Content-Disposition: form-data; name="metadata"' build/web/_worker.bundle
 
       - name: Install Playwright Chromium
         run: playwright install --with-deps chromium

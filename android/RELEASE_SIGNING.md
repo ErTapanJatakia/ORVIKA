@@ -21,8 +21,10 @@ keyPassword=REPLACE_WITH_PRIVATE_KEY_PASSWORD
 
 The Gradle build accepts the same four values from environment variables:
 `ORVIKA_UPLOAD_STORE_FILE`, `ORVIKA_UPLOAD_STORE_PASSWORD`,
-`ORVIKA_UPLOAD_KEY_ALIAS`, and `ORVIKA_UPLOAD_KEY_PASSWORD`. Use your CI
-secret store if building remotely; never print these values in logs.
+`ORVIKA_UPLOAD_KEY_ALIAS`, and `ORVIKA_UPLOAD_KEY_PASSWORD`. These are the
+local Gradle environment-variable names; the GitHub Actions workflow maps its
+repository secrets into `android/key.properties` on an ephemeral runner. Never
+print signing values in logs.
 
 ## Key custody
 
@@ -43,10 +45,10 @@ The Android validation workflow always produces a debug validation APK. It only
 produces a production-signed APK and AAB when all four repository or environment
 secrets are configured:
 
-- `ORVIKA_UPLOAD_KEYSTORE_BASE64`: base64-encoded upload keystore bytes
-- `ORVIKA_UPLOAD_STORE_PASSWORD`
-- `ORVIKA_UPLOAD_KEY_ALIAS`
-- `ORVIKA_UPLOAD_KEY_PASSWORD`
+- `ORVIKA_ANDROID_KEYSTORE_BASE64`: base64-encoded upload keystore bytes
+- `ORVIKA_ANDROID_STORE_PASSWORD`
+- `ORVIKA_ANDROID_APP_KEY`: upload-key alias
+- `ORVIKA_ANDROID_KEY_PASSWORD`
 
 Encode the keystore locally without uploading it to a public location:
 
@@ -55,8 +57,9 @@ base64 -w 0 /secure/path/orvika-upload-key.jks
 ```
 
 Copy the resulting value directly into the private GitHub Actions secret
-`ORVIKA_UPLOAD_KEYSTORE_BASE64`. Add the three passwords/alias as separate
-GitHub Actions secrets. Never paste these values into issues, pull requests,
+`ORVIKA_ANDROID_KEYSTORE_BASE64`. Add the store password, key alias
+(`ORVIKA_ANDROID_APP_KEY`), and key password as the other three GitHub Actions
+secrets. Never paste these values into issues, pull requests,
 chat, workflow logs, or repository files. The workflow writes the keystore to
 the ephemeral runner's temporary directory and removes it when the runner is
 discarded.
