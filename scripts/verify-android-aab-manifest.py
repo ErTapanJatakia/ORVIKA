@@ -4,7 +4,7 @@
 import argparse
 import re
 import shutil
-import subprocess
+import subprocess  # nosec B404 -- used only for a bounded, shell-free bundletool invocation.
 import sys
 import zipfile
 from pathlib import Path
