@@ -36,7 +36,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_accepts_well_formed_manifest(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             'package="com.orvika.app"><uses-permission '
             'android:name="android.permission.INTERNET"/></manifest>',
             "base",
@@ -45,7 +45,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_permission_declarations_capture_exact_protection_level(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
             'android:protectionLevel="signature"/></manifest>',
             "base",
@@ -92,8 +92,11 @@ class ManifestParserSecurityTests(unittest.TestCase):
             bundle_path = Path(directory, "app.aab")
             bundletool.write_bytes(b"test placeholder")
             bundle_path.write_bytes(b"test bundle placeholder")
-            with patch.object(MODULE.subprocess, "run", return_value=completed):
+            with patch.object(MODULE.subprocess, "run", return_value=completed) as run:
                 MODULE.read_module_manifest(bundletool, bundle_path, "base", Path(directory))
+            self.assertIs(run.call_args.kwargs["shell"], False)
+            self.assertIs(run.call_args.kwargs["stdin"], MODULE.subprocess.DEVNULL)
+            self.assertEqual(run.call_args.kwargs["timeout"], 120)
             status = Path(directory, "bundletool-module-status.txt").read_text()
             self.assertIn("module=base", status)
             self.assertIn("return_code=0", status)
