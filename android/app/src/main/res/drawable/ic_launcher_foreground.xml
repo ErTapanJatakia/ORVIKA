@@ -4,7 +4,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108"
-    xmlns:android="http://schemas.android.com/apk/res/android"> <!-- DevSkim: ignore DS137138 -- required Android XML namespace identifier, not a network endpoint. -->
+    xmlns:android="http://schemas.android.com/apk/res/android"> <!-- DevSkim: ignore DS137138; required Android XML namespace identifier, not a network endpoint. -->
     <path
         android:fillColor="#10233B"
         android:strokeColor="#00D5FF"
