@@ -36,7 +36,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_accepts_well_formed_manifest(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             'package="com.orvika.app"><uses-permission '
             'android:name="android.permission.INTERNET"/></manifest>',
             "base",
@@ -45,7 +45,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_permission_declarations_capture_exact_protection_level(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
             'android:protectionLevel="signature"/></manifest>',
             "base",
