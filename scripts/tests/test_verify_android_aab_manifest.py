@@ -6,7 +6,7 @@ import unittest
 import zipfile
 from pathlib import Path
 from unittest.mock import patch
-from subprocess import CompletedProcess
+from subprocess import CompletedProcess  # nosec B404 -- test-only result fixture; process execution is mocked.
 
 SCRIPT = Path(__file__).resolve().parents[1] / "verify-android-aab-manifest.py"
 SPEC = importlib.util.spec_from_file_location("verify_android_aab_manifest", SCRIPT)
@@ -36,7 +36,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_accepts_well_formed_manifest(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             'package="com.orvika.app"><uses-permission '
             'android:name="android.permission.INTERNET"/></manifest>',
             "base",
@@ -45,7 +45,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_permission_declarations_capture_exact_protection_level(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture. # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
             'android:protectionLevel="signature"/></manifest>',
             "base",
@@ -74,7 +74,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_permission_declaration_diagnostic_preserves_unexpected_value(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             '<permission android:name="com.orvika.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" '
             'android:protectionLevel="signature|privileged"/></manifest>',
             "base",
@@ -133,7 +133,7 @@ class ManifestParserSecurityTests(unittest.TestCase):
 
     def test_module_summary_contains_only_package_and_permission_metadata(self):
         root = MODULE.parse_manifest_xml(
-            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android" ' # DevSkim: ignore DS137138 -- required Android XML namespace identifier in a parser fixture.
             'package="com.orvika.app"><permission android:name="com.orvika.app.TEST" '
             'android:protectionLevel="signature"/><uses-permission '
             'android:name="android.permission.INTERNET"/><application '
