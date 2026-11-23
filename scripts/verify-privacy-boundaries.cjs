@@ -25,6 +25,8 @@ const forbidden = [
   [/FirebaseAnalytics|VercelAnalytics|window\.va\s*\(/, 'Analytics instrumentation'],
 ];
 
+// Dirent names are validated as single path segments and confined to their parent.
+// bearer:disable javascript_lang_path_traversal
 function resolveDirectoryEntry(directory, name) {
   // readdir supplies a basename, but enforce that contract before path resolution.
   if (typeof name !== 'string' || name.length === 0 || name === '.' || name === '..'
