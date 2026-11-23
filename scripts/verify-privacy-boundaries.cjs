@@ -76,4 +76,6 @@ assert.ok(!/document\.(?:body|forms)|querySelectorAll\s*\(.*(?:input|textarea)/i
 assert.ok(!/window\.va\s*\(\s*['"]event['"]/i.test(analytics),
   'Analytics bootstrap must not emit custom feature events');
 
+module.exports = { resolveDirectoryEntry };
+
 console.log('ORVIKA checker privacy source boundaries: PASS.');
