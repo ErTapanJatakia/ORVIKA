@@ -1,0 +1,10 @@
+title = "ORVIKA Gitleaks configuration"
+
+[allowlist]
+description = "The reviewed Android upload-key SHA-256 certificate fingerprint is a public identifier, not a credential. Scope this exception to the exact fingerprint in the dated release-assurance evidence record."
+paths = [
+  '''^docs/release-assurance-evidence-2026-11-23\.md$''',
+]
+regexes = [
+  '''b859b30cd703e7592fa169618fe934f47533a95338f5e1b1a11b6bf985b822b5''',
+]

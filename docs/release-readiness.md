@@ -86,3 +86,28 @@ As of this review, no CI run, Android validation, physical-device accessibility 
 ## Release decision
 
 ORVIKA should remain labelled a prototype until the mandatory functional, security/privacy, accessibility, localization, platform packaging and deployment gates are completed. Do not imply that local heuristics provide a guaranteed verdict or that code-level assurance is a certification.
+
+
+## Dated assurance update — 23 November 2026
+
+This addendum supersedes the earlier execution-boundary statement above **for the specific checks and run snapshots listed here**. The original checklist and historical review boundary are retained as a record of their review date.
+
+### Completed automated evidence
+
+- PR #268 merged: `f2cdcde1e9398940aea00f1848ac346b8b6087f8`.
+- Post-merge ORVIKA CI, Free Security Assurance, Workflow Lint, Cloudflare Pages Preview Validation and CodeQL runs succeeded. Run IDs and scope limitations are recorded in [the dated release-assurance evidence](release-assurance-evidence-2026-11-23.md).
+- Android Build Validation Run #75 successfully built and verified the signed release APK and AAB, confirmed matching signatures and the approved upload certificate fingerprint, and passed package/manifest/permission checks.
+- The post-merge CI run intentionally skipped Android Build Validation and deployment steps; the separate Run #75 supplied the Android signing evidence.
+- The preview validation was isolated; it was not a production deployment.
+
+### Still outstanding / not inferred as passed
+
+- Manual Android TalkBack and Switch Access testing.
+- Browser-only end-to-end keyboard testing and desktop screen-reader testing.
+- VoiceOver/Safari testing on a supported Apple device.
+- Full rendered contrast/focus, zoom/reflow, text-scale, RTL and touch-target inventories.
+- Full functional acceptance of all modules on the approved candidate build.
+- Production network/data-flow capture, production response-header inspection, and platform-specific QR cleanup/lifecycle verification.
+- Final store-specific RuStore and Aurora requirements and explicit maintainer release approval.
+
+**Decision remains pre-release.** Successful automated workflows and signed artifact verification do not close manual accessibility, production-runtime, store-readiness or release-authorization gates. No production deployment or store submission is implied or authorised by this addendum.

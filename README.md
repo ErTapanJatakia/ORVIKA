@@ -67,6 +67,7 @@ Useful references:
 - [Security and privacy assurance ledger](docs/security-privacy-assurance-ledger.md)
 - [Accessibility assurance review](docs/accessibility-assurance-review.md)
 - [Dashboard responsive assurance](docs/dashboard-responsive-assurance.md)
+- [Dated release-assurance evidence — 23 November 2026](docs/release-assurance-evidence-2026-11-23.md)
 - [Android release signing](android/RELEASE_SIGNING.md)
 - [Release readiness checklist](docs/release-readiness.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
