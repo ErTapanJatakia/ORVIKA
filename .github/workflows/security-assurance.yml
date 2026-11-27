@@ -53,7 +53,7 @@ jobs:
 
       - name: Upload Semgrep SARIF to GitHub code scanning
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934
         with:
           sarif_file: security-evidence/semgrep.sarif
 
@@ -133,7 +133,7 @@ jobs:
           results_format: sarif
           publish_results: true
       - name: Upload Scorecard results
-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934
         with:
           sarif_file: scorecard.sarif
 
@@ -459,7 +459,7 @@ jobs:
           output-directory: security-evidence
       - name: Upload DevSkim SARIF
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934
         with:
           sarif_file: security-evidence/devskim-results.sarif
       - name: Preserve DevSkim SARIF for evidence review
@@ -535,7 +535,7 @@ jobs:
           PY
       - name: Upload Bearer SARIF
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
+        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934
         with:
           sarif_file: bearer-results.sarif
       - name: Preserve Bearer SARIF for evidence review
